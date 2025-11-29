@@ -1,5 +1,6 @@
+import type { ICharacter } from '../character'
 import { EventBus } from '../event'
-import { CombatRandomGenerator, type IEntity } from '../shared'/**
+import { CombatRandomGenerator, type IEntity } from '../shared' /**
  * 戰鬥上下文
  * 持有 Ticker、EventBus、RNG 的引用
  * 提供戰鬥 ID、種子等基礎配置
@@ -29,6 +30,9 @@ export class CombatContext {
   }
   public getEntitiesByTeam(team: IEntity['team']): IEntity[] {
     return this.getAllEntities().filter((e) => (e as IEntity).team === team)
+  }
+  public isCharacter(entity: unknown): entity is ICharacter {
+    return (entity as ICharacter).effects !== undefined
   }
   // ===Tick===
   public getCurrentTick(): number {

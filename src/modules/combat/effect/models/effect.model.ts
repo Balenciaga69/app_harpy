@@ -1,5 +1,6 @@
 import type { ICharacter } from '../../character'
-import type { CombatContext } from '../../core/CombatContext'export interface IEffect {
+import type { CombatContext } from '../../core/CombatContext'
+export interface IEffect {
   readonly id: string
   readonly name: string
   // 當效果被添加時調用
