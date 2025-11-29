@@ -16,7 +16,7 @@ function runSimpleCombat() {
       evasion: 0.1,
       accuracy: 0.95,
       attackDamage: 20,
-      attackCooldown: 10,
+      attackCooldown: 100,
       criticalChance: 0.2,
       spellDamage: 0,
       spellCooldown: 0,
@@ -31,8 +31,8 @@ function runSimpleCombat() {
       armor: 5,
       evasion: 0.15,
       accuracy: 0.98,
-      attackDamage: 15,
-      attackCooldown: 8,
+      attackDamage: 10,
+      attackCooldown: 150,
       criticalChance: 0.3,
       spellDamage: 0,
       spellCooldown: 0,
@@ -49,7 +49,7 @@ function runSimpleCombat() {
       evasion: 0.05,
       accuracy: 0.85,
       attackDamage: 10,
-      attackCooldown: 12,
+      attackCooldown: 120,
       criticalChance: 0.1,
       spellDamage: 0,
       spellCooldown: 0,
@@ -65,7 +65,7 @@ function runSimpleCombat() {
       evasion: 0.05,
       accuracy: 0.85,
       attackDamage: 10,
-      attackCooldown: 12,
+      attackCooldown: 120,
       criticalChance: 0.1,
       spellDamage: 0,
       spellCooldown: 0,
@@ -111,6 +111,7 @@ function runSimpleCombat() {
   // 清理資源
   engine.dispose()
   console.log('\n=== 測試完成 ===')
+  result.logs = result.logs.filter((log) => !['tick:start', 'tick:end'].includes(log.eventType))
   return result
 }
 // 執行測試

@@ -120,13 +120,21 @@ export class DamageChain {
     }
     // 如果暴擊，對所有元素傷害套用暴擊倍率
     if (event.isCrit) {
-      const critMultiplier = 1.5 // TODO: 未來可從屬性讀取
+      const critMultiplier = event.source.attributes.get('criticalMultiplier') ?? 1.5
       event.damages.physical *= critMultiplier
       event.damages.fire *= critMultiplier
       event.damages.ice *= critMultiplier
       event.damages.lightning *= critMultiplier
       event.damages.poison *= critMultiplier
       event.damages.chaos *= critMultiplier
+
+      // 發送暴擊事件
+      this.context.eventBus.emit('entity:critical', {
+        sourceId: event.source.id,
+        targetId: event.target.id,
+        multiplier: critMultiplier,
+        tick: event.tick,
+      })
     }
     return event
   }
@@ -199,12 +207,19 @@ export class DamageChain {
   }
   /** 發送未命中事件 */
   private emitMissEvent(event: DamageEvent): void {
-    // TODO: 新增 'combat:miss' 事件到 CombatEventMap
-    void event
+    this.context.eventBus.emit('combat:miss', {
+      sourceId: event.source.id,
+      targetId: event.target.id,
+      tick: event.tick,
+    })
   }
   /** 發送被阻止事件 */
   private emitPreventedEvent(event: DamageEvent): void {
-    // TODO: 新增 'combat:prevented' 事件到 CombatEventMap
-    void event
+    this.context.eventBus.emit('combat:prevented', {
+      sourceId: event.source.id,
+      targetId: event.target.id,
+      reason: 'damage-prevented-by-effect',
+      tick: event.tick,
+    })
   }
 }

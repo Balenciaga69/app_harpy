@@ -7,6 +7,7 @@ export type AttributeType =
   | 'attackDamage'
   | 'attackCooldown'
   | 'criticalChance'
+  | 'criticalMultiplier'
   | 'accuracy'
   | 'spellDamage'
   | 'spellCooldown'
@@ -19,6 +20,7 @@ export interface BaseAttributeValues {
   attackDamage?: number
   attackCooldown?: number
   criticalChance?: number
+  criticalMultiplier?: number
   spellDamage?: number
   spellCooldown?: number
 }

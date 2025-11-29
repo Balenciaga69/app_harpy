@@ -50,8 +50,13 @@ export class AbilitySystem {
   /** 檢查角色是否可以攻擊 */
   private canAttack(character: ICharacter, currentTick: number): boolean {
     const nextAttack = this.nextAttackTick.get(character.id)
-    // 如果沒有記錄，代表第一次攻擊，可以立即執行
-    if (nextAttack === undefined) return true
+    // 如果沒有記錄，設置隨機初始延遲 (0 ~ 冷卻時間)
+    if (nextAttack === undefined) {
+      const cooldown = character.attributes.get('attackCooldown')
+      const randomDelay = Math.floor(this.context.rng.next() * cooldown)
+      this.nextAttackTick.set(character.id, currentTick + randomDelay)
+      return false
+    }
     // 檢查是否已經過了冷卻時間
     return currentTick >= nextAttack
   }
@@ -60,13 +65,19 @@ export class AbilitySystem {
     // 1. 選擇目標
     const target = this.selectTarget(character)
     if (!target) return // 沒有可攻擊的目標
-    // 2. 創建傷害事件
+    // 2. 發送攻擊事件
+    this.context.eventBus.emit('entity:attack', {
+      sourceId: character.id,
+      targetId: target.id,
+      tick: currentTick,
+    })
+    // 3. 創建傷害事件
     const damageEvent = this.createDamageEvent(character, target, currentTick)
-    // 3. 觸發傷害計算
+    // 4. 觸發傷害計算
     this.damageChain.execute(damageEvent)
-    // 4. 施加元素效果 (攻擊後,根據造成的傷害類型)
+    // 5. 施加元素效果 (攻擊後,根據造成的傷害類型)
     this.applyElementalEffects(damageEvent)
-    // 5. 更新下次攻擊時間
+    // 6. 更新下次攻擊時間
     this.updateCooldown(character, currentTick)
   }
   /** 選擇攻擊目標 */

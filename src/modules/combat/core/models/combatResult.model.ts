@@ -2,6 +2,7 @@ import type { ICharacter } from '../../character/models/character.model'
 import type { CharacterId } from '../../character/models/character.model'
 import type { CombatLogEntry } from '../../logger/combatLog.model'
 import type { ElementalDamages } from '../../damage/models/damageEvent.model'
+import type { CharacterSnapshot } from '../../event/combatEventMap.model'
 /**
  * 戰鬥結果類型
  */
@@ -14,14 +15,7 @@ export interface CombatSnapshot {
   /** 快照時間點 */
   tick: number
   /** 所有角色的狀態 */
-  characters: {
-    id: CharacterId
-    name: string
-    currentHp: number
-    maxHp: number
-    isDead: boolean
-    effects: string[] // 效果名稱列表
-  }[]
+  characters: CharacterSnapshot[]
 }
 /**
  * 關鍵時刻

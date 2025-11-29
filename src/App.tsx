@@ -2,7 +2,8 @@
 import { StrictMode } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './index.css'
-import { SandboxSimulator } from './modules/combat/shared/simulator/sandboxSimulator'
+import { runSimpleCombat } from './modules/combat/examples/simpleCombat'
+
 function App() {
   return (
     <StrictMode>
@@ -16,5 +17,6 @@ function App() {
     </StrictMode>
   )
 }
-SandboxSimulator()
+const result = runSimpleCombat()
+console.info('xZx result', result)
 export default App
