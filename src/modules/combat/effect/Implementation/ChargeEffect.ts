@@ -15,7 +15,6 @@ export class ChargeEffect extends StackableEffect {
   private spellModifierId: string | null = null
   private readonly decayRate: number = 0.1 // 每秒減少 10%
   private lastDecayTick: number = 0
-  // implementation
   constructor(initialStacks: number = 1) {
     super(`charge-${nanoid(6)}`, '充能', 16)
     this.setStacks(initialStacks)
