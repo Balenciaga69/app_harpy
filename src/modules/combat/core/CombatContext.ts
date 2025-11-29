@@ -1,27 +1,38 @@
-import type { IEntity } from '../shared/models/entity.model'
-import { EventBus } from '../event/EventBus'
+import { EventBus } from '../event'
+import { CombatRandomGenerator, type IEntity } from '../shared'
+
 /**
  * 戰鬥上下文
- * 持有 Ticker、EventBus、EventLogger 的引用
+ * 持有 Ticker、EventBus、RNG 的引用
  * 提供戰鬥 ID、種子等基礎配置
- * 不應該包含角色數據或戰鬥邏輯
- * 應該是一個 貧血模型。它只應該包含數據和存取數據的簡單方法，絕對不包含戰鬥邏輯。
+ * 是貧血模型。只包含數據和存取數據的簡單方法，不包含戰鬥邏輯。
  */
 export class CombatContext {
   public readonly eventBus: EventBus
+  public readonly rng: CombatRandomGenerator
   private currentTick: number = 0
-  private entities: Map<string, IEntity> = new Map() // 使用 Map 儲存戰鬥單位，解耦具體的 Store 實作
-  constructor() {
+  private entities: Map<string, IEntity> = new Map()
+  constructor(seed?: string | number) {
     this.eventBus = new EventBus()
+    this.rng = new CombatRandomGenerator(seed)
   }
-  // Entity
+  // ===Entity===
   public getEntity(id: string): IEntity | undefined {
     return this.entities.get(id)
   }
   public addEntity(entity: IEntity): void {
     this.entities.set(entity.id, entity)
   }
-  // Tick
+  public removeEntity(id: string): void {
+    this.entities.delete(id)
+  }
+  public getAllEntities(): readonly IEntity[] {
+    return Array.from(this.entities.values())
+  }
+  public getEntitiesByTeam(team: IEntity['team']): IEntity[] {
+    return this.getAllEntities().filter((e) => (e as IEntity).team === team)
+  }
+  // ===Tick===
   public getCurrentTick(): number {
     return this.currentTick
   }

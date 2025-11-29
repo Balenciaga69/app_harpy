@@ -1,5 +1,6 @@
-import type { ICharacter } from '../character/character.model'
-import type { CombatContext } from '../core/CombatContext'
+import type { ICharacter } from '../../character'
+import type { CombatContext } from '../../core/CombatContext'
+
 export interface IEffect {
   readonly id: string
   readonly name: string

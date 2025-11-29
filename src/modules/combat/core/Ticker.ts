@@ -48,7 +48,6 @@ export class Ticker {
   private shouldTakeSnapshot(): boolean {
     return this.context.getCurrentTick() % this.snapshotInterval === 0
   }
-
   /** 記錄完整快照 */
   private takeSnapshot(): void {
     // TODO: 取得所有 Entity 的狀態快照
