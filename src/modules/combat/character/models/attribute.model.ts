@@ -16,7 +16,11 @@ export interface BaseAttributeValues {
   armor: number
   evasion: number
   accuracy: number
-  // ... 其他屬性
+  attackDamage?: number
+  attackCooldown?: number
+  criticalChance?: number
+  spellDamage?: number
+  spellCooldown?: number
 }
 // 屬性修飾器 (來自 Effect)
 export interface AttributeModifier {

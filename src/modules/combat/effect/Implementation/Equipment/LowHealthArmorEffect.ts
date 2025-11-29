@@ -3,7 +3,6 @@ import type { IEffect, ICombatHook } from '../../models/effect.model'
 import type { ICharacter } from '../../../character/models/character.model'
 import type { CombatContext } from '../../../core/CombatContext'
 import type { DamageEvent } from '../../../damage'
-import { calculateArmorReduction } from '../../../damage/utils/damageCalculator.util'
 /**
  * 低血護甲增幅效果
  *
@@ -27,7 +26,7 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
   }
   /**
    * 【階段5】防禦計算階段
-   * 如果生命值低於 30%，護甲值加倍
+   * 如果生命值低於 30%，護甲值加倍，減免更多物理傷害
    */
   onDefenseCalculation(event: DamageEvent, context: CombatContext): DamageEvent {
     // 只處理目標是自己的情況（受到傷害時）
@@ -39,13 +38,15 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
     const maxHp = event.target.attributes.get('maxHp')
     const healthPercent = currentHp / maxHp
     if (healthPercent < this.healthThreshold) {
-      // 重新計算護甲減免，使用加倍的護甲值
+      // 計算加倍的護甲減免
       const baseArmor = event.target.attributes.get('armor')
       const boostedArmor = baseArmor * this.armorMultiplier
-      // 重新計算護甲減免
-      event.armorReduction = calculateArmorReduction(boostedArmor, event.baseDamage)
-      // 重新應用護甲減免
-      event.finalDamage = event.finalDamage * (1 - event.armorReduction)
+      // 計算護甲減免百分比
+      const armorReduction = boostedArmor / (boostedArmor + 100)
+      // 對物理傷害應用額外減免
+      // (原本的減免已經在 DamageChain 中處理，這裡再額外加倍)
+      const additionalReduction = armorReduction - baseArmor / (baseArmor + 100)
+      event.damages.physical *= 1 - additionalReduction
     }
     return event
   }
