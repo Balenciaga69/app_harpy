@@ -1,12 +1,4 @@
-/**
- * 事件佇列管理中心 - 雙軌事件調度系統
- *
- * 設計理念：
- * - Normal Events: 按 tick 排程的預定事件，由 Ticker 依時序觸發
- * - Immediate Events: 插隊執行的即時事件，在當前 tick 內立即處理
- *
- * 典型流程：攻擊事件(Normal) → 觸發反擊(Immediate) → 反擊立即執行
- */
+/** 按 Tick 執行事件 Queue的 儲存庫 */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand'
 import type { CombatEventType } from './combatEvent.type'
