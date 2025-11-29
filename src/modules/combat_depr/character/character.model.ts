@@ -26,9 +26,8 @@ export class Character {
     const modifier = this.getEffectModifier()
     return Math.floor(baseHp * (1 + modifier.maxHpIncreasePercent))
   }
-  /** 獲取效果修飾（帶緩存） */
+  /** 獲取效果修飾 */
   private getEffectModifier(currentTick?: number): EffectModifier {
-    // 簡單緩存：如果同一 tick 內多次調用，直接返回緩存值
     if (currentTick !== undefined && currentTick === this.lastModifierTick && this.cachedModifier) {
       return this.cachedModifier
     }
