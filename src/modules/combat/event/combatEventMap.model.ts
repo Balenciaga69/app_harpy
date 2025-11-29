@@ -10,5 +10,10 @@ export type CombatEventMap = {
   'entity:damage': { targetId: string; amount: number; sourceId?: string }
   'entity:heal': { targetId: string; amount: number }
   'entity:death': { targetId: string }
-  // more events can be added here
+  // snapshot
+  'tick:snapshot': {
+    tick: number
+    entities: any[] // TODO: 定義更具體的 Entity Snapshot 類型
+    // more events can be added here
+  }
 }

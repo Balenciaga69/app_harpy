@@ -16,6 +16,10 @@ export class EventBus {
   public emit<K extends keyof CombatEventMap>(event: K, payload: CombatEventMap[K]): void {
     this.emitter.emit(event, payload)
   }
+  /** 監聽所有事件 (用於 Logger 或 Debug) */
+  public onAll(handler: (type: keyof CombatEventMap, payload: any) => void): void {
+    this.emitter.on('*', handler as any)
+  }
   /** 清除所有監聽器 (用於戰鬥結束後的清理) */
   public clear(): void {
     this.emitter = mitt<CombatEventMap>() // mitt 沒有內建 clear 方法，所以創建新實例來重置
