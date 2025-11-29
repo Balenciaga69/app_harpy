@@ -1,7 +1,5 @@
 import { EventBus } from '../event'
-import { CombatRandomGenerator, type IEntity } from '../shared'
-
-/**
+import { CombatRandomGenerator, type IEntity } from '../shared'/**
  * 戰鬥上下文
  * 持有 Ticker、EventBus、RNG 的引用
  * 提供戰鬥 ID、種子等基礎配置
