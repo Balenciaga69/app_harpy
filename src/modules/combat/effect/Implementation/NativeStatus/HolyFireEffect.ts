@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../models/stackableEffect.model'
-import type { ICharacter } from '../../character/models/character.model'
-import type { CombatContext } from '../../core/CombatContext'
+import { StackableEffect } from '../../models/stackableEffect.model'
+import type { ICharacter } from '../../../character/models/character.model'
+import type { CombatContext } from '../../../core/CombatContext'
 /**
  * 聖火效果
  * - 每層提升護甲值

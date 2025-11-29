@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import type { IEffect, ICombatHook } from '../models/effect.model'
-import type { ICharacter } from '../../character/models/character.model'
-import type { CombatContext } from '../../core/CombatContext'
-import type { DamageEvent } from '../../damage'
+import type { IEffect, ICombatHook } from '../../models/effect.model'
+import type { ICharacter } from '../../../character/models/character.model'
+import type { CombatContext } from '../../../core/CombatContext'
+import type { DamageEvent } from '../../../damage'
 /**
  * 充能暴擊增幅效果
  *

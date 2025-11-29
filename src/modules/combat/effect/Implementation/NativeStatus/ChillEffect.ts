@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../models/stackableEffect.model'
-import type { ICharacter } from '../../character/models/character.model'
-import type { CombatContext } from '../../core/CombatContext'
+import { StackableEffect } from '../../models/stackableEffect.model'
+import type { ICharacter } from '../../../character/models/character.model'
+import type { CombatContext } from '../../../core/CombatContext'
 /**
  * 冰緩效果
  * - 延長敵方攻擊/施法冷卻時間

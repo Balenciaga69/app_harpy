@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../models/stackableEffect.model'
-import type { ICharacter } from '../../character/models/character.model'
-import type { CombatContext } from '../../core/CombatContext'
+import { StackableEffect } from '../../models/stackableEffect.model'
+import type { ICharacter } from '../../../character/models/character.model'
+import type { CombatContext } from '../../../core/CombatContext'
 /**
  * 充能效果
  * - 提高攻擊/施法頻率（降低冷卻時間）

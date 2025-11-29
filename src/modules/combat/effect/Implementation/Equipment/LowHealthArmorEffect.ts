@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid'
-import type { IEffect, ICombatHook } from '../models/effect.model'
-import type { ICharacter } from '../../character/models/character.model'
-import type { CombatContext } from '../../core/CombatContext'
-import type { DamageEvent } from '../../damage'
-import { calculateArmorReduction } from '../../damage/utils/damageCalculator.util'
+import type { IEffect, ICombatHook } from '../../models/effect.model'
+import type { ICharacter } from '../../../character/models/character.model'
+import type { CombatContext } from '../../../core/CombatContext'
+import type { DamageEvent } from '../../../damage'
+import { calculateArmorReduction } from '../../../damage/utils/damageCalculator.util'
 /**
  * 低血護甲增幅效果
  *

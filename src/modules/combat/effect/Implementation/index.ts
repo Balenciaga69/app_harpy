@@ -1,6 +1,8 @@
-export { HolyFireEffect } from './HolyFireEffect'
-export { ChargeEffect } from './ChargeEffect'
-export { ChillEffect } from './ChillEffect'
-export { PoisonEffect } from './PoisonEffect'
-export { ChargedCriticalEffect } from './ChargedCriticalEffect'
-export { LowHealthArmorEffect } from './LowHealthArmorEffect'
+// native status effects
+export { HolyFireEffect } from './NativeStatus/HolyFireEffect'
+export { ChargeEffect } from './NativeStatus/ChargeEffect'
+export { ChillEffect } from './NativeStatus/ChillEffect'
+export { PoisonEffect } from './NativeStatus/PoisonEffect'
+// equipment effects
+export { ChargedCriticalEffect } from './Equipment/ChargedCriticalEffect'
+export { LowHealthArmorEffect } from './Equipment/LowHealthArmorEffect'
