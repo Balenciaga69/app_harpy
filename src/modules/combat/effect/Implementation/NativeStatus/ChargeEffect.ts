@@ -71,14 +71,14 @@ export class ChargeEffect extends StackableEffect {
       mode: 'multiply',
       source: this.id,
     })
-    // 添加施法冷卻修飾器
-    this.spellModifierId = `${this.id}-spell-cd`
-    character.addAttributeModifier({
-      id: this.spellModifierId,
-      type: 'spellCooldown',
-      value: cooldownReduction,
-      mode: 'multiply',
-      source: this.id,
-    })
+    // TODO: 施法冷卻目前尚未實現，暫時註解
+    // this.spellModifierId = `${this.id}-spell-cd`
+    // character.addAttributeModifier({
+    //   id: this.spellModifierId,
+    //   type: 'spellCooldown',
+    //   value: cooldownReduction,
+    //   mode: 'multiply',
+    //   source: this.id,
+    // })
   }
 }

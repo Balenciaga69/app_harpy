@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '../combat-engine/combat.engine'
 import { Character } from '../character/character'
+import { ThunderStrikeUltimate } from '../ability'
 /**
  * 簡單的戰鬥測試範例（v0.3）
  * 驗證能量系統與大招機制
@@ -21,8 +22,10 @@ function runSimpleCombat() {
       criticalChance: 0.2,
       criticalMultiplier: 1.5,
       maxEnergy: 100,
-      energyRegen: 0,
+      energyRegen: 1,
+      energyGainOnAttack: 10,
     },
+    ultimate: new ThunderStrikeUltimate(2.5, 6),
   })
   warrior.setCurrentHpClamped(100)
   const archer = new Character({
@@ -38,7 +41,8 @@ function runSimpleCombat() {
       criticalChance: 0.35,
       criticalMultiplier: 2.0,
       maxEnergy: 100,
-      energyRegen: 0,
+      energyRegen: 1,
+      energyGainOnAttack: 12,
     },
   })
   archer.setCurrentHpClamped(80)
@@ -56,7 +60,8 @@ function runSimpleCombat() {
       criticalChance: 0.1,
       criticalMultiplier: 1.5,
       maxEnergy: 100,
-      energyRegen: 0,
+      energyRegen: 1,
+      energyGainOnAttack: 5,
     },
   })
   goblin1.setCurrentHpClamped(50)
@@ -73,7 +78,8 @@ function runSimpleCombat() {
       criticalChance: 0.1,
       criticalMultiplier: 1.5,
       maxEnergy: 100,
-      energyRegen: 0,
+      energyRegen: 1,
+      energyGainOnAttack: 5,
     },
   })
   goblin2.setCurrentHpClamped(50)

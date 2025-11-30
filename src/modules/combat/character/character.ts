@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid'
+import type { IUltimateAbility } from '../ability'
 import type { BaseAttributeValues, CharacterId, ICharacter } from '.'
 import type { CombatContext } from '../context/combat.context'
 import type { IEffect } from '../effect/models/effect.model'
@@ -14,6 +15,7 @@ interface CharacterConfig {
   name: string
   baseAttributes: BaseAttributeValues
   team: ICharacter['team']
+  ultimate?: IUltimateAbility
 }
 /**
  * Character：戰鬥系統中的核心實體，代表參與戰鬥的角色。
@@ -36,6 +38,8 @@ export class Character implements ICharacter {
   readonly name: string
   readonly team: ICharacter['team']
   isDead: boolean = false
+  /** 角色的大招（可選） */
+  private ultimate?: IUltimateAbility
   // 私有化內部實作
   private readonly attributeContainer: AttributeContainer
   private readonly attributeCalculator: AttributeCalculator
@@ -45,6 +49,7 @@ export class Character implements ICharacter {
     this.id = nanoid()
     this.team = config.team
     this.name = config.name
+    this.ultimate = config.ultimate
     this.attributeContainer = new AttributeContainer(config.baseAttributes)
     this.attributeCalculator = new AttributeCalculator(this.attributeContainer)
     this.effectManager = new EffectManager(this)
@@ -97,5 +102,14 @@ export class Character implements ICharacter {
   /** 獲取所有效果 */
   getAllEffects(): readonly IEffect[] {
     return this.effectManager.getAllEffects()
+  }
+  // === 大招相關方法 ===
+  /** 獲取大招（如果有） */
+  getUltimate(): IUltimateAbility | undefined {
+    return this.ultimate
+  }
+  /** 設置大招 */
+  setUltimate(ultimate: IUltimateAbility): void {
+    this.ultimate = ultimate
   }
 }

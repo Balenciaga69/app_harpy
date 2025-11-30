@@ -5,6 +5,7 @@ export type AttributeType =
   | 'maxEnergy'
   | 'currentEnergy'
   | 'energyRegen'
+  | 'energyGainOnAttack'
   | 'armor'
   | 'evasion'
   | 'attackDamage'
@@ -17,6 +18,7 @@ export interface BaseAttributeValues {
   maxHp: number
   maxEnergy: number
   energyRegen: number
+  energyGainOnAttack: number
   armor: number
   evasion: number
   accuracy: number

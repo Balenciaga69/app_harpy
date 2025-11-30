@@ -43,10 +43,9 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
       const boostedArmor = baseArmor * this.armorMultiplier
       // 計算護甲減免百分比
       const armorReduction = boostedArmor / (boostedArmor + 100)
-      // 對物理傷害應用額外減免
-      // (原本的減免已經在 DamageChain 中處理，這裡再額外加倍)
+      // 對傷害應用額外減免
       const additionalReduction = armorReduction - baseArmor / (baseArmor + 100)
-      event.damages.physical *= 1 - additionalReduction
+      event.amount *= 1 - additionalReduction
     }
     return event
   }

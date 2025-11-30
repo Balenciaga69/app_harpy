@@ -3,7 +3,7 @@ import type { ICharacter } from '../../character'
  * 傷害事件
  * 在 DamageChain 中傳遞並被修改的數據載體
  *
- * 設計原則 :
+ * 設計原則：
  * - 統一使用純粹傷害 (amount)
  * - 支援真實傷害 (isTrueDamage)
  * - 支援大招標記 (isUltimate)
@@ -27,7 +27,7 @@ export interface DamageEvent {
   // === 命中與暴擊 ===
   /** 是否暴擊 */
   isCrit: boolean
-  /** 是否命中（閃避判定） */
+  /** 是否命中（false = 被閃避） */
   isHit: boolean
   // === 元數據 ===
   /** 發生在哪個 Tick */

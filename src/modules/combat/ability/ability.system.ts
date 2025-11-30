@@ -58,6 +58,8 @@ export class AbilitySystem {
       const character = entity as ICharacter
       // 跳過已死亡的角色
       if (character.isDead) return
+      // 能量自然回復（每 100 tick 觸發一次）
+      this.processEnergyRegen(character, currentTick)
       // 檢查是否可以攻擊
       if (this.canAttack(character, currentTick)) {
         this.performAttack(character, currentTick)
@@ -116,11 +118,28 @@ export class AbilitySystem {
     this.damageChain.execute(damageEvent)
     // 普通攻擊成功後累積能量
     if (damageEvent.isHit && !damageEvent.prevented) {
-      this.gainEnergy(character, 10) // TODO: 能量獲取量可配置化
+      const energyGain = character.getAttribute('energyGainOnAttack') ?? 0
+      if (energyGain > 0) {
+        this.gainEnergy(character, energyGain)
+      }
     }
   }
   /** 執行大招 */
-  private performUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
+  private performUltimate(character: ICharacter, _target: ICharacter, _currentTick: number): void {
+    // 先消耗能量
+    character.setBaseAttribute('currentEnergy', 0)
+    // 檢查角色是否有大招
+    const ultimate = character.getUltimate()
+    if (!ultimate) {
+      // 如果沒有大招，使用默認大招邏輯（向後兼容）
+      this.performDefaultUltimate(character, _target, _currentTick)
+      return
+    }
+    // 執行角色專屬大招
+    ultimate.execute(character, this.context)
+  }
+  /** 默認大招邏輯（向後兼容，當角色沒有設置大招時使用） */
+  private performDefaultUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
     // 發送大招事件
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
@@ -129,13 +148,11 @@ export class AbilitySystem {
     })
     // 計算大招傷害（基礎攻擊力 * 倍率）
     const baseDamage = character.getAttribute('attackDamage') ?? 0
-    const ultimateDamage = baseDamage * 3 // TODO: 倍率可配置化
+    const ultimateDamage = baseDamage * 3
     // 創建大招傷害事件
     const damageEvent = this.damageFactory.createUltimateEvent(character, target, ultimateDamage, currentTick)
     // 執行傷害計算
     this.damageChain.execute(damageEvent)
-    // 消耗能量（清空）
-    character.setBaseAttribute('currentEnergy', 0)
   }
   /** 累積能量 */
   private gainEnergy(character: ICharacter, amount: number): void {
@@ -143,6 +160,15 @@ export class AbilitySystem {
     const maxEnergy = character.getAttribute('maxEnergy') ?? 100
     const newEnergy = Math.min(currentEnergy + amount, maxEnergy)
     character.setBaseAttribute('currentEnergy', newEnergy)
+  }
+  /** 能量自然回復（每 100 tick 觸發） */
+  private processEnergyRegen(character: ICharacter, currentTick: number): void {
+    // 每 100 tick 回復一次
+    if (currentTick % 100 !== 0) return
+    const energyRegen = character.getAttribute('energyRegen') ?? 0
+    if (energyRegen > 0) {
+      this.gainEnergy(character, energyRegen)
+    }
   }
   /** 更新攻擊冷卻時間 */
   private updateCooldown(character: ICharacter, currentTick: number): void {
