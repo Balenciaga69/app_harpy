@@ -11,7 +11,8 @@ combat/
 ├── effect/           # 效果系統
 ├── damage/           # 傷害計算
 ├── ability/          # 能力系統
-├── tick/             # 時間驅動
+├── tick/             # 時間驅動（包含 Driver 與 Processor）
+├── snapshot/         # 快照收集
 ├── logger/           # 日誌記錄
 └── combat-engine/    # 戰鬥引擎（頂層協調者）
 ```
@@ -109,9 +110,18 @@ combat/
 - **職責**：驅動時間流逝與系統更新
 - **內容**：
   - `TickerDriver`：時間驅動器（控制啟動/停止/最大 Tick）
-  - `TickerProcessor`：Tick 處理器（更新效果、發布事件）
-- **流程**：`tick:start → 處理效果 → tick:end`
+  - `TickerProcessor`：Tick 處理器（監聽 tick:start 事件，更新角色效果）
+- **流程**：`tick:start → TickerProcessor 處理效果更新 → tick:end`
 - **依賴**：`context`, `shared`
+- **被依賴**：`combat-engine`
+
+**snapshot/**
+
+- **職責**：實時收集戰鬥狀態快照
+- **內容**：
+  - `SnapshotCollector`：快照收集器（監聽 tick:start 事件，定期捕捉戰鬥狀態）
+- **流程**：`監聽 tick:start → 檢查採集間隔 → 從 Context 讀取實體狀態 → 生成快照`
+- **依賴**：`context`, `character`, `shared`
 - **被依賴**：`combat-engine`
 
 **logger/**
@@ -149,7 +159,7 @@ combat/
 - **職責**：戰鬥系統的頂層協調者
 - **內容**：
   - `CombatEngine`：戰鬥引擎（初始化、啟動、清理）
-  - `ResultBuilder`：結果構建器（組裝戰鬥結果）
+  - `ResultBuilder`：結果構建器（組裝戰鬥結果，內部使用）
   - Models：
     - `CombatConfig`：戰鬥配置
     - `CombatResult`：戰鬥結果
@@ -157,12 +167,12 @@ combat/
     - `CombatStatistics`：戰鬥統計
     - `CombatOutcome`：戰鬥結果類型
 - **流程**：
-  1. 初始化：創建 `CombatContext` → 初始化子系統（`TickerDriver`, `TickerProcessor`, `AbilitySystem`, `EventLogger`）
+  1. 初始化：創建 `CombatContext` → 初始化子系統（`TickerDriver`, `TickerProcessor`, `AbilitySystem`, `EventLogger`, `SnapshotCollector`）
   2. 設置：添加角色到 Context → 配置結束條件
-  3. 執行：啟動 Ticker → 戰鬥循環運行
-  4. 結果：使用 `ResultBuilder` 構建完整結果
+  3. 執行：啟動 Ticker → 戰鬥循環運行 → SnapshotCollector 實時收集快照
+  4. 結果：使用 `ResultBuilder` 構建完整結果（從 SnapshotCollector 獲取快照）
   5. 清理：釋放資源
-- **依賴**：`context`, `tick`, `ability`, `logger`, `character`, `damage`（僅類型）
+- **依賴**：`context`, `tick`, `ability`, `logger`, `snapshot`, `character`, `damage`（僅類型）
 - **被依賴**：無（入口點）
 
 ---
@@ -174,37 +184,37 @@ combat/
                      │  CombatEngine   │ (啟動、協調、彙總)
                      └────────┬────────┘
                               │
-              ┌───────────────┼───────────────┐
-              │               │               │
-      ┌───────▼──────┐ ┌─────▼──────┐ ┌─────▼──────┐
-      │ TickerDriver │ │AbilitySystem│ │EventLogger │
-      └───────┬──────┘ └─────┬───────┘ └─────┬──────┘
-              │               │                │
-              │ tick:start    │                │ 監聽所有事件
-              ├───────────────►                │
-              │               │                │
-              │         ┌─────▼─────────┐      │
-              │         │ 選擇目標       │      │
-              │         │ (Strategy)     │      │
-              │         └─────┬─────────┘      │
-              │               │                │
-              │         ┌─────▼─────────┐      │
-              │         │ DamageFactory  │      │
-              │         └─────┬─────────┘      │
-              │               │                │
-              │         ┌─────▼─────────┐      │
-              │         │  DamageChain   │      │
-              │         │  (8 Steps)     │      │
-              │         └─────┬─────────┘      │
-              │               │                │
-              │         ┌─────▼─────────┐      │
-              │         │ ElementEffect  │      │
-              │         │   Registry     │      │
-              │         └────────────────┘      │
-              │                                 │
-      ┌───────▼──────┐                  ┌──────▼──────┐
-      │TickerProcessor│───event:damage──►EventBus     │
-      └───────┬──────┘                  └──────┬──────┘
+              ┌───────────────┼───────────────┬───────────────┐
+              │               │               │               │
+      ┌───────▼──────┐ ┌─────▼──────┐ ┌─────▼──────┐ ┌──────▼─────┐
+      │TickerDriver  │ │AbilitySystem│ │EventLogger │ │SnapshotCol │
+      └───────┬──────┘ └─────┬───────┘ └─────┬──────┘ └──────┬─────┘
+              │               │                │               │
+              │ tick:start    │                │               │
+              ├───────────────►                │               │
+              │               │                │               │
+              │         ┌─────▼─────────┐      │         監聽tick:start
+              │         │ 選擇目標       │      │               │
+              │         │ (Strategy)     │      │               │
+              │         └─────┬─────────┘      │               │
+              │               │                │               │
+              │         ┌─────▼─────────┐      │               │
+              │         │ DamageFactory  │      │               │
+              │         └─────┬─────────┘      │               │
+              │               │                │               │
+              │         ┌─────▼─────────┐      │               │
+              │         │  DamageChain   │      │               │
+              │         │  (8 Steps)     │      │               │
+              │         └─────┬─────────┘      │               │
+              │               │                │               │
+              │         ┌─────▼─────────┐      │               │
+              │         │ ElementEffect  │      │               │
+              │         │   Registry     │      │               │
+              │         └────────────────┘      │               │
+              │                                 │               │
+      ┌───────▼──────┐                  ┌──────▼──────┐ ┌──────▼─────┐
+      │TickerProcessor│──event:damage──►│EventBus     │ │定期捕捉快照 │
+      └───────┬──────┘                  └──────┬──────┘ └────────────┘
               │                                 │
         更新角色效果                      發布到 Logger
 ```
@@ -229,8 +239,9 @@ combat/
   - `effect`：匯出效果系統
   - `damage`：匯出傷害系統
   - `ability`：匯出 AbilitySystem
-  - `tick`：匯出 Ticker 系統
-  - `logger`：匯出 Logger 系統
+  - `tick`：匯出 TickerDriver 與 TickerProcessor
+  - `snapshot`：匯出 SnapshotCollector
+  - `logger`：匯出 EventLogger 與日誌模型
   - `combat-engine`：匯出 CombatEngine 與模型（**不暴露 builders**，內部使用）
 
 - **子文件夾的 index.ts**：
@@ -246,6 +257,7 @@ combat/
   - `character/models`：匯出模型
   - `combat-engine/models`：匯出所有結果模型
   - `combat-engine/builders`：匯出構建器（僅供 combat-engine 內部使用）
+  - `snapshot`：匯出 SnapshotCollector
 
 ### 3. Import 規範
 
@@ -317,6 +329,9 @@ Combat 系統採用**分層架構 + 事件驅動**設計：
 
 ```
 CombatEngine.start()
+  → 初始化 CombatContext
+  → 初始化子系統（TickerDriver、TickerProcessor、AbilitySystem、EventLogger、SnapshotCollector）
+  → 設置角色與結束條件
   → TickerDriver.start()
     → 每個 Tick:
       ① EventBus 發布 'tick:start'
@@ -325,9 +340,13 @@ CombatEngine.start()
         → 創建傷害事件（Factory）
         → 執行傷害鏈（DamageChain + 8 Steps）
         → 施加元素效果（Registry）
-      ③ TickerProcessor 更新效果
-      ④ EventBus 發布 'tick:end'
+      ③ TickerProcessor 更新角色效果（onTick）
+      ④ SnapshotCollector 定期捕捉快照（每 N Ticks）
+      ⑤ EventBus 發布 'tick:end'
     → 檢查結束條件
   → ResultBuilder 構建結果
+    → 從 SnapshotCollector 獲取快照
+    → 從 EventLogger 獲取日誌
+    → 分析戰鬥結果與統計
   → 返回 CombatResult
 ```

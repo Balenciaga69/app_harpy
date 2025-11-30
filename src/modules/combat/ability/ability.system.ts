@@ -31,7 +31,7 @@ export class AbilitySystem {
   private targetSelector: ITargetSelector
   private damageFactory: DamageFactory
   private effectRegistry: ElementEffectRegistry
-  /** 追蹤每個角色的下次攻擊時間 (以 Tick 為單位) */
+  /** 追蹤每個角色的下次攻擊 Tick (以 Tick 為單位) */
   private nextAttackTick: Map<CharacterId, number> = new Map()
   private tickHandler: () => void
   constructor(context: CombatContext, targetSelector?: ITargetSelector) {
