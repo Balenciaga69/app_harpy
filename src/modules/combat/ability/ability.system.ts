@@ -1,9 +1,9 @@
 import type { CombatContext } from '../core/CombatContext'
 import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CharacterId } from '../character/interfaces/character.interface'
-import type { DamageEvent } from '../damage/models/damageEvent.model'
-import { createEmptyDamages } from '../damage/models/damageEvent.model'
-import { DamageChain } from '../damage/DamageChain'
+import type { DamageEvent } from '../damage/models/damage.event.model'
+import { createEmptyDamages } from '../damage/models/damage.event.model'
+import { DamageChain } from '../damage/damage.chain'
 import { HolyFireEffect, ChargeEffect, ChillEffect, PoisonEffect } from '../effect/Implementation'
 /**
  * 能力系統

@@ -1,8 +1,7 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
-import type { CharacterId } from '../../character/interfaces/character.interface'
-import type { CombatLogEntry } from '../../logger/combatLog.model'
-import type { ElementalDamages } from '../../damage/models/damageEvent.model'
-import type { CharacterSnapshot } from '../../event/combatEventMap.model'
+import type { CharacterSnapshot } from '../../character'
+import type { CharacterId, ICharacter } from '../../character/interfaces/character.interface'
+import type { ElementalDamages } from '../../damage/models/damage.event.model'
+import type { CombatLogEntry } from '../../logger/combat.log.model'
 /**
  * 戰鬥結果類型
  */

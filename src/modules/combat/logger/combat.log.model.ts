@@ -1,4 +1,4 @@
-import type { CombatEventMap } from '../event/combatEventMap.model'
+import type { CombatEventMap } from '../event/combat.event.map.model'
 export interface CombatLogEntry {
   tick: number
   eventType: keyof CombatEventMap

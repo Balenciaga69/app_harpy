@@ -1,3 +1,3 @@
 // 匯出所有日誌相關模組
-export * from './combatLog.model'
-export * from './EventLogger'
+export * from './combat.log.model'
+export * from './event.logger'

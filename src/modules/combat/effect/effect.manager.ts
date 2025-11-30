@@ -1,7 +1,6 @@
-import type { IEffect } from './models/effect.model'
-import type { CombatContext } from '../core/CombatContext'
 import type { ICharacter } from '../character'
-/** 角色效果管理器 (ECS Component) */
+import type { CombatContext } from '../core/CombatContext'
+import type { IEffect } from './models/effect.model'
 export class EffectManager {
   private effects: Map<string, IEffect> = new Map()
   private readonly owner: ICharacter

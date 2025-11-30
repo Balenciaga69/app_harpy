@@ -1,6 +1,6 @@
-import type { IEffect } from './effect.model'
 import type { ICharacter } from '../../character/interfaces/character.interface'
 import type { CombatContext } from '../../core/CombatContext'
+import type { IEffect } from './effect.model'
 /**
  * 可堆疊效果介面
  * 用於實作具有層數機制的效果（如聖火、充能、冰緩、毒等）

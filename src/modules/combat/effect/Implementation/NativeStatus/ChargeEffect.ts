@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../../models/stackableEffect.model'
+import { StackableEffect } from '../../models/stackable.effect.model.ts'
 import type { ICharacter } from '../../../character/interfaces/character.interface'
 import type { CombatContext } from '../../../core/CombatContext'
 /**

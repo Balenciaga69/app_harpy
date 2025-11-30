@@ -14,16 +14,13 @@ export class TickerSystem {
   }
   /** 處理 Tick */
   private processTick(): void {
-    const entities = this.context.getAllEntities() // 遍歷所有實體，觸發其效果的 Tick 處理
-    entities.forEach((entity) => {
-      if (this.context.isCharacter(entity)) {
-        entity.effects.onTick(this.context)
-      }
+    this.context.getAllEntities().forEach((entity) => {
+      if (!this.context.isCharacter(entity)) return
+      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
     })
   }
   /** 清理系統（移除事件監聽） */
   public dispose(): void {
-    // 移除事件監聽
     this.context.eventBus.off('tick:start', this.tickHandler)
   }
 }

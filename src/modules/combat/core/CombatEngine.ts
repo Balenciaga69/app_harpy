@@ -1,9 +1,9 @@
 import { CombatContext } from './CombatContext'
-import { Ticker } from './Ticker'
-import { EventLogger } from '../logger/EventLogger'
-import type { CombatLogEntry } from '../logger/combatLog.model'
-import { TickerSystem } from '../systems/TickerSystem'
-import { AbilitySystem } from '../systems/AbilitySystem'
+import { Ticker } from '../tick/ticker'
+import { EventLogger } from '../logger/event.logger'
+import type { CombatLogEntry } from '../logger/combat.log.model'
+import { TickerSystem } from '../tick/ticker.system'
+import { AbilitySystem } from '../ability/ability.system'
 import type { CombatConfig } from './models/combatConfig.model'
 import type {
   CombatResult,
@@ -15,7 +15,7 @@ import type {
 } from './models/combatResult.model'
 import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CharacterId } from '../character/interfaces/character.interface'
-import { createEmptyDamages } from '../damage/models/damageEvent.model'
+import { createEmptyDamages } from '../damage/models/damage.event.model'
 /**
  * 戰鬥引擎
  *

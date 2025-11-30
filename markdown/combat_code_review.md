@@ -440,6 +440,7 @@
 - **問題**: `ChargeEffect`、`ChillEffect`、`HolyFireEffect`、`PoisonEffect` 都有類似的結構
 - **影響**: 違反 DRY 原則
 - **改進方案**: 提取共同邏輯到抽象基類
+
   ```typescript
   abstract class TimedStackableEffect extends StackableEffect {
     protected lastDecayTick: number = 0

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
-import type { CombatEventMap } from './combatEventMap.model'
+import type { CombatEventMap } from './combat.event.map.model'
 export class EventBus {
   // mitt 實例，用於事件管理
   private emitter = mitt<CombatEventMap>()

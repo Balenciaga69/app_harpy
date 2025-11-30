@@ -1,5 +1,5 @@
-import type { EventBus } from '../event/EventBus'
-import type { CombatLogEntry } from './combatLog.model'
+import type { EventBus } from '../event/event.bus'
+import type { CombatLogEntry } from './combat.log.model'
 export class EventLogger {
   private logs: CombatLogEntry[] = []
   private eventBus: EventBus

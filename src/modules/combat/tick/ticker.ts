@@ -1,4 +1,4 @@
-import { CombatContext } from './CombatContext'
+import { CombatContext } from '../core/CombatContext'
 export class Ticker {
   private context: CombatContext
   private readonly snapshotInterval: number

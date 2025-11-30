@@ -32,7 +32,12 @@ export class CombatContext {
     return this.getAllEntities().filter((e) => (e as IEntity).team === team)
   }
   public isCharacter(entity: unknown): entity is ICharacter {
-    return (entity as ICharacter).effects !== undefined
+    return (
+      typeof entity === 'object' &&
+      entity !== null &&
+      'getAttribute' in entity &&
+      typeof (entity as Record<string, unknown>).getAttribute === 'function'
+    )
   }
   // ===Tick===
   public getCurrentTick(): number {

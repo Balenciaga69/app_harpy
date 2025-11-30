@@ -1,13 +1,6 @@
+import type { CharacterSnapshot } from '../character'
 import type { CharacterId } from '../character/interfaces/character.interface'
 /** 快照中的角色狀態 */
-export interface CharacterSnapshot {
-  id: CharacterId
-  name: string
-  currentHp: number
-  maxHp: number
-  isDead: boolean
-  effects: string[] // 效果名稱列表
-}
 /** EventName:Payload */
 export type CombatEventMap = {
   // combat

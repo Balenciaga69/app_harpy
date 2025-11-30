@@ -1,9 +1,9 @@
 import type { ICharacter } from '../character'
 import type { CombatContext } from '../core/CombatContext'
-import type { ICombatHook } from '../effect/models/effect.model'
-import type { DamageEvent } from './models/damageEvent.model'
-import { calculateTotalDamage } from './models/damageEvent.model'
-import { calculateHitChance } from './utils/damageCalculator.util'
+import type { ICombatHook } from '../shared/interfaces/combat.hook.interface'
+import type { DamageEvent } from './models/damage.event.model'
+import { calculateTotalDamage } from './models/damage.event.model'
+import { calculateHitChance } from './utils/damage.calculator.util'
 /**
  * 傷害責任鏈
  *
