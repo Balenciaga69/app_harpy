@@ -1,4 +1,4 @@
-import type { CombatContext } from '../../context/combat.context'
+import type { CombatContext } from '../../context'
 import type { DamageEvent } from '../models'
 import { calculateHitChance } from '../utils/damage.calculator.util'
 import type { IDamageStep } from './DamageStep.interface'

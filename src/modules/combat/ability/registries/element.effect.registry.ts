@@ -1,7 +1,7 @@
-import type { CombatContext } from '../../context/combat.context'
-import type { DamageEvent, ElementalDamages } from '../../damage/models/damage.event.model'
-import type { IEffect } from '../../effect/models/effect.model'
-import { ChillEffect, ChargeEffect, HolyFireEffect, PoisonEffect } from '../../effect/Implementation'
+import type { CombatContext } from '../../context'
+import type { DamageEvent, ElementalDamages } from '../../damage'
+import type { IEffect } from '../../effect'
+import { ChillEffect, ChargeEffect, HolyFireEffect, PoisonEffect } from '../../effect'
 /**
  * 元素效果配置
  */

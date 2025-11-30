@@ -1,4 +1,4 @@
-import type { CombatContext } from '../../context/combat.context'
+import type { CombatContext } from '../../context'
 import type { DamageEvent } from '../models'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'

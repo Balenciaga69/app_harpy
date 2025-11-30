@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { ICharacter } from '../../character'
 /**
  * 目標選擇策略介面
  */

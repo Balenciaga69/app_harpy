@@ -1,5 +1,4 @@
-import type { CharacterSnapshot } from '../character'
-import type { CharacterId } from '../character/interfaces/character.interface'
+import type { CharacterSnapshot, CharacterId } from '../character'
 /** 快照中的角色狀態 */
 /** EventName:Payload */
 export type CombatEventMap = {

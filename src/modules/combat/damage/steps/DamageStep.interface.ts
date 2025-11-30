@@ -1,5 +1,5 @@
-import type { CombatContext } from '../../context/combat.context'
-import type { DamageEvent } from '../models/damage.event.model'
+import type { CombatContext } from '../../context'
+import type { DamageEvent } from '../models'
 /**
  * DamageStep 介面
  *

@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { ICharacter } from '../../character'
 /**
  * 檢查物件是否為 ICharacter 類型
  */

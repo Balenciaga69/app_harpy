@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { ICharacter } from '../../character'
 import type { ITargetSelector } from './target.selector.interface'
 /**
  * LowestHealthSelector：最低血量目標選擇策略。

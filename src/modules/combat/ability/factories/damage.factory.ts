@@ -1,6 +1,6 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
-import { createEmptyDamages, type DamageEvent } from '../../damage/models/damage.event.model'
-import { AttackType, type AttackTypeValue } from '../models/attack.type.model'
+import type { ICharacter } from '../../character'
+import { createEmptyDamages, type DamageEvent } from '../../damage'
+import { AttackType, type AttackTypeValue } from '../models'
 /**
  * DamageFactory：傷害事件創建工廠。
  *

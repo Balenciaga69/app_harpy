@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { ICharacter } from '../../character'
 import type { ITargetSelector } from './target.selector.interface'
 /**
  * FirstAliveSelector：第一存活目標選擇策略。

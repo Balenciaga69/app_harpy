@@ -1,4 +1,4 @@
-import type { CombatContext } from '../context/combat.context'
+import type { CombatContext } from '../context'
 import { isCharacter } from '../shared'
 /**
  * TickerProcessor：Tick 事件的具體處理器。

@@ -1,4 +1,4 @@
-import { CombatContext } from '../context/combat.context'
+import { CombatContext } from '../context'
 /**
  * TickerDriver：戰鬥時間循環的驅動引擎。
  *
