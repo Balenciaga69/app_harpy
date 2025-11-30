@@ -2,7 +2,19 @@
 import mitt from 'mitt'
 import type { CombatEventMap } from './combat.event.map.model'
 /**
- * 事件總線，用於管理戰鬥相關事件的發布與訂閱。
+ * EventBus：戰鬥系統的事件總線。
+ *
+ * 設計理念：
+ * - 作為事件驅動架構的中樞，提供事件的發布與訂閱機制。
+ * - 使用輕量級的 mitt 實作，確保低延遲與高可擴展性。
+ * - 採用型別映射 (CombatEventMap) 以確保事件載荷型別安全。
+ * - 提供簡單的 API (on, off, emit, onAll, clear) 以便其他系統使用。
+ *
+ * 主要職責：
+ * - 提供事件訂閱 / 取消訂閱功能。
+ * - 提供事件發佈功能，供系統在關鍵節點（如 tick、傷害、死亡）發出通知。
+ * - 支援監聽所有事件（onAll），方便日誌或調試系統使用。
+ * - 支援清除所有監聽器，在戰鬥結束時釋放資源。
  */
 export class EventBus {
   // mitt 實例，用於事件管理

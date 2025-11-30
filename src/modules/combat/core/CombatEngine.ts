@@ -1,31 +1,33 @@
-import { CombatContext } from './CombatContext'
-import { TickerDriver } from '../tick/ticker.driver'
-import { EventLogger } from '../logger/event.logger'
-import type { CombatLogEntry } from '../logger/combat.log.model'
-import { TickerProcessor } from '../tick/ticker.processor'
 import { AbilitySystem } from '../ability/ability.system'
+import type { CharacterId, ICharacter } from '../character/interfaces/character.interface'
+import { createEmptyDamages } from '../damage/models/damage.event.model'
+import type { CombatLogEntry } from '../logger/combat.log.model'
+import { EventLogger } from '../logger/event.logger'
+import { TickerDriver } from '../tick/ticker.driver'
+import { TickerProcessor } from '../tick/ticker.processor'
+import { CombatContext } from './CombatContext'
 import type { CombatConfig } from './models/combatConfig.model'
 import type {
-  CombatResult,
-  CombatOutcome,
-  CombatSnapshot,
-  KeyMoment,
   CharacterStats,
+  CombatOutcome,
+  CombatResult,
+  CombatSnapshot,
   CombatStatistics,
+  KeyMoment,
 } from './models/combatResult.model'
-import type { ICharacter } from '../character/interfaces/character.interface'
-import type { CharacterId } from '../character/interfaces/character.interface'
-import { createEmptyDamages } from '../damage/models/damage.event.model'
 /**
- * 戰鬥引擎
+ * CombatEngine：戰鬥執行引擎。
  *
- * 負責協調整場戰鬥的運行:
- * 1. 初始化所有系統
- * 2. 設置戰鬥結束條件
- * 3. 運行戰鬥循環
- * 4. 收集並返回完整的戰鬥結果
+ * 設計理念：
+ * - 作為戰鬥系統的協調者，負責初始化並編排各個子系統（Ticker、Logger、Ability 等）。
+ * - 使用依賴注入（透過 CombatConfig 注入隊伍與設定），保持系統的可測試性與可替換性。
+ * - 將戰鬥的執行與統計收集責任封裝在單一介面中，供上層調用以取得完整結果。
  *
- * 主要用途: 生成一場戰鬥的完整過程和結果,供 UI 層回放使用
+ * 主要職責：
+ * - 初始化戰鬥上下文與核心系統，並配置戰鬥結束條件。
+ * - 啟動戰鬥循環與狀態快照收集，並記錄關鍵事件及日誌。
+ * - 在戰鬥結束後，彙總統計資料（Damage, Effects, Snapshots）並返回 CombatResult。
+ * - 提供資源清理接口（dispose），確保系統能優雅釋放事件監聽與資源。
  */
 export class CombatEngine {
   private context: CombatContext

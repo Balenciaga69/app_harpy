@@ -1,4 +1,5 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { ICharacter } from '../../character'
+
 /**
  * 傷害類型
  */

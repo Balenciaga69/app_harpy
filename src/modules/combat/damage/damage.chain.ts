@@ -1,22 +1,20 @@
 import type { ICharacter } from '../character'
 import type { CombatContext } from '../core/CombatContext'
-import type { ICombatHook } from '../shared/interfaces/combat.hook.interface'
-import type { DamageEvent } from './models/damage.event.model'
-import { calculateTotalDamage } from './models/damage.event.model'
+import { type DamageEvent, calculateTotalDamage, type ICombatHook } from './models'
 import { calculateHitChance } from './utils/damage.calculator.util'
 /**
- * 傷害責任鏈
+ * DamageChain：協調傷害計算流程的責任鏈。
  *
- * 負責協調完整的傷害計算流程：
- * 1. 收集所有相關的 Hook
- * 2. 依序執行各階段
- * 3. 應用傷害並觸發後續效果
+ * 設計理念：
+ * - 將完整的傷害計算過程分為明確階段，並協調 Hook 的執行順序。
+ * - 僅負責流程協調，不直接承擔具體效果或傷害邏輯，實現低耦合。
+ * - 支援 ICombatHook 的擴展，允許各種效果在不同階段介入流程。
+ * - 遵循開放封閉原則：添加新效果不需修改本類。
  *
- * 設計原則：
- * - 只負責協調流程，不包含具體邏輯
- * - 所有效果邏輯都在 Effect 實作中
- * - 遵循開放封閉原則（新增效果不需修改此類）
- * - 支援多元素傷害同時存在
+ * 主要職責：
+ * - 收集來自攻擊方與防守方的 Hook，並在各個階段中呼叫 Hook。
+ * - 管理命中、暴擊、傷害修飾、防禦計算與應用等關鍵階段的流程。
+ * - 在完成計算後，應用傷害並發出相關事件（如 entity:damage、entity:death）。
  */
 export class DamageChain {
   private context: CombatContext

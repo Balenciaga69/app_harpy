@@ -1,3 +1,3 @@
 export * from './damage.chain'
-export * from './models/damage.event.model'
+export * from './models'
 export * from './utils/damage.calculator.util'
