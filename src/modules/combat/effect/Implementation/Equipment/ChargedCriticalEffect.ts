@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import type { ICharacter } from '../../../character/interfaces/character.interface'
-import type { CombatContext } from '../../../context/combat.context'
+import type { ICharacter } from '../../../character'
+import type { CombatContext } from '../../../context'
 import type { DamageEvent, ICombatHook } from '../../../damage'
 import type { IEffect } from '../../models/effect.model'
 /**

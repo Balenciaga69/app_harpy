@@ -1,5 +1,5 @@
 import type { ICharacter } from '../character'
-import type { CombatContext } from '../context/combat.context'
+import type { CombatContext } from '../context'
 import type { IEffect } from './models/effect.model'
 /**
  * EffectManager：負責管理單個角色身上的所有動態效果實例。

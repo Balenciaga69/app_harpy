@@ -1,5 +1,4 @@
-import type { CharacterSnapshot } from '../character'
-import type { CharacterId } from '../character/interfaces/character.interface'
+import type { CharacterSnapshot, CharacterId } from '../character'
 /** 快照中的角色狀態 */
 /** EventName:Payload */
 export type CombatEventMap = {
@@ -11,6 +10,7 @@ export type CombatEventMap = {
   // tick
   'tick:start': { tick: number }
   'tick:end': { tick: number }
+  'ticker:stopped': { tick: number }
   // entity
   'entity:damage': { targetId: CharacterId; amount: number; sourceId?: CharacterId }
   'entity:heal': { targetId: CharacterId; amount: number }

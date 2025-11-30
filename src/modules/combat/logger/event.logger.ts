@@ -1,4 +1,4 @@
-import type { EventBus } from '../event/event.bus'
+import type { EventBus } from '../event'
 import type { CombatLogEntry } from './combat.log.model'
 /**
  * EventLogger：戰鬥事件的記錄與查詢系統。
