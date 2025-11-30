@@ -231,6 +231,9 @@ export class CombatEngine {
    * 清理資源
    */
   public dispose(): void {
+    // 停止 ticker 並發送事件
+    this.ticker.stop()
+    // 清理各個系統的事件監聽器
     this.tickerSystem.dispose()
     this.abilitySystem.dispose()
   }

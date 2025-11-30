@@ -1,4 +1,3 @@
-import type { ICharacter } from '../character'
 import { EventBus } from '../event'
 import { CombatRandomGenerator, type IEntity } from '../shared'
 /**
@@ -13,7 +12,6 @@ import { CombatRandomGenerator, type IEntity } from '../shared'
  * - 持有戰鬥的事件總線（EventBus）與隨機數生成器（CombatRandomGenerator）。
  * - 管理參與戰鬥的實體列表（Entity 管理）。
  * - 提供當前 Tick 的讀寫接口，方便其他系統基於時間驅動執行。
- * - 提供工具性的方法（如 isCharacter）以支援系統層判斷。
  */
 export class CombatContext {
   public readonly eventBus: EventBus
@@ -39,14 +37,6 @@ export class CombatContext {
   }
   public getEntitiesByTeam(team: IEntity['team']): readonly IEntity[] {
     return this.getAllEntities().filter((e) => (e as IEntity).team === team)
-  }
-  public isCharacter(entity: unknown): entity is ICharacter {
-    return (
-      typeof entity === 'object' &&
-      entity !== null &&
-      'getAttribute' in entity &&
-      typeof (entity as Record<string, unknown>).getAttribute === 'function'
-    )
   }
   // ===Tick===
   public getCurrentTick(): number {

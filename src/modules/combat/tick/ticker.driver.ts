@@ -55,7 +55,10 @@ export class TickerDriver {
   }
   /** 停止戰鬥 */
   public stop(): void {
+    if (!this.isRunning) return // 防止重複停止
     this.isRunning = false
+    // 發出停止事件,讓訂閱者有機會清理資源
+    this.context.eventBus.emit('ticker:stopped', { tick: this.context.getCurrentTick() })
   }
   /** 檢查戰鬥是否結束 (由 CombatEngine 注入判斷邏輯) */
   private checkCombatEnd(): boolean {

@@ -5,6 +5,7 @@ import type { DamageEvent } from '../damage/models/damage.event.model'
 import { createEmptyDamages } from '../damage/models/damage.event.model'
 import { DamageChain } from '../damage/damage.chain'
 import { HolyFireEffect, ChargeEffect, ChillEffect, PoisonEffect } from '../effect/Implementation'
+import { isCharacter } from '../shared'
 /**
  * 能力系統
  *
@@ -37,7 +38,7 @@ export class AbilitySystem {
     // 遍歷所有實體
     allEntities.forEach((entity) => {
       // 只處理角色
-      if (!this.context.isCharacter(entity)) return
+      if (!isCharacter(entity)) return
       const character = entity as ICharacter
       // 跳過已死亡的角色
       if (character.isDead) return
@@ -88,7 +89,7 @@ export class AbilitySystem {
     const enemies = this.context.getEntitiesByTeam(enemyTeam)
     // 過濾出還活著的角色
     const aliveEnemies = enemies.filter((e) => {
-      return this.context.isCharacter(e) && !(e as ICharacter).isDead
+      return isCharacter(e) && !(e as ICharacter).isDead
     }) as ICharacter[]
     // 簡化版：攻擊第一個存活的敵人
     return aliveEnemies[0] ?? null

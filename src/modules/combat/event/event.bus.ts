@@ -8,7 +8,7 @@ import type { CombatEventMap } from './combat.event.map.model'
  * - 作為事件驅動架構的中樞，提供事件的發布與訂閱機制。
  * - 使用輕量級的 mitt 實作，確保低延遲與高可擴展性。
  * - 採用型別映射 (CombatEventMap) 以確保事件載荷型別安全。
- * - 提供簡單的 API (on, off, emit, onAll, clear) 以便其他系統使用。
+ * - 提供簡單的 API 以便其他元件使用。
  *
  * 主要職責：
  * - 提供事件訂閱 / 取消訂閱功能。

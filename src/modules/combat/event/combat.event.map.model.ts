@@ -11,6 +11,7 @@ export type CombatEventMap = {
   // tick
   'tick:start': { tick: number }
   'tick:end': { tick: number }
+  'ticker:stopped': { tick: number }
   // entity
   'entity:damage': { targetId: CharacterId; amount: number; sourceId?: CharacterId }
   'entity:heal': { targetId: CharacterId; amount: number }

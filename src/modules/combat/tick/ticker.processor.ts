@@ -1,4 +1,5 @@
 import type { CombatContext } from '../context/combat.context'
+import { isCharacter } from '../shared'
 /**
  * TickerProcessor：Tick 事件的具體處理器。
  *
@@ -30,7 +31,7 @@ export class TickerProcessor {
   /** 處理 Tick */
   private processTick(): void {
     this.context.getAllEntities().forEach((entity) => {
-      if (!this.context.isCharacter(entity)) return
+      if (!isCharacter(entity)) return
       entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
     })
   }
