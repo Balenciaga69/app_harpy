@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
 import type { CombatEventMap } from './combat.event.map.model'
+/**
+ * 事件總線，用於管理戰鬥相關事件的發布與訂閱。
+ */
 export class EventBus {
   // mitt 實例，用於事件管理
   private emitter = mitt<CombatEventMap>()

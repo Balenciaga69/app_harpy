@@ -3,8 +3,19 @@ import type { IAttributeCalculator } from './interfaces/attribute.calculator.int
 import type { AttributeType } from './models/attribute.core.model'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from './models/attribute.modifier.model'
 /**
- * 屬性計算器：
- * 負責計算最終屬性值（基礎值 + 修飾符）。
+ * AttributeCalculator：屬性最終值的計算引擎。
+ *
+ * 設計理念：
+ * - 遵循單一職責原則，專注於屬性計算邏輯，不涉及數據儲存。
+ * - 與 AttributeContainer 協作，實現計算層與數據層的分離。
+ * - 採用明確的計算順序（優先級排序 → 加法 → 乘法），確保結果可預測。
+ * - 支援優先級機制，允許特定修飾符優先生效（如 Debuff 優先於 Buff）。
+ *
+ * 主要職責：
+ * - 從容器中獲取基礎值與修飾符，計算最終屬性值。
+ * - 按優先級排序修飾符，確保計算順序符合遊戲邏輯。
+ * - 分離處理加法與乘法修飾符，應用正確的數學公式。
+ * - 提供純計算方法，支援外部測試與驗證。
  */
 export class AttributeCalculator implements IAttributeCalculator {
   private container: AttributeContainer

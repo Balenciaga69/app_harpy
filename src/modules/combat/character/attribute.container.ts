@@ -1,7 +1,19 @@
 import type { AttributeType, BaseAttributeValues } from './models/attribute.core.model'
 import type { AttributeModifier } from './models/attribute.modifier.model'
 /**
- * 純數據容器：僅負責儲存與讀取屬性數據
+ * AttributeContainer：角色屬性數據的純容器。
+ *
+ * 設計理念：
+ * - 遵循單一職責原則，僅負責數據的儲存與讀取，不涉及計算邏輯。
+ * - 作為數據層與計算層的分離點，支援屬性系統的可測試性。
+ * - 使用 Map 結構提供高效的屬性查詢與修改操作。
+ * - 與 AttributeCalculator 協作，形成關注點分離的屬性管理系統。
+ *
+ * 主要職責：
+ * - 儲存角色的基礎屬性值（未經修飾符計算的原始數據）。
+ * - 管理屬性修飾符的添加、移除與查詢。
+ * - 提供屬性修飾符的分類儲存，按屬性類型組織修飾符列表。
+ * - 支援屬性數據的序列化與反序列化需求。
  */
 export class AttributeContainer {
   private baseValues: Map<AttributeType, number>

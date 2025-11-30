@@ -1,11 +1,28 @@
 import { CombatContext } from '../core/CombatContext'
-export class Ticker {
+/**
+ * TickerDriver：戰鬥時間循環的驅動引擎。
+ *
+ * 設計理念：
+ * - 作為戰鬥的心跳系統，驅動整個戰鬥的時間進程。
+ * - 通過事件驅動模式，發射 Tick 相關事件，讓其他系統響應時間流逝。
+ * - 支援可配置的結束條件，實現靈活的戰鬥終止邏輯。
+ * - 提供快照機制，定期記錄戰鬥狀態，支援回放與分析。
+ * - 設置最大 Tick 限制，防止無限循環導致的程式卡死。
+ *
+ * 主要職責：
+ * - 執行單次 Tick，發射 tick:start 與 tick:end 事件。
+ * - 管理戰鬥循環，持續執行 Tick 直到達成結束條件。
+ * - 定期觸發快照事件，記錄戰鬥狀態供後續分析。
+ * - 檢查戰鬥結束條件，適時停止戰鬥循環。
+ */
+const MAX_TICKS = 100000
+export class TickerDriver {
   private context: CombatContext
   private readonly snapshotInterval: number
   private isRunning: boolean = false
-  private maxTicks: number = 10000 // 防止無限循環
+  private maxTicks: number = MAX_TICKS // 防止無限循環
   private stopCondition: () => boolean = () => false // 用於判斷戰鬥結束的條件
-  constructor(context: CombatContext, maxTicks: number = 10000, snapshotInterval: number = 100) {
+  constructor(context: CombatContext, maxTicks: number = MAX_TICKS, snapshotInterval: number = 100) {
     this.context = context
     this.maxTicks = maxTicks
     this.snapshotInterval = snapshotInterval

@@ -1,2 +1,2 @@
-export * from './ticker'
-export * from './ticker.system'
+export * from './ticker.driver'
+export * from './ticker.processor'

@@ -1,8 +1,8 @@
 import { CombatContext } from './CombatContext'
-import { Ticker } from '../tick/ticker'
+import { TickerDriver } from '../tick/ticker.driver'
 import { EventLogger } from '../logger/event.logger'
 import type { CombatLogEntry } from '../logger/combat.log.model'
-import { TickerSystem } from '../tick/ticker.system'
+import { TickerProcessor } from '../tick/ticker.processor'
 import { AbilitySystem } from '../ability/ability.system'
 import type { CombatConfig } from './models/combatConfig.model'
 import type {
@@ -29,8 +29,8 @@ import { createEmptyDamages } from '../damage/models/damage.event.model'
  */
 export class CombatEngine {
   private context: CombatContext
-  private ticker: Ticker
-  private tickerSystem: TickerSystem
+  private ticker: TickerDriver
+  private tickerSystem: TickerProcessor
   private abilitySystem: AbilitySystem
   private eventLogger: EventLogger
   private config: CombatConfig
@@ -46,8 +46,8 @@ export class CombatEngine {
     // 1. 初始化戰鬥上下文
     this.context = new CombatContext(this.config.seed)
     // 2. 初始化核心系統
-    this.ticker = new Ticker(this.context, this.config.maxTicks, this.config.snapshotInterval)
-    this.tickerSystem = new TickerSystem(this.context)
+    this.ticker = new TickerDriver(this.context, this.config.maxTicks, this.config.snapshotInterval)
+    this.tickerSystem = new TickerProcessor(this.context)
     this.abilitySystem = new AbilitySystem(this.context)
     this.eventLogger = new EventLogger(this.context.eventBus)
     // 3. 設置戰鬥結束條件
