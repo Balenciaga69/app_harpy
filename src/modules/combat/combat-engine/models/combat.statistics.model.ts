@@ -1,6 +1,5 @@
 import type { CharacterId } from '../../character'
 import type { ElementalDamages } from '../../damage'
-
 /**
  * 角色戰鬥統計
  *
@@ -30,7 +29,6 @@ export interface CharacterStats {
   /** 閃避次數 */
   dodges: number
 }
-
 /**
  * 戰鬥統計數據
  *

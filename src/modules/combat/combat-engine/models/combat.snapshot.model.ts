@@ -1,5 +1,4 @@
 import type { CharacterSnapshot } from '../../character'
-
 /**
  * 戰鬥快照
  *

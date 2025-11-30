@@ -79,8 +79,8 @@ function runSimpleCombat() {
     seed: 12345, // 固定種子以確保可重現
     playerTeam: [warrior, archer],
     enemyTeam: [goblin1, goblin2],
-    maxTicks: 1000,
-    snapshotInterval: 50,
+    maxTicks: 10000,
+    snapshotInterval: 100,
     enableLogging: true,
   })
   // 啟動戰鬥

@@ -1,5 +1,4 @@
 import type { ICharacter } from '../../character'
-
 /**
  * 戰鬥配置
  *
