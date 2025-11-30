@@ -13,8 +13,8 @@ import type {
   CharacterStats,
   CombatStatistics,
 } from './models/combatResult.model'
-import type { ICharacter } from '../character/models/character.model'
-import type { CharacterId } from '../character/models/character.model'
+import type { ICharacter } from '../character/interfaces/character.interface'
+import type { CharacterId } from '../character/interfaces/character.interface'
 import { createEmptyDamages } from '../damage/models/damageEvent.model'
 /**
  * 戰鬥引擎

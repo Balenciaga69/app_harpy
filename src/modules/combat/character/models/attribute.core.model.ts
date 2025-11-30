@@ -1,4 +1,4 @@
-// 基礎屬性類型
+// 基礎屬性類型定義
 export type AttributeType =
   | 'maxHp'
   | 'currentHp'
@@ -23,12 +23,4 @@ export interface BaseAttributeValues {
   criticalMultiplier?: number
   spellDamage?: number
   spellCooldown?: number
-}
-// 屬性修飾器 (來自 Effect)
-export interface AttributeModifier {
-  readonly id: string
-  readonly type: AttributeType
-  readonly value: number
-  readonly mode: 'add' | 'multiply'
-  readonly source: string
 }

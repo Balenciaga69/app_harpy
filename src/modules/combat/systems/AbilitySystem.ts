@@ -1,6 +1,6 @@
 import type { CombatContext } from '../core/CombatContext'
-import type { ICharacter } from '../character/models/character.model'
-import type { CharacterId } from '../character/models/character.model'
+import type { ICharacter } from '../character/interfaces/character.interface'
+import type { CharacterId } from '../character/interfaces/character.interface'
 import type { DamageEvent } from '../damage/models/damageEvent.model'
 import { createEmptyDamages } from '../damage/models/damageEvent.model'
 import { DamageChain } from '../damage/DamageChain'

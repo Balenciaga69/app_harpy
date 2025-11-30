@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '../../models/stackableEffect.model'
-import type { ICharacter } from '../../../character/models/character.model'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
 import type { CombatContext } from '../../../core/CombatContext'
 /**
  * 毒效果
@@ -61,7 +61,7 @@ export class PoisonEffect extends StackableEffect {
       })
       // 檢查是否死亡
       if (newHp === 0 && !character.isDead) {
-        character.markDead()
+        character.isDead = true
         context.eventBus.emit('entity:death', {
           targetId: character.id,
         })

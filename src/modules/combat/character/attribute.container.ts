@@ -1,5 +1,9 @@
-// 尚未實作
-import type { AttributeType, BaseAttributeValues, AttributeModifier } from './models/attribute.model'
+import { AttributeCalculatorFactory } from './attribute.calculator'
+import type { AttributeType, BaseAttributeValues } from './models/attribute.core.model'
+import type { AttributeModifier } from './models/attribute.modifier.model'
+/**
+ * 存放 base attributes 與 modifiers，並計算各個屬性的最終值
+ */
 export class AttributeContainer {
   private baseValues: Map<AttributeType, number>
   private modifiers: Map<AttributeType, AttributeModifier[]>
@@ -35,11 +39,9 @@ export class AttributeContainer {
   private calculate(type: AttributeType): number {
     const base = this.baseValues.get(type) ?? 0
     const mods = this.modifiers.get(type) ?? []
-    // 先計算加法修飾器
-    const additive = mods.filter((m) => m.mode === 'add').reduce((sum, m) => sum + m.value, 0)
-    // 再計算乘法修飾器
-    const multiplier = mods.filter((m) => m.mode === 'multiply').reduce((product, m) => product * (1 + m.value), 1)
-    return (base + additive) * multiplier
+    // 使用計算器工廠獲取對應的計算器
+    const calculator = AttributeCalculatorFactory.get(type)
+    return calculator.calculate(base, mods)
   }
   /** 直接設置當前 HP (受傷/治療時使用) */
   setCurrentHp(value: number): void {

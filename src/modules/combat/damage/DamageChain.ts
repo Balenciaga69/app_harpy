@@ -1,5 +1,5 @@
 import type { CombatContext } from '../core/CombatContext'
-import type { ICharacter } from '../character/models/character.model'
+import type { ICharacter } from '../character/interfaces/character.interface'
 import type { ICombatHook } from '../effect/models/effect.model'
 import type { DamageEvent } from './models/damageEvent.model'
 import { calculateTotalDamage } from './models/damageEvent.model'
@@ -127,7 +127,6 @@ export class DamageChain {
       event.damages.lightning *= critMultiplier
       event.damages.poison *= critMultiplier
       event.damages.chaos *= critMultiplier
-
       // 發送暴擊事件
       this.context.eventBus.emit('entity:critical', {
         sourceId: event.source.id,
@@ -199,7 +198,7 @@ export class DamageChain {
     })
     // 檢查是否死亡
     if (newHp <= 0 && !event.target.isDead) {
-      event.target.markDead()
+      event.target.isDead = true
       this.context.eventBus.emit('entity:death', {
         targetId: event.target.id,
       })

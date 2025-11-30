@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '../../models/stackableEffect.model'
-import type { ICharacter } from '../../../character/models/character.model'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
 import type { CombatContext } from '../../../core/CombatContext'
 /**
  * 充能效果

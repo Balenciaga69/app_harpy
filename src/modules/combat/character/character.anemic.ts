@@ -1,8 +1,7 @@
 import { nanoid } from 'nanoid'
+import type { BaseAttributeValues, CharacterId, ICharacter } from '.'
 import { EffectManager } from '../effect/EffectManager'
-import { AttributeContainer } from './AttributeContainer'
-import type { BaseAttributeValues } from './models/attribute.model'
-import type { CharacterId, ICharacter } from './models/character.model'
+import { AttributeContainer } from './attribute.container'
 interface CharacterConfig {
   name: string
   baseAttributes: BaseAttributeValues
@@ -21,13 +20,5 @@ export class Character implements ICharacter {
     this.name = config.name
     this.attributes = new AttributeContainer(config.baseAttributes)
     this.effects = new EffectManager(this)
-  }
-  // 標記角色為死亡
-  public markDead(): void {
-    this.isDead = true
-  }
-  // 讓角色復活
-  public revive(): void {
-    this.isDead = false
   }
 }

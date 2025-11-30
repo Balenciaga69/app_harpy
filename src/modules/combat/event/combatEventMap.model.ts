@@ -1,5 +1,4 @@
-import type { CharacterId } from '../character/models/character.model'
-
+import type { CharacterId } from '../character/interfaces/character.interface'
 /** 快照中的角色狀態 */
 export interface CharacterSnapshot {
   id: CharacterId
@@ -9,7 +8,6 @@ export interface CharacterSnapshot {
   isDead: boolean
   effects: string[] // 效果名稱列表
 }
-
 /** EventName:Payload */
 export type CombatEventMap = {
   // combat

@@ -1,5 +1,5 @@
 import type { IEffect } from './models/effect.model'
-import type { ICharacter } from '../character/models/character.model'
+import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CombatContext } from '../core/CombatContext'
 /** 角色效果管理器 (ECS Component) */
 export class EffectManager {

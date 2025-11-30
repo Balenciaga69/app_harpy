@@ -1,5 +1,5 @@
-import type { ICharacter } from '../../character/models/character.model'
-import type { CharacterId } from '../../character/models/character.model'
+import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { CharacterId } from '../../character/interfaces/character.interface'
 import type { CombatLogEntry } from '../../logger/combatLog.model'
 import type { ElementalDamages } from '../../damage/models/damageEvent.model'
 import type { CharacterSnapshot } from '../../event/combatEventMap.model'
