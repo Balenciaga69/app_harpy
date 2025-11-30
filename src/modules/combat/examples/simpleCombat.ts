@@ -1,10 +1,11 @@
 import { CombatEngine } from '../core/CombatEngine'
-import { Character } from '../character/Character'
+import { Character } from '../character/character'
 /**
  * 簡單的戰鬥測試範例
  * 驗證整個戰鬥系統能夠運行
  */
 function runSimpleCombat() {
+  // eslint-disable-next-line no-console
   console.log('=== 開始戰鬥測試 ===\n')
   // 創建玩家隊伍
   const warrior = new Character({
@@ -22,7 +23,7 @@ function runSimpleCombat() {
       spellCooldown: 0,
     },
   })
-  warrior.attributes.setCurrentHp(100)
+  warrior.setCurrentHpClamped(100)
   const archer = new Character({
     name: '弓箭手',
     team: 'player',
@@ -38,7 +39,7 @@ function runSimpleCombat() {
       spellCooldown: 0,
     },
   })
-  archer.attributes.setCurrentHp(80)
+  archer.setCurrentHpClamped(80)
   // 創建敵人隊伍
   const goblin1 = new Character({
     name: '哥布林1',
@@ -55,7 +56,7 @@ function runSimpleCombat() {
       spellCooldown: 0,
     },
   })
-  goblin1.attributes.setCurrentHp(50)
+  goblin1.setCurrentHpClamped(50)
   const goblin2 = new Character({
     name: '哥布林2',
     team: 'enemy',
@@ -71,7 +72,7 @@ function runSimpleCombat() {
       spellCooldown: 0,
     },
   })
-  goblin2.attributes.setCurrentHp(50)
+  goblin2.setCurrentHpClamped(50)
   // 創建戰鬥引擎
   const engine = new CombatEngine({
     seed: 12345, // 固定種子以確保可重現
@@ -95,8 +96,8 @@ function runSimpleCombat() {
   console.log(`關鍵時刻數量: ${result.keyMoments.length}`)
   console.log('\n存活者:')
   result.survivors.forEach((char) => {
-    const currentHp = char.attributes.get('currentHp')
-    const maxHp = char.attributes.get('maxHp')
+    const currentHp = char.getAttribute('currentHp')
+    const maxHp = char.getAttribute('maxHp')
     console.log(`  - ${char.name}: ${currentHp.toFixed(1)}/${maxHp} HP`)
   })
   console.log('\n角色統計:')

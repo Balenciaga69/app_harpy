@@ -21,7 +21,7 @@ export class HolyFireEffect extends StackableEffect {
   }
   onRemove(character: ICharacter, _context: CombatContext): void {
     if (this.modifierId) {
-      character.attributes.removeModifier(this.modifierId)
+      character.removeAttributeModifier(this.modifierId)
       this.modifierId = null
     }
   }
@@ -33,11 +33,11 @@ export class HolyFireEffect extends StackableEffect {
   private updateArmorModifier(character: ICharacter): void {
     // 移除舊的修飾器
     if (this.modifierId) {
-      character.attributes.removeModifier(this.modifierId)
+      character.removeAttributeModifier(this.modifierId)
     }
     // 添加新的修飾器
     this.modifierId = `${this.id}-armor`
-    character.attributes.addModifier({
+    character.addAttributeModifier({
       id: this.modifierId,
       type: 'armor',
       value: this.stacks * this.armorPerStack,

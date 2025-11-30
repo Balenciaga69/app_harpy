@@ -25,11 +25,11 @@ export class ChargeEffect extends StackableEffect {
   }
   onRemove(character: ICharacter, _context: CombatContext): void {
     if (this.attackModifierId) {
-      character.attributes.removeModifier(this.attackModifierId)
+      character.removeAttributeModifier(this.attackModifierId)
       this.attackModifierId = null
     }
     if (this.spellModifierId) {
-      character.attributes.removeModifier(this.spellModifierId)
+      character.removeAttributeModifier(this.spellModifierId)
       this.spellModifierId = null
     }
   }
@@ -45,7 +45,7 @@ export class ChargeEffect extends StackableEffect {
       this.lastDecayTick = currentTick
       // 如果層數歸零，移除效果
       if (this.stacks === 0) {
-        character.effects.removeEffect(this.id, context)
+        character.removeEffect(this.id, context)
         return
       }
       this.updateCooldownModifiers(character)
@@ -55,16 +55,16 @@ export class ChargeEffect extends StackableEffect {
   private updateCooldownModifiers(character: ICharacter): void {
     // 移除舊的修飾器
     if (this.attackModifierId) {
-      character.attributes.removeModifier(this.attackModifierId)
+      character.removeAttributeModifier(this.attackModifierId)
     }
     if (this.spellModifierId) {
-      character.attributes.removeModifier(this.spellModifierId)
+      character.removeAttributeModifier(this.spellModifierId)
     }
     // 計算冷卻時間減少百分比（使用乘法修飾器）
     const cooldownReduction = -(this.stacks * this.cooldownReductionPerStack)
     // 添加攻擊冷卻修飾器
     this.attackModifierId = `${this.id}-attack-cd`
-    character.attributes.addModifier({
+    character.addAttributeModifier({
       id: this.attackModifierId,
       type: 'attackCooldown',
       value: cooldownReduction,
@@ -73,7 +73,7 @@ export class ChargeEffect extends StackableEffect {
     })
     // 添加施法冷卻修飾器
     this.spellModifierId = `${this.id}-spell-cd`
-    character.attributes.addModifier({
+    character.addAttributeModifier({
       id: this.spellModifierId,
       type: 'spellCooldown',
       value: cooldownReduction,

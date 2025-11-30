@@ -1,11 +1,16 @@
+import type { AttributeContainer } from './attribute.container'
 import type { IAttributeCalculator } from './interfaces/attribute.calculator.interface'
 import type { AttributeType } from './models/attribute.core.model'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from './models/attribute.modifier.model'
 /**
- * 預設屬性計算器
- * 實作簡單的 (base + additive) * multiplier 邏輯
+ * 屬性計算器：負責計算最終屬性值（基礎值 + 修飾符）
  */
-export class DefaultAttributeCalculator implements IAttributeCalculator {
+export class AttributeCalculator implements IAttributeCalculator {
+  private container: AttributeContainer
+  constructor(container: AttributeContainer) {
+    this.container = container
+  }
+  /** 計算指定屬性的最終值 */
   calculate(baseValue: number, modifiers: AttributeModifier[]): number {
     // 按優先級排序修飾器
     const sortedModifiers = [...modifiers].sort((a, b) => {
@@ -22,24 +27,10 @@ export class DefaultAttributeCalculator implements IAttributeCalculator {
     const multiplier = multiplyModifiers.reduce((product, m) => product * (1 + m.value), 1)
     return (baseValue + additive) * multiplier
   }
-}
-/**
- * 屬性計算器工廠
- * 根據屬性類型返回對應的計算器
- */
-export class AttributeCalculatorFactory {
-  private static calculators = new Map<AttributeType, IAttributeCalculator>()
-  // 註冊屬性計算器
-  static register(type: AttributeType, calculator: IAttributeCalculator): void {
-    this.calculators.set(type, calculator)
-  }
-  // 獲取屬性計算器 (如果沒有註冊特定計算器，返回預設計算器)
-  static get(type: AttributeType): IAttributeCalculator {
-    return this.calculators.get(type) ?? new DefaultAttributeCalculator()
-  }
-  // 初始化預設計算器
-  static initializeDefaults(): void {
-    // 目前所有屬性都使用預設計算器
-    // 將來可以為特定屬性註冊特殊計算器
+  /** 計算指定屬性類型的最終值（從容器獲取數據） */
+  calculateAttribute(type: AttributeType): number {
+    const baseValue = this.container.getBase(type)
+    const modifiers = this.container.getModifiers(type)
+    return this.calculate(baseValue, modifiers)
   }
 }

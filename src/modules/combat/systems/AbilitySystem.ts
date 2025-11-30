@@ -50,9 +50,9 @@ export class AbilitySystem {
   /** 檢查角色是否可以攻擊 */
   private canAttack(character: ICharacter, currentTick: number): boolean {
     const nextAttack = this.nextAttackTick.get(character.id)
-    // 如果沒有記錄，設置隨機初始延遲 (0 ~ 冷卻時間)
+    // 如果沒有記錄,設置隨機初始延遲 (0 ~ 冷卻時間)
     if (nextAttack === undefined) {
-      const cooldown = character.attributes.get('attackCooldown')
+      const cooldown = character.getAttribute('attackCooldown')
       const randomDelay = Math.floor(this.context.rng.next() * cooldown)
       this.nextAttackTick.set(character.id, currentTick + randomDelay)
       return false
@@ -95,7 +95,7 @@ export class AbilitySystem {
   }
   /** 創建傷害事件 */
   private createDamageEvent(source: ICharacter, target: ICharacter, tick: number): DamageEvent {
-    const baseDamage = source.attributes.get('attackDamage') ?? 0
+    const baseDamage = source.getAttribute('attackDamage') ?? 0
     // 創建基礎物理傷害
     const damages = createEmptyDamages()
     damages.physical = baseDamage
@@ -119,25 +119,25 @@ export class AbilitySystem {
     if (!damageEvent.isHit || damageEvent.prevented) return
     // 火焰傷害 → 聖火效果
     if (damageEvent.damages.fire > 0) {
-      target.effects.addEffect(new HolyFireEffect(), this.context)
+      target.addEffect(new HolyFireEffect(), this.context)
     }
     // 冰霜傷害 → 冰緩效果
     if (damageEvent.damages.ice > 0) {
-      target.effects.addEffect(new ChillEffect(), this.context)
+      target.addEffect(new ChillEffect(), this.context)
     }
     // 閃電傷害 → 充能效果
     if (damageEvent.damages.lightning > 0) {
-      target.effects.addEffect(new ChargeEffect(), this.context)
+      target.addEffect(new ChargeEffect(), this.context)
     }
     // 毒傷害 → 中毒效果
     if (damageEvent.damages.poison > 0) {
-      target.effects.addEffect(new PoisonEffect(), this.context)
+      target.addEffect(new PoisonEffect(), this.context)
     }
   }
   /** 更新攻擊冷卻時間 */
   private updateCooldown(character: ICharacter, currentTick: number): void {
     // 獲取攻擊冷卻時間（單位：Tick）
-    const cooldown = character.attributes.get('attackCooldown')
+    const cooldown = character.getAttribute('attackCooldown')
     // 計算下次可以攻擊的 Tick
     const nextAttack = currentTick + cooldown
     // 更新記錄

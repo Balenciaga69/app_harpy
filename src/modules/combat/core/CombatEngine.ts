@@ -131,10 +131,10 @@ export class CombatEngine {
       characters: allCharacters.map((char) => ({
         id: char.id,
         name: char.name,
-        currentHp: char.attributes.get('currentHp'),
-        maxHp: char.attributes.get('maxHp'),
+        currentHp: char.getAttribute('currentHp'),
+        maxHp: char.getAttribute('maxHp'),
         isDead: char.isDead,
-        effects: char.effects.getAllEffects().map((e) => e.name),
+        effects: char.getAllEffects().map((e) => e.name),
       })),
     }
   }

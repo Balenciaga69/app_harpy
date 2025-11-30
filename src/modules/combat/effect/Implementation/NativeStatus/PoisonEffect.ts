@@ -40,7 +40,7 @@ export class PoisonEffect extends StackableEffect {
       this.lastDecayTick = currentTick
       // 如果層數歸零，移除效果
       if (this.stacks === 0) {
-        character.effects.removeEffect(this.id, context)
+        character.removeEffect(this.id, context)
         return
       }
     }
@@ -50,9 +50,9 @@ export class PoisonEffect extends StackableEffect {
     const damage = this.stacks * this.damagePerStack
     if (damage > 0) {
       // 直接扣除生命值（無視護甲與閃避）
-      const currentHp = character.attributes.get('currentHp')
+      const currentHp = character.getAttribute('currentHp')
       const newHp = Math.max(0, currentHp - damage)
-      character.attributes.setCurrentHp(newHp)
+      character.setCurrentHpClamped(newHp)
       // 發送傷害事件
       context.eventBus.emit('entity:damage', {
         targetId: character.id,

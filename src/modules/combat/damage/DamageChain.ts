@@ -1,5 +1,5 @@
+import type { ICharacter } from '../character'
 import type { CombatContext } from '../core/CombatContext'
-import type { ICharacter } from '../character/interfaces/character.interface'
 import type { ICombatHook } from '../effect/models/effect.model'
 import type { DamageEvent } from './models/damageEvent.model'
 import { calculateTotalDamage } from './models/damageEvent.model'
@@ -62,7 +62,7 @@ export class DamageChain {
    * 收集角色身上所有效果的 Hook
    */
   private collectHooks(character: ICharacter): ICombatHook[] {
-    const effects = character.effects.getAllEffects()
+    const effects = character.getAllEffects()
     const hooks: ICombatHook[] = []
     for (const effect of effects) {
       // 檢查是否實作了任何 Hook 方法
@@ -98,8 +98,8 @@ export class DamageChain {
       }
     }
     // 如果 Hook 沒有明確設定命中結果，使用預設邏輯
-    const accuracy = event.source.attributes.get('accuracy')
-    const evasion = event.target.attributes.get('evasion')
+    const accuracy = event.source.getAttribute('accuracy')
+    const evasion = event.target.getAttribute('evasion')
     const hitChance = calculateHitChance(accuracy, evasion)
     event.isHit = this.context.rng.next() < hitChance
     event.evaded = !event.isHit
@@ -115,12 +115,12 @@ export class DamageChain {
     }
     // 如果是攻擊，進行暴擊判定
     if (event.tags.has('attack')) {
-      const critChance = event.source.attributes.get('criticalChance') ?? 0
+      const critChance = event.source.getAttribute('criticalChance') ?? 0
       event.isCrit = this.context.rng.next() < critChance
     }
     // 如果暴擊，對所有元素傷害套用暴擊倍率
     if (event.isCrit) {
-      const critMultiplier = event.source.attributes.get('criticalMultiplier') ?? 1.5
+      const critMultiplier = event.source.getAttribute('criticalMultiplier') ?? 1.5
       event.damages.physical *= critMultiplier
       event.damages.fire *= critMultiplier
       event.damages.ice *= critMultiplier
@@ -156,7 +156,7 @@ export class DamageChain {
     }
     // TODO: 未來實作分別的元素抗性
     // 目前暫時只處理物理護甲
-    const armor = event.target.attributes.get('armor')
+    const armor = event.target.getAttribute('armor')
     const armorReduction = this.calculateArmorReduction(armor)
     // 只對物理傷害應用護甲減免
     event.damages.physical *= 1 - armorReduction
@@ -187,9 +187,9 @@ export class DamageChain {
   }
   /** 應用傷害（扣除 HP） */
   private applyDamage(event: DamageEvent): void {
-    const currentHp = event.target.attributes.get('currentHp')
+    const currentHp = event.target.getAttribute('currentHp')
     const newHp = Math.max(0, currentHp - event.finalDamage)
-    event.target.attributes.setCurrentHp(newHp)
+    event.target.setCurrentHpClamped(newHp)
     // 發送傷害事件
     this.context.eventBus.emit('entity:damage', {
       targetId: event.target.id,
