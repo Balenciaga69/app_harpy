@@ -4,7 +4,6 @@ import type { EventLogger } from '../../logger'
 import type { SnapshotCollector } from '../../snapshot'
 import type { CombatConfig, CombatOutcome, CombatResult, CombatStatistics, CharacterStats } from '../models'
 import type { CombatLogEntry } from '../../logger'
-import { createEmptyDamages } from '../../damage'
 /**
  * ResultBuilder：戰鬥結果構建器
  *
@@ -103,8 +102,6 @@ export class ResultBuilder {
         name: char.name,
         damageDealt: 0,
         damageTaken: 0,
-        elementalDamageDealt: createEmptyDamages(),
-        elementalDamageTaken: createEmptyDamages(),
         kills: 0,
         survived: !char.isDead,
         attackCount: 0,
@@ -115,10 +112,10 @@ export class ResultBuilder {
     // TODO: 統計計算邏輯
     // 需要從 eventLogger 的日誌中反推計算各項數據
     // 建議未來實現 StatisticsCalculator 類別
-    const totalDamage = 0 // TODO: 從統計中計算
+    const totalDamage = 0
     return {
       characterStats,
-      effectsApplied: new Map(), // TODO: 統計效果觸發次數
+      effectsApplied: new Map(),
       totalDamage,
       duration: this.context.getCurrentTick(),
     }

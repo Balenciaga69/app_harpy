@@ -1,5 +1,4 @@
 import type { CharacterId } from '../../character'
-import type { ElementalDamages } from '../../damage'
 /**
  * 角色戰鬥統計
  *
@@ -14,10 +13,6 @@ export interface CharacterStats {
   damageDealt: number
   /** 受到的總傷害 */
   damageTaken: number
-  /** 各元素傷害分布（造成的） */
-  elementalDamageDealt: ElementalDamages
-  /** 各元素傷害分布（受到的） */
-  elementalDamageTaken: ElementalDamages
   /** 擊殺數 */
   kills: number
   /** 是否存活 */

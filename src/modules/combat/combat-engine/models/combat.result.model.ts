@@ -3,31 +3,29 @@ import type { CombatLogEntry } from '../../logger'
 import type { CombatOutcome } from './combat.outcome.model'
 import type { CombatSnapshot } from './combat.snapshot.model'
 import type { CombatStatistics } from './combat.statistics.model'
-
 /**
- * ?°é¬¥çµæ?
+ * ¾Ô°«µ²ªG
  *
- * ?…å«å®Œæ•´?„æˆ°é¬¥é?ç¨‹å?çµæ??¸æ?ï¼Œä? UI ?æ”¾ä½¿ç”¨??
- * ä½¿ç”¨çµ„å?æ¨¡å?å°‡ä??Œè·è²¬ç??¸æ?çµæ?çµ„å??¨ä?èµ·ã€?
+ * ­t³d«Ê¸Ë§¹¾ãªº¾Ô°«¹Lµ{»Pµ²ªG¡A¥D­n¥Î©ó UI ¦^©ñ¡C
+ * ¨Ï¥Î²Õ¦X¼Ò¦¡±N¬ÛÃöÂ¾³d»E¦X¦b¤@°_¡A¤è«KºûÅ@»PÂX®i¡C
  */
 export interface CombatResult {
-  /** ?°é¬¥çµæ? */
+  /** ¾Ô°«µ²ªG */
   outcome: CombatOutcome
-  /** ?²å???*/
+  /** ³Ó§QªÌ */
   winner: 'player' | 'enemy' | null
-  /** å­˜æ´»??*/
+  /** ¦s¬¡¨¤¦â */
   survivors: ICharacter[]
-  /** ?°é¬¥ç¸?Tick ??*/
+  /** ¾Ô°« Tick ¼Æ */
   totalTicks: number
-  /** å®Œæ•´?„ä?ä»¶æ—¥èªŒï??¨æ–¼è©³ç´°?æ”¾ï¼?*/
+  /** §¹¾ã¨Æ¥ó¤é»x¡A¨Ñ¸Ô²Ó¦^©ñ¨Ï¥Î */
   logs: CombatLogEntry[]
-  /** å®šæ?å¿«ç…§ï¼ˆç”¨?¼å¿«?Ÿè·³è½‰ï? */
+  /** ©w´Á§Ö·Ó¡]¥Î©ó§Ö³t¸õÂà¡^ */
   snapshots: CombatSnapshot[]
-  /** çµ±è??¸æ? */
+  /** ²Î­p¼Æ¾Ú */
   statistics: CombatStatistics
-  /** ?°é¬¥?‹å??‚é???*/
+  /** ¾Ô°«¶}©l tick */
   startedAt: number
-  /** ?°é¬¥çµæ??‚é???*/
+  /** ¾Ô°«µ²§ô tick */
   endedAt: number
 }
-

@@ -2,6 +2,9 @@
 export type AttributeType =
   | 'maxHp'
   | 'currentHp'
+  | 'maxEnergy'
+  | 'currentEnergy'
+  | 'energyRegen'
   | 'armor'
   | 'evasion'
   | 'attackDamage'
@@ -9,11 +12,11 @@ export type AttributeType =
   | 'criticalChance'
   | 'criticalMultiplier'
   | 'accuracy'
-  | 'spellDamage'
-  | 'spellCooldown'
 // 基礎屬性值配置
 export interface BaseAttributeValues {
   maxHp: number
+  maxEnergy: number
+  energyRegen: number
   armor: number
   evasion: number
   accuracy: number
@@ -21,6 +24,4 @@ export interface BaseAttributeValues {
   attackCooldown?: number
   criticalChance?: number
   criticalMultiplier?: number
-  spellDamage?: number
-  spellCooldown?: number
 }

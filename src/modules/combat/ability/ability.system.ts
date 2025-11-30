@@ -3,35 +3,31 @@ import type { CombatContext } from '../context'
 import { DamageChain } from '../damage'
 import { isCharacter } from '../shared'
 import { DamageFactory } from './factories'
-import { AttackType } from './models'
-import { ElementEffectRegistry } from './registries'
 import { FirstAliveSelector, type ITargetSelector } from './strategies'
 /**
- * AbilitySystem：角色攻擊行為協調系統。
+ * AbilitySystem：角色攻擊行為協調系統
  *
  * 設計理念：
- * - 作為攻擊流程的編排者，協調目標選擇、傷害計算、效果施加等環節。
- * - 採用策略模式實現可插拔的目標選擇邏輯，支援運行時切換選擇策略。
- * - 使用工廠模式統一管理傷害事件創建，集中化攻擊類型與傷害分配邏輯。
- * - 通過註冊表配置化元素效果施加，支援數據驅動的效果觸發機制。
- * - 基於 Tick 驅動，在每個時間單位檢查並執行角色的攻擊行為。
+ * - v0.3 移除元素系統，改為能量/大招機制
+ * - 普通攻擊累積能量，能量滿時可釋放大招
+ * - 採用策略模式實現可插拔的目標選擇邏輯
+ * - 基於 Tick 驅動，cooldown 單位為 tick
  *
  * 主要職責：
- * - 監聽 tick:start 事件，驅動角色攻擊邏輯。
- * - 管理每個角色的攻擊冷卻時間，確保攻擊頻率符合屬性設定。
- * - 使用目標選擇策略從敵方陣營中選擇攻擊目標。
- * - 透過 DamageFactory 創建傷害事件，並委託 DamageChain 執行傷害計算。
- * - 根據傷害類型透過 ElementEffectRegistry 施加對應的元素效果。
- * - 發布 entity:attack 事件，通知系統攻擊行為發生。
- * - 提供清理機制，在系統卸載時移除事件監聽與釋放資源。
+ * - 監聽 tick:start 事件，驅動角色攻擊邏輯
+ * - 管理每個角色的攻擊冷卻時間（cooldown）
+ * - 使用目標選擇策略從敵方陣營中選擇攻擊目標
+ * - 透過 DamageFactory 創建傷害事件
+ * - 委託 DamageChain 執行傷害計算
+ * - 管理能量累積與大招釋放邏輯
+ * - 發布 entity:attack 與 entity:ultimate 事件
  */
 export class AbilitySystem {
   private context: CombatContext
   private damageChain: DamageChain
   private targetSelector: ITargetSelector
   private damageFactory: DamageFactory
-  private effectRegistry: ElementEffectRegistry
-  /** 追蹤每個角色的下次攻擊 Tick (以 Tick 為單位) */
+  /** 追蹤每個角色的下次攻擊 Tick */
   private nextAttackTick: Map<CharacterId, number> = new Map()
   private tickHandler: () => void
   constructor(context: CombatContext, targetSelector?: ITargetSelector) {
@@ -39,11 +35,10 @@ export class AbilitySystem {
     this.damageChain = new DamageChain(context)
     this.targetSelector = targetSelector ?? new FirstAliveSelector()
     this.damageFactory = new DamageFactory()
-    this.effectRegistry = new ElementEffectRegistry()
     this.tickHandler = () => this.processTick()
     this.registerEventListeners()
   }
-  /** 設置目標選擇策略（允許運行時切換） */
+  /** 設置目標選擇策略 */
   setTargetSelector(selector: ITargetSelector): void {
     this.targetSelector = selector
   }
@@ -52,6 +47,7 @@ export class AbilitySystem {
     this.context.eventBus.on('tick:start', this.tickHandler)
   }
   /** 處理每個 Tick 的能力邏輯 */
+  // TODO: 這邊可以學 DamageChain 的架構，拆分成多個小方法
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()
     const allEntities = this.context.getAllEntities()
@@ -92,20 +88,61 @@ export class AbilitySystem {
     // 2. 使用策略選擇目標
     const target = this.targetSelector.selectTarget(character, aliveEnemies)
     if (!target) return
-    // 3. 發送攻擊事件
+    // 3. 檢查是否能釋放大招 // TODO: 這段有點複雜，可以考慮獨立成方法甚至類別或其他架構
+    const currentEnergy = character.getAttribute('currentEnergy') ?? 0
+    const maxEnergy = character.getAttribute('maxEnergy') ?? 100
+    const canUseUltimate = currentEnergy >= maxEnergy
+    if (canUseUltimate) {
+      // 釋放大招
+      this.performUltimate(character, target, currentTick)
+    } else {
+      // 普通攻擊
+      this.performNormalAttack(character, target, currentTick)
+    }
+    // 4. 更新下次攻擊時間
+    this.updateCooldown(character, currentTick)
+  }
+  /** 執行普通攻擊 */
+  private performNormalAttack(character: ICharacter, target: ICharacter, currentTick: number): void {
+    // 發送攻擊事件
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
       targetId: target.id,
       tick: currentTick,
     })
-    // 4. 使用工廠創建傷害事件（默認近戰物理攻擊）
-    const damageEvent = this.damageFactory.createDamageEvent(character, target, AttackType.MeleePhysical, currentTick)
-    // 5. 觸發傷害計算
+    // 創建普通攻擊傷害事件
+    const damageEvent = this.damageFactory.createAttackEvent(character, target, currentTick)
+    // 執行傷害計算
     this.damageChain.execute(damageEvent)
-    // 6. 使用註冊表施加元素效果
-    this.effectRegistry.applyEffects(damageEvent, this.context)
-    // 7. 更新下次攻擊時間
-    this.updateCooldown(character, currentTick)
+    // 普通攻擊成功後累積能量
+    if (damageEvent.isHit && !damageEvent.prevented) {
+      this.gainEnergy(character, 10) // TODO: 能量獲取量可配置化
+    }
+  }
+  /** 執行大招 */
+  private performUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
+    // 發送大招事件
+    this.context.eventBus.emit('entity:attack', {
+      sourceId: character.id,
+      targetId: target.id,
+      tick: currentTick,
+    })
+    // 計算大招傷害（基礎攻擊力 * 倍率）
+    const baseDamage = character.getAttribute('attackDamage') ?? 0
+    const ultimateDamage = baseDamage * 3 // TODO: 倍率可配置化
+    // 創建大招傷害事件
+    const damageEvent = this.damageFactory.createUltimateEvent(character, target, ultimateDamage, currentTick)
+    // 執行傷害計算
+    this.damageChain.execute(damageEvent)
+    // 消耗能量（清空）
+    character.setBaseAttribute('currentEnergy', 0)
+  }
+  /** 累積能量 */
+  private gainEnergy(character: ICharacter, amount: number): void {
+    const currentEnergy = character.getAttribute('currentEnergy') ?? 0
+    const maxEnergy = character.getAttribute('maxEnergy') ?? 100
+    const newEnergy = Math.min(currentEnergy + amount, maxEnergy)
+    character.setBaseAttribute('currentEnergy', newEnergy)
   }
   /** 更新攻擊冷卻時間 */
   private updateCooldown(character: ICharacter, currentTick: number): void {

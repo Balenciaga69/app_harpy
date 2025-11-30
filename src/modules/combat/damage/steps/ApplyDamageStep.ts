@@ -1,13 +1,13 @@
 import type { CombatContext } from '../../context/combat.context'
-import { calculateTotalDamage, type DamageEvent } from '../models'
+import type { DamageEvent } from '../models'
 import type { IDamageStep } from './DamageStep.interface'
 /**
  * 應用傷害階段
  */
 export class ApplyDamageStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
-    // 計算最終總傷害
-    event.finalDamage = calculateTotalDamage(event.damages)
+    // 使用 amount 作為最終傷害（已經過暴擊、防禦計算）
+    event.finalDamage = Math.max(0, event.amount)
     // 應用傷害（扣除 HP）
     const currentHp = event.target.getAttribute('currentHp')
     const newHp = Math.max(0, currentHp - event.finalDamage)
@@ -25,6 +25,6 @@ export class ApplyDamageStep implements IDamageStep {
         targetId: event.target.id,
       })
     }
-    return true // 繼續執行
+    return true
   }
 }

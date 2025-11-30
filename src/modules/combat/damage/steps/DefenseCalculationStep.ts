@@ -8,19 +8,22 @@ import { collectHooks } from './utils/hookCollector.util'
 export class DefenseCalculationStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
     const hooks = collectHooks(event.source, event.target)
-    // 先執行 Hook（可能會修改防禦計算）
+    // 執行 Hook
     for (const hook of hooks) {
       if (hook.onDefenseCalculation) {
         hook.onDefenseCalculation(event, context)
       }
     }
-    // TODO: 未來實作分別的元素抗性
-    // 目前暫時只處理物理護甲
+    // 真實傷害無視防禦
+    if (event.isTrueDamage) {
+      return true
+    }
+    // 計算護甲減免
     const armor = event.target.getAttribute('armor')
     const armorReduction = this.calculateArmorReduction(armor)
-    // 只對物理傷害應用護甲減免
-    event.damages.physical *= 1 - armorReduction
-    return true // 繼續執行
+    // 應用減免
+    event.amount *= 1 - armorReduction
+    return true
   }
   /** 計算護甲減免百分比 */
   private calculateArmorReduction(armor: number): number {

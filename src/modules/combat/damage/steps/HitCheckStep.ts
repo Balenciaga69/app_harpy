@@ -9,18 +9,17 @@ import { collectHooks } from './utils/hookCollector.util'
 export class HitCheckStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
     const hooks = collectHooks(event.source, event.target)
-    // 先執行 Hook（可能會修改命中判定）
+    // 執行 Hook
     for (const hook of hooks) {
       if (hook.onHitCheck) {
         hook.onHitCheck(event, context)
       }
     }
-    // 如果 Hook 沒有明確設定命中結果，使用預設邏輯
+    // 命中判定
     const accuracy = event.source.getAttribute('accuracy')
     const evasion = event.target.getAttribute('evasion')
     const hitChance = calculateHitChance(accuracy, evasion)
     event.isHit = context.rng.next() < hitChance
-    event.evaded = !event.isHit
     // 如果未命中，發送事件並終止流程
     if (!event.isHit) {
       context.eventBus.emit('combat:miss', {
@@ -28,8 +27,8 @@ export class HitCheckStep implements IDamageStep {
         targetId: event.target.id,
         tick: event.tick,
       })
-      return false // 終止流程
+      return false
     }
-    return true // 繼續執行
+    return true
   }
 }

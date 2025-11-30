@@ -2,12 +2,11 @@
 import { CombatEngine } from '../combat-engine/combat.engine'
 import { Character } from '../character/character'
 /**
- * 簡單的戰鬥測試範例
- * 驗證整個戰鬥系統能夠運行
+ * 簡單的戰鬥測試範例（v0.3）
+ * 驗證能量系統與大招機制
  */
 function runSimpleCombat() {
-  // eslint-disable-next-line no-console
-  console.log('=== 開始戰鬥測試 ===\n')
+  console.log('=== 開始戰鬥測試 (v0.3) ===\n')
   // 創建玩家隊伍
   const warrior = new Character({
     name: '戰士',
@@ -20,8 +19,9 @@ function runSimpleCombat() {
       attackDamage: 20,
       attackCooldown: 100,
       criticalChance: 0.2,
-      spellDamage: 0,
-      spellCooldown: 0,
+      criticalMultiplier: 1.5,
+      maxEnergy: 100,
+      energyRegen: 0,
     },
   })
   warrior.setCurrentHpClamped(100)
@@ -33,11 +33,12 @@ function runSimpleCombat() {
       armor: 5,
       evasion: 0.15,
       accuracy: 0.98,
-      attackDamage: 10,
-      attackCooldown: 150,
-      criticalChance: 0.3,
-      spellDamage: 0,
-      spellCooldown: 0,
+      attackDamage: 15,
+      attackCooldown: 80,
+      criticalChance: 0.35,
+      criticalMultiplier: 2.0,
+      maxEnergy: 100,
+      energyRegen: 0,
     },
   })
   archer.setCurrentHpClamped(80)
@@ -50,11 +51,12 @@ function runSimpleCombat() {
       armor: 3,
       evasion: 0.05,
       accuracy: 0.85,
-      attackDamage: 10,
+      attackDamage: 8,
       attackCooldown: 120,
       criticalChance: 0.1,
-      spellDamage: 0,
-      spellCooldown: 0,
+      criticalMultiplier: 1.5,
+      maxEnergy: 100,
+      energyRegen: 0,
     },
   })
   goblin1.setCurrentHpClamped(50)
@@ -66,11 +68,12 @@ function runSimpleCombat() {
       armor: 3,
       evasion: 0.05,
       accuracy: 0.85,
-      attackDamage: 10,
+      attackDamage: 8,
       attackCooldown: 120,
       criticalChance: 0.1,
-      spellDamage: 0,
-      spellCooldown: 0,
+      criticalMultiplier: 1.5,
+      maxEnergy: 100,
+      energyRegen: 0,
     },
   })
   goblin2.setCurrentHpClamped(50)
@@ -84,13 +87,19 @@ function runSimpleCombat() {
     enableLogging: true,
   })
   // 啟動戰鬥
-  console.log('戰鬥開始...\n')
+  console.log('戰鬥開始...')
+  console.log('弓箭手攻速較快 (80 ticks/攻擊)，能更快累積能量')
+  console.log('能量累積至 100 即可釋放大招 (傷害 x3)\n')
   const result = engine.start()
   // 輸出戰鬥結果
-  console.log('=== 戰鬥結束 ===\n')
+  console.log('\n=== 戰鬥結束 ===')
+  console.log(`勝利方: ${result.winner}`)
+  console.log(`總回合數: ${result.totalTicks} ticks`)
+  console.log(`存活者: ${result.survivors.map((s) => s.name).join(', ')}`)
   // 清理資源
   engine.dispose()
   console.log('\n=== 測試完成 ===')
+  // 過濾掉 tick 事件以減少日誌量
   result.logs = result.logs.filter((log) => !['tick:start', 'tick:end'].includes(log.eventType))
   return result
 }
