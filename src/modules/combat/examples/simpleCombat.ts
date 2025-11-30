@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { CombatEngine } from '../combat-engine/combat.engine'
 import { Character } from '../character/character'
 /**
@@ -87,28 +88,6 @@ function runSimpleCombat() {
   const result = engine.start()
   // 輸出戰鬥結果
   console.log('=== 戰鬥結束 ===\n')
-  console.log(`結果: ${result.outcome}`)
-  console.log(`獲勝方: ${result.winner ?? '無'}`)
-  console.log(`戰鬥時長: ${result.totalTicks} Ticks`)
-  console.log(`總傷害: ${result.statistics.totalDamage.toFixed(2)}`)
-  console.log(`事件日誌數量: ${result.logs.length}`)
-  console.log(`快照數量: ${result.snapshots.length}`)
-  console.log(`關鍵時刻數量: ${result.keyMoments.length}`)
-  console.log('\n存活者:')
-  result.survivors.forEach((char) => {
-    const currentHp = char.getAttribute('currentHp')
-    const maxHp = char.getAttribute('maxHp')
-    console.log(`  - ${char.name}: ${currentHp.toFixed(1)}/${maxHp} HP`)
-  })
-  console.log('\n角色統計:')
-  result.statistics.characterStats.forEach((stats) => {
-    console.log(`  ${stats.name}:`)
-    console.log(`    - 造成傷害: ${stats.damageDealt.toFixed(2)}`)
-    console.log(`    - 受到傷害: ${stats.damageTaken.toFixed(2)}`)
-    console.log(`    - 攻擊次數: ${stats.attackCount}`)
-    console.log(`    - 暴擊次數: ${stats.criticalHits}`)
-    console.log(`    - 存活: ${stats.survived ? '是' : '否'}`)
-  })
   // 清理資源
   engine.dispose()
   console.log('\n=== 測試完成 ===')

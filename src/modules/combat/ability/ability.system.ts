@@ -1,31 +1,51 @@
+import type { CharacterId, ICharacter } from '../character/interfaces/character.interface'
 import type { CombatContext } from '../context/combat.context'
-import type { ICharacter } from '../character/interfaces/character.interface'
-import type { CharacterId } from '../character/interfaces/character.interface'
-import type { DamageEvent } from '../damage/models/damage.event.model'
-import { createEmptyDamages } from '../damage/models/damage.event.model'
 import { DamageChain } from '../damage/damage.chain'
-import { HolyFireEffect, ChargeEffect, ChillEffect, PoisonEffect } from '../effect/Implementation'
 import { isCharacter } from '../shared'
+import { DamageFactory } from './factories/damage.factory'
+import { AttackType } from './models/attack.type.model'
+import { ElementEffectRegistry } from './registries'
+import { FirstAliveSelector, type ITargetSelector } from './strategies'
 /**
- * 能力系統
+ * AbilitySystem：角色攻擊行為協調系統。
  *
- * - 負責協調角色的攻擊行為：
- *    - 追蹤每個角色的攻擊冷卻時間
- *    - 選擇攻擊目標
- *    - 觸發傷害計算 (調用 DamageChain)
- *    - 施加元素效果
+ * 設計理念：
+ * - 作為攻擊流程的編排者，協調目標選擇、傷害計算、效果施加等環節。
+ * - 採用策略模式實現可插拔的目標選擇邏輯，支援運行時切換選擇策略。
+ * - 使用工廠模式統一管理傷害事件創建，集中化攻擊類型與傷害分配邏輯。
+ * - 通過註冊表配置化元素效果施加，支援數據驅動的效果觸發機制。
+ * - 基於 Tick 驅動，在每個時間單位檢查並執行角色的攻擊行為。
+ *
+ * 主要職責：
+ * - 監聽 tick:start 事件，驅動角色攻擊邏輯。
+ * - 管理每個角色的攻擊冷卻時間，確保攻擊頻率符合屬性設定。
+ * - 使用目標選擇策略從敵方陣營中選擇攻擊目標。
+ * - 透過 DamageFactory 創建傷害事件，並委託 DamageChain 執行傷害計算。
+ * - 根據傷害類型透過 ElementEffectRegistry 施加對應的元素效果。
+ * - 發布 entity:attack 事件，通知系統攻擊行為發生。
+ * - 提供清理機制，在系統卸載時移除事件監聽與釋放資源。
  */
 export class AbilitySystem {
   private context: CombatContext
   private damageChain: DamageChain
+  private targetSelector: ITargetSelector
+  private damageFactory: DamageFactory
+  private effectRegistry: ElementEffectRegistry
   /** 追蹤每個角色的下次攻擊時間 (以 Tick 為單位) */
   private nextAttackTick: Map<CharacterId, number> = new Map()
   private tickHandler: () => void
-  constructor(context: CombatContext) {
+  constructor(context: CombatContext, targetSelector?: ITargetSelector) {
     this.context = context
     this.damageChain = new DamageChain(context)
+    this.targetSelector = targetSelector ?? new FirstAliveSelector()
+    this.damageFactory = new DamageFactory()
+    this.effectRegistry = new ElementEffectRegistry()
     this.tickHandler = () => this.processTick()
     this.registerEventListeners()
+  }
+  /** 設置目標選擇策略（允許運行時切換） */
+  setTargetSelector(selector: ITargetSelector): void {
+    this.targetSelector = selector
   }
   /** 註冊事件監聽 */
   private registerEventListeners(): void {
@@ -63,77 +83,29 @@ export class AbilitySystem {
   }
   /** 執行攻擊 */
   private performAttack(character: ICharacter, currentTick: number): void {
-    // 1. 選擇目標
-    const target = this.selectTarget(character)
-    if (!target) return // 沒有可攻擊的目標
-    // 2. 發送攻擊事件
+    // 1. 獲取候選目標
+    const enemyTeam = character.team === 'player' ? 'enemy' : 'player'
+    const enemies = this.context.getEntitiesByTeam(enemyTeam)
+    const aliveEnemies = enemies.filter((e) => {
+      return isCharacter(e) && !(e as ICharacter).isDead
+    }) as ICharacter[]
+    // 2. 使用策略選擇目標
+    const target = this.targetSelector.selectTarget(character, aliveEnemies)
+    if (!target) return
+    // 3. 發送攻擊事件
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
       targetId: target.id,
       tick: currentTick,
     })
-    // 3. 創建傷害事件
-    const damageEvent = this.createDamageEvent(character, target, currentTick)
-    // 4. 觸發傷害計算
+    // 4. 使用工廠創建傷害事件（默認近戰物理攻擊）
+    const damageEvent = this.damageFactory.createDamageEvent(character, target, AttackType.MeleePhysical, currentTick)
+    // 5. 觸發傷害計算
     this.damageChain.execute(damageEvent)
-    // 5. 施加元素效果 (攻擊後,根據造成的傷害類型)
-    this.applyElementalEffects(damageEvent)
-    // 6. 更新下次攻擊時間
+    // 6. 使用註冊表施加元素效果
+    this.effectRegistry.applyEffects(damageEvent, this.context)
+    // 7. 更新下次攻擊時間
     this.updateCooldown(character, currentTick)
-  }
-  /** 選擇攻擊目標 */
-  private selectTarget(attacker: ICharacter): ICharacter | null {
-    // 確定敵對隊伍
-    const enemyTeam = attacker.team === 'player' ? 'enemy' : 'player'
-    // 獲取所有敵對實體
-    const enemies = this.context.getEntitiesByTeam(enemyTeam)
-    // 過濾出還活著的角色
-    const aliveEnemies = enemies.filter((e) => {
-      return isCharacter(e) && !(e as ICharacter).isDead
-    }) as ICharacter[]
-    // 簡化版：攻擊第一個存活的敵人
-    return aliveEnemies[0] ?? null
-  }
-  /** 創建傷害事件 */
-  private createDamageEvent(source: ICharacter, target: ICharacter, tick: number): DamageEvent {
-    const baseDamage = source.getAttribute('attackDamage') ?? 0
-    // 創建基礎物理傷害
-    const damages = createEmptyDamages()
-    damages.physical = baseDamage
-    return {
-      source,
-      target,
-      damages,
-      finalDamage: 0, // 會在 DamageChain 中計算
-      tags: new Set(['attack', 'melee']),
-      isCrit: false,
-      isHit: true,
-      evaded: false,
-      tick,
-      prevented: false,
-    }
-  }
-  /** 施加元素效果 - 根據造成的傷害類型必定觸發對應狀態 */
-  private applyElementalEffects(damageEvent: DamageEvent): void {
-    const target = damageEvent.target
-    // 只有命中才施加效果
-    if (!damageEvent.isHit || damageEvent.prevented) return
-    // 火焰傷害 → 聖火效果
-    if (damageEvent.damages.fire > 0) {
-      target.addEffect(new HolyFireEffect(), this.context)
-    }
-    // 冰霜傷害 → 冰緩效果
-    if (damageEvent.damages.ice > 0) {
-      target.addEffect(new ChillEffect(), this.context)
-    }
-    // 閃電傷害 → 充能效果
-    if (damageEvent.damages.lightning > 0) {
-      target.addEffect(new ChargeEffect(), this.context)
-    }
-    // 毒傷害 → 中毒效果
-    if (damageEvent.damages.poison > 0) {
-      target.addEffect(new PoisonEffect(), this.context)
-    }
   }
   /** 更新攻擊冷卻時間 */
   private updateCooldown(character: ICharacter, currentTick: number): void {
