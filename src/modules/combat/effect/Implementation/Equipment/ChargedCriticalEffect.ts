@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import type { IEffect, ICombatHook } from '../../models/effect.model'
-import type { ICharacter } from '../../../character/models/character.model'
-import type { CombatContext } from '../../../core/CombatContext'
-import type { DamageEvent } from '../../../damage'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
+import type { CombatContext } from '../../../context/combat.context'
+import type { DamageEvent, ICombatHook } from '../../../damage'
+import type { IEffect } from '../../models/effect.model'
 /**
  * 充能暴擊增幅效果
  *
@@ -32,10 +32,10 @@ export class ChargedCriticalEffect implements IEffect, ICombatHook {
       return event
     }
     // 檢查是否有充能效果
-    const hasCharge = event.source.effects.getAllEffects().some((effect) => effect.name === '充能')
+    const hasCharge = event.source.getAllEffects().some((effect) => effect.name === '充能')
     if (hasCharge && event.tags.has('attack')) {
       // 重新計算暴擊判定，使用加倍的暴擊率
-      const baseCritChance = event.source.attributes.get('criticalChance')
+      const baseCritChance = event.source.getAttribute('criticalChance')
       const boostedCritChance = Math.min(1, baseCritChance * 2) // 最高 100%
       event.isCrit = context.rng.next() < boostedCritChance
     }
@@ -44,11 +44,11 @@ export class ChargedCriticalEffect implements IEffect, ICombatHook {
   /** 輔助方法：獲取效果的擁有者 */
   private getOwner(event: DamageEvent, _context: CombatContext): ICharacter | null {
     // 檢查攻擊者是否擁有此效果
-    if (event.source.effects.hasEffect(this.id)) {
+    if (event.source.hasEffect(this.id)) {
       return event.source
     }
     // 檢查目標是否擁有此效果
-    if (event.target.effects.hasEffect(this.id)) {
+    if (event.target.hasEffect(this.id)) {
       return event.target
     }
     return null

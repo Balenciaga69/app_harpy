@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../../models/stackableEffect.model'
-import type { ICharacter } from '../../../character/models/character.model'
-import type { CombatContext } from '../../../core/CombatContext'
+import { StackableEffect } from '../../models/stackable.effect.model.ts'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
+import type { CombatContext } from '../../../context/combat.context.ts'
 /**
  * 冰緩效果
  * - 延長敵方攻擊/施法冷卻時間
@@ -25,11 +25,11 @@ export class ChillEffect extends StackableEffect {
   }
   onRemove(character: ICharacter, _context: CombatContext): void {
     if (this.attackModifierId) {
-      character.attributes.removeModifier(this.attackModifierId)
+      character.removeAttributeModifier(this.attackModifierId)
       this.attackModifierId = null
     }
     if (this.spellModifierId) {
-      character.attributes.removeModifier(this.spellModifierId)
+      character.removeAttributeModifier(this.spellModifierId)
       this.spellModifierId = null
     }
   }
@@ -45,7 +45,7 @@ export class ChillEffect extends StackableEffect {
       this.lastDecayTick = currentTick
       // 如果層數歸零，移除效果
       if (this.stacks === 0) {
-        character.effects.removeEffect(this.id, context)
+        character.removeEffect(this.id, context)
         return
       }
       this.updateCooldownModifiers(character)
@@ -55,16 +55,16 @@ export class ChillEffect extends StackableEffect {
   private updateCooldownModifiers(character: ICharacter): void {
     // 移除舊的修飾器
     if (this.attackModifierId) {
-      character.attributes.removeModifier(this.attackModifierId)
+      character.removeAttributeModifier(this.attackModifierId)
     }
     if (this.spellModifierId) {
-      character.attributes.removeModifier(this.spellModifierId)
+      character.removeAttributeModifier(this.spellModifierId)
     }
     // 計算冷卻時間增加百分比（使用乘法修飾器）
     const cooldownIncrease = this.stacks * this.cooldownIncreasePerStack
     // 添加攻擊冷卻修飾器
     this.attackModifierId = `${this.id}-attack-cd`
-    character.attributes.addModifier({
+    character.addAttributeModifier({
       id: this.attackModifierId,
       type: 'attackCooldown',
       value: cooldownIncrease,
@@ -73,7 +73,7 @@ export class ChillEffect extends StackableEffect {
     })
     // 添加施法冷卻修飾器
     this.spellModifierId = `${this.id}-spell-cd`
-    character.attributes.addModifier({
+    character.addAttributeModifier({
       id: this.spellModifierId,
       type: 'spellCooldown',
       value: cooldownIncrease,

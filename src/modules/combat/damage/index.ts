@@ -1,3 +1,3 @@
-export { DamageChain } from './DamageChain'
-export type { DamageEvent, DamageType } from './models/damageEvent.model'
-export * from './utils/damageCalculator.util'
+export * from './damage.chain'
+export * from './models'
+export * from './utils/damage.calculator.util'

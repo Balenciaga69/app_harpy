@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import type { IEffect, ICombatHook } from '../../models/effect.model'
-import type { ICharacter } from '../../../character/models/character.model'
-import type { CombatContext } from '../../../core/CombatContext'
-import type { DamageEvent } from '../../../damage'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
+import type { CombatContext } from '../../../context/combat.context'
+import type { DamageEvent, ICombatHook } from '../../../damage'
+import type { IEffect } from '../../models/effect.model'
 /**
  * 低血護甲增幅效果
  *
@@ -34,12 +34,12 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
       return event
     }
     // 檢查生命值是否低於門檻
-    const currentHp = event.target.attributes.get('currentHp')
-    const maxHp = event.target.attributes.get('maxHp')
+    const currentHp = event.target.getAttribute('currentHp')
+    const maxHp = event.target.getAttribute('maxHp')
     const healthPercent = currentHp / maxHp
     if (healthPercent < this.healthThreshold) {
       // 計算加倍的護甲減免
-      const baseArmor = event.target.attributes.get('armor')
+      const baseArmor = event.target.getAttribute('armor')
       const boostedArmor = baseArmor * this.armorMultiplier
       // 計算護甲減免百分比
       const armorReduction = boostedArmor / (boostedArmor + 100)
@@ -53,11 +53,11 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
   /** 輔助方法：獲取效果的擁有者 */
   private getOwner(event: DamageEvent, _context: CombatContext): ICharacter | null {
     // 檢查攻擊者是否擁有此效果
-    if (event.source.effects.hasEffect(this.id)) {
+    if (event.source.hasEffect(this.id)) {
       return event.source
     }
     // 檢查目標是否擁有此效果
-    if (event.target.effects.hasEffect(this.id)) {
+    if (event.target.hasEffect(this.id)) {
       return event.target
     }
     return null

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../../models/stackableEffect.model'
-import type { ICharacter } from '../../../character/models/character.model'
-import type { CombatContext } from '../../../core/CombatContext'
+import { StackableEffect } from '../../models/stackable.effect.model.ts'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
+import type { CombatContext } from '../../../context/combat.context.ts'
 /**
  * 毒效果
  * - 每層每 Tick 造成 1 點 DoT
@@ -40,7 +40,7 @@ export class PoisonEffect extends StackableEffect {
       this.lastDecayTick = currentTick
       // 如果層數歸零，移除效果
       if (this.stacks === 0) {
-        character.effects.removeEffect(this.id, context)
+        character.removeEffect(this.id, context)
         return
       }
     }
@@ -50,9 +50,9 @@ export class PoisonEffect extends StackableEffect {
     const damage = this.stacks * this.damagePerStack
     if (damage > 0) {
       // 直接扣除生命值（無視護甲與閃避）
-      const currentHp = character.attributes.get('currentHp')
+      const currentHp = character.getAttribute('currentHp')
       const newHp = Math.max(0, currentHp - damage)
-      character.attributes.setCurrentHp(newHp)
+      character.setCurrentHpClamped(newHp)
       // 發送傷害事件
       context.eventBus.emit('entity:damage', {
         targetId: character.id,
@@ -61,7 +61,7 @@ export class PoisonEffect extends StackableEffect {
       })
       // 檢查是否死亡
       if (newHp === 0 && !character.isDead) {
-        character.markDead()
+        character.isDead = true
         context.eventBus.emit('entity:death', {
           targetId: character.id,
         })

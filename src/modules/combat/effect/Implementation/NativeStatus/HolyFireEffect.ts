@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../../models/stackableEffect.model'
-import type { ICharacter } from '../../../character/models/character.model'
-import type { CombatContext } from '../../../core/CombatContext'
+import { StackableEffect } from '../../models/stackable.effect.model.ts'
+import type { ICharacter } from '../../../character/interfaces/character.interface'
+import type { CombatContext } from '../../../context/combat.context.ts'
 /**
  * 聖火效果
  * - 每層提升護甲值
@@ -21,7 +21,7 @@ export class HolyFireEffect extends StackableEffect {
   }
   onRemove(character: ICharacter, _context: CombatContext): void {
     if (this.modifierId) {
-      character.attributes.removeModifier(this.modifierId)
+      character.removeAttributeModifier(this.modifierId)
       this.modifierId = null
     }
   }
@@ -33,11 +33,11 @@ export class HolyFireEffect extends StackableEffect {
   private updateArmorModifier(character: ICharacter): void {
     // 移除舊的修飾器
     if (this.modifierId) {
-      character.attributes.removeModifier(this.modifierId)
+      character.removeAttributeModifier(this.modifierId)
     }
     // 添加新的修飾器
     this.modifierId = `${this.id}-armor`
-    character.attributes.addModifier({
+    character.addAttributeModifier({
       id: this.modifierId,
       type: 'armor',
       value: this.stacks * this.armorPerStack,
