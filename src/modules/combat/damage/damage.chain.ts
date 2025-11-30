@@ -1,5 +1,5 @@
 import type { ICharacter } from '../character'
-import type { CombatContext } from '../core/CombatContext'
+import type { CombatContext } from '../context/combat.context'
 import { type DamageEvent, calculateTotalDamage, type ICombatHook } from './models'
 import { calculateHitChance } from './utils/damage.calculator.util'
 /**

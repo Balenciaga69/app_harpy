@@ -1,4 +1,4 @@
-import { CombatEngine } from '../core/CombatEngine'
+import { CombatEngine } from '../combat-engine/combat.engine'
 import { Character } from '../character/character'
 /**
  * 簡單的戰鬥測試範例

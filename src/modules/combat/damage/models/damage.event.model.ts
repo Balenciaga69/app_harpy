@@ -1,5 +1,4 @@
 import type { ICharacter } from '../../character'
-
 /**
  * 傷害類型
  */

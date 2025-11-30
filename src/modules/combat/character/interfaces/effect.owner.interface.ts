@@ -1,5 +1,5 @@
 import type { IEffect } from '../../effect/models/effect.model'
-import type { CombatContext } from '../../core/CombatContext'
+import type { CombatContext } from '../../context/combat.context'
 /** 效果擁有者介面 */
 export interface IEffectOwner {
   addEffect(effect: IEffect, context: CombatContext): void

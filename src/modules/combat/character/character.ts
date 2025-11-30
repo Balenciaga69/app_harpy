@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import type { BaseAttributeValues, CharacterId, ICharacter } from '.'
-import type { CombatContext } from '../core/CombatContext'
+import type { CombatContext } from '../context/combat.context'
 import type { IEffect } from '../effect/models/effect.model'
 import { EffectManager } from '../effect/effect.manager'
 import { AttributeCalculator } from './attribute.calculator'

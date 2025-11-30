@@ -1,4 +1,4 @@
-import type { CombatContext } from '../core/CombatContext'
+import type { CombatContext } from '../context/combat.context'
 import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CharacterId } from '../character/interfaces/character.interface'
 import type { DamageEvent } from '../damage/models/damage.event.model'

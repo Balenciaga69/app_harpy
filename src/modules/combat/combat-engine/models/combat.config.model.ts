@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../character/interfaces/character.interface'
+import type { ICharacter } from '../../character'
 /**
  * 戰鬥配置
  * 定義一場戰鬥的初始參數

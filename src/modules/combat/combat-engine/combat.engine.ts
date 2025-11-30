@@ -5,8 +5,8 @@ import type { CombatLogEntry } from '../logger/combat.log.model'
 import { EventLogger } from '../logger/event.logger'
 import { TickerDriver } from '../tick/ticker.driver'
 import { TickerProcessor } from '../tick/ticker.processor'
-import { CombatContext } from './CombatContext'
-import type { CombatConfig } from './models/combatConfig.model'
+import { CombatContext } from '../context/combat.context'
+import type { CombatConfig } from './models/combat.config.model'
 import type {
   CharacterStats,
   CombatOutcome,
@@ -14,7 +14,7 @@ import type {
   CombatSnapshot,
   CombatStatistics,
   KeyMoment,
-} from './models/combatResult.model'
+} from './models/combat.result.model'
 /**
  * CombatEngine：戰鬥執行引擎。
  *

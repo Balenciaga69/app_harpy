@@ -37,7 +37,7 @@ export class CombatContext {
   public getAllEntities(): readonly IEntity[] {
     return Array.from(this.entities.values())
   }
-  public getEntitiesByTeam(team: IEntity['team']): IEntity[] {
+  public getEntitiesByTeam(team: IEntity['team']): readonly IEntity[] {
     return this.getAllEntities().filter((e) => (e as IEntity).team === team)
   }
   public isCharacter(entity: unknown): entity is ICharacter {

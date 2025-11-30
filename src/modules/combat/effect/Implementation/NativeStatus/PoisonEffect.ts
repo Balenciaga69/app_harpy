@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '../../models/stackable.effect.model.ts'
 import type { ICharacter } from '../../../character/interfaces/character.interface'
-import type { CombatContext } from '../../../core/CombatContext'
+import type { CombatContext } from '../../../context/combat.context.ts'
 /**
  * 毒效果
  * - 每層每 Tick 造成 1 點 DoT

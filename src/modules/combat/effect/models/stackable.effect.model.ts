@@ -1,5 +1,5 @@
 import type { ICharacter } from '../../character/interfaces/character.interface'
-import type { CombatContext } from '../../core/CombatContext'
+import type { CombatContext } from '../../context/combat.context'
 import type { IEffect } from './effect.model'
 /**
  * 可堆疊效果介面

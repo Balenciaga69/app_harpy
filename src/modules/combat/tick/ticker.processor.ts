@@ -1,4 +1,4 @@
-import type { CombatContext } from '../core/CombatContext'
+import type { CombatContext } from '../context/combat.context'
 /**
  * TickerProcessor：Tick 事件的具體處理器。
  *
