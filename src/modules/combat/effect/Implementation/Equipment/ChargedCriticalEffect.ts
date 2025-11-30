@@ -33,7 +33,7 @@ export class ChargedCriticalEffect implements IEffect, ICombatHook {
     }
     // 檢查是否有充能效果
     const hasCharge = event.source.getAllEffects().some((effect) => effect.name === '充能')
-    if (hasCharge && event.tags.has('attack')) {
+    if (hasCharge) {
       // 重新計算暴擊判定，使用加倍的暴擊率
       const baseCritChance = event.source.getAttribute('criticalChance')
       const boostedCritChance = Math.min(1, baseCritChance * 2) // 最高 100%
