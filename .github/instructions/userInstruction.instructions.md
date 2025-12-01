@@ -23,7 +23,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - Help understand complex logic
 - Provide a brief one-line description of a function or class's purpose, allowing for quick browsing without diving into the code
 - Methods use /_* single-line description *_/
-- Class,Type,Interface use /\*_ * multi-line description and design concept *_/
+- Class,Type,Interface use /\*_ * multi-line description *_/
 - Methods or function logic comments use // single-line description
 - I don't need any @param, @returns type comments, as these are redundant
 - I found that my colleague's computer does not support Chinese comments, so please use English comments throughout. However, my English level is not very good, so your English should not be too difficult, and should not exceed B2 level. I need to be able to read it and he needs to understand it.
