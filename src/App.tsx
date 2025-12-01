@@ -2,7 +2,7 @@
 import { StrictMode } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './index.css'
-import { runSimpleCombat } from './modules/combat/examples/simpleCombat'
+import { runSimpleCombat } from './modules/combat-impl'
 function App() {
   return (
     <StrictMode>
