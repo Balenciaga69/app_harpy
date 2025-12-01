@@ -5,7 +5,6 @@ import { isCharacter } from '../../infra/shared'
 import { DamageChain } from '../../logic/damage'
 import { DamageFactory } from './factories'
 import { FirstAliveSelector, type ITargetSelector } from './target-select-strategies'
-
 /**
  * AbilitySystem: Character attack behavior coordination system
  *

@@ -1,5 +1,4 @@
 import type { ICharacter } from '@/modules/combat/domain/character'
-
 /**
  * Target selector strategy interface
  */

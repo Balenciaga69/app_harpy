@@ -13,13 +13,11 @@ export const CombatTiming = {
   /** Default snapshot collection interval (ticks) */
   DEFAULT_SNAPSHOT_INTERVAL: 100,
 } as const
-
 /** Energy system configurations */
 export const EnergySystem = {
   /** Energy regeneration interval (ticks) */
   REGEN_INTERVAL_TICKS: 100,
 } as const
-
 /** Ultimate ability energy configurations */
 export const UltimateEnergy = {
   /** Energy cost for ultimate abilities */

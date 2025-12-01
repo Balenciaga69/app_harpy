@@ -5,7 +5,6 @@
 // Migration note: If migrating to strongly typed language, suggest elevating these two interfaces to shared contract layer
 import type { ICharacter } from '../../../domain/character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
-
 /**
  * Ultimate interface - behavior contract
  *

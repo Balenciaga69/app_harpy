@@ -15,7 +15,6 @@ export const UltimateDefaults = {
   // === Charge related ===
   thunderStrikeChargeStacks: 6, // Thunder strike charge stacks
 } as const
-
 /** Ultimate ability limits (for validation) */
 export const UltimateLimits = {
   // === Damage multiplier ===

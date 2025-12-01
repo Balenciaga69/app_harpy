@@ -50,7 +50,6 @@ export class Character implements ICharacter {
   private equippedItem?: Equipment
   /** Owned relics (stackable) */
   private relics: Relic[] = []
-
   // Privatize internal implementation
   private readonly attributeContainer: AttributeContainer
   private readonly attributeCalculator: AttributeCalculator
@@ -114,9 +113,7 @@ export class Character implements ICharacter {
   getAllEffects(): readonly IEffect[] {
     return this.effectManager.getAllEffects()
   }
-
   // === Item-related methods ===
-
   /**
    * Equip an equipment item
    * Only one equipment can be equipped at a time
@@ -127,37 +124,30 @@ export class Character implements ICharacter {
     if (this.equippedItem) {
       this.unequipItem(context)
     }
-
     // Equip new equipment
     this.equippedItem = equipment
-
     // Apply all effects from this equipment
     equipment.getEffects().forEach((effect) => {
       this.addEffect(effect, context)
     })
   }
-
   /**
    * Unequip current equipment
    */
   unequipItem(context: CombatContext): void {
     if (!this.equippedItem) return
-
     // Remove all effects from this equipment
     this.equippedItem.getEffects().forEach((effect) => {
       this.removeEffect(effect.id, context)
     })
-
     this.equippedItem = undefined
   }
-
   /**
    * Get currently equipped item
    */
   getEquippedItem(): Equipment | undefined {
     return this.equippedItem
   }
-
   /**
    * Add a relic
    * If same relic already exists, add stack instead of creating new instance
@@ -165,17 +155,14 @@ export class Character implements ICharacter {
   addRelic(relic: Relic, context: CombatContext): void {
     // Check if same relic already exists (by name)
     const existingRelic = this.relics.find((r) => r.name === relic.name)
-
     if (existingRelic) {
       // Add stack to existing relic
       // First remove old effects
       existingRelic.getEffects().forEach((effect) => {
         this.removeEffect(effect.id, context)
       })
-
       // Add stack
       existingRelic.addStack()
-
       // Apply new effects
       existingRelic.getEffects().forEach((effect) => {
         this.addEffect(effect, context)
@@ -188,32 +175,26 @@ export class Character implements ICharacter {
       })
     }
   }
-
   /**
    * Remove a relic completely
    */
   removeRelic(relicName: string, context: CombatContext): void {
     const index = this.relics.findIndex((r) => r.name === relicName)
     if (index === -1) return
-
     const relic = this.relics[index]
-
     // Remove all effects from this relic
     relic.getEffects().forEach((effect) => {
       this.removeEffect(effect.id, context)
     })
-
     // Remove relic from list
     this.relics.splice(index, 1)
   }
-
   /**
    * Get all relics
    */
   getAllRelics(): readonly Relic[] {
     return this.relics
   }
-
   /**
    * Get all items (equipment + relics)
    */
@@ -225,7 +206,6 @@ export class Character implements ICharacter {
     items.push(...this.relics)
     return items
   }
-
   // === Ultimate-related methods ===
   /** Get ultimate (if any) */
   getUltimate(): IUltimateAbility | undefined {

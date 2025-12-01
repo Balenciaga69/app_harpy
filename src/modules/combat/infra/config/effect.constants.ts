@@ -16,14 +16,12 @@ export const EffectNames = {
   // === Equipment effects ===
   CHARGED_CRITICAL: 'Charged Critical',
 } as const
-
 /** Effect type constants */
 export const EffectTypes = {
   NATIVE_STATUS: 'native-status',
   EQUIPMENT: 'equipment',
   TEMPORARY: 'temporary',
 } as const
-
 /** Charge effect configurations */
 export const ChargeEffectConfig = {
   /** Cooldown reduction per stack (4% per stack) */
