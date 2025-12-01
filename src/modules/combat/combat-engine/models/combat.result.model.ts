@@ -1,33 +1,32 @@
-import type { ICharacter } from '../../character'
-import type { CombatLogEntry } from '../../logger'
+import type { ICharacter } from '../../domain/character'
+import type { CombatLogEntry } from '../../logic/logger'
 import type { CombatOutcome } from './combat.outcome.model'
 import type { CombatSnapshot } from './combat.snapshot.model'
 import type { CombatStatistics } from './combat.statistics.model'
 
 /**
- * ?°é¬¥çµæ?
+ * CombatResult
  *
- * ?…å«å®Œæ•´?„æˆ°é¬¥é?ç¨‹å?çµæ??¸æ?ï¼Œä? UI ?æ”¾ä½¿ç”¨??
- * ä½¿ç”¨çµ„å?æ¨¡å?å°‡ä??Œè·è²¬ç??¸æ?çµæ?çµ„å??¨ä?èµ·ã€?
+ * Result data produced by the combat engine.
+ * Used by the UI, replay system, and any code that needs final combat info.
  */
 export interface CombatResult {
-  /** ?°é¬¥çµæ? */
+  // The outcome of the combat (win, loss, draw, etc.)
   outcome: CombatOutcome
-  /** ?²å???*/
+  // Which side won: 'player', 'enemy', or null for no winner
   winner: 'player' | 'enemy' | null
-  /** å­˜æ´»??*/
+  // Characters that survived the combat
   survivors: ICharacter[]
-  /** ?°é¬¥ç¸?Tick ??*/
+  // Total ticks the combat lasted
   totalTicks: number
-  /** å®Œæ•´?„ä?ä»¶æ—¥èªŒï??¨æ–¼è©³ç´°?æ”¾ï¼?*/
+  // Ordered list of combat log entries (useful for replay and debugging)
   logs: CombatLogEntry[]
-  /** å®šæ?å¿«ç…§ï¼ˆç”¨?¼å¿«?Ÿè·³è½‰ï? */
+  // Periodic snapshots captured during combat (for replay or inspection)
   snapshots: CombatSnapshot[]
-  /** çµ±è??¸æ? */
+  // Aggregated statistics about the combat (damage done, kills, etc.)
   statistics: CombatStatistics
-  /** ?°é¬¥?‹å??‚é???*/
+  // Tick when the combat started
   startedAt: number
-  /** ?°é¬¥çµæ??‚é???*/
+  // Tick when the combat ended
   endedAt: number
 }
-

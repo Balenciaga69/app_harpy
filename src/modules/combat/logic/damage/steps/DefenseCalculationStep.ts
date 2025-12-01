@@ -1,0 +1,37 @@
+import type { CombatContext } from '@/modules/combat/context'
+import type { DamageEvent } from '../models/damage.event.model'
+import type { IDamageStep } from './DamageStep.interface'
+import { collectHooks } from './utils/hookCollector.util'
+import { calculateArmorReduction } from '../utils/damage.calculator.util'
+/**
+ * DefenseCalculationStep: Calculates damage reduction based on target's defense.
+ *
+ * Responsibilities:
+ * - Calculate armor reduction
+ * - Apply reduction to damage amount
+ * - Handle true damage that bypasses defense
+ */
+export class DefenseCalculationStep implements IDamageStep {
+  execute(event: DamageEvent, context: CombatContext): boolean {
+    const hooks = collectHooks(event.source, event.target)
+    // Execute hooks
+    for (const hook of hooks) {
+      if (hook.onDefenseCalculation) {
+        hook.onDefenseCalculation(event, context)
+      }
+    }
+    // Skip defense for true damage
+    if (event.isTrueDamage) {
+      return true
+    }
+    // Get armor value
+    const armor = event.target.getAttribute('armor')
+    // Calculate reduction rate using unified formula
+    const reductionRate = calculateArmorReduction(armor)
+    // Apply reduction
+    const reducedDamage = event.amount * (1 - reductionRate)
+    // Ensure minimum damage of 1
+    event.amount = Math.max(1, reducedDamage)
+    return true
+  }
+}

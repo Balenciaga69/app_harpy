@@ -11,18 +11,18 @@ Provide project context and coding guidelines that AI should follow when generat
 - 易讀性高
 - 遵循SOLID原則(尤其是單一職責原則最重要)
 - 符合設計模式
-
 - 命名有意義
 - 避免魔法數字和魔法字串
-
 - 代碼就是最好的文檔
+- 物件關係不應形成循環依賴，依賴應該是單向的
 
 ### 關於註解
 
-- 註解有兩種用途
-- 幫助理解複雜的邏輯
-- 簡短的一行描述函數或類的用途，讓高速瀏覽的人能免於看代碼
-- 方法使用 /\*_ 單行敘述功能 _/
-- Class,Type,Interface 使用 /\*\* _ 多行敘述功能與設計理念 _/
-- 方法或函數內的邏輯註解使用 // 單行敘述
-- 我不需要任何 @param, @returns 之類的註解，因為這些都是多餘的
+- Comments have two purposes
+- Help understand complex logic
+- Provide a brief one-line description of a function or class's purpose, allowing for quick browsing without diving into the code
+- Methods use /_* single-line description *_/
+- Class,Type,Interface use /\*_ * multi-line description and design concept *_/
+- Methods or function logic comments use // single-line description
+- I don't need any @param, @returns type comments, as these are redundant
+- I found that my colleague's computer does not support Chinese comments, so please use English comments throughout. However, my English level is not very good, so your English should not be too difficult, and should not exceed B2 level. I need to be able to read it and he needs to understand it.

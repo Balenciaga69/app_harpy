@@ -1,26 +1,25 @@
-import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../character'
-import type { EventLogger } from '../../logger'
-import type { SnapshotCollector } from '../../snapshot'
+import type { CombatContext } from '@/modules/combat/context'
+import type { ICharacter } from '../../domain/character'
+import type { EventLogger } from '../../logic/logger'
+import type { SnapshotCollector } from '../../logic/snapshot'
 import type { CombatConfig, CombatOutcome, CombatResult, CombatStatistics, CharacterStats } from '../models'
-import type { CombatLogEntry } from '../../logger'
-import { createEmptyDamages } from '../../damage'
+import type { CombatLogEntry } from '../../logic/logger'
 /**
- * ResultBuilder：戰鬥結果構建器
+ * ResultBuilder: Combat result builder
  *
- * 設計理念：
- * - 採用建造者模式分步構建複雜的 CombatResult 物件，將結果組裝邏輯從 CombatEngine 中分離
- * - 使用組合模式將不同職責的數據（結果判定、快照獲取、統計計算）組合在一起
- * - 保持每個方法的單一職責，確保易於測試與維護
- * - 職責專一：只負責組裝結果，不負責生成快照（由 SnapshotCollector 負責）
+ * Design concept:
+ * - Uses builder pattern to construct complex CombatResult objects step by step, separating result assembly logic from CombatEngine
+ * - Uses composition pattern to combine different responsibilities (outcome determination, snapshot retrieval, statistics calculation)
+ * - Keeps each method's single responsibility for easy testing and maintenance
+ * - Focused responsibility: only assembles results, not generating snapshots (handled by SnapshotCollector)
  *
- * 主要職責：
- * - 分析戰鬥結果並判定勝負（analyzeOutcome）
- * - 獲取戰鬥結束時的存活角色列表（getSurvivors）
- * - 從 SnapshotCollector 獲取戰鬥快照（不再自行生成假數據）
- * - 初始化統計數據結構（目前為空殼，待未來實現 StatisticsCalculator）
- * - 從 EventLogger 收集完整事件日誌
- * - 組裝並返回完整的 CombatResult 物件
+ * Main responsibilities:
+ * - Analyze combat outcome and determine winner (analyzeOutcome)
+ * - Get list of surviving characters at combat end (getSurvivors)
+ * - Get combat snapshots from SnapshotCollector (no longer generates fake data)
+ * - Initialize statistics data structure (currently empty shell, pending future StatisticsCalculator implementation)
+ * - Collect complete event logs from EventLogger
+ * - Assemble and return complete CombatResult object
  */
 export class ResultBuilder {
   private context: CombatContext
@@ -44,7 +43,7 @@ export class ResultBuilder {
     this.startTime = startTime
     this.endTime = endTime
   }
-  /** 構建完整的戰鬥結果 */
+  /** Build complete combat result */
   build(): CombatResult {
     const { outcome, winner } = this.analyzeOutcome()
     const survivors = this.getSurvivors()
@@ -64,7 +63,7 @@ export class ResultBuilder {
       endedAt: this.endTime,
     }
   }
-  /** 分析戰鬥結果 */
+  /** Analyze combat outcome */
   private analyzeOutcome(): { outcome: CombatOutcome; winner: 'player' | 'enemy' | null } {
     const playerAlive = this.config.playerTeam.some((c) => !c.isDead)
     const enemyAlive = this.config.enemyTeam.some((c) => !c.isDead)
@@ -81,30 +80,28 @@ export class ResultBuilder {
     if (reachedMaxTicks) {
       return { outcome: 'timeout', winner: null }
     }
-    // 預設情況（不應該發生）
+    // Default case (should not happen)
     return { outcome: 'draw', winner: null }
   }
-  /** 獲取存活者 */
+  /** Get survivors */
   private getSurvivors(): ICharacter[] {
     return [...this.config.playerTeam, ...this.config.enemyTeam].filter((c) => !c.isDead)
   }
-  /** 收集事件日誌 */
+  /** Collect event logs */
   private collectLogs(): CombatLogEntry[] {
     return this.eventLogger.getLogs() as CombatLogEntry[]
   }
-  /** 構建統計數據（目前為空殼） */
+  /** Build statistics (currently empty shell) */
   private buildStatistics(): CombatStatistics {
     const allCharacters = [...this.config.playerTeam, ...this.config.enemyTeam]
     const characterStats = new Map<string, CharacterStats>()
-    // 初始化每個角色的統計
+    // Initialize statistics for each character
     allCharacters.forEach((char) => {
       characterStats.set(char.id, {
         characterId: char.id,
         name: char.name,
         damageDealt: 0,
         damageTaken: 0,
-        elementalDamageDealt: createEmptyDamages(),
-        elementalDamageTaken: createEmptyDamages(),
         kills: 0,
         survived: !char.isDead,
         attackCount: 0,
@@ -112,13 +109,13 @@ export class ResultBuilder {
         dodges: 0,
       })
     })
-    // TODO: 統計計算邏輯
-    // 需要從 eventLogger 的日誌中反推計算各項數據
-    // 建議未來實現 StatisticsCalculator 類別
-    const totalDamage = 0 // TODO: 從統計中計算
+    // TODO: Statistics calculation logic
+    // Need to calculate data from eventLogger logs
+    // Suggest implementing StatisticsCalculator class in the future
+    const totalDamage = 0
     return {
       characterStats,
-      effectsApplied: new Map(), // TODO: 統計效果觸發次數
+      effectsApplied: new Map(),
       totalDamage,
       duration: this.context.getCurrentTick(),
     }

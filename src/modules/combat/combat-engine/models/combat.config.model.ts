@@ -1,20 +1,20 @@
-import type { ICharacter } from '../../character'
+import type { ICharacter } from '../../domain/character'
 /**
- * 戰鬥配置
+ * CombatConfig
  *
- * 定義一場戰鬥的初始參數。
+ * Defines the initial parameters for a combat session.
  */
 export interface CombatConfig {
-  /** 隨機數種子（用於可重現的戰鬥） */
+  /** Random seed for reproducible combat */
   seed?: string | number
-  /** 玩家隊伍 */
+  /** Player team */
   playerTeam: ICharacter[]
-  /** 敵人隊伍 */
+  /** Enemy team */
   enemyTeam: ICharacter[]
-  /** 最大 Tick 數（防止無限循環） */
+  /** Maximum number of ticks to prevent infinite loops */
   maxTicks?: number
-  /** 快照間隔（每 N 個 Tick 記錄一次快照） */
+  /** Interval for taking snapshots (every N ticks) */
   snapshotInterval?: number
-  /** 是否啟用日誌記錄 */
+  /** Whether to enable logging */
   enableLogging?: boolean
 }

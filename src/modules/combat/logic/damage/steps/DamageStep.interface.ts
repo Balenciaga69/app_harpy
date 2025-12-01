@@ -1,0 +1,14 @@
+import type { CombatContext } from '@/modules/combat/context'
+import type { DamageEvent } from '../models/damage.event.model'
+/**
+ * DamageStep interface
+ *
+ * Define unified interface for each step in damage calculation process
+ */
+export interface IDamageStep {
+  /**
+   * Execute this step's logic
+   * @returns Whether to continue to next step (false = terminate process)
+   */
+  execute(event: DamageEvent, context: CombatContext): boolean
+}

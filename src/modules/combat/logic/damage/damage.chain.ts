@@ -1,0 +1,53 @@
+import type { CombatContext } from '@/modules/combat/context'
+import type { DamageEvent } from './models/damage.event.model'
+import type { IDamageStep } from './steps/DamageStep.interface'
+import { AfterApplyStep } from './steps/AfterApplyStep'
+import { ApplyDamageStep } from './steps/ApplyDamageStep'
+import { BeforeApplyStep } from './steps/BeforeApplyStep'
+import { BeforeDamageStep } from './steps/BeforeDamageStep'
+import { CriticalStep } from './steps/CriticalStep'
+import { DamageModifyStep } from './steps/DamageModifyStep'
+import { DefenseCalculationStep } from './steps/DefenseCalculationStep'
+import { HitCheckStep } from './steps/HitCheckStep'
+/**
+ * DamageChain: Responsibility chain coordinating damage calculation process.
+ *
+ * Design concept:
+ * - Divide complete damage calculation process into clear stages and coordinate Hook execution order.
+ * - Use Step pattern, each stage handled by independent Step class, achieving single responsibility.
+ * - Support ICombatHook extension, allow various effects to intervene in process at different stages.
+ * - Follow open-closed principle: adding new effects only requires adding Step class.
+ *
+ * Main responsibilities:
+ * - Execute each damage calculation stage in order.
+ * - Support early termination of stages (miss, prevented).
+ */
+export class DamageChain {
+  private steps: IDamageStep[]
+  private context: CombatContext
+  constructor(context: CombatContext) {
+    this.context = context
+    // Define complete damage calculation process
+    this.steps = [
+      new BeforeDamageStep(), // Stage 1: Damage initiation
+      new HitCheckStep(), // Stage 2: Hit check
+      new CriticalStep(), // Stage 3: Critical check
+      new DamageModifyStep(), // Stage 4: Damage modification
+      new DefenseCalculationStep(), // Stage 5: Defense calculation
+      new BeforeApplyStep(), // Stage 6: Final confirmation
+      new ApplyDamageStep(), // Apply damage
+      new AfterApplyStep(), // Stage 7: After damage apply
+    ]
+  }
+  /**
+   * Execute complete damage calculation process
+   */
+  execute(event: DamageEvent): void {
+    for (const step of this.steps) {
+      const shouldContinue = step.execute(event, this.context)
+      if (!shouldContinue) {
+        break // Terminate process early
+      }
+    }
+  }
+}

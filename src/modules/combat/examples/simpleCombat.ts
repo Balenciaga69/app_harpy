@@ -1,100 +1,102 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '../combat-engine/combat.engine'
-import { Character } from '../character/character'
+import { ThunderStrikeUltimate } from '../coordination/models'
+import { Character } from '../domain/character/character'
+import { createDefaultAttributes } from '../domain/character/models/attribute.core.model'
 /**
- * 簡單的戰鬥測試範例
- * 驗證整個戰鬥系統能夠運行
+ * Simple combat test example (v0.3)
+ * Validates energy system, ultimate ability mechanism, and new attribute system
  */
 function runSimpleCombat() {
-  // eslint-disable-next-line no-console
-  console.log('=== 開始戰鬥測試 ===\n')
-  // 創建玩家隊伍
+  console.log('=== Starting Combat Test (v0.3) ===\n')
+  // Create player team
   const warrior = new Character({
-    name: '戰士',
+    name: 'Warrior',
     team: 'player',
-    baseAttributes: {
-      maxHp: 100,
-      armor: 10,
-      evasion: 0.1,
-      accuracy: 0.95,
-      attackDamage: 20,
-      attackCooldown: 100,
-      criticalChance: 0.2,
-      spellDamage: 0,
-      spellCooldown: 0,
-    },
+    baseAttributes: createDefaultAttributes({
+      maxHp: 1200,
+      currentHp: 1200,
+      armor: 80,
+      evasion: 50,
+      accuracy: 150,
+      attackDamage: 120,
+      attackCooldown: 100, // 1 second per attack
+      criticalChance: 0.1, // 10%
+      energyGainOnAttack: 4, // About 25 attacks to unleash ultimate
+    }),
+    ultimate: new ThunderStrikeUltimate(2.5, 6),
   })
-  warrior.setCurrentHpClamped(100)
   const archer = new Character({
-    name: '弓箭手',
+    name: 'Archer',
     team: 'player',
-    baseAttributes: {
-      maxHp: 80,
-      armor: 5,
-      evasion: 0.15,
-      accuracy: 0.98,
-      attackDamage: 10,
-      attackCooldown: 150,
-      criticalChance: 0.3,
-      spellDamage: 0,
-      spellCooldown: 0,
-    },
+    baseAttributes: createDefaultAttributes({
+      maxHp: 800,
+      currentHp: 800,
+      armor: 30,
+      evasion: 120,
+      accuracy: 180,
+      attackDamage: 90,
+      attackCooldown: 80, // 0.8 seconds per attack (faster attack speed)
+      criticalChance: 0.15, // 15%
+      criticalMultiplier: 2.0,
+      energyGainOnAttack: 5, // About 20 attacks to unleash ultimate
+    }),
   })
-  archer.setCurrentHpClamped(80)
-  // 創建敵人隊伍
+  // Create enemy team
   const goblin1 = new Character({
-    name: '哥布林1',
+    name: 'Goblin1',
     team: 'enemy',
-    baseAttributes: {
-      maxHp: 50,
-      armor: 3,
-      evasion: 0.05,
-      accuracy: 0.85,
-      attackDamage: 10,
-      attackCooldown: 120,
-      criticalChance: 0.1,
-      spellDamage: 0,
-      spellCooldown: 0,
-    },
+    baseAttributes: createDefaultAttributes({
+      maxHp: 600,
+      currentHp: 600,
+      armor: 20,
+      evasion: 80,
+      accuracy: 120,
+      attackDamage: 50,
+      attackCooldown: 120, // 1.2 seconds per attack
+    }),
   })
-  goblin1.setCurrentHpClamped(50)
   const goblin2 = new Character({
-    name: '哥布林2',
+    name: 'Goblin2',
     team: 'enemy',
-    baseAttributes: {
-      maxHp: 50,
-      armor: 3,
-      evasion: 0.05,
-      accuracy: 0.85,
-      attackDamage: 10,
+    baseAttributes: createDefaultAttributes({
+      maxHp: 600,
+      currentHp: 600,
+      armor: 20,
+      evasion: 80,
+      accuracy: 120,
+      attackDamage: 50,
       attackCooldown: 120,
-      criticalChance: 0.1,
-      spellDamage: 0,
-      spellCooldown: 0,
-    },
+    }),
   })
-  goblin2.setCurrentHpClamped(50)
-  // 創建戰鬥引擎
+  // Create combat engine
   const engine = new CombatEngine({
-    seed: 12345, // 固定種子以確保可重現
+    seed: 12345, // Fixed seed for reproducible results
     playerTeam: [warrior, archer],
     enemyTeam: [goblin1, goblin2],
     maxTicks: 10000,
     snapshotInterval: 100,
     enableLogging: true,
   })
-  // 啟動戰鬥
-  console.log('戰鬥開始...\n')
+  // Start combat
+  console.log('Combat begins...')
+  console.log('Warrior: High HP and armor, strong attack power')
+  console.log('Archer: Fast attack speed, high evasion, high crit rate')
+  console.log('Energy accumulates to 100 to unleash ultimate ability\n')
   const result = engine.start()
-  // 輸出戰鬥結果
-  console.log('=== 戰鬥結束 ===\n')
-  // 清理資源
+  // Output combat results
+  console.log('\n=== Combat Ended ===')
+  console.log(`Winner: ${result.winner}`)
+  console.log(`Total rounds: ${result.totalTicks} ticks`)
+  console.log(`Survivors: ${result.survivors.map((s) => s.name).join(', ')}`)
+  // Clean up resources
   engine.dispose()
-  console.log('\n=== 測試完成 ===')
+  console.log('\n=== Test Completed ===')
+  // Filter out tick events to reduce log volume
   result.logs = result.logs.filter((log) => !['tick:start', 'tick:end'].includes(log.eventType))
   return result
 }
-// 執行測試
+// Run test
 // if (require.main === module) {
 //   runSimpleCombat()
 // }
