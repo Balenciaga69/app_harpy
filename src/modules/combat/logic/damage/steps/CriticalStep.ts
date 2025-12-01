@@ -2,6 +2,7 @@ import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
+import { CriticalFormula } from '@/modules/combat/infra/config'
 /**
  * CriticalStep: Determines if damage is critical and applies critical multiplier.
  */
@@ -19,7 +20,7 @@ export class CriticalStep implements IDamageStep {
     event.isCrit = context.rng.next() < critChance
     // If critical, apply critical multiplier
     if (event.isCrit) {
-      const critMultiplier = event.source.getAttribute('criticalMultiplier') ?? 1.5
+      const critMultiplier = event.source.getAttribute('criticalMultiplier') ?? CriticalFormula.DEFAULT_MULTIPLIER
       event.amount *= critMultiplier
       // Emit critical event
       context.eventBus.emit('entity:critical', {

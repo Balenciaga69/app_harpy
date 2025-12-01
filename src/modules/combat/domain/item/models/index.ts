@@ -1,0 +1,5 @@
+export type { IItem, ItemRarity } from './item.interface'
+export { Equipment } from './equipment.model'
+export type { EquipmentConfig } from './equipment.model'
+export { Relic } from './relic.model'
+export type { RelicConfig } from './relic.model'

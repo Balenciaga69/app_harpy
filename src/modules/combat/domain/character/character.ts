@@ -1,16 +1,19 @@
 import { nanoid } from 'nanoid'
 import type { CharacterSnapshot } from '@/modules/combat/infra/shared'
-import type { IUltimateAbility } from '../../coordination/models/ultimate.ability.interface'
 import type { BaseAttributeValues } from './models/attribute.core.model'
 import type { CharacterId } from './interfaces/character.interface'
 import type { ICharacter } from './interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from '../effect/models/effect.model'
+import type { IItem } from '../item/models/item.interface'
+import type { Equipment } from '../item/models/equipment.model'
+import type { Relic } from '../item/models/relic.model'
 import { EffectManager } from '../effect/effect.manager'
 import { AttributeCalculator } from './attribute.calculator'
 import { AttributeContainer } from './attribute.container'
 import type { AttributeModifier } from './models/attribute.modifier.model'
 import type { AttributeType } from './models/attribute.core.model'
+import type { IUltimateAbility } from '../../coordination'
 /**
  * Configuration parameters required for character initialization
  */
@@ -43,6 +46,10 @@ export class Character implements ICharacter {
   isDead: boolean = false
   /** Character's ultimate (optional) */
   private ultimate?: IUltimateAbility
+  /** Equipped items (only one equipment allowed) */
+  private equippedItem?: Equipment
+  /** Owned relics (stackable) */
+  private relics: Relic[] = []
   // Privatize internal implementation
   private readonly attributeContainer: AttributeContainer
   private readonly attributeCalculator: AttributeCalculator
@@ -105,6 +112,99 @@ export class Character implements ICharacter {
   /** Get all effects */
   getAllEffects(): readonly IEffect[] {
     return this.effectManager.getAllEffects()
+  }
+  // === Item-related methods ===
+  /**
+   * Equip an equipment item
+   * Only one equipment can be equipped at a time
+   * Equipping new equipment will unequip the old one
+   */
+  equipItem(equipment: Equipment, context: CombatContext): void {
+    // Unequip old equipment if exists
+    if (this.equippedItem) {
+      this.unequipItem(context)
+    }
+    // Equip new equipment
+    this.equippedItem = equipment
+    // Apply all effects from this equipment
+    equipment.getEffects().forEach((effect) => {
+      this.addEffect(effect, context)
+    })
+  }
+  /**
+   * Unequip current equipment
+   */
+  unequipItem(context: CombatContext): void {
+    if (!this.equippedItem) return
+    // Remove all effects from this equipment
+    this.equippedItem.getEffects().forEach((effect) => {
+      this.removeEffect(effect.id, context)
+    })
+    this.equippedItem = undefined
+  }
+  /**
+   * Get currently equipped item
+   */
+  getEquippedItem(): Equipment | undefined {
+    return this.equippedItem
+  }
+  /**
+   * Add a relic
+   * If same relic already exists, add stack instead of creating new instance
+   */
+  addRelic(relic: Relic, context: CombatContext): void {
+    // Check if same relic already exists (by name)
+    const existingRelic = this.relics.find((r) => r.name === relic.name)
+    if (existingRelic) {
+      // Add stack to existing relic
+      // First remove old effects
+      existingRelic.getEffects().forEach((effect) => {
+        this.removeEffect(effect.id, context)
+      })
+      // Add stack
+      existingRelic.addStack()
+      // Apply new effects
+      existingRelic.getEffects().forEach((effect) => {
+        this.addEffect(effect, context)
+      })
+    } else {
+      // Add new relic
+      this.relics.push(relic)
+      relic.getEffects().forEach((effect) => {
+        this.addEffect(effect, context)
+      })
+    }
+  }
+  /**
+   * Remove a relic completely
+   */
+  removeRelic(relicName: string, context: CombatContext): void {
+    const index = this.relics.findIndex((r) => r.name === relicName)
+    if (index === -1) return
+    const relic = this.relics[index]
+    // Remove all effects from this relic
+    relic.getEffects().forEach((effect) => {
+      this.removeEffect(effect.id, context)
+    })
+    // Remove relic from list
+    this.relics.splice(index, 1)
+  }
+  /**
+   * Get all relics
+   */
+  getAllRelics(): readonly Relic[] {
+    return this.relics
+  }
+  /**
+   * Get all items (equipment + relics)
+   */
+  getAllItems(): IItem[] {
+    const items: IItem[] = []
+    if (this.equippedItem) {
+      items.push(this.equippedItem)
+    }
+    items.push(...this.relics)
+    return items
   }
   // === Ultimate-related methods ===
   /** Get ultimate (if any) */

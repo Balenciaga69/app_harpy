@@ -2,6 +2,7 @@ import type { CombatSnapshot } from '../../combat-engine/models'
 import type { CombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '../../domain/character'
 import { isCharacter } from '../../infra/shared'
+import { CombatTiming } from '../../infra/config'
 /**
  * SnapshotCollector: Combat snapshot collector.
  *
@@ -23,7 +24,7 @@ export class SnapshotCollector {
   private snapshots: CombatSnapshot[] = []
   private interval: number
   private context: CombatContext
-  constructor(context: CombatContext, interval: number = 100) {
+  constructor(context: CombatContext, interval: number = CombatTiming.DEFAULT_SNAPSHOT_INTERVAL) {
     this.context = context
     this.interval = interval
     this.registerEventListeners()
