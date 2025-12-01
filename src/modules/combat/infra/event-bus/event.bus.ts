@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
-import type { CombatEventMap } from './combat.event.map.model'
+import type { CombatEventMap } from './models/combat.event.map.model'
 /**
  * EventBus：戰鬥系統的事件總線。
  *

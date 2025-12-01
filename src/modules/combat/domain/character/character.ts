@@ -3,6 +3,7 @@ import type { IUltimateAbility } from '../../coordination'
 import type { BaseAttributeValues, CharacterId, ICharacter } from '.'
 import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from '../effect/models/effect.model'
+import type { CharacterSnapshot } from './models/character.snapshot.model'
 import { EffectManager } from '../effect/effect.manager'
 import { AttributeCalculator } from './attribute.calculator'
 import { AttributeContainer } from './attribute.container'
@@ -111,5 +112,18 @@ export class Character implements ICharacter {
   /** 設置大招 */
   setUltimate(ultimate: IUltimateAbility): void {
     this.ultimate = ultimate
+  }
+
+  // === 快照相關方法 ===
+  /** 創建角色快照（用於回放、日誌記錄） */
+  createSnapshot(): CharacterSnapshot {
+    return {
+      id: this.id,
+      name: this.name,
+      currentHp: this.getAttribute('currentHp'),
+      maxHp: this.getAttribute('maxHp'),
+      isDead: this.isDead,
+      effects: this.getAllEffects().map((e) => e.name),
+    }
   }
 }

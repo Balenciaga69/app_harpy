@@ -1,7 +1,7 @@
+import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 import { nanoid } from 'nanoid'
-import type { ICharacter } from '../../../character'
 import type { CombatContext } from '../../../../context'
-import type { DamageEvent, ICombatHook } from '../../../../damage'
+import type { ICharacter } from '../../../character'
 import type { IEffect } from '../../models/effect.model'
 /**
  * 低血護甲增幅效果

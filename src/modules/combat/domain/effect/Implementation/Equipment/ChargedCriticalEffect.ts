@@ -32,6 +32,7 @@ export class ChargedCriticalEffect implements IEffect, ICombatHook {
       return event
     }
     // 檢查是否有充能效果
+    // TODO: 異常狀態表 應該有個 Enum 而不是在此處 === "充能"
     const hasCharge = event.source.getAllEffects().some((effect) => effect.name === '充能')
     if (hasCharge) {
       // 重新計算暴擊判定，使用加倍的暴擊率

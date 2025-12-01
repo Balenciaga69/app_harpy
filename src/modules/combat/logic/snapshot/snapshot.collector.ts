@@ -41,14 +41,7 @@ export class SnapshotCollector {
     const allEntities = this.context.getAllEntities()
     const snapshot: CombatSnapshot = {
       tick,
-      characters: allEntities.filter(isCharacter).map((character: ICharacter) => ({
-        id: character.id,
-        name: character.name,
-        currentHp: character.getAttribute('currentHp'),
-        maxHp: character.getAttribute('maxHp'),
-        isDead: character.isDead,
-        effects: character.getAllEffects().map((effect) => effect.name),
-      })),
+      characters: allEntities.filter(isCharacter).map((character: ICharacter) => character.createSnapshot()),
     }
     this.snapshots.push(snapshot)
   }
