@@ -8,17 +8,21 @@
 ## 📋 問題概述
 
 ### 問題 1: 可擴展性需求
+
 **需求**: 能夠使用裝備、大絕招、聖物、裝備特效等來改變傷害與狀態與異常狀態計算邏輯
 
 **現況分析**:
+
 - 目前已有 `ICombatHook` 介面，允許在傷害計算的 7 個階段插入自定義邏輯
 - 已有實作範例：`ChargedCriticalEffect`（裝備特效）、`LowHealthArmorEffect`（裝備特效）
 - 這些特效透過實作 `IEffect` 和 `ICombatHook` 雙介面來達成
 
 ### 問題 2: 組織架構疑慮
+
 **困惑**: 大絕招放在 `coordination/models/`，效果放在 `domain/effect/`，兩個資料夾在定義層次上不同
 
 **現況分析**:
+
 - `IUltimateAbility` 位於 `coordination` 層（第 5 層：協調層）
 - `IEffect` 位於 `domain` 層（第 3 層：數據模型層）
 - `ICombatHook` 位於 `logic` 層（第 4 層：業務邏輯層）
@@ -30,20 +34,22 @@
 ### 遊戲設計角度：Item = 遺物的本質
 
 根據你的設計文件：
+
 > "其實本質上都是遺物(Items)，只不過遺物可以無限堆疊，但裝備武器只能裝備一個。"
 
 這個理念暗示了：
+
 1. **武器、頭盔、項鍊** 都是特殊的遺物（單例限制）
 2. **遺物** 可以無限堆疊（數量限制）
 3. 它們本質上都是 **效果的容器** (Effect Container)
 
 ### 技術實作角度：三種擴展介面的職責
 
-| 介面                | 作用範疇               | 生命週期       | 觸發時機           |
-| :------------------ | :--------------------- | :------------- | :----------------- |
-| `IEffect`           | 狀態管理、屬性修改     | 持續/週期      | onApply/onTick     |
-| `ICombatHook`       | 傷害計算流程干預       | 單次傷害事件   | 傷害計算各階段     |
-| `IUltimateAbility`  | 主動技能行為           | 主動觸發       | 能量滿時執行       |
+| 介面               | 作用範疇           | 生命週期     | 觸發時機       |
+| :----------------- | :----------------- | :----------- | :------------- |
+| `IEffect`          | 狀態管理、屬性修改 | 持續/週期    | onApply/onTick |
+| `ICombatHook`      | 傷害計算流程干預   | 單次傷害事件 | 傷害計算各階段 |
+| `IUltimateAbility` | 主動技能行為       | 主動觸發     | 能量滿時執行   |
 
 ---
 
@@ -93,7 +99,7 @@ combat/
 ```typescript
 /**
  * Item interface - unified abstraction for all equipment and relics
- * 
+ *
  * Design concept:
  * - All items (weapons, armor, relics) implement this interface
  * - Items can provide multiple effects
@@ -103,12 +109,12 @@ export interface IItem {
   readonly id: string
   readonly name: string
   readonly description: string
-  readonly rarity: ItemRarity  // Common, Rare, Epic, Legendary
-  readonly slot?: ItemSlot     // Only equipment has slot restriction
-  
+  readonly rarity: ItemRarity // Common, Rare, Epic, Legendary
+  readonly slot?: ItemSlot // Only equipment has slot restriction
+
   /** Get all effects this item provides */
   getEffects(): IEffect[]
-  
+
   /** Upgrade item (future feature) */
   upgrade?(): void
 }
@@ -130,9 +136,9 @@ export abstract class Equipment implements IItem {
   readonly description: string
   readonly rarity: ItemRarity
   readonly slot: ItemSlot
-  
+
   protected effects: IEffect[] = []
-  
+
   constructor(config: EquipmentConfig) {
     this.id = config.id ?? `equipment-${nanoid(6)}`
     this.name = config.name
@@ -141,10 +147,10 @@ export abstract class Equipment implements IItem {
     this.slot = config.slot
     this.initializeEffects()
   }
-  
+
   /** Initialize effects provided by this equipment */
   protected abstract initializeEffects(): void
-  
+
   getEffects(): IEffect[] {
     return this.effects
   }
@@ -163,11 +169,11 @@ export abstract class Relic implements IItem {
   readonly name: string
   readonly description: string
   readonly rarity: ItemRarity
-  readonly slot = undefined  // Relics don't occupy equipment slots
-  
+  readonly slot = undefined // Relics don't occupy equipment slots
+
   protected effects: IEffect[] = []
   private stackCount: number = 1
-  
+
   constructor(config: RelicConfig) {
     this.id = config.id ?? `relic-${nanoid(6)}`
     this.name = config.name
@@ -175,24 +181,24 @@ export abstract class Relic implements IItem {
     this.rarity = config.rarity
     this.initializeEffects()
   }
-  
+
   protected abstract initializeEffects(): void
-  
+
   getEffects(): IEffect[] {
     return this.effects
   }
-  
+
   /** Get stack count */
   getStackCount(): number {
     return this.stackCount
   }
-  
+
   /** Add stacks */
   addStack(): void {
     this.stackCount++
     this.onStackChanged()
   }
-  
+
   /** Handle stack count changes (e.g., refresh effects) */
   protected abstract onStackChanged(): void
 }
@@ -205,7 +211,7 @@ export abstract class Relic implements IItem {
 ```typescript
 /**
  * Charged Critical Weapon
- * 
+ *
  * Equipment effect:
  * - When wielder has charge, critical chance doubles
  */
@@ -215,14 +221,14 @@ export class ChargedCriticalWeapon extends Equipment {
       name: 'Stormblade',
       description: 'Doubles critical chance when charged',
       rarity: 'epic',
-      slot: 'weapon'
+      slot: 'weapon',
     })
   }
-  
+
   protected initializeEffects(): void {
     // Add base attack damage modifier
     this.effects.push(new BaseAttackDamageEffect(50))
-    
+
     // Add charged critical hook effect
     this.effects.push(new ChargedCriticalEffect())
   }
@@ -234,7 +240,7 @@ export class ChargedCriticalWeapon extends Equipment {
 ```typescript
 /**
  * Iron Will Relic
- * 
+ *
  * Stackable relic:
  * - Gain +20% armor when below 30% HP
  * - Each stack increases armor bonus by 10%
@@ -244,14 +250,14 @@ export class IronWillRelic extends Relic {
     super({
       name: 'Iron Will',
       description: 'Gain armor when low on health',
-      rarity: 'rare'
+      rarity: 'rare',
     })
   }
-  
+
   protected initializeEffects(): void {
     this.effects.push(new LowHealthArmorEffect(this.getStackCount()))
   }
-  
+
   protected onStackChanged(): void {
     // Refresh effects with new stack count
     this.effects = []
@@ -306,10 +312,10 @@ domain/
 
 ## 📊 方案對比
 
-| 方案     | 優點                                              | 缺點                               | 適用場景                 |
-| :------- | :------------------------------------------------ | :--------------------------------- | :----------------------- |
-| **方案 A** | ✅ 符合「Item = 遺物」的遊戲設計<br>✅ 統一管理入口<br>✅ 易於實作升級系統<br>✅ 清晰的職責分層 | ⚠️ 需要新建模組<br>⚠️ 需要遷移部分代碼 | 長期維護、系統複雜度高   |
-| **方案 B** | ✅ 改動最小<br>✅ 保持現有架構 | ⚠️ 概念仍然分散<br>⚠️ 未來擴展受限 | 短期快速開發、試錯階段   |
+| 方案       | 優點                                                                                            | 缺點                                   | 適用場景               |
+| :--------- | :---------------------------------------------------------------------------------------------- | :------------------------------------- | :--------------------- |
+| **方案 A** | ✅ 符合「Item = 遺物」的遊戲設計<br>✅ 統一管理入口<br>✅ 易於實作升級系統<br>✅ 清晰的職責分層 | ⚠️ 需要新建模組<br>⚠️ 需要遷移部分代碼 | 長期維護、系統複雜度高 |
+| **方案 B** | ✅ 改動最小<br>✅ 保持現有架構                                                                  | ⚠️ 概念仍然分散<br>⚠️ 未來擴展受限     | 短期快速開發、試錯階段 |
 
 ---
 
@@ -340,10 +346,10 @@ domain/
 ```typescript
 export class Character implements ICharacter {
   // ...existing code...
-  
+
   private equippedItems: Map<ItemSlot, Equipment> = new Map()
   private relics: Relic[] = []
-  
+
   /** Equip an item */
   equipItem(item: Equipment, context: CombatContext): void {
     // Remove old item in same slot
@@ -351,29 +357,28 @@ export class Character implements ICharacter {
     if (oldItem) {
       this.unequipItem(item.slot, context)
     }
-    
+
     // Equip new item
     this.equippedItems.set(item.slot, item)
-    
+
     // Apply all effects from this item
-    item.getEffects().forEach(effect => {
+    item.getEffects().forEach((effect) => {
       this.applyEffect(effect, context)
     })
   }
-  
+
   /** Add a relic */
   addRelic(relic: Relic, context: CombatContext): void {
     this.relics.push(relic)
-    relic.getEffects().forEach(effect => {
+    relic.getEffects().forEach((effect) => {
       this.applyEffect(effect, context)
     })
   }
-  
+
   /** Get all item effects (for hook collection) */
   private getAllItemEffects(): IEffect[] {
-    const equipmentEffects = Array.from(this.equippedItems.values())
-      .flatMap(item => item.getEffects())
-    const relicEffects = this.relics.flatMap(relic => relic.getEffects())
+    const equipmentEffects = Array.from(this.equippedItems.values()).flatMap((item) => item.getEffects())
+    const relicEffects = this.relics.flatMap((relic) => relic.getEffects())
     return [...equipmentEffects, ...relicEffects]
   }
 }
@@ -421,11 +426,13 @@ combat/
 ```
 
 **優點**:
+
 - 所有契約（介面）都在最底層，被上層依賴
 - 實作類可以自由選擇在 domain 或 coordination 實作
 - 避免循環依賴
 
 **缺點**:
+
 - 違反了「介面應該靠近使用者」的原則
 - 可能導致 shared 層過於臃腫
 
@@ -436,6 +443,7 @@ combat/
 ### 短期（v0.3 開發階段）
 
 採用 **方案 B + 命名規範優化**：
+
 1. 保持現有架構，專注實作能量系統和大招邏輯
 2. 統一命名規範（`XXXEquipmentEffect`, `XXXUltimate` 等）
 3. 將 `coordination/models/` 改為 `coordination/ability-system/ultimate/`
@@ -443,6 +451,7 @@ combat/
 ### 中長期（v0.4+ 或正式版前）
 
 採用 **方案 A + 共享契約層**：
+
 1. 建立 `domain/item/` 統一管理裝備與遺物
 2. 將 `ICombatHook` 和 `IUltimateAbility` 移到 `shared/interfaces/`
 3. 保持 `IEffect` 在 `domain/effect/models/`（因為它是核心領域概念）
@@ -452,11 +461,13 @@ combat/
 **建議**: 大招不應該是 Item 的一部分
 
 **理由**:
+
 1. 大招是角色的「內建能力」，不可更換（至少在你目前的設計中）
 2. 大招的觸發機制依賴能量系統，與裝備邏輯分離
 3. 未來可能會有「替換大招」的需求，但那是另一個系統（技能書系統）
 
 **推薦組織**:
+
 ```
 coordination/
   ability-system/

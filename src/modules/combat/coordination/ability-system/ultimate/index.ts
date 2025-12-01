@@ -1,0 +1,5 @@
+export type { IUltimateAbility, UltimateType } from './ultimate.ability.interface'
+export { SimpleDamageUltimate } from './SimpleDamageUltimate'
+export { ThunderStrikeUltimate } from './ThunderStrikeUltimate'
+export { BloodPactUltimate } from './BloodPactUltimate'
+export * from './effects'

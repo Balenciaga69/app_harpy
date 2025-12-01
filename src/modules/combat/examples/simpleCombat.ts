@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '../combat-engine/combat.engine'
-import { ThunderStrikeUltimate } from '../coordination/models'
+import { ThunderStrikeUltimate } from '../coordination'
 import { Character } from '../domain/character/character'
 import { createDefaultAttributes } from '../domain/character/models/attribute.core.model'
 /**
@@ -24,7 +24,7 @@ function runSimpleCombat() {
       criticalChance: 0.1, // 10%
       energyGainOnAttack: 4, // About 25 attacks to unleash ultimate
     }),
-    ultimate: new ThunderStrikeUltimate(2.5, 6),
+    ultimate: new ThunderStrikeUltimate(2.5),
   })
   const archer = new Character({
     name: 'Archer',

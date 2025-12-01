@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../domain/character'
+import type { ICharacter } from '@/modules/combat/domain/character'
 import type { ITargetSelector } from './target.selector.interface'
 /**
  * LowestHealthSelector: Lowest health target selection strategy.

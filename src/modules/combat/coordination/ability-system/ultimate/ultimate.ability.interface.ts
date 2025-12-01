@@ -3,7 +3,7 @@
 //   1. Access to caster (ICharacter)'s attributes and methods
 //   2. Access to combat context (CombatContext) to affect other characters or query status
 // Migration note: If migrating to strongly typed language, suggest elevating these two interfaces to shared contract layer
-import type { ICharacter } from '../../domain/character/interfaces/character.interface'
+import type { ICharacter } from '../../../domain/character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 
 /**
