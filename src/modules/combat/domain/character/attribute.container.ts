@@ -2,21 +2,10 @@ import type { AttributeType, BaseAttributeValues } from './models/attribute.core
 import type { AttributeModifier } from './models/attribute.modifier.model'
 import { AttributeLimits } from '../../infra/config'
 /**
- * AttributeContainer: Pure container for character attribute data.
+ * AttributeContainer
  *
- * Design philosophy:
- * - Follows single responsibility principle, only handles data storage and retrieval, no calculation logic.
- * - Serves as separation point between data layer and calculation layer, supports testability of attribute system.
- * - Uses Map structure for efficient attribute query and modification operations.
- * - Collaborates with AttributeCalculator to form a separation of concerns attribute management system.
- * - Includes attribute validation mechanism to ensure values are within reasonable ranges.
- *
- * Main responsibilities:
- * - Store character's base attribute values (raw data without modifier calculations).
- * - Manage addition, removal, and querying of attribute modifiers.
- * - Provide categorized storage of attribute modifiers, organized by attribute type.
- * - Validate legality of attribute values, prevent exceeding design ranges.
- * - Support serialization and deserialization needs of attribute data.
+ * Stores base attribute values and manages attribute modifiers for a character. Handles validation and
+ * provides methods to add, remove, and query modifiers by type.
  */
 export class AttributeContainer {
   private baseValues: Map<AttributeType, number>

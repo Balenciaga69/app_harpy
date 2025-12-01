@@ -10,17 +10,10 @@ import { DamageModifyStep } from './steps/DamageModifyStep'
 import { DefenseCalculationStep } from './steps/DefenseCalculationStep'
 import { HitCheckStep } from './steps/HitCheckStep'
 /**
- * DamageChain: Responsibility chain coordinating damage calculation process.
+ * DamageChain
  *
- * Design concept:
- * - Divide complete damage calculation process into clear stages and coordinate Hook execution order.
- * - Use Step pattern, each stage handled by independent Step class, achieving single responsibility.
- * - Support ICombatHook extension, allow various effects to intervene in process at different stages.
- * - Follow open-closed principle: adding new effects only requires adding Step class.
- *
- * Main responsibilities:
- * - Execute each damage calculation stage in order.
- * - Support early termination of stages (miss, prevented).
+ * Coordinates the damage calculation process by executing a sequence of step classes. Each step
+ * represents a stage (hit, crit, modify, defense, apply, etc). Supports early termination and extension via hooks.
  */
 export class DamageChain {
   private steps: IDamageStep[]

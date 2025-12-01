@@ -4,15 +4,9 @@ import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
 import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 /**
- * Blood Pact Effect
+ * BloodPactEffect
  *
- * Applied by Blood Pact Ultimate
- * Enhances next N normal attacks with damage multiplier
- *
- * Design:
- * - Implements both IEffect (for lifecycle) and ICombatHook (for damage modification)
- * - Tracks remaining attack count
- * - Auto-removes when count reaches zero
+ * Applied by Blood Pact Ultimate. Multiplies damage for next N normal attacks, auto-removes when finished.
  */
 export class BloodPactEffect implements IEffect, ICombatHook {
   readonly id: string

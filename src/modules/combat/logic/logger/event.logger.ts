@@ -1,19 +1,10 @@
 import type { EventBus } from '../../infra/event-bus'
 import type { CombatLogEntry } from './combat.log.model'
 /**
- * EventLogger: Combat event recording and query system.
+ * EventLogger
  *
- * Design concept:
- * - As implementation of observer pattern, listens to all events from EventBus and records them.
- * - Provides timeline query functionality, supports filtering logs by Tick range.
- * - Automatically tracks current Tick, ensures each log has correct timestamp.
- * - Achieves loose coupling through event-driven approach, no need to modify business logic for logging.
- *
- * Main responsibilities:
- * - Listens to all combat events, automatically records to log list.
- * - Tracks current Tick, adds time context to each log.
- * - Provides log query interface, supports full and range queries.
- * - Automatically extracts common fields (like sourceId, targetId) from event payload.
+ * Records combat events from EventBus, tracks tick context, and provides log query methods. Supports filtering
+ * by tick range and extracting common fields from event payloads.
  */
 export class EventLogger {
   private logs: CombatLogEntry[] = []

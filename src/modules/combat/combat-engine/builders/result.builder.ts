@@ -5,21 +5,9 @@ import type { SnapshotCollector } from '../../logic/snapshot'
 import type { CombatConfig, CombatOutcome, CombatResult, CombatStatistics, CharacterStats } from '../models'
 import type { CombatLogEntry } from '../../logic/logger'
 /**
- * ResultBuilder: Combat result builder
+ * ResultBuilder
  *
- * Design concept:
- * - Uses builder pattern to construct complex CombatResult objects step by step, separating result assembly logic from CombatEngine
- * - Uses composition pattern to combine different responsibilities (outcome determination, snapshot retrieval, statistics calculation)
- * - Keeps each method's single responsibility for easy testing and maintenance
- * - Focused responsibility: only assembles results, not generating snapshots (handled by SnapshotCollector)
- *
- * Main responsibilities:
- * - Analyze combat outcome and determine winner (analyzeOutcome)
- * - Get list of surviving characters at combat end (getSurvivors)
- * - Get combat snapshots from SnapshotCollector (no longer generates fake data)
- * - Initialize statistics data structure (currently empty shell, pending future StatisticsCalculator implementation)
- * - Collect complete event logs from EventLogger
- * - Assemble and return complete CombatResult object
+ * Assembles a CombatResult from context, config, logs, and snapshots. Determines outcome, survivors, and statistics.
  */
 export class ResultBuilder {
   private context: CombatContext

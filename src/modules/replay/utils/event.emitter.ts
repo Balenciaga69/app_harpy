@@ -1,9 +1,8 @@
 import type { ReplayEvent, ReplayEventType } from '../models'
 /**
- * Simple EventEmitter for replay events
+ * ReplayEventEmitter
  *
- * Provides basic pub/sub pattern for replay engine to communicate with UI.
- * Lightweight implementation without external dependencies.
+ * Lightweight event emitter for replay events. Provides pub/sub for replay engine and UI communication.
  */
 export class ReplayEventEmitter {
   private listeners: Map<ReplayEventType, Set<(event: ReplayEvent) => void>> = new Map()

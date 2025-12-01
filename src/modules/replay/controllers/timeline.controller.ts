@@ -12,12 +12,9 @@ export interface TimelineMoment {
   label?: string
 }
 /**
- * TimelineController: Timeline and scrubbing control
+ * TimelineController
  *
- * Handles timeline-related operations:
- * - Convert tick to progress percentage
- * - Convert progress percentage to tick
- * - Find important moments (ultimates, deaths, critical hits)
+ * Converts between tick and progress, detects important events, and provides timeline marker queries for replay.
  */
 export class TimelineController {
   private engine: ReplayEngine

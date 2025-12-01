@@ -2,20 +2,10 @@ import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from './models/effect.model'
 /**
- * EffectManager: Responsible for managing all dynamic effect instances on a single character.
+ * EffectManager
  *
- * Design concept:
- * - Acts as Component in ECS, focuses on lifecycle management and updating of effects.
- * - Follows strategy pattern, each effect is independent strategy entity, can be dynamically added/removed.
- * - Combined with responsibility chain pattern, effects can act as Hooks participating in combat flow (damage calculation).
- * - Achieves loose coupling through event-driven approach, ensures adding new effects doesn't require modifying this class.
- * - Provides encapsulated interface, avoids character class becoming too large, conforms to single responsibility principle.
- *
- * Main responsibilities:
- * - Add/remove effects and trigger corresponding apply/remove logic.
- * - Update all effects in each Tick, handle continuous logic.
- * - Provide effect query and check methods, support conditional judgments.
- * - Ensure effect uniqueness, avoid duplicate additions.
+ * Manages effect instances attached to a character. Responsible for adding/removing effects, calling
+ * effect lifecycle hooks (onApply/onRemove/onTick), and providing queries to inspect active effects.
  */
 export class EffectManager {
   private effects: Map<string, IEffect> = new Map()

@@ -1,19 +1,9 @@
 import type { CombatContext } from '../../context'
 import { isCharacter } from '../../infra/shared'
 /**
- * TickerProcessor: Specific processor for Tick events.
+ * TickerProcessor
  *
- * Design concept:
- * - As implementation of observer pattern, listens to tick:start event and executes corresponding logic.
- * - Follows single responsibility principle, focuses on triggering Tick updates for character effects.
- * - Achieves loose coupling through event-driven approach, decoupled from TickerDriver.
- * - Provides dispose method, supports graceful cleanup and resource release of system.
- *
- * Main responsibilities:
- * - Listens to each Tick start event, automatically triggers processing logic.
- * - Iterates through all character entities, calls their effects' onTick methods.
- * - Handles updates of continuous effects (like continuous damage, periodic healing, Buff decay).
- * - Provides system cleanup method, removes event listeners to avoid memory leaks.
+ * Listens to tick:start events and triggers onTick for all character effects. Handles cleanup via dispose.
  */
 export class TickerProcessor {
   private context: CombatContext

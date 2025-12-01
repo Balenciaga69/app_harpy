@@ -24,20 +24,10 @@ interface CharacterConfig {
   ultimate?: IUltimateAbility
 }
 /**
- * Character: Core entity in combat system, representing characters participating in combat.
+ * Character
  *
- * Design concept:
- * - Implementation of Facade pattern, simplifies interfaces for character-related operations.
- * - Follows composition over inheritance principle, implements complex functions through combination of specialized components.
- * - Encapsulates internal implementation details, exposes only necessary public interfaces, reduces external coupling.
- * - Implements ICharacter interface, ensures consistency and replaceability of character behavior.
- * - Supports dynamic attribute modification and dynamic effect management, adapts to various changes in combat.
- *
- * Main responsibilities:
- * - Manage character's basic information.
- * - Provide attribute-related operation interfaces, delegate to internal containers and calculators for processing.
- * - Provide effect-related operation interfaces, delegate to EffectManager for processing.
- * - Ensure HP change value legality (limit between 0 and maximum when taking damage/healing).
+ * Represents an entity in combat. It stores identity, attributes, HP, equipment, relics, and effects.
+ * Exposes methods to query/update attributes, manage effects/items, and create snapshots for replay.
  */
 export class Character implements ICharacter {
   readonly id: CharacterId

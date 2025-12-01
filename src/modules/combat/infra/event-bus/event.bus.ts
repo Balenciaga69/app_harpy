@@ -2,16 +2,9 @@
 import mitt from 'mitt'
 import type { CombatEventMap } from './models/combat.event.map.model'
 /**
- * EventBus: Combat system's event bus.
+ * EventBus
  *
- * Design concept:
- * - Uses lightweight mitt implementation as event-driven hub, provides event management API.
- *
- * Main responsibilities:
- * - Provide event subscription/unsubscription functionality.
- * - Provide event publishing functionality for systems to send notifications at key points (tick, damage, death).
- * - Support listening to all events (onAll) for logging or debugging systems.
- * - Support clearing all listeners to release resources when combat ends.
+ * Provides event subscription, publishing, and listener management for combat systems. Uses mitt for event handling.
  */
 export class EventBus {
   // mitt instance for event management

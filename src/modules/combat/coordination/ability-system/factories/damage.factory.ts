@@ -1,18 +1,9 @@
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { DamageEvent } from '@/modules/combat/logic/damage'
 /**
- * DamageFactory: Damage event creation factory.
+ * DamageFactory
  *
- * Design concept:
- * - Supports normal attack and ultimate two damage types
- * - Supports true damage (ignores defense) marking
- * - Provides unified DamageEvent structure
- *
- * Main responsibilities:
- * - Create damage events for standard attacks (from attackDamage attribute)
- * - Create damage events for ultimates (isUltimate = true)
- * - Create true damage events (isTrueDamage = true, ignores all reductions)
- * - Initialize default state for damage events
+ * Creates damage events for normal attacks and ultimates. Encapsulates event creation logic and supports extension.
  */
 export class DamageFactory {
   /** Create normal attack damage event */
