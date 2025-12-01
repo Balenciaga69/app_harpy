@@ -6,10 +6,9 @@ import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } fr
  * AttributeCalculator：屬性最終值的計算引擎。
  *
  * 設計理念：
+ * - SRP, 純計算邏輯工具
  * - 遵循單一職責原則，專注於屬性計算邏輯，不涉及數據儲存。
  * - 與 AttributeContainer 協作，實現計算層與數據層的分離。
- * - 採用明確的計算順序（優先級排序 → 加法 → 乘法），確保結果可預測。
- * - 支援優先級機制，允許特定修飾符優先生效（如 Debuff 優先於 Buff）。
  *
  * 主要職責：
  * - 從容器中獲取基礎值與修飾符，計算最終屬性值。
@@ -38,6 +37,7 @@ export class AttributeCalculator implements IAttributeCalculator {
     const multiplier = this.calculateMultiplierProduct(multiplyModifiers)
     return (baseValue + additive) * multiplier
   }
+  // === 幫助方法 ===
   /** 按優先級排序修飾器 */
   private sortModifiersByPriority(modifiers: AttributeModifier[]): AttributeModifier[] {
     return [...modifiers].sort((a, b) => {

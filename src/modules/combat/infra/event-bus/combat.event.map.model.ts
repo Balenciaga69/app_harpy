@@ -1,6 +1,5 @@
 import type { CharacterSnapshot, CharacterId } from '../../domain/character'
 /** 快照中的角色狀態 */
-/** EventName:Payload */
 export type CombatEventMap = {
   // combat
   'combat:start': void

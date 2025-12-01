@@ -5,10 +5,7 @@ import type { CombatEventMap } from './combat.event.map.model'
  * EventBus：戰鬥系統的事件總線。
  *
  * 設計理念：
- * - 作為事件驅動架構的中樞，提供事件的發布與訂閱機制。
- * - 使用輕量級的 mitt 實作，確保低延遲與高可擴展性。
- * - 採用型別映射 (CombatEventMap) 以確保事件載荷型別安全。
- * - 提供簡單的 API 以便其他元件使用。
+ * - 使用輕量級的 mitt 實作，作為事件驅動中樞，提供事件管理 API。
  *
  * 主要職責：
  * - 提供事件訂閱 / 取消訂閱功能。

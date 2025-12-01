@@ -16,6 +16,7 @@ export const ModifierPriority = {
   HIGHEST: 1000,
 } as const
 /** 修飾器優先級類型  */
+// TODO: 似乎暫時用不到，需要思考意義
 export type ModifierPriorityType = (typeof ModifierPriority)[keyof typeof ModifierPriority]
 /** 擴展的屬性修飾器 (支援優先級) */
 export interface AttributeModifierEx extends AttributeModifier {

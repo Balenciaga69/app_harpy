@@ -1,4 +1,4 @@
-import type { IEntity } from '@/modules/combat/infra/shared'
+import { type IEntity } from '@/modules/combat/infra/shared'
 import type { IAttributeProvider } from './attribute.provider.interface'
 import type { IEffectOwner } from './effect.owner.interface'
 import type { IUltimateOwner } from './ultimate.owner.interface'
