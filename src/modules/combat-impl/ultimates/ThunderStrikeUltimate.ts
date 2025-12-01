@@ -1,11 +1,11 @@
 import { nanoid } from 'nanoid'
-import type { ICharacter } from '../../../domain/character'
+import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
-import { DamageChain } from '../../../logic/damage'
-import type { IUltimateAbility } from './ultimate.ability.interface'
-import { UltimateDefaults } from '../../../infra/config'
-import { FirstAliveSelector } from '../target-select-strategies'
-import { DamageFactory } from '../factories'
+import { DamageChain } from '@/modules/combat/logic/damage'
+import type { IUltimateAbility } from '@/modules/combat/coordination/ability-system/ultimate/ultimate.ability.interface'
+import { UltimateDefaults } from '@/modules/combat/infra/config'
+import { FirstAliveSelector } from '@/modules/combat/coordination/ability-system/target-select-strategies'
+import { DamageFactory } from '@/modules/combat/coordination/ability-system/factories'
 /**
  * Thunder Strike Ultimate
  *

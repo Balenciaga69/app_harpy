@@ -1,1 +1,0 @@
-export { BloodPactEffect } from './BloodPactEffect'

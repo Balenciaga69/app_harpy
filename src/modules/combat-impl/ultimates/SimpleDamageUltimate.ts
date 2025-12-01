@@ -1,12 +1,11 @@
 import { nanoid } from 'nanoid'
-// TODO: [Cross-layer dependency] This implementation class depends on Domain layer and Context layer
-// Inherits dependency requirements from IUltimateAbility interface
-import type { ICharacter } from '../../../domain/character'
+import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
-import { DamageChain } from '../../../logic/damage'
-import type { IUltimateAbility } from './ultimate.ability.interface'
-import { UltimateDefaults } from '../../../infra/config'
-import { DamageFactory, FirstAliveSelector } from '..'
+import { DamageChain } from '@/modules/combat/logic/damage'
+import type { IUltimateAbility } from '@/modules/combat/coordination/ability-system/ultimate/ultimate.ability.interface'
+import { UltimateDefaults } from '@/modules/combat/infra/config'
+import { DamageFactory } from '@/modules/combat/coordination/ability-system/factories'
+import { FirstAliveSelector } from '@/modules/combat/coordination'
 /**
  * Basic damage ultimate - concrete implementation
  *

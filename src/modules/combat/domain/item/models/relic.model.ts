@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid'
 import type { IEffect } from '../../effect/models/effect.model'
 import type { IItem, ItemRarity } from './item.interface'
-
 /**
  * Relic configuration
  */
@@ -11,7 +10,6 @@ export interface RelicConfig {
   description: string
   rarity: ItemRarity
 }
-
 /**
  * Relic base class
  *
@@ -28,10 +26,8 @@ export abstract class Relic implements IItem {
   readonly description: string
   readonly rarity: ItemRarity
   readonly stackable = true
-
   protected effects: IEffect[] = []
   private stackCount: number = 1
-
   constructor(config: RelicConfig) {
     this.id = config.id ?? `relic-${nanoid(6)}`
     this.name = config.name
@@ -39,22 +35,18 @@ export abstract class Relic implements IItem {
     this.rarity = config.rarity
     this.initializeEffects()
   }
-
   /**
    * Initialize effects provided by this relic
    * Subclasses must implement this to define their effect composition
    */
   protected abstract initializeEffects(): void
-
   getEffects(): IEffect[] {
     return this.effects
   }
-
   /** Get current stack count */
   getStackCount(): number {
     return this.stackCount
   }
-
   /**
    * Add one stack to this relic
    * Triggers onStackChanged() for subclasses to handle
@@ -63,7 +55,6 @@ export abstract class Relic implements IItem {
     this.stackCount++
     this.onStackChanged()
   }
-
   /**
    * Handle stack count changes
    * Subclasses can override this to refresh effects based on new stack count

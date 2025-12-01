@@ -1,10 +1,8 @@
 import type { IEffect } from '../../effect/models/effect.model'
-
 /**
  * Item rarity levels
  */
 export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary'
-
 /**
  * Item interface - unified abstraction for all equipment and relics
  *
@@ -28,7 +26,6 @@ export interface IItem {
   readonly rarity: ItemRarity
   /** Whether this item can stack (relics can, equipment cannot) */
   readonly stackable: boolean
-
   /**
    * Get all effects this item provides
    * Effects are applied to character when item is equipped/added

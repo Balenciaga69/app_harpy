@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import type { ICharacter } from '../../../../domain/character'
+import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
-import type { IEffect } from '../../../../domain/effect/models/effect.model'
-import type { DamageEvent, ICombatHook } from '../../../../logic/damage'
+import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
+import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 
 /**
  * Blood Pact Effect

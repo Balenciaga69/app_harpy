@@ -1,9 +1,9 @@
 import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 import { nanoid } from 'nanoid'
-import type { CombatContext } from '../../../../context'
-import { EffectNames } from '../../../../infra/config'
-import type { ICharacter } from '../../../character'
-import type { IEffect } from '../../models/effect.model'
+import type { CombatContext } from '@/modules/combat/context'
+import { EffectNames } from '@/modules/combat/infra/config'
+import type { ICharacter } from '@/modules/combat/domain/character'
+import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
 
 /**
  * Charged critical amplification effect

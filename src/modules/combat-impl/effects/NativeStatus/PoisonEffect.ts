@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../../models/stackable.effect.model'
-import type { ICharacter } from '../../../character'
-import type { CombatContext } from '../../../../context'
+import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
+import type { ICharacter } from '@/modules/combat/domain/character'
+import type { CombatContext } from '@/modules/combat/context'
 /**
  * Poison effect
  * - Deals fixed damage per stack per tick

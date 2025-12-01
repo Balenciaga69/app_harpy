@@ -1,4 +1,9 @@
 import { nanoid } from 'nanoid'
+import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
+import type { ICharacter } from '@/modules/combat/domain/character'
+import type { CombatContext } from '@/modules/combat/context'
+/**
+ * Holy Fire effect { nanoid } from 'nanoid'
 import { StackableEffect } from '../../models/stackable.effect.model'
 import type { ICharacter } from '../../../character'
 import type { CombatContext } from '../../../../context'

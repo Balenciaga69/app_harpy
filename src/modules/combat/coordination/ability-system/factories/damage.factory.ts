@@ -1,6 +1,5 @@
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { DamageEvent } from '@/modules/combat/logic/damage'
-
 /**
  * DamageFactory: Damage event creation factory.
  *

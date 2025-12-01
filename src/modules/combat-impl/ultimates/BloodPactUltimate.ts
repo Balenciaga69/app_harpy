@@ -1,9 +1,8 @@
 import { nanoid } from 'nanoid'
-import type { ICharacter } from '../../../domain/character'
+import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
-import type { IUltimateAbility } from './ultimate.ability.interface'
-import { BloodPactEffect } from './effects/BloodPactEffect'
-
+import type { IUltimateAbility } from '@/modules/combat/coordination/ability-system/ultimate/ultimate.ability.interface'
+import { BloodPactEffect } from '../effects/BloodPactEffect'
 /**
  * Blood Pact Ultimate
  *
@@ -17,11 +16,9 @@ export class BloodPactUltimate implements IUltimateAbility {
   readonly name: string
   readonly description: string
   readonly type = 'buff' as const
-
   private hpCostPercent: number = 0.2 // Cost 20% of current HP
   private damageMultiplier: number = 2.0 // 2x damage
   private attackCount: number = 3 // Affects next 3 attacks
-
   constructor(
     name: string = 'Blood Pact',
     description: string = 'Sacrifice HP to double damage of next 3 attacks',
@@ -36,11 +33,9 @@ export class BloodPactUltimate implements IUltimateAbility {
     this.damageMultiplier = damageMultiplier
     this.attackCount = attackCount
   }
-
   execute(caster: ICharacter, context: CombatContext): void {
     const currentHp = caster.getAttribute('currentHp')
     const maxHp = caster.getAttribute('maxHp')
-
     // Check if HP is sufficient (at least 20% of max HP)
     const minHpRequired = maxHp * this.hpCostPercent
     if (currentHp < minHpRequired) {
@@ -48,15 +43,12 @@ export class BloodPactUltimate implements IUltimateAbility {
       // TODO: Maybe emit a failed ultimate event
       return
     }
-
     // 1. Consume HP
     const hpCost = currentHp * this.hpCostPercent
     caster.setCurrentHpClamped(currentHp - hpCost)
-
     // 2. Apply Blood Pact effect
     const bloodPactEffect = new BloodPactEffect(this.damageMultiplier, this.attackCount)
     caster.addEffect(bloodPactEffect, context)
-
     // 3. Emit event
     context.eventBus.emit('entity:attack', {
       sourceId: caster.id,

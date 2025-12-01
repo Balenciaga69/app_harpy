@@ -146,7 +146,313 @@ v0.3 版本的 Combat 模組**高度契合**遊戲設計文件的要求：
 
 ## 3. 開發者體驗評估
 
-### 3.1 新增一個裝備 (含獨特效果)
+### 3.1 系統運作機制：聖物、大招、裝備、效果如何協同工作
+
+在深入開發者體驗之前，讓我們先理解這套系統的核心設計理念與運作機制。
+
+#### 3.1.1 核心概念：萬物皆效果
+
+Combat v0.3 的核心設計哲學是：**所有遊戲機制都以 `IEffect` 為基礎構建**。
+
+- **裝備（Equipment）** = 效果容器 + 裝備屬性
+- **聖物（Relic）** = 可堆疊的效果容器
+- **大招（Ultimate）** = 觸發器 + 效果注入
+- **異常狀態（Status）** = 純效果實現
+
+這種統一抽象的好處是：
+
+1. ✅ 所有元件共用同一套生命週期管理（onApply/onRemove）
+2. ✅ 所有元件共用同一套 Hook 機制（介入傷害、屬性、行為）
+3. ✅ 開發者只需學習一套 API，即可實現所有功能
+4. ✅ 系統自動協調所有效果的觸發順序與清理
+
+---
+
+#### 3.1.2 實戰範例：多元組合如何運作
+
+讓我們透過一個實際戰鬥場景，看看裝備、聖物、大招如何協同工作：
+
+```typescript
+// 創建一個弓箭手角色
+const archer = new Character({
+  name: 'Archer',
+  team: 'player',
+  baseAttributes: createDefaultAttributes({
+    maxHp: 800,
+    attackDamage: 90,
+    criticalChance: 0.15, // 15% 暴擊率
+    energyGainOnAttack: 5,
+  }),
+  ultimate: new ThunderStrikeUltimate(2.5), // 雷擊大招
+})
+
+// 裝備 Stormblade（充能時暴擊率翻倍）
+const stormblade = new Stormblade()
+archer.equipItem(stormblade, context)
+
+// 裝備 Poison Vial x2（攻擊附加中毒）
+const poisonVial = new PoisonVial()
+poisonVial.addStack() // 堆疊到 2 層
+archer.addRelic(poisonVial, context)
+```
+
+**戰鬥過程中發生了什麼？**
+
+1. **初始化階段**：
+   - `Stormblade.getEffects()` 返回 `[ChargedCriticalEffect]`
+   - `PoisonVial.getEffects()` 返回 `[PoisonEffect, PoisonEffect]`（2 層）
+   - 所有效果自動注入到 `archer` 身上：
+     ```typescript
+     archer.getAllEffects()
+     // => [ChargedCriticalEffect, PoisonEffect, PoisonEffect]
+     ```
+
+2. **普通攻擊階段**：
+   - 弓箭手發起攻擊，進入 7 階段傷害鏈：
+
+   **[Stage 3] CriticalCheck**:
+
+   ```typescript
+   // ChargedCriticalEffect 介入
+   onCriticalCheck(event: DamageEvent) {
+     if (event.source.hasEffect('charge')) {
+       // 有充能狀態，暴擊率翻倍
+       event.criticalChance *= 2 // 15% => 30%
+     }
+   }
+   ```
+
+   **[Stage 7] AfterDamageApply**:
+
+   ```typescript
+   // PoisonEffect #1 介入
+   afterDamageApply(event: DamageEvent) {
+     if (event.isHit) {
+       // 攻擊命中，對目標施加中毒
+       event.target.addEffect(new PoisonStackEffect(1), context)
+     }
+   }
+
+   // PoisonEffect #2 介入
+   afterDamageApply(event: DamageEvent) {
+     if (event.isHit) {
+       // 再次施加中毒（堆疊效果）
+       event.target.addEffect(new PoisonStackEffect(1), context)
+     }
+   }
+   ```
+
+3. **能量累積**：
+   - 每次攻擊命中，獲得 5 點能量
+   - 經過約 20 次攻擊後，能量滿 (100/100)
+
+4. **大招階段**：
+   - 系統自動觸發 `ThunderStrikeUltimate.execute()`
+   ```typescript
+   execute(caster: ICharacter, context: CombatContext) {
+     // 1. 對所有敵人造成 2.5 倍傷害
+     const enemies = context.getEntitiesByTeam('enemy')
+     enemies.forEach(enemy => {
+       const damage = caster.getAttribute('attackDamage') * 2.5
+       // 觸發傷害事件，再次經過 7 階段鏈
+       damageFactory.createUltimateDamage(caster, enemy, damage)
+     })
+
+     // 2. 能量歸零
+     caster.setBaseAttribute('currentEnergy', 0)
+   }
+   ```
+
+**關鍵發現**：
+
+- 🔥 **效果自動疊加**：Stormblade 的暴擊加成 + Poison Vial 的中毒效果，無需手動協調
+- 🔥 **Hook 自動觸發**：每個效果在正確的階段自動介入，開發者無需管理執行順序
+- 🔥 **生命週期自動管理**：裝備卸下時，效果自動移除；聖物堆疊時，效果自動刷新
+- 🔥 **大招與效果無縫銜接**：大招觸發的傷害，依然會經過所有 Hook（如暴擊、中毒等）
+
+---
+
+#### 3.1.3 多變化運作機制範例
+
+**範例 1：血契大招（BloodPactUltimate）**
+
+這個大招展示了「臨時效果注入」的機制：
+
+```typescript
+// 大招施放
+execute(caster: ICharacter, context: CombatContext) {
+  // 1. 消耗 20% 當前 HP
+  const hpCost = caster.getAttribute('currentHp') * 0.2
+  caster.setCurrentHpClamped(currentHp - hpCost)
+
+  // 2. 注入 BloodPactEffect（強化接下來 3 次攻擊）
+  const effect = new BloodPactEffect(2.0, 3)
+  caster.addEffect(effect, context)
+}
+
+// 效果實現
+class BloodPactEffect implements IEffect, ICombatHook {
+  private remainingAttacks: number = 3
+
+  onDamageModify(event: DamageEvent) {
+    if (this.remainingAttacks > 0) {
+      event.amount *= 2.0 // 傷害翻倍
+      this.remainingAttacks--
+
+      // 計數器歸零，自動移除效果
+      if (this.remainingAttacks === 0) {
+        event.source.removeEffect(this.id, context)
+      }
+    }
+  }
+}
+```
+
+**運作流程**：
+
+1. 玩家施放大招，消耗 HP
+2. 系統注入 `BloodPactEffect` 到角色身上
+3. 接下來 3 次普通攻擊，傷害自動翻倍
+4. 第 3 次攻擊後，效果自動移除
+
+**為何這樣設計？**
+
+- ✅ **效果可重用**：同一個 BloodPactEffect 可用於不同大招、裝備
+- ✅ **自動清理**：無需手動追蹤「第幾次攻擊」，效果自己管理生命週期
+- ✅ **易於測試**：可以單獨測試 BloodPactEffect，無需啟動完整戰鬥
+
+---
+
+**範例 2：聖物堆疊（Poison Vial）**
+
+聖物展示了「效果數量 = 堆疊數量」的機制：
+
+```typescript
+class PoisonVial extends Relic {
+  protected initializeEffects() {
+    // 清空舊效果
+    this.effects = []
+
+    // 根據堆疊數量，創建對應數量的效果
+    for (let i = 0; i < this.getStackCount(); i++) {
+      this.effects.push(new PoisonEffect(1))
+    }
+  }
+
+  protected onStackChanged() {
+    // 堆疊變化時，刷新效果
+    this.initializeEffects()
+  }
+}
+```
+
+**運作流程**：
+
+1. 初始狀態：1 層 Poison Vial = 1 個 PoisonEffect
+2. 玩家獲得第 2 個 Poison Vial，呼叫 `addStack()`
+3. 系統觸發 `onStackChanged()`，重新生成效果
+4. 現在：2 層 = 2 個 PoisonEffect
+5. 每次攻擊，兩個 PoisonEffect 都會觸發，疊加兩層中毒
+
+**為何這樣設計？**
+
+- ✅ **簡單直觀**：堆疊數 = 效果數，易於理解
+- ✅ **靈活擴展**：可以改為「堆疊增強效果強度」而非「效果數量」
+- ✅ **自動同步**：堆疊變化時，效果自動刷新，無需手動管理
+
+---
+
+**範例 3：裝備條件效果（Guardian's Plate）**
+
+裝備展示了「動態屬性修正」的機制：
+
+```typescript
+class LowHealthArmorEffect implements IEffect {
+  private modifierId: string | null = null
+
+  onApply(character: ICharacter, context: CombatContext) {
+    // 初始化時不添加修正，等待條件觸發
+  }
+
+  // 每個 Tick 都會檢查條件
+  onTick(character: ICharacter, context: CombatContext) {
+    const currentHp = character.getAttribute('currentHp')
+    const maxHp = character.getAttribute('maxHp')
+    const hpPercent = currentHp / maxHp
+
+    if (hpPercent < 0.3 && !this.modifierId) {
+      // 血量低於 30%，添加護甲加成
+      this.modifierId = `${this.id}-armor`
+      character.addAttributeModifier({
+        id: this.modifierId,
+        type: 'armor',
+        value: 20,
+        mode: 'add',
+        source: this.id,
+      })
+    } else if (hpPercent >= 0.3 && this.modifierId) {
+      // 血量回復到 30% 以上，移除加成
+      character.removeAttributeModifier(this.modifierId)
+      this.modifierId = null
+    }
+  }
+}
+```
+
+**運作流程**：
+
+1. 玩家裝備 Guardian's Plate
+2. 戰鬥開始，血量 100%，無加成
+3. 受到傷害，血量降至 28%
+4. 系統自動添加 +20 護甲修正
+5. 治療後血量回到 35%
+6. 系統自動移除護甲加成
+
+**為何這樣設計？**
+
+- ✅ **條件觸發**：無需手動監聽血量變化，效果自己檢查條件
+- ✅ **動態響應**：護甲值即時反映當前狀態
+- ✅ **可組合**：多個條件效果可以同時存在，互不干擾
+
+---
+
+#### 3.1.4 為何要這樣開發？設計理念總結
+
+**問題**：為什麼不用簡單的「if-else」判斷，而要設計這麼複雜的 Hook 系統？
+
+**答案**：
+
+1. **可擴展性**：
+   - ❌ if-else 方法：每新增一個裝備，就要修改 DamageChain 代碼
+   - ✅ Hook 方法：新增裝備只需創建新的 Effect 類，零侵入
+
+2. **可維護性**：
+   - ❌ if-else 方法：所有邏輯混在一起，難以追蹤
+   - ✅ Hook 方法：每個效果獨立封裝，職責單一
+
+3. **可測試性**：
+   - ❌ if-else 方法：必須啟動完整戰鬥才能測試單一裝備
+   - ✅ Hook 方法：可以單獨測試 Effect，快速驗證邏輯
+
+4. **可組合性**：
+   - ❌ if-else 方法：多個效果組合時，容易產生衝突
+   - ✅ Hook 方法：效果自動疊加，無需手動協調
+
+5. **開發體驗**：
+   - ❌ if-else 方法：新人必須理解整個戰鬥流程
+   - ✅ Hook 方法：新人只需理解 Effect 接口，即可開始開發
+
+**核心原則**：
+
+> **開放封閉原則（Open-Closed Principle）**：  
+> 系統對擴展開放（輕鬆新增裝備、大招、效果），  
+> 對修改封閉（不需要改動底層 DamageChain、AbilitySystem）。
+
+這就是為什麼 Combat v0.3 選擇這種設計：**讓開發者專注於創造內容，而非維護系統**。
+
+---
+
+### 3.2 新增一個裝備 (含獨特效果)
 
 #### 開發流程
 
@@ -249,7 +555,7 @@ warrior.equipItem(vampiricBlade, context)
 
 ---
 
-### 3.2 新增一個大絕招
+### 3.3 新增一個大絕招
 
 #### 開發流程
 
@@ -343,7 +649,7 @@ const healer = new Character({
 
 ---
 
-### 3.3 新增一個異常狀態效果
+### 3.4 新增一個異常狀態效果
 
 #### 開發流程
 
@@ -439,7 +745,7 @@ character.addEffect(blindEffect, context)
 
 ---
 
-### 3.4 開發體驗總結
+### 3.5 開發者體驗總結
 
 | 開發任務     | 難度 |  代碼量  | 需理解概念數 | 牽涉底層 | 是否痛苦 |
 | :----------- | :--: | :------: | :----------: | :------: | :------: |

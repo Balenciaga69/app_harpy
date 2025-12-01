@@ -1,5 +1,5 @@
-import { Equipment } from '../../models/equipment.model'
-import { LowHealthArmorEffect } from '../../../effect/Implementation/Equipment/LowHealthArmorEffect'
+import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
+import { LowHealthArmorEffect } from '../effects/Equipment/LowHealthArmorEffect'
 
 /**
  * Guardian's Plate - Low Health Armor

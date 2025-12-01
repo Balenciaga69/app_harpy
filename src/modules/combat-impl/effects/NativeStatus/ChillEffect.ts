@@ -1,23 +1,22 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '../../models/stackable.effect.model'
-import type { ICharacter } from '../../../character'
-import type { CombatContext } from '../../../../context'
-import { EffectNames, ChargeEffectConfig, TickConfig } from '../../../../infra/config'
+import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
+import type { ICharacter } from '@/modules/combat/domain/character'
+import type { CombatContext } from '@/modules/combat/context'
 /**
- * Charge effect
- * - Increases attack/spell frequency (reduces cooldown time)
- * - Default 4%/stack
- * - Max 16 stacks
+ * Chill effect
+ * - Extends enemy attack/spell cooldown time
+ * - Default 4% per stack
+ * - Maximum 16 stacks
  * - Decays over time
  */
-export class ChargeEffect extends StackableEffect {
-  private readonly cooldownReductionPerStack: number = ChargeEffectConfig.COOLDOWN_REDUCTION_PER_STACK // 4%
+export class ChillEffect extends StackableEffect {
+  private readonly cooldownIncreasePerStack: number = 0.04 // 4%
   private attackModifierId: string | null = null
   private spellModifierId: string | null = null
-  private readonly decayRate: number = ChargeEffectConfig.DECAY_RATE_PER_SECOND // Reduce 10% per second
+  private readonly decayRate: number = 0.1 // Reduce 10% per second
   private lastDecayTick: number = 0
   constructor(initialStacks: number = 1) {
-    super(`charge-${nanoid(6)}`, EffectNames.CHARGE, ChargeEffectConfig.MAX_STACKS)
+    super(`chill-${nanoid(6)}`, 'Chill', 16)
     this.setStacks(initialStacks)
   }
   onApply(character: ICharacter, context: CombatContext): void {
@@ -37,8 +36,8 @@ export class ChargeEffect extends StackableEffect {
   onTick(character: ICharacter, context: CombatContext): void {
     const currentTick = context.getCurrentTick()
     const ticksPassed = currentTick - this.lastDecayTick
-    // Assume TickConfig.TICKS_PER_SECOND ticks = 1 second (this value can be adjusted)
-    const secondsPassed = ticksPassed / TickConfig.TICKS_PER_SECOND
+    // Assume 100 ticks = 1 second
+    const secondsPassed = ticksPassed / 100
     if (secondsPassed >= 1) {
       // Reduce 10% stacks per second or at least 1 stack
       const decayAmount = Math.max(1, Math.floor(this.stacks * this.decayRate))
@@ -52,7 +51,7 @@ export class ChargeEffect extends StackableEffect {
       this.updateCooldownModifiers(character)
     }
   }
-  /** Update cooldown modifiers */
+  /** Update cooldown modifiers (increase cooldown time) */
   private updateCooldownModifiers(character: ICharacter): void {
     // Remove old modifiers
     if (this.attackModifierId) {
@@ -61,25 +60,16 @@ export class ChargeEffect extends StackableEffect {
     if (this.spellModifierId) {
       character.removeAttributeModifier(this.spellModifierId)
     }
-    // Calculate cooldown reduction percentage (using multiply modifier)
-    const cooldownReduction = -(this.stacks * this.cooldownReductionPerStack)
+    // Calculate cooldown increase percentage (using multiply modifier)
+    const cooldownIncrease = this.stacks * this.cooldownIncreasePerStack
     // Add attack cooldown modifier
     this.attackModifierId = `${this.id}-attack-cd`
     character.addAttributeModifier({
       id: this.attackModifierId,
       type: 'attackCooldown',
-      value: cooldownReduction,
+      value: cooldownIncrease,
       mode: 'multiply',
       source: this.id,
     })
-    // TODO: Spell cooldown not yet implemented, temporarily commented
-    // this.spellModifierId = `${this.id}-spell-cd`
-    // character.addAttributeModifier({
-    //   id: this.spellModifierId,
-    //   type: 'spellCooldown',
-    //   value: cooldownReduction,
-    //   mode: 'multiply',
-    //   source: this.id,
-    // })
   }
 }

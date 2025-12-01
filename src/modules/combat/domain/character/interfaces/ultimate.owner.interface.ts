@@ -1,5 +1,4 @@
 import type { IUltimateAbility } from '@/modules/combat/coordination'
-
 /**
  * Ultimate owner interface
  *

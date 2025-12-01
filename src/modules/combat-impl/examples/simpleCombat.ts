@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import { ThunderStrikeUltimate } from '@/modules/combat-impl'
-import { CombatEngine } from '../combat-engine/combat.engine'
-import { Character } from '../domain/character/character'
-import { createDefaultAttributes } from '../domain/character/models/attribute.core.model'
+import { CombatEngine } from '@/modules/combat/combat-engine/combat.engine'
+import { Character } from '@/modules/combat/domain/character/character'
+import { createDefaultAttributes } from '@/modules/combat/domain/character/models/attribute.core.model'
+import { ThunderStrikeUltimate } from '../ultimates'
 /**
  * Simple combat test example (v0.3)
  * Validates energy system, ultimate ability mechanism, and new attribute system

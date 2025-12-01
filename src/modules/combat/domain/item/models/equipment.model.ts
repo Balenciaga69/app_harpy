@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid'
 import type { IEffect } from '../../effect/models/effect.model'
 import type { IItem, ItemRarity } from './item.interface'
-
 /**
  * Equipment configuration
  */
@@ -11,7 +10,6 @@ export interface EquipmentConfig {
   description: string
   rarity: ItemRarity
 }
-
 /**
  * Equipment base class
  *
@@ -28,9 +26,7 @@ export abstract class Equipment implements IItem {
   readonly description: string
   readonly rarity: ItemRarity
   readonly stackable = false
-
   protected effects: IEffect[] = []
-
   constructor(config: EquipmentConfig) {
     this.id = config.id ?? `equipment-${nanoid(6)}`
     this.name = config.name
@@ -38,13 +34,11 @@ export abstract class Equipment implements IItem {
     this.rarity = config.rarity
     this.initializeEffects()
   }
-
   /**
    * Initialize effects provided by this equipment
    * Subclasses must implement this to define their effect composition
    */
   protected abstract initializeEffects(): void
-
   getEffects(): IEffect[] {
     return this.effects
   }
