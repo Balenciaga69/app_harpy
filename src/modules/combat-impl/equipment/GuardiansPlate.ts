@@ -1,6 +1,5 @@
 import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
 import { LowHealthArmorEffect } from '../effects/Equipment/LowHealthArmorEffect'
-
 /**
  * Guardian's Plate - Low Health Armor
  *
@@ -16,7 +15,6 @@ export class GuardiansPlate extends Equipment {
       rarity: 'rare',
     })
   }
-
   protected initializeEffects(): void {
     // Add low health armor hook effect
     this.effects.push(new LowHealthArmorEffect())
