@@ -42,7 +42,6 @@ export const ModifierPriority = {
   HIGH: 900,
   HIGHEST: 1000,
 } as const
-
 /** 修飾器優先級類型 */
 export type ModifierPriorityType = (typeof ModifierPriority)[keyof typeof ModifierPriority]
 /** 擴展的屬性修飾器 (支援優先級) */

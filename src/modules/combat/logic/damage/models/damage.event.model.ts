@@ -1,5 +1,4 @@
 import type { ICharacter } from '@/modules/combat/domain/character'
-
 /**
  * 傷害事件
  * 在 DamageChain 中傳遞並被修改的數據載體

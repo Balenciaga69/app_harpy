@@ -1,41 +1,41 @@
-/**
- * 傷害計算工具函數
- * 提供護甲減免、命中率、閃避率等計算公式
- */
+import { ArmorFormula, EvasionFormula, CriticalFormula } from '@/modules/combat/infra/config'
 /**
  * 計算護甲減免百分比
+ *
+ * 公式：armor / (armor + K)
+ * - K = 100（可配置）
+ * - 護甲 100 → 50% 減免
+ * - 護甲 600 → 85.7% 減免
+ * - 最大減免 90%
+ *
  * @param armor 護甲值
- * @param damage 傷害值
- * @returns 減免百分比 (0-1)
+ * @returns 減免百分比
  */
-export function calculateArmorReduction(armor: number, damage: number): number {
-  if (armor <= 0) return 0
-  // TODO: 實作護甲減免公式（需要根據遊戲設計調整）
-  // 暫時使用簡單公式：reduction = armor / (armor + damage)
-  const reduction = armor / (armor + damage * 5)
-  return Math.min(0.9, Math.max(0, reduction)) // 限制在 0-90%
+export function calculateArmorReduction(armor: number): number {
+  return ArmorFormula.calculate(armor)
+}
+/**
+ * 計算閃避率
+ *
+ * 公式：(evasion - accuracy) / 100
+ * - 最小 5%
+ * - 最大 80%
+ *
+ * @param evasion 閃避值
+ * @param accuracy 命中值
+ * @returns 閃避率 (0.05-0.8)
+ */
+export function calculateEvasionChance(evasion: number, accuracy: number): number {
+  return EvasionFormula.calculate(evasion, accuracy)
 }
 /**
  * 計算命中率
  * @param accuracy 命中值
  * @param evasion 閃避值
- * @returns 命中率 (0-1)
+ * @returns 命中率
  */
 export function calculateHitChance(accuracy: number, evasion: number): number {
-  if (evasion <= 0) return 1 // 沒有閃避，必中
-  // TODO: 實作命中率公式（需要根據遊戲設計調整）
-  // 暫時使用簡單公式
-  const hitChance = accuracy / (accuracy + evasion)
-  return Math.min(1, Math.max(0.1, hitChance)) // 限制在 10-100%
-}
-/**
- * 計算閃避率
- * @param accuracy 命中值
- * @param evasion 閃避值
- * @returns 閃避率 (0-1)
- */
-export function calculateEvasionChance(accuracy: number, evasion: number): number {
-  return 1 - calculateHitChance(accuracy, evasion)
+  return 1 - calculateEvasionChance(evasion, accuracy)
 }
 /**
  * 計算暴擊倍率後的傷害
@@ -43,6 +43,6 @@ export function calculateEvasionChance(accuracy: number, evasion: number): numbe
  * @param critMultiplier 暴擊倍率（預設 1.5）
  * @returns 暴擊後的傷害
  */
-export function applyCritMultiplier(baseDamage: number, critMultiplier: number = 1.5): number {
-  return baseDamage * critMultiplier
+export function applyCritMultiplier(baseDamage: number, critMultiplier?: number): number {
+  return CriticalFormula.calculate(baseDamage, critMultiplier)
 }

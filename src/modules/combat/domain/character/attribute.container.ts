@@ -1,5 +1,6 @@
 import type { AttributeType, BaseAttributeValues } from './models/attribute.core.model'
 import type { AttributeModifier } from './models/attribute.modifier.model'
+import { AttributeLimits } from '../../infra/config'
 /**
  * AttributeContainer：角色屬性數據的純容器。
  *
@@ -8,11 +9,13 @@ import type { AttributeModifier } from './models/attribute.modifier.model'
  * - 作為數據層與計算層的分離點，支援屬性系統的可測試性。
  * - 使用 Map 結構提供高效的屬性查詢與修改操作。
  * - 與 AttributeCalculator 協作，形成關注點分離的屬性管理系統。
+ * - 加入屬性驗證機制，確保數值在合理範圍內。
  *
  * 主要職責：
  * - 儲存角色的基礎屬性值（未經修飾符計算的原始數據）。
  * - 管理屬性修飾符的添加、移除與查詢。
  * - 提供屬性修飾符的分類儲存，按屬性類型組織修飾符列表。
+ * - 驗證屬性值的合法性，防止超出設計範圍。
  * - 支援屬性數據的序列化與反序列化需求。
  */
 export class AttributeContainer {
@@ -30,9 +33,28 @@ export class AttributeContainer {
   getBase(type: AttributeType): number {
     return this.baseValues.get(type) ?? 0
   }
-  /** 設置基礎屬性值 */
+  /** 設置基礎屬性值（帶驗證） */
   setBase(type: AttributeType, value: number): void {
-    this.baseValues.set(type, value)
+    const validatedValue = this.validateAttribute(type, value)
+    this.baseValues.set(type, validatedValue)
+  }
+  /** 驗證屬性值是否在合法範圍內 */
+  private validateAttribute(type: AttributeType, value: number): number {
+    const limit = AttributeLimits[type as keyof typeof AttributeLimits]
+    if (!limit) {
+      // 如果沒有定義限制，直接返回原值（向後兼容）
+      return value
+    }
+    // 限制在最小值與最大值之間
+    const clamped = Math.min(limit.max, Math.max(limit.min, value))
+    // 開發模式下警告超出範圍
+    if (clamped !== value && import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[AttributeContainer] Attribute '${type}' value ${value} clamped to ${clamped} (min: ${limit.min}, max: ${limit.max})`
+      )
+    }
+    return clamped
   }
   /** 添加屬性修飾器 */
   addModifier(modifier: AttributeModifier): void {

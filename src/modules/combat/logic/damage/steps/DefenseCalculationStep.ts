@@ -2,8 +2,14 @@ import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '../models'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
+import { calculateArmorReduction } from '../utils/damage.calculator.util'
 /**
  * 防禦計算階段
+ *
+ * 職責：
+ * - 計算護甲減免
+ * - 應用減免率到傷害值
+ * - 真實傷害無視防禦
  */
 export class DefenseCalculationStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
@@ -18,17 +24,14 @@ export class DefenseCalculationStep implements IDamageStep {
     if (event.isTrueDamage) {
       return true
     }
-    // 計算護甲減免
+    // 獲取護甲值
     const armor = event.target.getAttribute('armor')
-    const armorReduction = this.calculateArmorReduction(armor)
+    // 計算減免率（使用統一公式）
+    const reductionRate = calculateArmorReduction(armor)
     // 應用減免
-    event.amount *= 1 - armorReduction
+    const reducedDamage = event.amount * (1 - reductionRate)
+    // 確保最小傷害為 1
+    event.amount = Math.max(1, reducedDamage)
     return true
-  }
-  /** 計算護甲減免百分比 */
-  private calculateArmorReduction(armor: number): number {
-    // 簡化公式: 減免% = armor / (armor + 100)
-    // 例如: 50護甲 = 33%減免, 100護甲 = 50%減免
-    return armor / (armor + 100)
   }
 }

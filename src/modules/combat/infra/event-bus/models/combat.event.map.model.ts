@@ -13,7 +13,6 @@ import type {
   EntityCriticalPayload,
   TickSnapshotPayload,
 } from './event.payload.model'
-
 /**
  * 戰鬥事件映射表
  *
@@ -26,19 +25,16 @@ export type CombatEventMap = {
   'combat:end': CombatEndPayload
   'combat:miss': CombatMissPayload
   'combat:prevented': CombatPreventedPayload
-
   // === Tick 相關事件 ===
   'tick:start': TickStartPayload
   'tick:end': TickEndPayload
   'ticker:stopped': TickerStoppedPayload
-
   // === Entity 相關事件 ===
   'entity:damage': EntityDamagePayload
   'entity:heal': EntityHealPayload
   'entity:death': EntityDeathPayload
   'entity:attack': EntityAttackPayload
   'entity:critical': EntityCriticalPayload
-
   // === Snapshot 相關事件 ===
   'tick:snapshot': TickSnapshotPayload
 }

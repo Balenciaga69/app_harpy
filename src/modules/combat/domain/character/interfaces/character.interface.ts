@@ -3,10 +3,8 @@ import type { IAttributeProvider } from './attribute.provider.interface'
 import type { IEffectOwner } from './effect.owner.interface'
 import type { IUltimateOwner } from './ultimate.owner.interface'
 import type { CharacterSnapshot } from '../models/character.snapshot.model'
-
 // 角色 ID（簡單 alias）
 export type CharacterId = string
-
 /**
  * 角色介面：定義角色對外的公開方法
  *

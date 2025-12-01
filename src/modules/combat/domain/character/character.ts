@@ -113,7 +113,6 @@ export class Character implements ICharacter {
   setUltimate(ultimate: IUltimateAbility): void {
     this.ultimate = ultimate
   }
-
   // === 快照相關方法 ===
   /** 創建角色快照（用於回放、日誌記錄） */
   createSnapshot(): CharacterSnapshot {

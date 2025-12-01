@@ -1,5 +1,4 @@
 import type { IUltimateAbility } from '../../../coordination'
-
 /**
  * 大招擁有者介面
  *
@@ -15,7 +14,6 @@ import type { IUltimateAbility } from '../../../coordination'
 export interface IUltimateOwner {
   /** 獲取大招（如果有） */
   getUltimate(): IUltimateAbility | undefined
-
   /** 設置大招 */
   setUltimate(ultimate: IUltimateAbility): void
 }
