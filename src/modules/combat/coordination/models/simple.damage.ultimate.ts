@@ -7,6 +7,7 @@ import { DamageChain } from '../../logic/damage'
 import { DamageFactory } from '../factories'
 import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
+import { UltimateDefaults } from '../../infra/config'
 /**
  * Basic damage ultimate - concrete implementation
  *
@@ -18,7 +19,7 @@ export class SimpleDamageUltimate implements IUltimateAbility {
   readonly description: string
   readonly type = 'damage' as const
   private damageMultiplier: number
-  constructor(name: string, description: string, damageMultiplier: number = 3) {
+  constructor(name: string, description: string, damageMultiplier: number = UltimateDefaults.simpleDamageMultiplier) {
     this.id = `ultimate-${nanoid(6)}`
     this.name = name
     this.description = description

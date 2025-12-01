@@ -1,5 +1,6 @@
 import type { CombatContext } from '../context'
 import type { CharacterId, ICharacter } from '../domain/character'
+import { EnergySystem, UltimateDefaults } from '../infra/config'
 import { isCharacter } from '../infra/shared'
 import { DamageChain } from '../logic/damage'
 import { DamageFactory } from './factories'
@@ -148,7 +149,7 @@ export class AbilitySystem {
     })
     // Calculate ultimate damage (base attack * multiplier)
     const baseDamage = character.getAttribute('attackDamage') ?? 0
-    const ultimateDamage = baseDamage * 3
+    const ultimateDamage = baseDamage * UltimateDefaults.defaultDamageMultiplier
     // Create ultimate damage event
     const damageEvent = this.damageFactory.createUltimateEvent(character, target, ultimateDamage, currentTick)
     // Execute damage calculation
@@ -164,7 +165,7 @@ export class AbilitySystem {
   /** Energy natural regen (triggers every 100 ticks) */
   private processEnergyRegen(character: ICharacter, currentTick: number): void {
     // Regen every 100 ticks
-    if (currentTick % 100 !== 0) return
+    if (currentTick % EnergySystem.REGEN_INTERVAL_TICKS !== 0) return
     const energyRegen = character.getAttribute('energyRegen') ?? 0
     if (energyRegen > 0) {
       this.gainEnergy(character, energyRegen)

@@ -1,5 +1,6 @@
 import type { CombatContext } from '../../context'
 import type { CombatStartPayload } from '../../infra/event-bus'
+import { CombatTiming } from '../../infra/config'
 /**
  * TickerDriver: Combat time loop driving engine
  *
@@ -15,7 +16,7 @@ import type { CombatStartPayload } from '../../infra/event-bus'
  * - Manage combat loop, continuously execute Tick until end condition is met
  * - Check combat end condition, stop combat loop at appropriate time
  */
-const MAX_TICKS = 100000
+const MAX_TICKS = CombatTiming.MAX_TICKS
 export class TickerDriver {
   private context: CombatContext
   private readonly maxTicks: number

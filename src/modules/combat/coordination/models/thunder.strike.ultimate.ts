@@ -8,6 +8,7 @@ import { ChargeEffect } from '../../domain/effect/Implementation'
 import { DamageFactory } from '../factories'
 import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
+import { UltimateDefaults, EffectNames } from '../../infra/config'
 /**
  * Hybrid ultimate example: Thunder Strike - concrete implementation
  *
@@ -22,7 +23,10 @@ export class ThunderStrikeUltimate implements IUltimateAbility {
   readonly type = 'hybrid' as const
   private damageMultiplier: number
   private chargeStacks: number
-  constructor(damageMultiplier: number = 2, chargeStacks: number = 6) {
+  constructor(
+    damageMultiplier: number = UltimateDefaults.thunderStrikeDamageMultiplier,
+    chargeStacks: number = UltimateDefaults.thunderStrikeChargeStacks
+  ) {
     this.id = `ultimate-thunder-${nanoid(6)}`
     this.damageMultiplier = damageMultiplier
     this.chargeStacks = chargeStacks
@@ -48,7 +52,7 @@ export class ThunderStrikeUltimate implements IUltimateAbility {
       damageChain.execute(damageEvent)
     }
     // === Second part: Add charge stacks to self ===
-    const existingCharge = caster.getAllEffects().find((e) => e.name === 'Charge')
+    const existingCharge = caster.getAllEffects().find((e) => e.name === EffectNames.CHARGE)
     if (existingCharge && 'addStacks' in existingCharge) {
       const stackable = existingCharge as { addStacks: (amount: number) => void }
       stackable.addStacks(this.chargeStacks)

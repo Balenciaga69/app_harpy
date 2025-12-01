@@ -1,8 +1,10 @@
 import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 import { nanoid } from 'nanoid'
 import type { CombatContext } from '../../../../context'
+import { EffectNames } from '../../../../infra/config'
 import type { ICharacter } from '../../../character'
 import type { IEffect } from '../../models/effect.model'
+
 /**
  * Charged critical amplification effect
  *
@@ -33,7 +35,7 @@ export class ChargedCriticalEffect implements IEffect, ICombatHook {
     }
     // Check if has charge effect
     // TODO: Status effect table should have an Enum instead of === "Charge" here
-    const hasCharge = event.source.getAllEffects().some((effect) => effect.name === 'Charge')
+    const hasCharge = event.source.getAllEffects().some((effect) => effect.name === EffectNames.CHARGE)
     if (hasCharge) {
       // Recalculate critical check using doubled critical chance
       const baseCritChance = event.source.getAttribute('criticalChance')
