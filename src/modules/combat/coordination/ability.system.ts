@@ -1,6 +1,6 @@
 import type { CombatContext } from '../context'
 import type { CharacterId, ICharacter } from '../domain/character'
-import { EnergySystem, UltimateDefaults } from '../infra/config'
+import { EnergySystem, UltimateDefaults, UltimateEnergy } from '../infra/config'
 import { isCharacter } from '../infra/shared'
 import { DamageChain } from '../logic/damage'
 import { DamageFactory } from './factories'
@@ -9,7 +9,7 @@ import { FirstAliveSelector, type ITargetSelector } from './target-select-strate
  * AbilitySystem: Character attack behavior coordination system
  *
  * Design concept:
- * - v0.3 removes element system, changes to energy/ultimate mechanism
+ * - Removes element system, changes to energy/ultimate mechanism
  * - Normal attacks accumulate energy, can release ultimate when energy is full
  * - Uses strategy pattern to implement pluggable target selection logic
  * - Based on Tick drive, cooldown unit is tick
@@ -48,7 +48,6 @@ export class AbilitySystem {
     this.context.eventBus.on('tick:start', this.tickHandler)
   }
   /** Process ability logic for each tick */
-  // TODO: Can learn from DamageChain architecture, split into multiple small methods
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()
     const allEntities = this.context.getAllEntities()
@@ -93,7 +92,7 @@ export class AbilitySystem {
     if (!target) return
     // 3. Check if can release ultimate // TODO: This part is complex, can consider making it a separate method or even class or other architecture
     const currentEnergy = character.getAttribute('currentEnergy') ?? 0
-    const maxEnergy = character.getAttribute('maxEnergy') ?? 100
+    const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
     const canUseUltimate = currentEnergy >= maxEnergy
     if (canUseUltimate) {
       // Release ultimate
@@ -158,7 +157,7 @@ export class AbilitySystem {
   /** Accumulate energy */
   private gainEnergy(character: ICharacter, amount: number): void {
     const currentEnergy = character.getAttribute('currentEnergy') ?? 0
-    const maxEnergy = character.getAttribute('maxEnergy') ?? 100
+    const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
     const newEnergy = Math.min(currentEnergy + amount, maxEnergy)
     character.setBaseAttribute('currentEnergy', newEnergy)
   }

@@ -10,7 +10,7 @@ import { TickerDriver, TickerProcessor } from '../logic/tick'
  *
  * Design concept:
  * - Acts as a streamlined coordinator for the combat system, responsible for initializing and orchestrating subsystems (Ticker, Logger, Ability, Snapshot, etc.)
- * - Uses composition pattern to manage lifecycles of multiple subsystems, ensuring correct initialization and release of resources
+ * - Uses composition pattern to manage life cycles of multiple subsystems, ensuring correct initialization and release of resources
  * - Uses ResultBuilder to separate result building logic, keeping CombatEngine's responsibility single
  * - Encapsulates combat flow control and result aggregation in a single interface for upper layers
  *
