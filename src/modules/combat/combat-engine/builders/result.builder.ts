@@ -1,7 +1,7 @@
 import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../character'
+import type { ICharacter } from '../../domain/character'
 import type { EventLogger } from '../../logger'
-import type { SnapshotCollector } from '../../snapshot'
+import type { SnapshotCollector } from '../../logic/snapshot'
 import type { CombatConfig, CombatOutcome, CombatResult, CombatStatistics, CharacterStats } from '../models'
 import type { CombatLogEntry } from '../../logger'
 /**

@@ -11,11 +11,10 @@ Provide project context and coding guidelines that AI should follow when generat
 - 易讀性高
 - 遵循SOLID原則(尤其是單一職責原則最重要)
 - 符合設計模式
-
 - 命名有意義
 - 避免魔法數字和魔法字串
-
 - 代碼就是最好的文檔
+- 物件關係不應形成循環依賴，依賴應該是單向的
 
 ### 關於註解
 

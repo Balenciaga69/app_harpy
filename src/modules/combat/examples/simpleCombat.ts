@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '../combat-engine/combat.engine'
-import { Character } from '../character/character'
-import { ThunderStrikeUltimate } from '../ability'
+import { Character } from '../domain/character/character'
+import { ThunderStrikeUltimate } from '../coordination'
 /**
  * 簡單的戰鬥測試範例（v0.3）
  * 驗證能量系統與大招機制

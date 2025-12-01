@@ -1,4 +1,4 @@
-import type { CharacterSnapshot } from '../../character'
+import type { CharacterSnapshot } from '../../domain/character'
 /**
  * 戰鬥快照
  *

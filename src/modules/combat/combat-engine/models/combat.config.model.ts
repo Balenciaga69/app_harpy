@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../character'
+import type { ICharacter } from '../../domain/character'
 /**
  * 戰鬥配置
  *

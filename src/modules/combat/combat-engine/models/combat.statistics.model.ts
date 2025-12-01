@@ -1,4 +1,4 @@
-import type { CharacterId } from '../../character'
+import type { CharacterId } from '../../domain/character'
 /**
  * 角色戰鬥統計
  *
