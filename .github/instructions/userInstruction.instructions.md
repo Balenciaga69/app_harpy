@@ -18,6 +18,7 @@ Provide project context and coding guidelines that AI should follow when generat
 
 ### 關於註解
 
+- When you refactor or modify code, be sure to update related comments to maintain consistency
 - Comments have two purposes
 - Help understand complex logic
 - Provide a brief one-line description of a function or class's purpose, allowing for quick browsing without diving into the code
