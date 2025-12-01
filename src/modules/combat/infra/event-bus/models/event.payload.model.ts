@@ -1,4 +1,4 @@
-import type { CharacterId, CharacterSnapshot } from '../../../domain/character'
+import type { CharacterId, CharacterSnapshot } from '../../shared/models'
 /**
  * 戰鬥開始事件
  */

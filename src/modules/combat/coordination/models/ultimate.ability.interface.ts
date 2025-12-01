@@ -1,7 +1,15 @@
+// TODO: [跨層依賴] Coordination 層依賴 Domain 層的 ICharacter 和 Context 層的 CombatContext
+// 原因：大招執行需要：
+//   1. 訪問施放者（ICharacter）的屬性和方法
+//   2. 訪問戰鬥上下文（CombatContext）來影響其他角色或查詢狀態
+// 遷移注意：若遷移到強類型語言，建議將這兩個介面提升為共用契約層
 import type { ICharacter } from '../../domain/character'
 import type { CombatContext } from '@/modules/combat/context'
+
 /**
- * 大招介面
+ * 大招介面 - 行為契約
+ *
+ * 定義大招應具備的能力，使用策略模式實現
  *
  * 設計理念：
  * - 大招不一定是傷害技能，可以是輔助、召喚、治療等

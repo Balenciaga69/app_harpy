@@ -1,12 +1,11 @@
-import { type IEntity } from '@/modules/combat/infra/shared'
+import { type IEntity, type CharacterId, type CharacterSnapshot } from '@/modules/combat/infra/shared'
 import type { IAttributeProvider } from './attribute.provider.interface'
 import type { IEffectOwner } from './effect.owner.interface'
 import type { IUltimateOwner } from './ultimate.owner.interface'
-import type { CharacterSnapshot } from '../models/character.snapshot.model'
-// 角色 ID（簡單 alias）
-export type CharacterId = string
 /**
  * 角色介面：定義角色對外的公開方法
+ *
+ * 這是行為契約 (Contract Model)，定義角色應具備的能力
  *
  * 設計理念：
  * - 組合優於繼承：透過組合多個職責介面
@@ -17,3 +16,5 @@ export interface ICharacter extends IEntity, IAttributeProvider, IEffectOwner, I
   /** 創建角色快照（用於回放、日誌記錄） */
   createSnapshot(): CharacterSnapshot
 }
+// 重新導出型別別名（保持向後兼容）
+export type { CharacterId, CharacterSnapshot }

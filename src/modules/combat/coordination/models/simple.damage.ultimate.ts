@@ -1,12 +1,14 @@
 import { nanoid } from 'nanoid'
+// TODO: [跨層依賴] 此實作類別依賴 Domain 層和 Context 層
+// 繼承自 IUltimateAbility 介面的依賴要求
 import type { ICharacter } from '../../domain/character'
 import type { CombatContext } from '@/modules/combat/context'
-import { DamageChain } from '../../damage'
+import { DamageChain } from '../../logic/damage'
 import { DamageFactory } from '../factories'
 import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
 /**
- * 基礎傷害型大招
+ * 基礎傷害型大招 - 具體實作
  *
  * 範例：對單一目標造成高額傷害
  */
