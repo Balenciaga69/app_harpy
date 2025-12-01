@@ -1,7 +1,7 @@
-// 公共類（給外部使用）
+// Public classes (for external use)
 export { Character } from './character'
 
-// 角色模板工廠函數（給外部使用）
+// Character template factory functions (for external use)
 export {
   createWarriorTemplate,
   createArcherTemplate,
@@ -14,16 +14,16 @@ export {
   createBalancedTemplate,
 } from './character.templates'
 
-// 公共接口（類型定義）
+// Public interfaces (type definitions)
 export type { ICharacter, CharacterId, CharacterSnapshot } from './interfaces/character.interface'
 export type { IAttributeProvider } from './interfaces/attribute.provider.interface'
 export type { IEffectOwner } from './interfaces/effect.owner.interface'
 export type { IUltimateOwner } from './interfaces/ultimate.owner.interface'
 
-// 公共類型（屬性相關）
+// Public types (attribute related)
 export type { AttributeType } from './models/attribute.core.model'
 export type { AttributeModifier } from './models/attribute.modifier.model'
 export type { BaseAttributeValues } from './models/attribute.core.model'
 
-// 注意：AttributeContainer 和 AttributeCalculator 是內部實現，不導出
-// 注意：EffectManager 也是內部實現，不導出
+// Note: AttributeContainer and AttributeCalculator are internal implementations, not exported
+// Note: EffectManager is also internal implementation, not exported

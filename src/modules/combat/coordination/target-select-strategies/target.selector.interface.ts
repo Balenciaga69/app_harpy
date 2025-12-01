@@ -1,10 +1,10 @@
 import type { ICharacter } from '../../domain/character'
 /**
- * 目標選擇策略介面
+ * Target selector strategy interface
  */
 export interface ITargetSelector {
   /**
-   * 從候選目標中選擇一個攻擊目標
+   * Select one attack target from candidate targets
    */
   selectTarget(attacker: ICharacter, candidates: ICharacter[]): ICharacter | null
 }

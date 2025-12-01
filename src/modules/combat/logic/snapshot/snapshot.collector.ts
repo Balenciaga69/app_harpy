@@ -3,21 +3,21 @@ import type { CombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '../../domain/character'
 import { isCharacter } from '../../infra/shared'
 /**
- * SnapshotCollector：戰鬥快照收集器。
+ * SnapshotCollector: Combat snapshot collector.
  *
- * 設計理念：
- * - 單一職責：只負責監聽事件並實時收集戰鬥狀態快照。
- * - 事件驅動：透過 EventBus 接收採集時機通知，不主動輪詢。
- * - 數據真實性：直接讀取當下的實體狀態，確保快照準確反映戰鬥進程。
- * - 可配置間隔：支援靈活的採集頻率設定，平衡性能與回放精度。
- * - 職責分離：僅負責收集，不參與戰鬥邏輯或結果構建。
+ * Design concept:
+ * - Single responsibility: only responsible for listening to events and collecting combat status snapshots in real-time.
+ * - Event-driven: receives collection timing notifications through EventBus, does not actively poll.
+ * - Data authenticity: directly reads current entity status, ensures snapshots accurately reflect combat progress.
+ * - Configurable interval: supports flexible collection frequency settings, balances performance and replay precision.
+ * - Responsibility separation: only collects, does not participate in combat logic or result building.
  *
- * 主要職責：
- * - 監聽 tick:start 事件，判斷是否達到採集間隔。
- * - 從 CombatContext 讀取所有實體的當前狀態。
- * - 生成並儲存包含真實時間戳的快照物件。
- * - 提供快照查詢介面供 ResultBuilder 使用。
- * - 提供資源清理方法，在戰鬥結束後釋放記憶體。
+ * Main responsibilities:
+ * - Listens to tick:start event, judges whether collection interval is reached.
+ * - Reads current status of all entities from CombatContext.
+ * - Generates and stores snapshot objects containing real timestamps.
+ * - Provides snapshot query interface for ResultBuilder use.
+ * - Provides resource cleanup method to release memory after combat ends.
  */
 export class SnapshotCollector {
   private snapshots: CombatSnapshot[] = []
@@ -28,7 +28,7 @@ export class SnapshotCollector {
     this.interval = interval
     this.registerEventListeners()
   }
-  /** 註冊事件監聽 */
+  /** Register event listeners */
   private registerEventListeners(): void {
     this.context.eventBus.on('tick:start', (payload) => {
       if (payload.tick % this.interval === 0) {
@@ -36,7 +36,7 @@ export class SnapshotCollector {
       }
     })
   }
-  /** 捕捉當前戰鬥狀態快照 */
+  /** Capture current combat status snapshot */
   private captureSnapshot(tick: number): void {
     const allEntities = this.context.getAllEntities()
     const snapshot: CombatSnapshot = {
@@ -45,11 +45,11 @@ export class SnapshotCollector {
     }
     this.snapshots.push(snapshot)
   }
-  /** 獲取所有已收集的快照 */
+  /** Get all collected snapshots */
   public getSnapshots(): CombatSnapshot[] {
     return this.snapshots
   }
-  /** 清理資源 */
+  /** Clean up resources */
   public dispose(): void {
     this.snapshots = []
   }

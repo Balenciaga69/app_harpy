@@ -3,25 +3,25 @@ import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * ?´æ??¤å??Žæ®µ
+ * CriticalStep: Determines if damage is critical and applies critical multiplier.
  */
 export class CriticalStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
     const hooks = collectHooks(event.source, event.target)
-    // ?·è? Hook
+    // Execute hooks
     for (const hook of hooks) {
       if (hook.onCritCheck) {
         hook.onCritCheck(event, context)
       }
     }
-    // ?²è??´æ??¤å?
+    // Calculate critical chance
     const critChance = event.source.getAttribute('criticalChance') ?? 0
     event.isCrit = context.rng.next() < critChance
-    // å¦‚æ??´æ?ï¼Œå??¨æš´?Šå€ç?
+    // If critical, apply critical multiplier
     if (event.isCrit) {
       const critMultiplier = event.source.getAttribute('criticalMultiplier') ?? 1.5
       event.amount *= critMultiplier
-      // ?¼é€æš´?Šä?ä»?
+      // Emit critical event
       context.eventBus.emit('entity:critical', {
         sourceId: event.source.id,
         targetId: event.target.id,

@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-// TODO: [跨層依賴] 此實作類別依賴 Domain 層和 Context 層
-// 繼承自 IUltimateAbility 介面的依賴要求
+// TODO: [Cross-layer dependency] This implementation class depends on Domain layer and Context layer
+// Inherits dependency requirements from IUltimateAbility interface
 import type { ICharacter } from '../../domain/character'
 import type { CombatContext } from '@/modules/combat/context'
 import { DamageChain } from '../../logic/damage'
@@ -9,16 +9,16 @@ import { DamageFactory } from '../factories'
 import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
 /**
- * 混合型大招範例：雷霆衝擊 - 具體實作
+ * Hybrid ultimate example: Thunder Strike - concrete implementation
  *
- * 效果：
- * - 對單一敵人造成傷害
- * - 為自己疊加充能層數
+ * Effects:
+ * - Deal damage to single enemy
+ * - Add charge stacks to self
  */
 export class ThunderStrikeUltimate implements IUltimateAbility {
   readonly id: string
-  readonly name: string = '雷霆衝擊'
-  readonly description: string = '對敵人造成傷害，並為自己疊加充能'
+  readonly name: string = 'Thunder Strike'
+  readonly description: string = 'Deal damage to enemy and add charge stacks to self'
   readonly type = 'hybrid' as const
   private damageMultiplier: number
   private chargeStacks: number
@@ -28,7 +28,7 @@ export class ThunderStrikeUltimate implements IUltimateAbility {
     this.chargeStacks = chargeStacks
   }
   execute(caster: ICharacter, context: CombatContext): void {
-    // === 第一部分：造成傷害 ===
+    // === First part: Deal damage ===
     const enemyTeam = caster.team === 'player' ? 'enemy' : 'player'
     const enemies = context.getEntitiesByTeam(enemyTeam)
     const aliveEnemies = enemies.filter((e) => 'isDead' in e && !e.isDead) as ICharacter[]
@@ -47,8 +47,8 @@ export class ThunderStrikeUltimate implements IUltimateAbility {
       const damageChain = new DamageChain(context)
       damageChain.execute(damageEvent)
     }
-    // === 第二部分：為自己疊加充能 ===
-    const existingCharge = caster.getAllEffects().find((e) => e.name === '充能')
+    // === Second part: Add charge stacks to self ===
+    const existingCharge = caster.getAllEffects().find((e) => e.name === 'Charge')
     if (existingCharge && 'addStacks' in existingCharge) {
       const stackable = existingCharge as { addStacks: (amount: number) => void }
       stackable.addStacks(this.chargeStacks)

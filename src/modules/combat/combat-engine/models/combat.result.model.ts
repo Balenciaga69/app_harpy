@@ -3,29 +3,30 @@ import type { CombatLogEntry } from '../../logic/logger'
 import type { CombatOutcome } from './combat.outcome.model'
 import type { CombatSnapshot } from './combat.snapshot.model'
 import type { CombatStatistics } from './combat.statistics.model'
+
 /**
- * �԰����G
+ * CombatResult
  *
- * �t�d�ʸ˧��㪺�԰��L�{�P���G�A�D�n�Ω� UI �^��C
- * �ϥβզX�Ҧ��N����¾�d�E�X�b�@�_�A��K���@�P�X�i�C
+ * Result data produced by the combat engine.
+ * Used by the UI, replay system, and any code that needs final combat info.
  */
 export interface CombatResult {
-  /** �԰����G */
+  // The outcome of the combat (win, loss, draw, etc.)
   outcome: CombatOutcome
-  /** �ӧQ�� */
+  // Which side won: 'player', 'enemy', or null for no winner
   winner: 'player' | 'enemy' | null
-  /** �s������ */
+  // Characters that survived the combat
   survivors: ICharacter[]
-  /** �԰� Tick �� */
+  // Total ticks the combat lasted
   totalTicks: number
-  /** ����ƥ��x�A�ѸԲӦ^��ϥ� */
+  // Ordered list of combat log entries (useful for replay and debugging)
   logs: CombatLogEntry[]
-  /** �w���ַӡ]�Ω�ֳt����^ */
+  // Periodic snapshots captured during combat (for replay or inspection)
   snapshots: CombatSnapshot[]
-  /** �έp�ƾ� */
+  // Aggregated statistics about the combat (damage done, kills, etc.)
   statistics: CombatStatistics
-  /** �԰��}�l tick */
+  // Tick when the combat started
   startedAt: number
-  /** �԰����� tick */
+  // Tick when the combat ended
   endedAt: number
 }

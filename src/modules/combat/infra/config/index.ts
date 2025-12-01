@@ -1,7 +1,7 @@
 /**
- * 遊戲配置層入口
+ * Game configuration layer entry point
  *
- * 集中匯出所有配置常數與公式
+ * Centralized export of all configuration constants and formulas
  */
 export * from './attribute.constants'
 export * from './formula.constants'

@@ -1,9 +1,9 @@
 import type { CharacterId } from './entity.types'
 /**
- * 角色快照 - 純資料模型
+ * Character snapshot - pure data model
  *
- * 用於記錄某個時間點的角色狀態
- * 主要用於：回放系統、日誌記錄、事件傳遞
+ * Used to record character status at a specific time point
+ * Mainly used for: replay system, log recording, event transmission
  */
 export interface CharacterSnapshot {
   id: CharacterId

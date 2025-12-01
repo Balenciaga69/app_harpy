@@ -4,51 +4,51 @@ import type { CombatContext } from '../../../../context'
 import type { ICharacter } from '../../../character'
 import type { IEffect } from '../../models/effect.model'
 /**
- * 充能暴擊增幅效果
+ * Charged critical amplification effect
  *
- * 獨特裝備效果：
- * - 當角色擁有充能效果時，暴擊率加倍
- * - 透過修改 DamageChain 的暴擊判定來實作
+ * Unique equipment effect:
+ * - When character has charge effect, critical chance doubles
+ * - Implemented by modifying DamageChain's critical check
  */
 export class ChargedCriticalEffect implements IEffect, ICombatHook {
   readonly id: string
-  readonly name: string = '充能暴擊'
+  readonly name: string = 'Charged Critical'
   constructor() {
     this.id = `charged-crit-${nanoid(6)}`
   }
   onApply(_character: ICharacter, _context: CombatContext): void {
-    // 被動效果，不需要初始化
+    // Passive effect, no initialization needed
   }
   onRemove(_character: ICharacter, _context: CombatContext): void {
-    // 被動效果，不需要清理
+    // Passive effect, no cleanup needed
   }
   /**
-   * 【階段3】暴擊判定階段
-   * 如果角色有充能效果，暴擊率加倍
+   * [Stage 3] Critical check stage
+   * If character has charge effect, double critical chance
    */
   onCritCheck(event: DamageEvent, context: CombatContext): DamageEvent {
-    // 只處理攻擊者是自己的情況
+    // Only handle when source is self
     if (event.source.id !== this.getOwner(event, context)?.id) {
       return event
     }
-    // 檢查是否有充能效果
-    // TODO: 異常狀態表 應該有個 Enum 而不是在此處 === "充能"
-    const hasCharge = event.source.getAllEffects().some((effect) => effect.name === '充能')
+    // Check if has charge effect
+    // TODO: Status effect table should have an Enum instead of === "Charge" here
+    const hasCharge = event.source.getAllEffects().some((effect) => effect.name === 'Charge')
     if (hasCharge) {
-      // 重新計算暴擊判定，使用加倍的暴擊率
+      // Recalculate critical check using doubled critical chance
       const baseCritChance = event.source.getAttribute('criticalChance')
-      const boostedCritChance = Math.min(1, baseCritChance * 2) // 最高 100%
+      const boostedCritChance = Math.min(1, baseCritChance * 2) // Max 100%
       event.isCrit = context.rng.next() < boostedCritChance
     }
     return event
   }
-  /** 輔助方法：獲取效果的擁有者 */
+  /** Helper method: Get the owner of this effect */
   private getOwner(event: DamageEvent, _context: CombatContext): ICharacter | null {
-    // 檢查攻擊者是否擁有此效果
+    // Check if source has this effect
     if (event.source.hasEffect(this.id)) {
       return event.source
     }
-    // 檢查目標是否擁有此效果
+    // Check if target has this effect
     if (event.target.hasEffect(this.id)) {
       return event.target
     }

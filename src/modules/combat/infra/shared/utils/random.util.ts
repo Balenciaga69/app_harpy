@@ -1,18 +1,18 @@
 import seedrandom from 'seedrandom'
 /**
- * CombatRandomGenerator：可重現的偽隨機數生成器。
+ * CombatRandomGenerator: Reproducible pseudo-random number generator.
  *
- * 設計理念：
- * - 基於 seedrandom 庫，提供種子化的隨機數生成，確保結果可重現。
- * - 支援戰鬥回放與測試，相同種子產生相同的隨機序列。
- * - 封裝常用的隨機數生成方法，提供便捷的機率判斷與範圍生成。
- * - 作為 CombatContext 的核心元件，統一管理戰鬥中的所有隨機性。
+ * Design concept:
+ * - Based on seedrandom library, provides seeded random number generation to ensure reproducible results.
+ * - Supports combat replay and testing, same seed produces same random sequence.
+ * - Encapsulates commonly used random number generation methods, provides convenient probability judgment and range generation.
+ * - As core component of CombatContext, uniformly manages all randomness in combat.
  *
- * 主要職責：
- * - 生成基礎隨機數（0 到 1 之間的浮點數）。
- * - 提供整數與浮點數的範圍隨機生成方法。
- * - 支援機率判斷（如暴擊判定、閃避判定）。
- * - 保存與提供種子，支援戰鬥狀態的保存與重放。
+ * Main responsibilities:
+ * - Generate basic random numbers (floating point numbers between 0 and 1).
+ * - Provide integer and floating point range random generation methods.
+ * - Support probability judgment (critical judgment, evasion judgment).
+ * - Save and provide seed, support saving and replaying combat status.
  */
 export class CombatRandomGenerator {
   private rng: seedrandom.PRNG
@@ -21,23 +21,23 @@ export class CombatRandomGenerator {
     this.seed = String(seed)
     this.rng = seedrandom(this.seed)
   }
-  /** 生成 [0, 1) 範圍的隨機數（類似 Math.random()） */
+  /** Generate random number in [0, 1) range (similar to Math.random()) */
   next(): number {
     return this.rng()
   }
-  /** 生成 [min, max) 範圍的隨機整數 */
+  /** Generate random integer in [min, max) range */
   nextInt(min: number, max: number): number {
     return Math.floor(this.next() * (max - min) + min)
   }
-  /** 生成 [min, max] 範圍的隨機浮點數 */
+  /** Generate random float in [min, max] range */
   nextFloat(min: number, max: number): number {
     return this.next() * (max - min) + min
   }
-  /** 以指定機率返回 true */
+  /** Return true with specified probability */
   chance(probability: number): boolean {
     return this.next() < probability
   }
-  /** 獲取當前種子（用於保存/重放） */
+  /** Get current seed (for saving/replaying) */
   getSeed(): string {
     return this.seed
   }

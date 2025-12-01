@@ -3,7 +3,7 @@ import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * 傷害應用後階段
+ * AfterApplyStep: Post-damage application step for cleanup and effects.
  */
 export class AfterApplyStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
@@ -13,6 +13,6 @@ export class AfterApplyStep implements IDamageStep {
         hook.afterDamageApply(event, context)
       }
     }
-    return true // 繼續執行
+    return true // Continue execution
   }
 }

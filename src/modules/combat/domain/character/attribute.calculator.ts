@@ -3,32 +3,32 @@ import type { IAttributeCalculator } from './interfaces/attribute.calculator.int
 import type { AttributeType } from './models/attribute.core.model'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from './models/attribute.modifier.model'
 /**
- * AttributeCalculator：屬性最終值的計算引擎。
+ * AttributeCalculator: Final value calculation engine for attributes.
  *
- * 設計理念：
- * - SRP, 純計算邏輯工具
- * - 遵循單一職責原則，專注於屬性計算邏輯，不涉及數據儲存。
- * - 與 AttributeContainer 協作，實現計算層與數據層的分離。
+ * Design concept:
+ * - SRP, pure calculation logic tool
+ * - Follows single responsibility principle, focuses on attribute calculation logic, without business logic.
+ * - Collaborates with AttributeContainer to achieve separation of calculation layer and data layer.
  *
- * 主要職責：
- * - 從容器中獲取基礎值與修飾符，計算最終屬性值。
- * - 按優先級排序修飾符，確保計算順序符合遊戲邏輯。
- * - 分離處理加法與乘法修飾符，應用正確的數學公式。
- * - 提供純計算方法，支援外部測試與驗證。
+ * Main responsibilities:
+ * - Get base values and modifiers from container, calculate final attribute values.
+ * - Sort modifiers by priority to ensure calculation order matches game logic.
+ * - Separate processing of additive and multiplicative modifiers, apply correct mathematical formulas.
+ * - Provide pure calculation methods for external testing and verification.
  */
 export class AttributeCalculator implements IAttributeCalculator {
   private container: AttributeContainer
-  /** 初始化屬性計算器，注入屬性容器 */
+  /** Initialize attribute calculator, inject attribute container */
   constructor(container: AttributeContainer) {
     this.container = container
   }
-  /** 計算指定屬性類型的最終值（從容器獲取數據） */
+  /** Calculate final value of specified attribute type (get data from container) */
   calculateAttribute(type: AttributeType): number {
     const baseValue = this.container.getBase(type)
     const modifiers = this.container.getModifiers(type)
     return this.calculate(baseValue, modifiers)
   }
-  /** 計算指定屬性的最終值 */
+  /** Calculate final value of specified attribute */
   calculate(baseValue: number, modifiers: AttributeModifier[]): number {
     const sortedModifiers = this.sortModifiersByPriority(modifiers)
     const additiveModifiers = this.filterModifiersByMode(sortedModifiers, 'add')
@@ -37,8 +37,8 @@ export class AttributeCalculator implements IAttributeCalculator {
     const multiplier = this.calculateMultiplierProduct(multiplyModifiers)
     return (baseValue + additive) * multiplier
   }
-  // === 幫助方法 ===
-  /** 按優先級排序修飾器 */
+  // === Helper methods ===
+  /** Sort modifiers by priority */
   private sortModifiersByPriority(modifiers: AttributeModifier[]): AttributeModifier[] {
     return [...modifiers].sort((a, b) => {
       const priorityA = (a as AttributeModifierEx).priority ?? ModifierPriority.NORMAL
@@ -46,15 +46,15 @@ export class AttributeCalculator implements IAttributeCalculator {
       return priorityA - priorityB
     })
   }
-  /** 根據模式篩選修飾器 */
+  /** Filter modifiers by mode */
   private filterModifiersByMode(modifiers: AttributeModifier[], mode: 'add' | 'multiply'): AttributeModifier[] {
     return modifiers.filter((m) => m.mode === mode)
   }
-  /** 計算加法修飾器的總和 */
+  /** Calculate sum of additive modifiers */
   private calculateAdditiveSum(modifiers: AttributeModifier[]): number {
     return modifiers.reduce((sum, m) => sum + m.value, 0)
   }
-  /** 計算乘法修飾器的總積 */
+  /** Calculate product of multiplicative modifiers */
   private calculateMultiplierProduct(modifiers: AttributeModifier[]): number {
     return modifiers.reduce((product, m) => product * (1 + m.value), 1)
   }

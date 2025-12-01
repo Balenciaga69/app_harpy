@@ -1,50 +1,50 @@
 import type { CharacterId } from '../../domain/character'
 /**
- * 角色戰鬥統計
+ * CharacterStats
  *
- * 記錄單個角色在戰鬥中的詳細數據。
+ * Records detailed data for a single character in combat.
  */
 export interface CharacterStats {
-  /** 角色 ID */
+  /** Character ID */
   characterId: CharacterId
-  /** 角色名稱 */
+  /** Character name */
   name: string
-  /** 造成的總傷害 */
+  /** Total damage dealt */
   damageDealt: number
-  /** 受到的總傷害 */
+  /** Total damage taken */
   damageTaken: number
-  /** 擊殺數 */
+  /** Number of kills */
   kills: number
-  /** 是否存活 */
+  /** Whether survived */
   survived: boolean
-  /** 攻擊次數 */
+  /** Number of attacks */
   attackCount: number
-  /** 暴擊次數 */
+  /** Number of critical hits */
   criticalHits: number
-  /** 閃避次數 */
+  /** Number of dodges */
   dodges: number
 }
 /**
- * 戰鬥統計數據
+ * CombatStatistics
  *
- * 彙總整場戰鬥的統計資訊。
+ * Aggregates statistics for the entire combat.
  *
- * TODO: 統計計算邏輯
- * 目前統計數據為空殼，需要從 EventLogger 的日誌中反推計算。
- * 建議未來實現 StatisticsCalculator 類別，遍歷事件日誌並累積：
- * - damageDealt/damageTaken：監聽 'entity:damage' 事件
- * - kills：監聽 'entity:death' 事件
- * - criticalHits：監聽 'entity:critical' 事件
- * - dodges：監聽 'combat:miss' 事件
- * - effectsApplied：監聽 'entity:effect-applied' 事件
+ * TODO: Statistics calculation logic
+ * Currently, statistics are empty shells and need to be calculated from EventLogger logs.
+ * Suggest implementing a StatisticsCalculator class in the future to iterate through event logs and accumulate:
+ * - damageDealt/damageTaken: listen to 'entity:damage' events
+ * - kills: listen to 'entity:death' events
+ * - criticalHits: listen to 'entity:critical' events
+ * - dodges: listen to 'combat:miss' events
+ * - effectsApplied: listen to 'entity:effect-applied' events
  */
 export interface CombatStatistics {
-  /** 每個角色的統計 */
+  /** Statistics for each character */
   characterStats: Map<CharacterId, CharacterStats>
-  /** 效果觸發統計 */
+  /** Effect application statistics */
   effectsApplied: Map<string, number> // effectName -> count
-  /** 總傷害 */
+  /** Total damage */
   totalDamage: number
-  /** 戰鬥時長（Tick 數） */
+  /** Combat duration in ticks */
   duration: number
 }

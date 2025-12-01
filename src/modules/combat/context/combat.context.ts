@@ -1,17 +1,17 @@
 import { EventBus } from '../infra/event-bus'
 import { CombatRandomGenerator, type IEntity } from '../infra/shared'
 /**
- * CombatContext：戰鬥的全域上下文容器。
+ * CombatContext: Global context container for combat.
  *
- * 設計理念：
- * - 作為貧血模型（Anemic Model），僅承載共享資料與訪問接口，不包含業務邏輯。
- * - 提供 EventBus、RNG 與 Entity 管理等核心資源，供多個系統共用。
- * - 最小化耦合，系統（如 DamageChain、Ticker）透過 Context 訪問共用資源。
+ * Design concept:
+ * - Acts as an anemic model, only carries shared data and access interfaces, without business logic.
+ * - Provides core resources like EventBus, RNG, and Entity management for multiple systems to share.
+ * - Minimizes coupling; systems (like DamageChain, Ticker) access shared resources through Context.
  *
- * 主要職責：
- * - 持有戰鬥的事件總線（EventBus）與隨機數生成器（CombatRandomGenerator）。
- * - 管理參與戰鬥的實體列表（Entity 管理）。
- * - 提供當前 Tick 的讀寫接口，方便其他系統基於時間驅動執行。
+ * Main responsibilities:
+ * - Holds the combat event bus (EventBus) and random number generator (CombatRandomGenerator).
+ * - Manages the list of entities participating in combat (Entity management).
+ * - Provides read/write interface for current Tick, allowing other systems to execute based on time.
  */
 export class CombatContext {
   public readonly eventBus: EventBus
@@ -48,5 +48,5 @@ export class CombatContext {
   public resetTick(): void {
     this.currentTick = 0
   }
-  // 這裡可以加入更多戰鬥全域資訊，如 RNG 種子、戰鬥設定等
+  // More global combat info can be added here, like RNG seed, combat settings, etc.
 }

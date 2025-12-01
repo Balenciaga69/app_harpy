@@ -1,19 +1,19 @@
 import type { IUltimateAbility } from '../../../coordination/models/ultimate.ability.interface'
 /**
- * 大招擁有者介面
+ * Ultimate owner interface
  *
- * 設計理念：
- * - 定義角色與大招之間的關聯契約
- * - 支援大招的動態替換 (類似裝備系統)
- * - 透過策略模式實現大招的多樣化
+ * Design concept:
+ * - Define association contract between character and ultimate
+ * - Support dynamic replacement of ultimate (similar to equipment system)
+ * - Implement diversification of ultimate through strategy pattern
  *
- * 注意事項：
- * - 依賴 coordination 層的 IUltimateAbility 介面 (合理的單向依賴)
- * - 不會造成循環依賴 (domain → coordination 是正確的依賴方向)
+ * Notes:
+ * - Depends on IUltimateAbility interface from coordination layer (reasonable unidirectional dependency)
+ * - Will not cause circular dependency (domain → coordination is correct dependency direction)
  */
 export interface IUltimateOwner {
-  /** 獲取大招（如果有） */
+  /** Get ultimate (if any) */
   getUltimate(): IUltimateAbility | undefined
-  /** 設置大招 */
+  /** Set ultimate */
   setUltimate(ultimate: IUltimateAbility): void
 }

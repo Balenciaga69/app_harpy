@@ -3,20 +3,20 @@ import { StackableEffect } from '../../models/stackable.effect.model'
 import type { ICharacter } from '../../../character'
 import type { CombatContext } from '../../../../context'
 /**
- * 充能效果
- * - 提高攻擊/施法頻率（降低冷卻時間）
- * - 預設 4%/層
- * - 最高 16 層
- * - 隨時間衰減
+ * Charge effect
+ * - Increases attack/spell frequency (reduces cooldown time)
+ * - Default 4%/stack
+ * - Max 16 stacks
+ * - Decays over time
  */
 export class ChargeEffect extends StackableEffect {
   private readonly cooldownReductionPerStack: number = 0.04 // 4%
   private attackModifierId: string | null = null
   private spellModifierId: string | null = null
-  private readonly decayRate: number = 0.1 // 每秒減少 10%
+  private readonly decayRate: number = 0.1 // Reduce 10% per second
   private lastDecayTick: number = 0
   constructor(initialStacks: number = 1) {
-    super(`charge-${nanoid(6)}`, '充能', 16)
+    super(`charge-${nanoid(6)}`, 'Charge', 16)
     this.setStacks(initialStacks)
   }
   onApply(character: ICharacter, context: CombatContext): void {
@@ -36,14 +36,14 @@ export class ChargeEffect extends StackableEffect {
   onTick(character: ICharacter, context: CombatContext): void {
     const currentTick = context.getCurrentTick()
     const ticksPassed = currentTick - this.lastDecayTick
-    // 假設 100 ticks = 1 秒（這個數值可以調整）
+    // Assume 100 ticks = 1 second (this value can be adjusted)
     const secondsPassed = ticksPassed / 100
     if (secondsPassed >= 1) {
-      // 每秒減少 10% 層數或至少 1 層
+      // Reduce 10% stacks per second or at least 1 stack
       const decayAmount = Math.max(1, Math.floor(this.stacks * this.decayRate))
       this.removeStacks(decayAmount)
       this.lastDecayTick = currentTick
-      // 如果層數歸零，移除效果
+      // If stacks reach zero, remove effect
       if (this.stacks === 0) {
         character.removeEffect(this.id, context)
         return
@@ -51,18 +51,18 @@ export class ChargeEffect extends StackableEffect {
       this.updateCooldownModifiers(character)
     }
   }
-  /** 更新冷卻時間修飾器 */
+  /** Update cooldown modifiers */
   private updateCooldownModifiers(character: ICharacter): void {
-    // 移除舊的修飾器
+    // Remove old modifiers
     if (this.attackModifierId) {
       character.removeAttributeModifier(this.attackModifierId)
     }
     if (this.spellModifierId) {
       character.removeAttributeModifier(this.spellModifierId)
     }
-    // 計算冷卻時間減少百分比（使用乘法修飾器）
+    // Calculate cooldown reduction percentage (using multiply modifier)
     const cooldownReduction = -(this.stacks * this.cooldownReductionPerStack)
-    // 添加攻擊冷卻修飾器
+    // Add attack cooldown modifier
     this.attackModifierId = `${this.id}-attack-cd`
     character.addAttributeModifier({
       id: this.attackModifierId,
@@ -71,7 +71,7 @@ export class ChargeEffect extends StackableEffect {
       mode: 'multiply',
       source: this.id,
     })
-    // TODO: 施法冷卻目前尚未實現，暫時註解
+    // TODO: Spell cooldown not yet implemented, temporarily commented
     // this.spellModifierId = `${this.id}-spell-cd`
     // character.addAttributeModifier({
     //   id: this.spellModifierId,

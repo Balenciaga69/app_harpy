@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-// TODO: [跨層依賴] 此實作類別依賴 Domain 層和 Context 層
-// 繼承自 IUltimateAbility 介面的依賴要求
+// TODO: [Cross-layer dependency] This implementation class depends on Domain layer and Context layer
+// Inherits dependency requirements from IUltimateAbility interface
 import type { ICharacter } from '../../domain/character'
 import type { CombatContext } from '@/modules/combat/context'
 import { DamageChain } from '../../logic/damage'
@@ -8,9 +8,9 @@ import { DamageFactory } from '../factories'
 import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
 /**
- * 基礎傷害型大招 - 具體實作
+ * Basic damage ultimate - concrete implementation
  *
- * 範例：對單一目標造成高額傷害
+ * Example: Deal high damage to single target
  */
 export class SimpleDamageUltimate implements IUltimateAbility {
   readonly id: string
@@ -25,23 +25,23 @@ export class SimpleDamageUltimate implements IUltimateAbility {
     this.damageMultiplier = damageMultiplier
   }
   execute(caster: ICharacter, context: CombatContext): void {
-    // 1. 選擇目標
+    // 1. Select target
     const enemyTeam = caster.team === 'player' ? 'enemy' : 'player'
     const enemies = context.getEntitiesByTeam(enemyTeam)
     const aliveEnemies = enemies.filter((e) => 'isDead' in e && !e.isDead) as ICharacter[]
     const selector = new FirstAliveSelector()
     const target = selector.selectTarget(caster, aliveEnemies)
     if (!target) return
-    // 2. 計算傷害
+    // 2. Calculate damage
     const baseDamage = caster.getAttribute('attackDamage') ?? 0
     const ultimateDamage = baseDamage * this.damageMultiplier
-    // 3. 發送事件（使用 entity:attack 事件，因為 ultimate 也是攻擊的一種）
+    // 3. Send event (use entity:attack event, since ultimate is also a type of attack)
     context.eventBus.emit('entity:attack', {
       sourceId: caster.id,
       targetId: target.id,
       tick: context.getCurrentTick(),
     })
-    // 4. 創建傷害事件並執行
+    // 4. Create damage event and execute
     const damageFactory = new DamageFactory()
     const damageEvent = damageFactory.createUltimateEvent(caster, target, ultimateDamage, context.getCurrentTick())
     const damageChain = new DamageChain(context)

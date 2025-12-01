@@ -12,7 +12,7 @@ import { AttributeContainer } from './attribute.container'
 import type { AttributeModifier } from './models/attribute.modifier.model'
 import type { AttributeType } from './models/attribute.core.model'
 /**
- * 配置角色初始化所需的參數
+ * Configuration parameters required for character initialization
  */
 interface CharacterConfig {
   name: string
@@ -21,33 +21,33 @@ interface CharacterConfig {
   ultimate?: IUltimateAbility
 }
 /**
- * Character：戰鬥系統中的核心實體，代表參與戰鬥的角色。
+ * Character: Core entity in combat system, representing characters participating in combat.
  *
- * 設計理念：
- * - 作為 Facade 模式的實現，簡化角色相關操作的介面。
- * - 遵循組合優於繼承原則，通過組合多個專職元件實現複雜功能。
- * - 封裝內部實作細節，僅暴露必要的公開介面，降低外部耦合。
- * - 實作 ICharacter 介面，確保角色行為的一致性與可替換性。
- * - 支援屬性動態修改與效果動態管理，適應戰鬥中的各種變化。
+ * Design concept:
+ * - Implementation of Facade pattern, simplifies interfaces for character-related operations.
+ * - Follows composition over inheritance principle, implements complex functions through combination of specialized components.
+ * - Encapsulates internal implementation details, exposes only necessary public interfaces, reduces external coupling.
+ * - Implements ICharacter interface, ensures consistency and replaceability of character behavior.
+ * - Supports dynamic attribute modification and dynamic effect management, adapts to various changes in combat.
  *
- * 主要職責：
- * - 管理角色的基本資訊。
- * - 提供屬性相關操作介面，委派給內部的容器與計算器處理。
- * - 提供效果相關操作介面，委派給 EffectManager 處理。
- * - 確保 HP 變動時的數值合法性（如限制在 0 到最大值之間）。
+ * Main responsibilities:
+ * - Manage character's basic information.
+ * - Provide attribute-related operation interfaces, delegate to internal containers and calculators for processing.
+ * - Provide effect-related operation interfaces, delegate to EffectManager for processing.
+ * - Ensure HP change value legality (limit between 0 and maximum when taking damage/healing).
  */
 export class Character implements ICharacter {
   readonly id: CharacterId
   readonly name: string
   readonly team: ICharacter['team']
   isDead: boolean = false
-  /** 角色的大招（可選） */
+  /** Character's ultimate (optional) */
   private ultimate?: IUltimateAbility
-  // 私有化內部實作
+  // Privatize internal implementation
   private readonly attributeContainer: AttributeContainer
   private readonly attributeCalculator: AttributeCalculator
   private readonly effectManager: EffectManager
-  /** 初始化角色，注入屬性容器與效果管理器 */
+  /** Initialize character, inject attribute container and effect manager */
   constructor(config: CharacterConfig) {
     this.id = nanoid()
     this.team = config.team
@@ -57,66 +57,66 @@ export class Character implements ICharacter {
     this.attributeCalculator = new AttributeCalculator(this.attributeContainer)
     this.effectManager = new EffectManager(this)
   }
-  // === 屬性相關方法 ===
-  /** 獲取最終屬性值（含修飾符計算） */
+  // === Attribute-related methods ===
+  /** Get final attribute value (including modifier calculation) */
   getAttribute(type: AttributeType): number {
     return this.attributeCalculator.calculateAttribute(type)
   }
-  /** 獲取基礎屬性值（不含修飾符） */
+  /** Get base attribute value (without modifiers) */
   getBaseAttribute(type: AttributeType): number {
     return this.attributeContainer.getBase(type)
   }
-  /** 設置基礎屬性值 */
+  /** Set base attribute value */
   setBaseAttribute(type: AttributeType, value: number): void {
     this.attributeContainer.setBase(type, value)
   }
-  /** 新增屬性修飾符 */
+  /** Add attribute modifier */
   addAttributeModifier(modifier: AttributeModifier): void {
     this.attributeContainer.addModifier(modifier)
   }
-  /** 移除屬性修飾符 */
+  /** Remove attribute modifier */
   removeAttributeModifier(modifierId: string): void {
     this.attributeContainer.removeModifier(modifierId)
   }
-  /** 設置當前 HP，並限制在合法範圍內（受傷/治療時使用） */
+  /** Set current HP and limit within legal range (used when taking damage/healing) */
   setCurrentHpClamped(value: number): void {
     const MIN_HP = 0 as const
     const maxHp = this.getAttribute('maxHp')
     const clampedValue = Math.max(MIN_HP, Math.min(value, maxHp))
     this.setBaseAttribute('currentHp', clampedValue)
   }
-  // === 效果相關方法 ===
-  /** 新增效果 */
+  // === Effect-related methods ===
+  /** Add effect */
   addEffect(effect: IEffect, context: CombatContext): void {
     this.effectManager.addEffect(effect, context)
   }
-  /** 移除效果 */
+  /** Remove effect */
   removeEffect(effectId: string, context: CombatContext): void {
     this.effectManager.removeEffect(effectId, context)
   }
-  /** 檢查是否有指定效果 */
+  /** Check if has specified effect */
   hasEffect(effectId: string): boolean {
     return this.effectManager.hasEffect(effectId)
   }
-  /** 獲取指定效果 */
+  /** Get specified effect */
   getEffect(effectId: string): IEffect | undefined {
     return this.effectManager.getEffect(effectId)
   }
-  /** 獲取所有效果 */
+  /** Get all effects */
   getAllEffects(): readonly IEffect[] {
     return this.effectManager.getAllEffects()
   }
-  // === 大招相關方法 ===
-  /** 獲取大招（如果有） */
+  // === Ultimate-related methods ===
+  /** Get ultimate (if any) */
   getUltimate(): IUltimateAbility | undefined {
     return this.ultimate
   }
-  /** 設置大招 */
+  /** Set ultimate */
   setUltimate(ultimate: IUltimateAbility): void {
     this.ultimate = ultimate
   }
-  // === 快照相關方法 ===
-  /** 創建角色快照（用於回放、日誌記錄） */
+  // === Snapshot-related methods ===
+  /** Create character snapshot (for replay, log recording) */
   createSnapshot(): CharacterSnapshot {
     return {
       id: this.id,

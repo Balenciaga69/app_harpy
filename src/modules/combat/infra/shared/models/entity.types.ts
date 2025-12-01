@@ -1,12 +1,12 @@
 /**
- * 實體相關的共用型別定義
+ * Entity-related shared type definitions
  *
- * 這些是純資料型別 (Data Models)，不包含行為
- * 可以被所有層級安全引用
+ * These are pure data types (Data Models), without behavior
+ * Can be safely referenced by all levels
  */
 
-/** 角色 ID */
+/** Character ID */
 export type CharacterId = string
 
-/** 實體 ID (通用) */
+/** Entity ID (general) */
 export type EntityId = string

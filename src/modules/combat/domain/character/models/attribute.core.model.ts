@@ -1,5 +1,5 @@
 import { AttributeDefaults } from '@/modules/combat/infra/config'
-// 基礎屬性類型定義
+// Base attribute type definitions
 export type AttributeType =
   | 'maxHp'
   | 'currentHp'
@@ -15,37 +15,37 @@ export type AttributeType =
   | 'criticalMultiplier'
   | 'accuracy'
 /**
- * 基礎屬性值配置
+ * Base attribute value configuration
  *
- * 所有屬性都是必填，使用明確的預設值
+ * All attributes are required, using explicit default values
  */
 export interface BaseAttributeValues {
-  // === 生命相關 ===
+  // === Health related ===
   maxHp: number
-  currentHp: number // 初始化時通常等於 maxHp
-  // === 能量相關 ===
+  currentHp: number // Usually equals maxHp during initialization
+  // === Energy related ===
   maxEnergy: number
   currentEnergy: number
-  energyRegen: number // 每 100 tick 回復量
-  energyGainOnAttack: number // 普攻命中獲得量
-  // === 攻擊相關 ===
+  energyRegen: number // Regen amount per 100 ticks
+  energyGainOnAttack: number // Amount gained on attack hit
+  // === Attack related ===
   attackDamage: number
-  attackCooldown: number // 單位：tick (100 tick = 1 sec)
-  // === 防禦相關 ===
+  attackCooldown: number // Unit: tick (100 tick = 1 sec)
+  // === Defense related ===
   armor: number
   evasion: number
   accuracy: number
-  // === 暴擊相關 ===
-  criticalChance: number // 0-1 範圍 (0.05 = 5%)
-  criticalMultiplier: number // 倍率 (1.5 = 150%)
+  // === Critical related ===
+  criticalChance: number // 0-1 range (0.05 = 5%)
+  criticalMultiplier: number // Multiplier (1.5 = 150%)
 }
 /**
- * 建立預設屬性值
+ * Create default attribute values
  *
- * 使用此函數確保所有屬性都有合理的初始值
+ * Use this function to ensure all attributes have reasonable initial values
  *
- * @param overrides 覆寫的屬性值（僅設置需要自訂的部分）
- * @returns 完整的屬性配置
+ * @param overrides Override attribute values (only set parts to customize)
+ * @returns Complete attribute configuration
  */
 export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>): BaseAttributeValues {
   return {
@@ -62,6 +62,6 @@ export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>
     accuracy: AttributeDefaults.accuracy,
     criticalChance: AttributeDefaults.criticalChance,
     criticalMultiplier: AttributeDefaults.criticalMultiplier,
-    ...overrides, // 允許覆寫部分屬性
+    ...overrides, // Allow overriding partial attributes
   }
 }

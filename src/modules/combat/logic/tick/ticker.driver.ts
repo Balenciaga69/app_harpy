@@ -1,19 +1,19 @@
 import type { CombatContext } from '../../context'
 import type { CombatStartPayload } from '../../infra/event-bus'
 /**
- * TickerDriver：戰鬥時間循環的驅動引擎
+ * TickerDriver: Combat time loop driving engine
  *
- * 設計理念：
- * - 作為戰鬥的心跳系統，驅動整個戰鬥的時間進程
- * - 通過事件驅動模式，發射 Tick 相關事件，讓其他系統響應時間流逝
- * - 支援可配置的結束條件，實現靈活的戰鬥終止邏輯
- * - 設置最大 Tick 限制，防止無限循環導致的程式卡死
- * - 職責專一：只負責驅動時間流逝，不負責狀態快照
+ * Design concept:
+ * - As combat heartbeat system, drives entire combat time progress
+ * - Through event-driven mode, emits Tick related events, lets other systems respond to time passage
+ * - Supports configurable end conditions, achieves flexible combat termination logic
+ * - Sets maximum Tick limit, prevents infinite loops causing program freeze
+ * - Focused responsibility: only drives time passage, does not handle status snapshots
  *
- * 主要職責：
- * - 執行單次 Tick，發射 tick:start 與 tick:end 事件
- * - 管理戰鬥循環，持續執行 Tick 直到達成結束條件
- * - 檢查戰鬥結束條件，適時停止戰鬥循環
+ * Main responsibilities:
+ * - Execute single Tick, emit tick:start and tick:end events
+ * - Manage combat loop, continuously execute Tick until end condition is met
+ * - Check combat end condition, stop combat loop at appropriate time
  */
 const MAX_TICKS = 100000
 export class TickerDriver {
@@ -25,17 +25,17 @@ export class TickerDriver {
     this.context = context
     this.maxTicks = maxTicks
   }
-  /** 設置戰鬥結束條件 */
+  /** Set combat end condition */
   public setStopCondition(condition: () => boolean): void {
     this.stopCondition = condition
   }
-  /** 執行單次 Tick */
+  /** Execute single Tick */
   public tick(): void {
     this.context.eventBus.emit('tick:start', { tick: this.context.getCurrentTick() })
     this.context.incrementTick()
     this.context.eventBus.emit('tick:end', { tick: this.context.getCurrentTick() })
   }
-  /** 啟動戰鬥循環 (預計算模式) */
+  /** Start combat loop (pre-calculation mode) */
   public start(): void {
     this.isRunning = true
     this.context.resetTick()
@@ -47,13 +47,13 @@ export class TickerDriver {
       }
     }
   }
-  /** 停止戰鬥 */
+  /** Stop combat */
   public stop(): void {
     if (!this.isRunning) return
     this.isRunning = false
     this.context.eventBus.emit('ticker:stopped', { tick: this.context.getCurrentTick() })
   }
-  /** 檢查戰鬥是否結束 */
+  /** Check if combat has ended */
   private checkCombatEnd(): boolean {
     return this.stopCondition()
   }

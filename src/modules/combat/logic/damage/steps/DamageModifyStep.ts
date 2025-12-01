@@ -3,7 +3,7 @@ import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * ?·å®³ä¿®é£¾?Žæ®µ
+ * DamageModifyStep: Step for modifying damage amount through effects.
  */
 export class DamageModifyStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
@@ -13,6 +13,6 @@ export class DamageModifyStep implements IDamageStep {
         hook.onDamageModify(event, context)
       }
     }
-    return true // ç¹¼ç??·è?
+    return true // Continue processing
   }
 }

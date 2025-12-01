@@ -4,58 +4,58 @@ import type { CombatContext } from '../../../../context'
 import type { ICharacter } from '../../../character'
 import type { IEffect } from '../../models/effect.model'
 /**
- * 低血護甲增幅效果
+ * Low health armor amplification effect
  *
- * 獨特裝備效果：
- * - 當生命值低於 30% 時，護甲 x2
- * - 透過修改 DamageChain 的防禦計算來實作
+ * Unique equipment effect:
+ * - When health drops below 30%, armor x2
+ * - Implemented by modifying DamageChain's defense calculation
  */
 export class LowHealthArmorEffect implements IEffect, ICombatHook {
   readonly id: string
-  readonly name: string = '危機護甲'
+  readonly name: string = 'Crisis Armor'
   private readonly healthThreshold: number = 0.3 // 30%
-  private readonly armorMultiplier: number = 2 // 2倍
+  private readonly armorMultiplier: number = 2 // 2x
   constructor() {
     this.id = `low-hp-armor-${nanoid(6)}`
   }
   onApply(_character: ICharacter, _context: CombatContext): void {
-    // 被動效果，不需要初始化
+    // Passive effect, no initialization needed
   }
   onRemove(_character: ICharacter, _context: CombatContext): void {
-    // 被動效果，不需要清理
+    // Passive effect, no cleanup needed
   }
   /**
-   * 【階段5】防禦計算階段
-   * 如果生命值低於 30%，護甲值加倍，減免更多物理傷害
+   * [Stage 5] Defense calculation stage
+   * If health below 30%, double armor value to reduce more physical damage
    */
   onDefenseCalculation(event: DamageEvent, context: CombatContext): DamageEvent {
-    // 只處理目標是自己的情況（受到傷害時）
+    // Only handle when target is self (when taking damage)
     if (event.target.id !== this.getOwner(event, context)?.id) {
       return event
     }
-    // 檢查生命值是否低於門檻
+    // Check if health is below threshold
     const currentHp = event.target.getAttribute('currentHp')
     const maxHp = event.target.getAttribute('maxHp')
     const healthPercent = currentHp / maxHp
     if (healthPercent < this.healthThreshold) {
-      // 計算加倍的護甲減免
+      // Calculate doubled armor reduction
       const baseArmor = event.target.getAttribute('armor')
       const boostedArmor = baseArmor * this.armorMultiplier
-      // 計算護甲減免百分比
+      // Calculate armor reduction percentage
       const armorReduction = boostedArmor / (boostedArmor + 100)
-      // 對傷害應用額外減免
+      // Apply additional reduction to damage
       const additionalReduction = armorReduction - baseArmor / (baseArmor + 100)
       event.amount *= 1 - additionalReduction
     }
     return event
   }
-  /** 輔助方法：獲取效果的擁有者 */
+  /** Helper method: Get the owner of this effect */
   private getOwner(event: DamageEvent, _context: CombatContext): ICharacter | null {
-    // 檢查攻擊者是否擁有此效果
+    // Check if source has this effect
     if (event.source.hasEffect(this.id)) {
       return event.source
     }
-    // 檢查目標是否擁有此效果
+    // Check if target has this effect
     if (event.target.hasEffect(this.id)) {
       return event.target
     }

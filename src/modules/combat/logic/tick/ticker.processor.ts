@@ -1,19 +1,19 @@
 import type { CombatContext } from '../../context'
 import { isCharacter } from '../../infra/shared'
 /**
- * TickerProcessor：Tick 事件的具體處理器。
+ * TickerProcessor: Specific processor for Tick events.
  *
- * 設計理念：
- * - 作為觀察者模式的實現，監聽 tick:start 事件並執行對應邏輯。
- * - 遵循單一職責原則，專注於觸發角色效果的 Tick 更新。
- * - 通過事件驅動實現鬆耦合，與 TickerDriver 解耦。
- * - 提供 dispose 方法，支援系統的優雅清理與資源釋放。
+ * Design concept:
+ * - As implementation of observer pattern, listens to tick:start event and executes corresponding logic.
+ * - Follows single responsibility principle, focuses on triggering Tick updates for character effects.
+ * - Achieves loose coupling through event-driven approach, decoupled from TickerDriver.
+ * - Provides dispose method, supports graceful cleanup and resource release of system.
  *
- * 主要職責：
- * - 監聽每個 Tick 開始事件，自動觸發處理邏輯。
- * - 遍歷所有角色實體，調用其效果的 onTick 方法。
- * - 處理持續性效果的更新（如持續傷害、定期治療、Buff 衰減）。
- * - 提供系統清理方法，移除事件監聽避免記憶體洩漏。
+ * Main responsibilities:
+ * - Listens to each Tick start event, automatically triggers processing logic.
+ * - Iterates through all character entities, calls their effects' onTick methods.
+ * - Handles updates of continuous effects (like continuous damage, periodic healing, Buff decay).
+ * - Provides system cleanup method, removes event listeners to avoid memory leaks.
  */
 export class TickerProcessor {
   private context: CombatContext
@@ -23,19 +23,19 @@ export class TickerProcessor {
     this.tickHandler = () => this.processTick()
     this.registerEventListeners()
   }
-  /** 註冊事件監聽 */
+  /** Register event listeners */
   private registerEventListeners(): void {
-    // 監聽每個 Tick 開始事件
+    // Listen to each Tick start event
     this.context.eventBus.on('tick:start', this.tickHandler)
   }
-  /** 處理 Tick */
+  /** Process Tick */
   private processTick(): void {
     this.context.getAllEntities().forEach((entity) => {
       if (!isCharacter(entity)) return
       entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
     })
   }
-  /** 清理系統（移除事件監聽） */
+  /** Clean up system (remove event listeners) */
   public dispose(): void {
     this.context.eventBus.off('tick:start', this.tickHandler)
   }

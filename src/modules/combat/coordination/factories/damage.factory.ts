@@ -1,21 +1,21 @@
 import type { ICharacter } from '../../domain/character'
 import type { DamageEvent } from '../../logic/damage'
 /**
- * DamageFactory：傷害事件創建工廠。
+ * DamageFactory: Damage event creation factory.
  *
- * 設計理念：
- * - 支援普通攻擊與大招兩種傷害類型
- * - 支援真實傷害（無視防禦）標記
- * - 提供統一的 DamageEvent 結構
+ * Design concept:
+ * - Supports normal attack and ultimate two damage types
+ * - Supports true damage (ignores defense) marking
+ * - Provides unified DamageEvent structure
  *
- * 主要職責：
- * - 創建標準攻擊的傷害事件（從 attackDamage 屬性取值）
- * - 創建大招的傷害事件（isUltimate = true）
- * - 創建真實傷害事件（isTrueDamage = true，無視任何減免）
- * - 初始化傷害事件的預設狀態
+ * Main responsibilities:
+ * - Create damage events for standard attacks (from attackDamage attribute)
+ * - Create damage events for ultimates (isUltimate = true)
+ * - Create true damage events (isTrueDamage = true, ignores all reductions)
+ * - Initialize default state for damage events
  */
 export class DamageFactory {
-  /** 創建普通攻擊傷害事件 */
+  /** Create normal attack damage event */
   createAttackEvent(source: ICharacter, target: ICharacter, tick: number): DamageEvent {
     const baseDamage = source.getAttribute('attackDamage') ?? 0
     return {
@@ -31,7 +31,7 @@ export class DamageFactory {
       prevented: false,
     }
   }
-  /** 創建大招傷害事件 */
+  /** Create ultimate damage event */
   createUltimateEvent(source: ICharacter, target: ICharacter, damageAmount: number, tick: number): DamageEvent {
     return {
       source,
@@ -46,13 +46,13 @@ export class DamageFactory {
       prevented: false,
     }
   }
-  /** 創建真實傷害事件（無視防禦） */
+  /** Create true damage event (ignores defense) */
   createTrueDamageEvent(source: ICharacter, target: ICharacter, damageAmount: number, tick: number): DamageEvent {
     return {
       source,
       target,
       amount: damageAmount,
-      finalDamage: damageAmount, // 真實傷害直接等於最終傷害
+      finalDamage: damageAmount, // True damage equals final damage directly
       isCrit: false,
       isHit: true,
       isUltimate: false,

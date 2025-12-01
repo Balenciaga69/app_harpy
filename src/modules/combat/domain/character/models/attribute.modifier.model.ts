@@ -1,5 +1,5 @@
 import type { AttributeType } from './attribute.core.model'
-/** 屬性修飾器  */
+/** Attribute modifier */
 export interface AttributeModifier {
   readonly id: string
   readonly type: AttributeType
@@ -8,32 +8,32 @@ export interface AttributeModifier {
   readonly source: string
 }
 /**
- * 修飾器執行順序優先級
+ * Modifier execution priority
  *
- * 設計理念：
- * - 控制不同來源的屬性修飾器計算順序，確保遊戲機制的正確性。
- * - 數值越小越先執行，數值越大越後執行。
- * - 配合 AttributeCalculator 的 sortModifiersByPriority 方法使用。
+ * Design concept:
+ * - Control calculation order of attribute modifiers from different sources to ensure correctness of game mechanics.
+ * - Smaller numbers execute first, larger numbers execute later.
+ * - Used with AttributeCalculator's sortModifiersByPriority method.
  *
- * 使用場景：(暫定，遊戲機制尚未確認)
- * - LOWEST (0): 基礎懲罰效果（如疾病、詛咒）
- * - LOW (100): 臨時減益效果（如減速、虛弱）
- * - NORMAL (500): 一般 Buff/Debuff、裝備屬性（預設值）
- * - HIGH (900): 精英效果、套裝加成
- * - HIGHEST (1000): 聖物加成、終極被動
+ * Usage scenarios: (Tentative, game mechanics not yet confirmed)
+ * - LOWEST (0): Basic penalty effects (disease, curse)
+ * - LOW (100): Temporary debuff effects (slow, weaken)
+ * - NORMAL (500): General Buff/Debuff, equipment attributes (default)
+ * - HIGH (900): Elite effects, set bonuses
+ * - HIGHEST (1000): Artifact bonuses, ultimate passives
  *
- * 當前狀態：
- * - ✅ AttributeCalculator 已實現優先級排序邏輯
- * - ⚠️ 目前所有 Modifier 都使用 NORMAL 優先級（尚未實裝差異化）
+ * Current status:
+ * - ✅ AttributeCalculator has implemented priority sorting logic
+ * - ⚠️ Currently all Modifiers use NORMAL priority (differentiation not yet implemented)
  *
- * TODO: 待實裝範例：
- * - 實裝聖物系統時，設置 priority: ModifierPriority.HIGHEST
- * - 實裝套裝效果時，設置 priority: ModifierPriority.HIGH
- * - 實裝詛咒/疾病效果時，設置 priority: ModifierPriority.LOWEST
+ * TODO: Pending implementation examples:
+ * - When implementing artifact system, set priority: ModifierPriority.HIGHEST
+ * - When implementing set effects, set priority: ModifierPriority.HIGH
+ * - When implementing curse/disease effects, set priority: ModifierPriority.LOWEST
  *
- * 注意事項：
- * - 如果所有 Modifier 都使用相同優先級，則按照添加順序執行。
- * - 修改優先級可能影響最終屬性計算結果，需謹慎調整。
+ * Notes:
+ * - If all Modifiers use same priority, execute in order of addition.
+ * - Modifying priority may affect final attribute calculation results, adjust cautiously.
  */
 export const ModifierPriority = {
   LOWEST: 0,
@@ -42,9 +42,9 @@ export const ModifierPriority = {
   HIGH: 900,
   HIGHEST: 1000,
 } as const
-/** 修飾器優先級類型 */
+/** Modifier priority type */
 export type ModifierPriorityType = (typeof ModifierPriority)[keyof typeof ModifierPriority]
-/** 擴展的屬性修飾器 (支援優先級) */
+/** Extended attribute modifier (supports priority) */
 export interface AttributeModifierEx extends AttributeModifier {
   readonly priority: ModifierPriorityType
 }

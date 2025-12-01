@@ -4,23 +4,23 @@ import { calculateHitChance } from '../utils/damage.calculator.util'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * ?½ä¸­?¤å??Žæ®µ
+ * Hit check stage
  */
 export class HitCheckStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
     const hooks = collectHooks(event.source, event.target)
-    // ?·è? Hook
+    // Execute hooks
     for (const hook of hooks) {
       if (hook.onHitCheck) {
         hook.onHitCheck(event, context)
       }
     }
-    // ?½ä¸­?¤å?
+    // Hit check
     const accuracy = event.source.getAttribute('accuracy')
     const evasion = event.target.getAttribute('evasion')
     const hitChance = calculateHitChance(accuracy, evasion)
     event.isHit = context.rng.next() < hitChance
-    // å¦‚æ??ªå‘½ä¸­ï??¼é€ä?ä»¶ä¸¦çµ‚æ­¢æµç?
+    // If miss, send event and terminate process
     if (!event.isHit) {
       context.eventBus.emit('combat:miss', {
         sourceId: event.source.id,

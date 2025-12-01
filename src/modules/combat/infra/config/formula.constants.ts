@@ -1,21 +1,21 @@
 /**
- * 遊戲公式相關的係數與配置
+ * Game formula related coefficients and configurations
  *
- * 設計理念：
- * - 集中管理所有遊戲公式的係數
- * - 提供計算方法，確保公式一致性
- * - 便於調整遊戲平衡
+ * Design concept:
+ * - Centralized management of all game formula coefficients
+ * - Provide calculation methods to ensure formula consistency
+ * - Facilitate game balance adjustments
  */
-/** 護甲減免公式配置 */
+/** Armor reduction formula configuration */
 export const ArmorFormula = {
-  /** K 係數（建議值：100） */
+  /** K coefficient (suggested value: 100) */
   K_COEFFICIENT: 100,
-  /** 最大減免率（避免無敵） */
+  /** Maximum reduction rate (avoid invincibility) */
   MAX_REDUCTION: 0.9, // 90%
   /**
-   * 計算減免率：armor / (armor + K)
-   * @param armor 護甲值
-   * @returns 減免率 (0-0.9)
+   * Calculate reduction rate: armor / (armor + K)
+   * @param armor Armor value
+   * @returns Reduction rate (0-0.9)
    */
   calculate(armor: number): number {
     if (armor <= 0) return 0
@@ -23,67 +23,67 @@ export const ArmorFormula = {
     return Math.min(this.MAX_REDUCTION, Math.max(0, reduction))
   },
 } as const
-/** 閃避機制配置 */
+/** Evasion mechanism configuration */
 export const EvasionFormula = {
-  /** 閃避率計算除數 */
+  /** Evasion rate calculation divider */
   DIVIDER: 100,
-  /** 最小閃避率 */
+  /** Minimum evasion rate */
   MIN_EVASION_RATE: 0.05, // 5%
-  /** 最大閃避率 */
+  /** Maximum evasion rate */
   MAX_EVASION_RATE: 0.8, // 80%
-  /** 閃避成功後的係數懲罰 */
+  /** Coefficient penalty after evasion success */
   SUCCESS_PENALTY: 0.8,
-  /** 閃避失敗後係數恢復 */
+  /** Coefficient recovery after evasion failure */
   FAILURE_RESET: 1.0,
   /**
-   * 計算閃避率：(evasion - accuracy) / 100
-   * @param evasion 閃避值
-   * @param accuracy 命中值
-   * @returns 閃避率 (0.05-0.8)
+   * Calculate evasion rate: (evasion - accuracy) / 100
+   * @param evasion Evasion value
+   * @param accuracy Accuracy value
+   * @returns Evasion rate (0.05-0.8)
    */
   calculate(evasion: number, accuracy: number): number {
     const rate = (evasion - accuracy) / this.DIVIDER
     return Math.min(this.MAX_EVASION_RATE, Math.max(this.MIN_EVASION_RATE, rate))
   },
 } as const
-/** 暴擊機制配置 */
+/** Critical mechanism configuration */
 export const CriticalFormula = {
-  /** 預設暴擊倍率 */
+  /** Default critical multiplier */
   DEFAULT_MULTIPLIER: 1.5,
   /**
-   * 計算暴擊傷害
-   * @param baseDamage 基礎傷害
-   * @param critMultiplier 暴擊倍率（預設 1.5）
-   * @returns 暴擊後的傷害
+   * Calculate critical damage
+   * @param baseDamage Base damage
+   * @param critMultiplier Critical multiplier (default 1.5)
+   * @returns Damage after critical
    */
   calculate(baseDamage: number, critMultiplier?: number): number {
     const multiplier = critMultiplier ?? this.DEFAULT_MULTIPLIER
     return baseDamage * multiplier
   },
 } as const
-/** 能量系統配置 */
+/** Energy system configuration */
 export const EnergyConfig = {
-  /** 大招消耗能量 */
+  /** Ultimate energy cost */
   ULTIMATE_COST: 100,
-  /** 能量回復間隔（ticks） */
-  REGEN_INTERVAL: 100, // 每 100 tick = 1 秒
+  /** Energy regen interval (ticks) */
+  REGEN_INTERVAL: 100, // Every 100 ticks = 1 second
 } as const
-/** Tick 時間配置 */
+/** Tick time configuration */
 export const TickConfig = {
-  /** 每秒的 Tick 數 */
+  /** Ticks per second */
   TICKS_PER_SECOND: 100,
   /**
-   * Tick 轉秒
-   * @param ticks Tick 數
-   * @returns 秒數
+   * Convert ticks to seconds
+   * @param ticks Number of ticks
+   * @returns Number of seconds
    */
   toSeconds(ticks: number): number {
     return ticks / this.TICKS_PER_SECOND
   },
   /**
-   * 秒轉 Tick
-   * @param seconds 秒數
-   * @returns Tick 數
+   * Convert seconds to ticks
+   * @param seconds Number of seconds
+   * @returns Number of ticks
    */
   fromSeconds(seconds: number): number {
     return seconds * this.TICKS_PER_SECOND

@@ -1,19 +1,19 @@
 import type { EventBus } from '../../infra/event-bus'
 import type { CombatLogEntry } from './combat.log.model'
 /**
- * EventLogger：戰鬥事件的記錄與查詢系統。
+ * EventLogger: Combat event recording and query system.
  *
- * 設計理念：
- * - 作為觀察者模式的實現，監聽 EventBus 的所有事件並記錄。
- * - 提供時間軸查詢功能，支援按 Tick 範圍篩選日誌。
- * - 自動追蹤當前 Tick，確保每條日誌都有正確的時間戳記。
- * - 通過事件驅動實現鬆耦合，無需修改業務邏輯即可完成日誌記錄。
+ * Design concept:
+ * - As implementation of observer pattern, listens to all events from EventBus and records them.
+ * - Provides timeline query functionality, supports filtering logs by Tick range.
+ * - Automatically tracks current Tick, ensures each log has correct timestamp.
+ * - Achieves loose coupling through event-driven approach, no need to modify business logic for logging.
  *
- * 主要職責：
- * - 監聽所有戰鬥事件，自動記錄到日誌列表中。
- * - 追蹤當前 Tick，為每條日誌添加時間上下文。
- * - 提供日誌查詢介面，支援全量與範圍查詢。
- * - 自動從事件 payload 中提取常見欄位（如 sourceId、targetId）。
+ * Main responsibilities:
+ * - Listens to all combat events, automatically records to log list.
+ * - Tracks current Tick, adds time context to each log.
+ * - Provides log query interface, supports full and range queries.
+ * - Automatically extracts common fields (like sourceId, targetId) from event payload.
  */
 export class EventLogger {
   private logs: CombatLogEntry[] = []
@@ -35,21 +35,21 @@ export class EventLogger {
   getLogsByTickRange(startTick: number, endTick: number): CombatLogEntry[] {
     return this.logs.filter((log) => log.tick >= startTick && log.tick <= endTick)
   }
-  /** 設置事件監聽器 */
-  // TODO: 這一段其實不夠嚴謹，盲拆事件，而且全部事件都監聽了，未來可以改成只監聽特定事件
+  /** Set up event listeners */
+  // TODO: This part is not rigorous enough, blindly destructures events, and listens to all events, can be changed in the future to only listen to specific events
   private setupListeners() {
-    // 1. 追蹤 Tick
+    // 1. Track Tick
     this.eventBus.on('tick:start', (payload) => {
       this.currentTick = payload.tick
     })
-    // 2. 記錄所有事件
+    // 2. Record all events
     this.eventBus.onAll((type, payload) => {
       const entry: CombatLogEntry = {
         tick: this.currentTick,
         eventType: type,
         payload: payload as Record<string, unknown>,
       }
-      // 嘗試從 payload 中提取常見欄位
+      // Try to extract common fields from payload
       if (payload && typeof payload === 'object') {
         const p = payload as Record<string, unknown>
         if ('sourceId' in p && typeof p.sourceId === 'string') entry.sourceId = p.sourceId

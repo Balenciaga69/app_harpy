@@ -3,7 +3,7 @@ import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * ?·å®³?¼èµ·?Žæ®µ
+ * BeforeDamageStep: Initial step before damage calculation begins.
  */
 export class BeforeDamageStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
@@ -13,6 +13,6 @@ export class BeforeDamageStep implements IDamageStep {
         hook.beforeDamageCalculation(event, context)
       }
     }
-    return true // ç¹¼ç??·è?
+    return true // Continue processing
   }
 }

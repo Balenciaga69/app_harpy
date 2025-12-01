@@ -14,27 +14,27 @@ import type {
   TickSnapshotPayload,
 } from './event.payload.model'
 /**
- * 戰鬥事件映射表
+ * Combat event mapping table
  *
- * 定義所有戰鬥相關事件的名稱與對應的 Payload 類型。
- * 通過 TypeScript 的類型系統確保事件發送與監聽時的類型安全。
+ * Defines all combat-related event names and corresponding Payload types.
+ * Ensures type safety when sending and listening to events through TypeScript's type system.
  */
 export type CombatEventMap = {
-  // === Combat 相關事件 ===
+  // === Combat related events ===
   'combat:start': CombatStartPayload
   'combat:end': CombatEndPayload
   'combat:miss': CombatMissPayload
   'combat:prevented': CombatPreventedPayload
-  // === Tick 相關事件 ===
+  // === Tick related events ===
   'tick:start': TickStartPayload
   'tick:end': TickEndPayload
   'ticker:stopped': TickerStoppedPayload
-  // === Entity 相關事件 ===
+  // === Entity related events ===
   'entity:damage': EntityDamagePayload
   'entity:heal': EntityHealPayload
   'entity:death': EntityDeathPayload
   'entity:attack': EntityAttackPayload
   'entity:critical': EntityCriticalPayload
-  // === Snapshot 相關事件 ===
+  // === Snapshot related events ===
   'tick:snapshot': TickSnapshotPayload
 }

@@ -1,13 +1,13 @@
-// TODO: [跨層依賴] Logic 層依賴 Context 層的 CombatContext
-// 原因：Hook 需要訪問戰鬥上下文來查詢或修改狀態
-// 遷移注意：若遷移到強類型語言，需將 CombatContext 介面提升為共用契約
+// TODO: [Cross-layer dependency] Logic layer depends on Context layer's CombatContext
+// Reason: Hook needs to access combat context to query or modify status
+// Migration note: If migrating to strongly typed language, need to elevate CombatContext interface to shared contract
 import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '..'
 /**
- * 戰鬥 Hook 介面 - 行為契約
+ * Combat Hook interface - behavior contract
  *
- * 定義傷害計算流程中的各個可擴展點
- * 允許角色、裝備、效果等注入自定義邏輯
+ * Define various extensible points in damage calculation process
+ * Allow characters, equipment, effects, etc. to inject custom logic
  */
 export interface ICombatHook {
   beforeDamageCalculation?(event: DamageEvent, context: CombatContext): DamageEvent

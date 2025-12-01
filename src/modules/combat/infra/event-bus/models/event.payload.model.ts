@@ -1,18 +1,18 @@
 import type { CharacterId, CharacterSnapshot } from '../../shared/models'
 /**
- * 戰鬥開始事件
+ * Combat start event
  */
 export interface CombatStartPayload {
-  // 暫無 payload
+  // No payload for now
 }
 /**
- * 戰鬥結束事件
+ * Combat end event
  */
 export interface CombatEndPayload {
   winnerId: string
 }
 /**
- * 戰鬥未命中事件
+ * Combat miss event
  */
 export interface CombatMissPayload {
   sourceId: CharacterId
@@ -20,7 +20,7 @@ export interface CombatMissPayload {
   tick: number
 }
 /**
- * 戰鬥攻擊被阻止事件
+ * Combat attack prevented event
  */
 export interface CombatPreventedPayload {
   sourceId: CharacterId
@@ -29,25 +29,25 @@ export interface CombatPreventedPayload {
   tick: number
 }
 /**
- * Tick 開始事件
+ * Tick start event
  */
 export interface TickStartPayload {
   tick: number
 }
 /**
- * Tick 結束事件
+ * Tick end event
  */
 export interface TickEndPayload {
   tick: number
 }
 /**
- * Ticker 停止事件
+ * Ticker stopped event
  */
 export interface TickerStoppedPayload {
   tick: number
 }
 /**
- * 實體傷害事件
+ * Entity damage event
  */
 export interface EntityDamagePayload {
   targetId: CharacterId
@@ -55,20 +55,20 @@ export interface EntityDamagePayload {
   sourceId?: CharacterId
 }
 /**
- * 實體治療事件
+ * Entity heal event
  */
 export interface EntityHealPayload {
   targetId: CharacterId
   amount: number
 }
 /**
- * 實體死亡事件
+ * Entity death event
  */
 export interface EntityDeathPayload {
   targetId: CharacterId
 }
 /**
- * 實體攻擊事件
+ * Entity attack event
  */
 export interface EntityAttackPayload {
   sourceId: CharacterId
@@ -76,7 +76,7 @@ export interface EntityAttackPayload {
   tick: number
 }
 /**
- * 實體暴擊事件
+ * Entity critical event
  */
 export interface EntityCriticalPayload {
   sourceId: CharacterId
@@ -85,7 +85,7 @@ export interface EntityCriticalPayload {
   tick: number
 }
 /**
- * Tick 快照事件
+ * Tick snapshot event
  */
 export interface TickSnapshotPayload {
   tick: number

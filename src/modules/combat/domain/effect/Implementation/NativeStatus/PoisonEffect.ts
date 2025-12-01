@@ -3,33 +3,33 @@ import { StackableEffect } from '../../models/stackable.effect.model'
 import type { ICharacter } from '../../../character'
 import type { CombatContext } from '../../../../context'
 /**
- * 毒效果
- * - 每層每 Tick 造成固定傷害
- * - 真實傷害（無視護甲與閃避）
- * - 理論上無上限
- * - 每秒減少 10% 層數或至少 1 層
+ * Poison effect
+ * - Deals fixed damage per stack per tick
+ * - True damage (ignores armor and evasion)
+ * - Theoretically unlimited stacks
+ * - Reduces 10% stacks per second or at least 1 stack
  */
 export class PoisonEffect extends StackableEffect {
   private readonly damagePerStack: number = 1
   private readonly decayRate: number = 0.1
   private lastDecayTick: number = 0
   constructor(initialStacks: number = 1) {
-    super(`poison-${nanoid(6)}`, '毒', undefined)
+    super(`poison-${nanoid(6)}`, 'Poison', undefined)
     this.setStacks(initialStacks)
   }
   onApply(_character: ICharacter, context: CombatContext): void {
     this.lastDecayTick = context.getCurrentTick()
   }
   onRemove(_character: ICharacter, _context: CombatContext): void {
-    // 無需清理
+    // No cleanup needed
   }
   onTick(character: ICharacter, context: CombatContext): void {
     const currentTick = context.getCurrentTick()
-    // 每個 Tick 造成真實傷害
+    // Deal true damage every tick
     this.applyPoisonDamage(character, context)
-    // 檢查衰減
+    // Check decay
     const ticksPassed = currentTick - this.lastDecayTick
-    const secondsPassed = ticksPassed / 100 // 假設 100 ticks = 1 秒
+    const secondsPassed = ticksPassed / 100 // Assume 100 ticks = 1 second
     if (secondsPassed >= 1) {
       const decayAmount = Math.max(1, Math.floor(this.stacks * this.decayRate))
       this.removeStacks(decayAmount)
@@ -39,21 +39,21 @@ export class PoisonEffect extends StackableEffect {
       }
     }
   }
-  /** 施加毒傷害 */
+  /** Apply poison damage */
   private applyPoisonDamage(character: ICharacter, context: CombatContext): void {
     const damage = this.stacks * this.damagePerStack
     if (damage > 0) {
-      // 直接扣除生命值（真實傷害）
+      // Directly reduce HP (true damage)
       const currentHp = character.getAttribute('currentHp')
       const newHp = Math.max(0, currentHp - damage)
       character.setCurrentHpClamped(newHp)
-      // 發送傷害事件
+      // Emit damage event
       context.eventBus.emit('entity:damage', {
         targetId: character.id,
         amount: damage,
         sourceId: this.id,
       })
-      // 檢查死亡
+      // Check death
       if (newHp === 0 && !character.isDead) {
         character.isDead = true
         context.eventBus.emit('entity:death', {

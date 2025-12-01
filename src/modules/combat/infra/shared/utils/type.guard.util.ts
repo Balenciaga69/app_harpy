@@ -1,6 +1,6 @@
 import type { ICharacter } from '@/modules/combat/domain/character'
 /**
- * 檢查物件是否為 ICharacter 類型
+ * Check if object is ICharacter type
  */
 export function isCharacter(entity: unknown): entity is ICharacter {
   return (

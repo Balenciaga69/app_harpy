@@ -2,26 +2,26 @@ import type { ICharacter } from '../../character'
 import type { CombatContext } from '../../../context'
 import type { IEffect } from './effect.model'
 /**
- * 可堆疊效果介面
- * 用於實作具有層數機制的效果（如聖火、充能、冰緩、毒等）
+ * Stackable effect interface
+ * Used to implement effects with stack mechanics (holy fire, charge, chill, poison, etc.)
  */
 export interface IStackableEffect extends IEffect {
-  /** 當前層數 */
+  /** Current stacks */
   stacks: number
-  /** 最大層數限制（可選） */
+  /** Maximum stack limit (optional) */
   maxStacks?: number
-  /** 增加層數 */
+  /** Add stacks */
   addStacks(amount: number): void
-  /** 減少層數 */
+  /** Remove stacks */
   removeStacks(amount: number): void
-  /** 設置層數 */
+  /** Set stacks */
   setStacks(amount: number): void
-  /** 獲取當前層數 */
+  /** Get current stacks */
   getStacks(): number
 }
 /**
- * 可堆疊效果的抽象基類
- * 提供層數管理的基礎實作
+ * Abstract base class for stackable effects
+ * Provides basic implementation of stack management
  */
 export abstract class StackableEffect implements IStackableEffect {
   public stacks: number = 0
@@ -33,26 +33,26 @@ export abstract class StackableEffect implements IStackableEffect {
     this.name = name
     this.maxStacks = maxStacks
   }
-  /** 增加層數 */
+  /** Add stacks */
   addStacks(amount: number): void {
     this.stacks = Math.min(this.stacks + amount, this.maxStacks ?? Infinity)
   }
-  /** 減少層數 */
+  /** Remove stacks */
   removeStacks(amount: number): void {
     this.stacks = Math.max(0, this.stacks - amount)
   }
-  /** 設置層數 */
+  /** Set stacks */
   setStacks(amount: number): void {
     this.stacks = Math.max(0, Math.min(amount, this.maxStacks ?? Infinity))
   }
-  /** 獲取當前層數 */
+  /** Get current stacks */
   getStacks(): number {
     return this.stacks
   }
-  /** 當效果被添加時調用 */
+  /** Called when effect is added */
   abstract onApply(character: ICharacter, context: CombatContext): void
-  /** 當效果被移除時調用 */
+  /** Called when effect is removed */
   abstract onRemove(character: ICharacter, context: CombatContext): void
-  /** 每個 Tick 調用（可選） */
+  /** Called each Tick (optional) */
   abstract onTick?(character: ICharacter, context: CombatContext): void
 }

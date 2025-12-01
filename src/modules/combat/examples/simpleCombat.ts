@@ -4,14 +4,14 @@ import { ThunderStrikeUltimate } from '../coordination/models'
 import { Character } from '../domain/character/character'
 import { createDefaultAttributes } from '../domain/character/models/attribute.core.model'
 /**
- * 簡單的戰鬥測試範例（v0.3）
- * 驗證能量系統、大招機制與新的屬性系統
+ * Simple combat test example (v0.3)
+ * Validates energy system, ultimate ability mechanism, and new attribute system
  */
 function runSimpleCombat() {
-  console.log('=== 開始戰鬥測試 (v0.3) ===\n')
-  // 創建玩家隊伍
+  console.log('=== Starting Combat Test (v0.3) ===\n')
+  // Create player team
   const warrior = new Character({
-    name: '戰士',
+    name: 'Warrior',
     team: 'player',
     baseAttributes: createDefaultAttributes({
       maxHp: 1200,
@@ -20,14 +20,14 @@ function runSimpleCombat() {
       evasion: 50,
       accuracy: 150,
       attackDamage: 120,
-      attackCooldown: 100, // 1 秒/次
+      attackCooldown: 100, // 1 second per attack
       criticalChance: 0.1, // 10%
-      energyGainOnAttack: 4, // 約 25 次攻擊釋放大招
+      energyGainOnAttack: 4, // About 25 attacks to unleash ultimate
     }),
     ultimate: new ThunderStrikeUltimate(2.5, 6),
   })
   const archer = new Character({
-    name: '弓箭手',
+    name: 'Archer',
     team: 'player',
     baseAttributes: createDefaultAttributes({
       maxHp: 800,
@@ -36,15 +36,15 @@ function runSimpleCombat() {
       evasion: 120,
       accuracy: 180,
       attackDamage: 90,
-      attackCooldown: 80, // 0.8 秒/次（攻速較快）
+      attackCooldown: 80, // 0.8 seconds per attack (faster attack speed)
       criticalChance: 0.15, // 15%
       criticalMultiplier: 2.0,
-      energyGainOnAttack: 5, // 約 20 次攻擊釋放大招
+      energyGainOnAttack: 5, // About 20 attacks to unleash ultimate
     }),
   })
-  // 創建敵人隊伍
+  // Create enemy team
   const goblin1 = new Character({
-    name: '哥布林1',
+    name: 'Goblin1',
     team: 'enemy',
     baseAttributes: createDefaultAttributes({
       maxHp: 600,
@@ -53,11 +53,11 @@ function runSimpleCombat() {
       evasion: 80,
       accuracy: 120,
       attackDamage: 50,
-      attackCooldown: 120, // 1.2 秒/次
+      attackCooldown: 120, // 1.2 seconds per attack
     }),
   })
   const goblin2 = new Character({
-    name: '哥布林2',
+    name: 'Goblin2',
     team: 'enemy',
     baseAttributes: createDefaultAttributes({
       maxHp: 600,
@@ -69,34 +69,34 @@ function runSimpleCombat() {
       attackCooldown: 120,
     }),
   })
-  // 創建戰鬥引擎
+  // Create combat engine
   const engine = new CombatEngine({
-    seed: 12345, // 固定種子以確保可重現
+    seed: 12345, // Fixed seed for reproducible results
     playerTeam: [warrior, archer],
     enemyTeam: [goblin1, goblin2],
     maxTicks: 10000,
     snapshotInterval: 100,
     enableLogging: true,
   })
-  // 啟動戰鬥
-  console.log('戰鬥開始...')
-  console.log('戰士: 高血量高護甲，攻擊力強')
-  console.log('弓箭手: 攻速快，閃避高，暴擊率高')
-  console.log('能量累積至 100 即可釋放大招\n')
+  // Start combat
+  console.log('Combat begins...')
+  console.log('Warrior: High HP and armor, strong attack power')
+  console.log('Archer: Fast attack speed, high evasion, high crit rate')
+  console.log('Energy accumulates to 100 to unleash ultimate ability\n')
   const result = engine.start()
-  // 輸出戰鬥結果
-  console.log('\n=== 戰鬥結束 ===')
-  console.log(`勝利方: ${result.winner}`)
-  console.log(`總回合數: ${result.totalTicks} ticks`)
-  console.log(`存活者: ${result.survivors.map((s) => s.name).join(', ')}`)
-  // 清理資源
+  // Output combat results
+  console.log('\n=== Combat Ended ===')
+  console.log(`Winner: ${result.winner}`)
+  console.log(`Total rounds: ${result.totalTicks} ticks`)
+  console.log(`Survivors: ${result.survivors.map((s) => s.name).join(', ')}`)
+  // Clean up resources
   engine.dispose()
-  console.log('\n=== 測試完成 ===')
-  // 過濾掉 tick 事件以減少日誌量
+  console.log('\n=== Test Completed ===')
+  // Filter out tick events to reduce log volume
   result.logs = result.logs.filter((log) => !['tick:start', 'tick:end'].includes(log.eventType))
   return result
 }
-// 執行測試
+// Run test
 // if (require.main === module) {
 //   runSimpleCombat()
 // }

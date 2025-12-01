@@ -2,20 +2,20 @@ import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from './models/effect.model'
 /**
- * EffectManager：負責管理單個角色身上的所有動態效果實例。
+ * EffectManager: Responsible for managing all dynamic effect instances on a single character.
  *
- * 設計理念：
- * - 作為 ECS 中的 Component，專注於效果的生命週期管理與更新。
- * - 遵循策略模式，每個效果都是獨立的策略實體，可動態添加/移除。
- * - 與責任鏈模式結合，效果可作為 Hook 參與戰鬥流程（如傷害計算）。
- * - 通過事件驅動實現鬆耦合，確保新增效果不需修改此類。
- * - 提供封裝介面，避免角色類別過於龐大，符合單一職責原則。
+ * Design concept:
+ * - Acts as Component in ECS, focuses on lifecycle management and updating of effects.
+ * - Follows strategy pattern, each effect is independent strategy entity, can be dynamically added/removed.
+ * - Combined with responsibility chain pattern, effects can act as Hooks participating in combat flow (damage calculation).
+ * - Achieves loose coupling through event-driven approach, ensures adding new effects doesn't require modifying this class.
+ * - Provides encapsulated interface, avoids character class becoming too large, conforms to single responsibility principle.
  *
- * 主要職責：
- * - 添加/移除效果，並觸發對應的應用/移除邏輯。
- * - 在每個 Tick 中更新所有效果，處理持續性邏輯。
- * - 提供效果查詢與檢查方法，支援條件判斷。
- * - 確保效果唯一性，避免重複添加。
+ * Main responsibilities:
+ * - Add/remove effects and trigger corresponding apply/remove logic.
+ * - Update all effects in each Tick, handle continuous logic.
+ * - Provide effect query and check methods, support conditional judgments.
+ * - Ensure effect uniqueness, avoid duplicate additions.
  */
 export class EffectManager {
   private effects: Map<string, IEffect> = new Map()
@@ -23,40 +23,40 @@ export class EffectManager {
   constructor(owner: ICharacter) {
     this.owner = owner
   }
-  /** 添加效果 */
+  /** Add effect */
   addEffect(effect: IEffect, context: CombatContext): void {
     if (this.effects.has(effect.id)) {
-      return // 避免重複添加
+      return // Avoid duplicate addition
     }
     this.effects.set(effect.id, effect)
     effect.onApply(this.owner, context)
   }
-  /** 移除效果 */
+  /** Remove effect */
   removeEffect(effectId: string, context: CombatContext): void {
     const effect = this.effects.get(effectId)
     if (!effect) return
     effect.onRemove(this.owner, context)
     this.effects.delete(effectId)
   }
-  /** 獲取效果 */
+  /** Get effect */
   getEffect(effectId: string): IEffect | undefined {
     return this.effects.get(effectId)
   }
-  /** 檢查是否有效果 */
+  /** Check if has effect */
   hasEffect(effectId: string): boolean {
     return this.effects.has(effectId)
   }
-  /** 獲取所有效果 */
+  /** Get all effects */
   getAllEffects(): readonly IEffect[] {
     return Array.from(this.effects.values())
   }
-  /** 每個 Tick 調用所有效果 */
+  /** Call all effects each Tick */
   onTick(context: CombatContext): void {
     this.effects.forEach((effect) => {
       effect.onTick?.(this.owner, context)
     })
   }
-  /** 清除所有效果 */
+  /** Clear all effects */
   clear(context: CombatContext): void {
     this.effects.forEach((effect) => {
       effect.onRemove(this.owner, context)

@@ -6,20 +6,20 @@ import type { CombatConfig, CombatResult } from './models'
 import { ResultBuilder } from './builders'
 import { TickerDriver, TickerProcessor } from '../logic/tick'
 /**
- * CombatEngine：戰鬥執行引擎
+ * CombatEngine: Combat execution engine
  *
- * 設計理念：
- * - 作為戰鬥系統的精簡協調者，負責初始化並編排各個子系統（Ticker、Logger、Ability、Snapshot 等）
- * - 採用組合模式統一管理多個子系統的生命週期，確保資源的正確初始化與釋放
- * - 使用 ResultBuilder 分離結果構建邏輯，保持 CombatEngine 的職責單一
- * - 將戰鬥流程控制與結果彙總責任封裝在單一介面中，供上層調用
+ * Design concept:
+ * - Acts as a streamlined coordinator for the combat system, responsible for initializing and orchestrating subsystems (Ticker, Logger, Ability, Snapshot, etc.)
+ * - Uses composition pattern to manage lifecycles of multiple subsystems, ensuring correct initialization and release of resources
+ * - Uses ResultBuilder to separate result building logic, keeping CombatEngine's responsibility single
+ * - Encapsulates combat flow control and result aggregation in a single interface for upper layers
  *
- * 主要職責：
- * - 初始化戰鬥上下文與核心子系統（TickerDriver、TickerProcessor、AbilitySystem、EventLogger、SnapshotCollector）
- * - 配置戰鬥結束條件並設置角色到上下文中
- * - 啟動戰鬥循環並記錄開始/結束時間戳
- * - 委託 ResultBuilder 構建完整的 CombatResult 物件
- * - 提供資源清理接口（dispose），確保系統能優雅釋放事件監聽與資源
+ * Main responsibilities:
+ * - Initialize combat context and core subsystems (TickerDriver, TickerProcessor, AbilitySystem, EventLogger, SnapshotCollector)
+ * - Configure combat end conditions and set characters in context
+ * - Start combat loop and record start/end timestamps
+ * - Delegate to ResultBuilder to build complete CombatResult object
+ * - Provide resource cleanup interface (dispose) to ensure graceful release of event listeners and resources
  */
 export class CombatEngine {
   private context: CombatContext
@@ -38,20 +38,20 @@ export class CombatEngine {
       enableLogging: true,
       ...config,
     }
-    // 1. 初始化戰鬥上下文
+    // 1. Initialize combat context
     this.context = new CombatContext(this.config.seed)
-    // 2. 初始化核心系統
+    // 2. Initialize core systems
     this.ticker = new TickerDriver(this.context, this.config.maxTicks)
     this.tickerSystem = new TickerProcessor(this.context)
     this.abilitySystem = new AbilitySystem(this.context)
     this.eventLogger = new EventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
-    // 3. 設置戰鬥結束條件
+    // 3. Set combat end condition
     this.ticker.setStopCondition(() => this.checkBattleEnd())
-    // 4. 創建並添加所有角色
+    // 4. Create and add all characters
     this.setupCharacters()
   }
-  /** 啟動戰鬥並返回完整結果 */
+  /** Start combat and return complete result */
   public start(): CombatResult {
     this.startTime = Date.now()
     this.ticker.start()
@@ -66,24 +66,24 @@ export class CombatEngine {
     )
     return resultBuilder.build()
   }
-  /** 設置角色 */
+  /** Set up characters */
   private setupCharacters(): void {
-    // 添加玩家隊伍
+    // Add player team
     this.config.playerTeam.forEach((character) => {
       this.context.addEntity(character)
     })
-    // 添加敵人隊伍
+    // Add enemy team
     this.config.enemyTeam.forEach((character) => {
       this.context.addEntity(character)
     })
   }
-  /** 檢查戰鬥是否結束 */
+  /** Check if combat has ended */
   private checkBattleEnd(): boolean {
     const playerAlive = this.config.playerTeam.some((c) => !c.isDead)
     const enemyAlive = this.config.enemyTeam.some((c) => !c.isDead)
     return !playerAlive || !enemyAlive
   }
-  /** 清理資源 */
+  /** Clean up resources */
   public dispose(): void {
     this.ticker.stop()
     this.tickerSystem.dispose()
