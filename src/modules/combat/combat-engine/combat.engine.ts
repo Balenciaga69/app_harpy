@@ -1,10 +1,10 @@
 import { AbilitySystem } from '../coordination'
 import { EventLogger } from '../logic/logger'
-import { TickerDriver, TickerProcessor } from '../tick'
 import { SnapshotCollector } from '../logic/snapshot'
 import { CombatContext } from '../context'
 import type { CombatConfig, CombatResult } from './models'
 import { ResultBuilder } from './builders'
+import { TickerDriver, TickerProcessor } from '../logic/tick'
 /**
  * CombatEngine：戰鬥執行引擎
  *
