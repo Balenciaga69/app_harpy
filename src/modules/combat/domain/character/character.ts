@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { IUltimateAbility } from '../../coordination'
 import type { BaseAttributeValues, CharacterId, ICharacter } from '.'
-import type { CombatContext } from '../../context/combat.context'
+import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from '../effect/models/effect.model'
 import { EffectManager } from '../effect/effect.manager'
 import { AttributeCalculator } from './attribute.calculator'

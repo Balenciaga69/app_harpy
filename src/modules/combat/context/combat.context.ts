@@ -1,5 +1,5 @@
 import { EventBus } from '../infra/event-bus'
-import { CombatRandomGenerator, type IEntity } from '../shared'
+import { CombatRandomGenerator, type IEntity } from '../infra/shared'
 /**
  * CombatContext：戰鬥的全域上下文容器。
  *

@@ -1,5 +1,5 @@
 import type { ICharacter } from '../../domain/character'
-import type { CombatLogEntry } from '../../logger'
+import type { CombatLogEntry } from '../../logic/logger'
 import type { CombatOutcome } from './combat.outcome.model'
 import type { CombatSnapshot } from './combat.snapshot.model'
 import type { CombatStatistics } from './combat.statistics.model'

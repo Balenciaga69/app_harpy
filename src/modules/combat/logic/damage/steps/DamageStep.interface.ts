@@ -1,4 +1,4 @@
-import type { CombatContext } from '../../context'
+import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '../models'
 /**
  * DamageStep 介面

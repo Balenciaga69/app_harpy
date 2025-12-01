@@ -1,5 +1,5 @@
 import type { ICharacter } from '../../domain/character'
-import type { CombatContext } from '../../context'
+import type { CombatContext } from '@/modules/combat/context'
 /**
  * 大招介面
  *

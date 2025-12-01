@@ -1,4 +1,4 @@
-import type { CombatContext } from '../../context/combat.context'
+import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '..'
 export interface ICombatHook {
   beforeDamageCalculation?(event: DamageEvent, context: CombatContext): DamageEvent

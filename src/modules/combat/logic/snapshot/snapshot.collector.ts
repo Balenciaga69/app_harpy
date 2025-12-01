@@ -1,7 +1,7 @@
-import type { CombatContext } from '../../context'
 import type { CombatSnapshot } from '../../combat-engine/models'
-import { isCharacter } from '../shared'
+import type { CombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '../../domain/character'
+import { isCharacter } from '../../infra/shared'
 /**
  * SnapshotCollector：戰鬥快照收集器。
  *

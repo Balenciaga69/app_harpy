@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import type { ICharacter } from '../../domain/character'
-import type { CombatContext } from '../../context'
+import type { CombatContext } from '@/modules/combat/context'
 import { DamageChain } from '../../damage'
 import { DamageFactory } from '../factories'
 import { FirstAliveSelector } from '../target-select-strategies'

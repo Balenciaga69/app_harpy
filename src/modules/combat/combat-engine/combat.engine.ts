@@ -1,5 +1,5 @@
 import { AbilitySystem } from '../coordination'
-import { EventLogger } from '../logger'
+import { EventLogger } from '../logic/logger'
 import { TickerDriver, TickerProcessor } from '../tick'
 import { SnapshotCollector } from '../logic/snapshot'
 import { CombatContext } from '../context'

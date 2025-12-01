@@ -1,9 +1,9 @@
-import type { CombatContext } from '../../context'
+import type { CombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '../../domain/character'
-import type { EventLogger } from '../../logger'
+import type { EventLogger } from '../../logic/logger'
 import type { SnapshotCollector } from '../../logic/snapshot'
 import type { CombatConfig, CombatOutcome, CombatResult, CombatStatistics, CharacterStats } from '../models'
-import type { CombatLogEntry } from '../../logger'
+import type { CombatLogEntry } from '../../logic/logger'
 /**
  * ResultBuilder：戰鬥結果構建器
  *
