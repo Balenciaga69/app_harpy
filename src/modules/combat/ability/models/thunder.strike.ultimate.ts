@@ -4,7 +4,7 @@ import type { CombatContext } from '../../context'
 import { DamageChain } from '../../damage'
 import { ChargeEffect } from '../../effect/Implementation'
 import { DamageFactory } from '../factories'
-import { FirstAliveSelector } from '../strategies'
+import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
 /**
  * 混合型大招範例：雷霆衝擊

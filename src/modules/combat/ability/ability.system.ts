@@ -3,7 +3,7 @@ import type { CombatContext } from '../context'
 import { DamageChain } from '../damage'
 import { isCharacter } from '../shared'
 import { DamageFactory } from './factories'
-import { FirstAliveSelector, type ITargetSelector } from './strategies'
+import { FirstAliveSelector, type ITargetSelector } from './target-select-strategies'
 /**
  * AbilitySystem：角色攻擊行為協調系統
  *

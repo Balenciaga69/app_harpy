@@ -4,7 +4,6 @@ import type { DamageEvent } from '../../damage'
  * DamageFactory：傷害事件創建工廠。
  *
  * 設計理念：
- * - v0.3 簡化版本：移除元素傷害系統，統一為純粹傷害
  * - 支援普通攻擊與大招兩種傷害類型
  * - 支援真實傷害（無視防禦）標記
  * - 提供統一的 DamageEvent 結構

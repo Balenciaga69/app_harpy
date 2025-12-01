@@ -3,7 +3,7 @@ import type { ICharacter } from '../../character'
 import type { CombatContext } from '../../context'
 import { DamageChain } from '../../damage'
 import { DamageFactory } from '../factories'
-import { FirstAliveSelector } from '../strategies'
+import { FirstAliveSelector } from '../target-select-strategies'
 import type { IUltimateAbility } from './ultimate.ability.interface'
 /**
  * 基礎傷害型大招
