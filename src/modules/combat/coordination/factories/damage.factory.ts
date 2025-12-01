@@ -1,5 +1,5 @@
 import type { ICharacter } from '../../domain/character'
-import type { DamageEvent } from '../../damage'
+import type { DamageEvent } from '../../logic/damage'
 /**
  * DamageFactory：傷害事件創建工廠。
  *

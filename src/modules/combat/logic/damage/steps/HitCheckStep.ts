@@ -1,26 +1,26 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from '../models'
+import type { DamageEvent } from '../models/damage.event.model'
 import { calculateHitChance } from '../utils/damage.calculator.util'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * 命中判定階段
+ * ?�中?��??�段
  */
 export class HitCheckStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
     const hooks = collectHooks(event.source, event.target)
-    // 執行 Hook
+    // ?��? Hook
     for (const hook of hooks) {
       if (hook.onHitCheck) {
         hook.onHitCheck(event, context)
       }
     }
-    // 命中判定
+    // ?�中?��?
     const accuracy = event.source.getAttribute('accuracy')
     const evasion = event.target.getAttribute('evasion')
     const hitChance = calculateHitChance(accuracy, evasion)
     event.isHit = context.rng.next() < hitChance
-    // 如果未命中，發送事件並終止流程
+    // 如�??�命中�??�送�?件並終止流�?
     if (!event.isHit) {
       context.eventBus.emit('combat:miss', {
         sourceId: event.source.id,

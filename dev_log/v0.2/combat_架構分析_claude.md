@@ -75,6 +75,7 @@ EventBus 作為核心通訊機制，實現了模組間的鬆耦合：
 **當前問題**：
 
 - ⚠️ **EventLogger 的 `onAll` 盲拆事件**：
+
   ```typescript
   this.eventBus.onAll((type, payload) => {
     const entry: CombatLogEntry = {
@@ -595,6 +596,7 @@ class EventLogger {
 **潛在瓶頸**：
 
 - ⚠️ **每 Tick 遍歷所有角色與效果**：
+
   ```typescript
   // TickerProcessor.ts
   this.context.getAllEntities().forEach((entity) => {
@@ -688,6 +690,7 @@ class EventLogger {
 **待改進**：
 
 - ⚠️ **隨機初始延遲可能影響平衡性**：
+
   ```typescript
   const randomDelay = Math.floor(this.context.rng.next() * cooldown)
   this.nextAttackTick.set(character.id, currentTick + randomDelay)

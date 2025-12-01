@@ -1,5 +1,5 @@
-import type { ICharacter } from '../../../domain/character'
-import type { ICombatHook } from '../../models'
+import type { ICharacter } from '../../../../domain/character/interfaces/character.interface'
+import type { ICombatHook } from '../../models/combat.hook.interface'
 /**
  * 收集角色身上所有效果的 Hook
  */

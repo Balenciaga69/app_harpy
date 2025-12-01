@@ -1,4 +1,5 @@
-import { CombatContext } from '../context'
+import type { CombatContext } from '../../context'
+import type { CombatStartPayload } from '../../infra/event-bus'
 /**
  * TickerDriver：戰鬥時間循環的驅動引擎
  *
@@ -38,7 +39,7 @@ export class TickerDriver {
   public start(): void {
     this.isRunning = true
     this.context.resetTick()
-    this.context.eventBus.emit('combat:start', undefined)
+    this.context.eventBus.emit('combat:start', {} as CombatStartPayload)
     while (this.isRunning && this.context.getCurrentTick() < this.maxTicks) {
       this.tick()
       if (this.checkCombatEnd()) {

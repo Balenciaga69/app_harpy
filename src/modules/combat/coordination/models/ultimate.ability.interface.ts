@@ -3,7 +3,7 @@
 //   1. 訪問施放者（ICharacter）的屬性和方法
 //   2. 訪問戰鬥上下文（CombatContext）來影響其他角色或查詢狀態
 // 遷移注意：若遷移到強類型語言，建議將這兩個介面提升為共用契約層
-import type { ICharacter } from '../../domain/character'
+import type { ICharacter } from '../../domain/character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 
 /**

@@ -1,4 +1,4 @@
-import type { ICharacter } from '../character'
+import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from './models/effect.model'
 /**

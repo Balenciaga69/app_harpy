@@ -1,4 +1,4 @@
-import type { IUltimateAbility } from '../../../coordination'
+import type { IUltimateAbility } from '../../../coordination/models/ultimate.ability.interface'
 /**
  * 大招擁有者介面
  *

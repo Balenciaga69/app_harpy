@@ -1,9 +1,9 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from '../models'
+import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * 傷害發起階段
+ * ?�害?�起?�段
  */
 export class BeforeDamageStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
@@ -13,6 +13,6 @@ export class BeforeDamageStep implements IDamageStep {
         hook.beforeDamageCalculation(event, context)
       }
     }
-    return true // 繼續執行
+    return true // 繼�??��?
   }
 }

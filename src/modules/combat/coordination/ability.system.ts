@@ -1,7 +1,7 @@
-import type { CharacterId, ICharacter } from '../domain/character'
 import type { CombatContext } from '../context'
-import { DamageChain } from '../damage'
-import { isCharacter } from '../shared'
+import type { CharacterId, ICharacter } from '../domain/character'
+import { isCharacter } from '../infra/shared'
+import { DamageChain } from '../logic/damage'
 import { DamageFactory } from './factories'
 import { FirstAliveSelector, type ITargetSelector } from './target-select-strategies'
 /**

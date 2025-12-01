@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '../combat-engine/combat.engine'
+import { ThunderStrikeUltimate } from '../coordination/models'
 import { Character } from '../domain/character/character'
 import { createDefaultAttributes } from '../domain/character/models/attribute.core.model'
-import { ThunderStrikeUltimate } from '../coordination'
 /**
  * 簡單的戰鬥測試範例（v0.3）
  * 驗證能量系統、大招機制與新的屬性系統

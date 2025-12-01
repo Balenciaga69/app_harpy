@@ -71,14 +71,5 @@ export class ChillEffect extends StackableEffect {
       mode: 'multiply',
       source: this.id,
     })
-    // 添加施法冷卻修飾器
-    this.spellModifierId = `${this.id}-spell-cd`
-    character.addAttributeModifier({
-      id: this.spellModifierId,
-      type: 'spellCooldown',
-      value: cooldownIncrease,
-      mode: 'multiply',
-      source: this.id,
-    })
   }
 }

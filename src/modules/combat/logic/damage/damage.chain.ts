@@ -1,16 +1,14 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from './models'
-import type { IDamageStep } from './steps'
-import {
-  AfterApplyStep,
-  ApplyDamageStep,
-  BeforeApplyStep,
-  BeforeDamageStep,
-  CriticalStep,
-  DamageModifyStep,
-  DefenseCalculationStep,
-  HitCheckStep,
-} from './steps'
+import type { DamageEvent } from './models/damage.event.model'
+import type { IDamageStep } from './steps/DamageStep.interface'
+import { AfterApplyStep } from './steps/AfterApplyStep'
+import { ApplyDamageStep } from './steps/ApplyDamageStep'
+import { BeforeApplyStep } from './steps/BeforeApplyStep'
+import { BeforeDamageStep } from './steps/BeforeDamageStep'
+import { CriticalStep } from './steps/CriticalStep'
+import { DamageModifyStep } from './steps/DamageModifyStep'
+import { DefenseCalculationStep } from './steps/DefenseCalculationStep'
+import { HitCheckStep } from './steps/HitCheckStep'
 /**
  * DamageChain：協調傷害計算流程的責任鏈。
  *

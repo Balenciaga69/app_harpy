@@ -1,14 +1,14 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from '../models'
+import type { DamageEvent } from '../models/damage.event.model'
 /**
  * DamageStep 介面
  *
- * 定義傷害計算流程中每個步驟的統一介面
+ * 定義?�害計�?流�?中�??�步驟�?統�?介面
  */
 export interface IDamageStep {
   /**
-   * 執行此步驟的邏輯
-   * @returns 是否應該繼續執行後續步驟 (false = 提前終止流程)
+   * ?��?此步驟�??�輯
+   * @returns ?�否?�該繼�??��?後�?步�? (false = ?��?終止流�?)
    */
   execute(event: DamageEvent, context: CombatContext): boolean
 }

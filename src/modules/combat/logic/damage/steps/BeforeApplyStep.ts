@@ -1,9 +1,9 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from '../models'
+import type { DamageEvent } from '../models/damage.event.model'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 /**
- * 最終確認階段
+ * ?�終確認�?�?
  */
 export class BeforeApplyStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {
@@ -13,7 +13,7 @@ export class BeforeApplyStep implements IDamageStep {
         hook.beforeDamageApply(event, context)
       }
     }
-    // 檢查是否被阻止
+    // 檢查?�否被阻�?
     if (event.prevented) {
       context.eventBus.emit('combat:prevented', {
         sourceId: event.source.id,
@@ -21,8 +21,8 @@ export class BeforeApplyStep implements IDamageStep {
         reason: 'damage-prevented-by-effect',
         tick: event.tick,
       })
-      return false // 終止流程
+      return false // 終止流�?
     }
-    return true // 繼續執行
+    return true // 繼�??��?
   }
 }
