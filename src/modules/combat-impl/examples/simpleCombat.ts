@@ -2,14 +2,26 @@
 import { CombatEngine } from '@/modules/combat/combat-engine/combat.engine'
 import { Character } from '@/modules/combat/domain/character/character'
 import { createDefaultAttributes } from '@/modules/combat/domain/character/models/attribute.core.model'
-import { ThunderStrikeUltimate } from '../ultimates'
+import { ThunderStrikeUltimate, BloodPactUltimate } from '../ultimates'
+import { Stormblade, GuardiansPlate } from '../equipment'
+import { PoisonVial } from '../relics'
+import { CombatContext } from '@/modules/combat/context'
+
 /**
  * Simple combat test example (v0.3)
- * Validates energy system, ultimate ability mechanism, and new attribute system
+ * Demonstrates:
+ * - Equipment system (Stormblade, Guardian's Plate)
+ * - Relic system (Poison Vial with stacking)
+ * - Ultimate abilities (Thunder Strike, Blood Pact)
+ * - Effect combinations and interactions
  */
 function runSimpleCombat() {
   console.log('=== Starting Combat Test (v0.3) ===\n')
-  // Create player team
+
+  // Create temporary context for equipment initialization
+  const tempContext = new CombatContext(12345)
+
+  // Create player team with equipment, relics, and ultimates
   const warrior = new Character({
     name: 'Warrior',
     team: 'player',
@@ -24,8 +36,12 @@ function runSimpleCombat() {
       criticalChance: 0.1, // 10%
       energyGainOnAttack: 4, // About 25 attacks to unleash ultimate
     }),
-    ultimate: new ThunderStrikeUltimate(2.5),
+    ultimate: new BloodPactUltimate(), // Sacrifice HP to empower next 3 attacks
   })
+
+  // Equip Warrior with Guardian's Plate (armor boost at low HP)
+  warrior.equipItem(new GuardiansPlate(), tempContext)
+
   const archer = new Character({
     name: 'Archer',
     team: 'player',
@@ -41,7 +57,16 @@ function runSimpleCombat() {
       criticalMultiplier: 2.0,
       energyGainOnAttack: 5, // About 20 attacks to unleash ultimate
     }),
+    ultimate: new ThunderStrikeUltimate(2.5), // Massive AOE lightning damage
   })
+
+  // Equip Archer with Stormblade (doubles crit chance when charged)
+  // and 2 stacks of Poison Vial (apply poison on attacks)
+  const poisonVial = new PoisonVial()
+  poisonVial.addStack() // Stack to 2
+  archer.equipItem(new Stormblade(), tempContext)
+  archer.addRelic(poisonVial, tempContext)
+
   // Create enemy team
   const goblin1 = new Character({
     name: 'Goblin1',
@@ -56,6 +81,7 @@ function runSimpleCombat() {
       attackCooldown: 120, // 1.2 seconds per attack
     }),
   })
+
   const goblin2 = new Character({
     name: 'Goblin2',
     team: 'enemy',
@@ -69,6 +95,7 @@ function runSimpleCombat() {
       attackCooldown: 120,
     }),
   })
+
   // Create combat engine
   const engine = new CombatEngine({
     seed: 12345, // Fixed seed for reproducible results
@@ -78,26 +105,34 @@ function runSimpleCombat() {
     snapshotInterval: 100,
     enableLogging: true,
   })
+
   // Start combat
   console.log('Combat begins...')
-  console.log('Warrior: High HP and armor, strong attack power')
-  console.log('Archer: Fast attack speed, high evasion, high crit rate')
+  console.log("Warrior: Guardian's Plate (armor boost at low HP) + Blood Pact (sacrifice HP for damage)")
+  console.log('Archer: Stormblade (crit boost when charged) + Poison Vial x2 (poison stacks) + Thunder Strike')
   console.log('Energy accumulates to 100 to unleash ultimate ability\n')
+
   const result = engine.start()
+
   // Output combat results
   console.log('\n=== Combat Ended ===')
   console.log(`Winner: ${result.winner}`)
   console.log(`Total rounds: ${result.totalTicks} ticks`)
   console.log(`Survivors: ${result.survivors.map((s) => s.name).join(', ')}`)
+
   // Clean up resources
   engine.dispose()
   console.log('\n=== Test Completed ===')
+
   // Filter out tick events to reduce log volume
   result.logs = result.logs.filter((log) => !['tick:start', 'tick:end'].includes(log.eventType))
+
   return result
 }
+
 // Run test
 // if (require.main === module) {
 //   runSimpleCombat()
 // }
+
 export { runSimpleCombat }
