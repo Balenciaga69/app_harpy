@@ -1,6 +1,5 @@
 import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
 import { ChargedCriticalEffect } from '../effects/Equipment/ChargedCriticalEffect'
-
 /**
  * Stormblade - Charged Critical Weapon
  *
@@ -16,7 +15,6 @@ export class Stormblade extends Equipment {
       rarity: 'epic',
     })
   }
-
   protected initializeEffects(): void {
     // Add charged critical hook effect
     this.effects.push(new ChargedCriticalEffect())

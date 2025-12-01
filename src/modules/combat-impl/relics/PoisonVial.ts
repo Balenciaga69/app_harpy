@@ -1,6 +1,5 @@
 import { Relic } from '@/modules/combat/domain/item/models/relic.model'
 import { PoisonEffect } from '../effects/NativeStatus/PoisonEffect'
-
 /**
  * Poison Vial - Stackable Poison Relic
  *
@@ -17,7 +16,6 @@ export class PoisonVial extends Relic {
       rarity: 'common',
     })
   }
-
   protected initializeEffects(): void {
     // Each stack provides one poison effect
     // Multiple stacks mean multiple poison applications
@@ -25,7 +23,6 @@ export class PoisonVial extends Relic {
       this.effects.push(new PoisonEffect(1))
     }
   }
-
   protected onStackChanged(): void {
     // Refresh all effects when stack count changes
     this.effects = []

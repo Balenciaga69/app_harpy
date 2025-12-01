@@ -4,12 +4,9 @@ import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './utils/hookCollector.util'
 import { calculateArmorReduction } from '../utils/damage.calculator.util'
 /**
- * DefenseCalculationStep: Calculates damage reduction based on target's defense.
+ * DefenseCalculationStep
  *
- * Responsibilities:
- * - Calculate armor reduction
- * - Apply reduction to damage amount
- * - Handle true damage that bypasses defense
+ * Calculates damage reduction based on target's armor. Handles true damage bypass and applies reduction formula.
  */
 export class DefenseCalculationStep implements IDamageStep {
   execute(event: DamageEvent, context: CombatContext): boolean {

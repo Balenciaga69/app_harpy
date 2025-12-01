@@ -4,13 +4,10 @@ import type { CombatContext } from '@/modules/combat/context'
 import { EffectNames } from '@/modules/combat/infra/config'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
-
 /**
- * Charged critical amplification effect
+ * ChargedCriticalEffect
  *
- * Unique equipment effect:
- * - When character has charge effect, critical chance doubles
- * - Implemented by modifying DamageChain's critical check
+ * Equipment effect: doubles critical chance if character has charge effect. Modifies DamageChain's crit check.
  */
 export class ChargedCriticalEffect implements IEffect, ICombatHook {
   readonly id: string

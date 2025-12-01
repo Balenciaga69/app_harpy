@@ -2,19 +2,10 @@ import type { CombatContext } from '../../context'
 import type { CombatStartPayload } from '../../infra/event-bus'
 import { CombatTiming } from '../../infra/config'
 /**
- * TickerDriver: Combat time loop driving engine
+ * TickerDriver
  *
- * Design concept:
- * - As combat heartbeat system, drives entire combat time progress
- * - Through event-driven mode, emits Tick related events, lets other systems respond to time passage
- * - Supports configurable end conditions, achieves flexible combat termination logic
- * - Sets maximum Tick limit, prevents infinite loops causing program freeze
- * - Focused responsibility: only drives time passage, does not handle status snapshots
- *
- * Main responsibilities:
- * - Execute single Tick, emit tick:start and tick:end events
- * - Manage combat loop, continuously execute Tick until end condition is met
- * - Check combat end condition, stop combat loop at appropriate time
+ * Drives the combat tick loop, emitting tick events and checking end conditions. Supports max tick limit and
+ * configurable stop logic.
  */
 const MAX_TICKS = CombatTiming.MAX_TICKS
 export class TickerDriver {

@@ -248,6 +248,7 @@ archer.addRelic(poisonVial, context)
 
 4. **大招階段**：
    - 系統自動觸發 `ThunderStrikeUltimate.execute()`
+
    ```typescript
    execute(caster: ICharacter, context: CombatContext) {
      // 1. 對所有敵人造成 2.5 倍傷害

@@ -4,11 +4,9 @@ import type { CombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
 /**
- * Low health armor amplification effect
+ * LowHealthArmorEffect
  *
- * Unique equipment effect:
- * - When health drops below 30%, armor x2
- * - Implemented by modifying DamageChain's defense calculation
+ * Equipment effect: doubles armor when health <30%. Modifies DamageChain's defense calculation.
  */
 export class LowHealthArmorEffect implements IEffect, ICombatHook {
   readonly id: string

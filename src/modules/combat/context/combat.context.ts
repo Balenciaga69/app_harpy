@@ -1,17 +1,10 @@
 import { EventBus } from '../infra/event-bus'
 import { CombatRandomGenerator, type IEntity } from '../infra/shared'
 /**
- * CombatContext: Global context container for combat.
+ * CombatContext
  *
- * Design concept:
- * - Acts as an anemic model, only carries shared data and access interfaces, without business logic.
- * - Provides core resources like EventBus, RNG, and Entity management for multiple systems to share.
- * - Minimizes coupling; systems (like DamageChain, Ticker) access shared resources through Context.
- *
- * Main responsibilities:
- * - Holds the combat event bus (EventBus) and random number generator (CombatRandomGenerator).
- * - Manages the list of entities participating in combat (Entity management).
- * - Provides read/write interface for current Tick, allowing other systems to execute based on time.
+ * Holds global resources for combat: event bus, RNG, entity list, and current tick. Provides read/write
+ * access for systems to share state and coordinate combat progress.
  */
 export class CombatContext {
   public readonly eventBus: EventBus

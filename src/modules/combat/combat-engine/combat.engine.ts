@@ -6,20 +6,11 @@ import type { CombatConfig, CombatResult } from './models'
 import { ResultBuilder } from './builders'
 import { TickerDriver, TickerProcessor } from '../logic/tick'
 /**
- * CombatEngine: Combat execution engine
+ * CombatEngine
  *
- * Design concept:
- * - Acts as a streamlined coordinator for the combat system, responsible for initializing and orchestrating subsystems (Ticker, Logger, Ability, Snapshot, etc.)
- * - Uses composition pattern to manage life cycles of multiple subsystems, ensuring correct initialization and release of resources
- * - Uses ResultBuilder to separate result building logic, keeping CombatEngine's responsibility single
- * - Encapsulates combat flow control and result aggregation in a single interface for upper layers
- *
- * Main responsibilities:
- * - Initialize combat context and core subsystems (TickerDriver, TickerProcessor, AbilitySystem, EventLogger, SnapshotCollector)
- * - Configure combat end conditions and set characters in context
- * - Start combat loop and record start/end timestamps
- * - Delegate to ResultBuilder to build complete CombatResult object
- * - Provide resource cleanup interface (dispose) to ensure graceful release of event listeners and resources
+ * Orchestrates a combat run by initializing the core subsystems (TickerDriver, TickerProcessor, AbilitySystem,
+ * EventLogger, SnapshotCollector), driving the tick loop and returning a CombatResult via ResultBuilder.
+ * Responsible for subsystem lifecycle (initialize / dispose) and combat flow control.
  */
 export class CombatEngine {
   private context: CombatContext

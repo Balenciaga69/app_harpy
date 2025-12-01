@@ -6,22 +6,10 @@ import { DamageChain } from '../../logic/damage'
 import { DamageFactory } from './factories'
 import { FirstAliveSelector, type ITargetSelector } from './target-select-strategies'
 /**
- * AbilitySystem: Character attack behavior coordination system
+ * AbilitySystem
  *
- * Design concept:
- * - Removes element system, changes to energy/ultimate mechanism
- * - Normal attacks accumulate energy, can release ultimate when energy is full
- * - Uses strategy pattern to implement pluggable target selection logic
- * - Based on Tick drive, cooldown unit is tick
- *
- * Main responsibilities:
- * - Listens to tick:start event, drives character attack logic
- * - Manages attack cooldown time for each character (cooldown)
- * - Uses target selection strategy to choose attack target from enemy camp
- * - Creates damage events through DamageFactory
- * - Delegates damage calculation to DamageChain
- * - Manages energy accumulation and ultimate release logic
- * - Publishes entity:attack and entity:ultimate events
+ * Coordinates character attack logic per tick. Manages cooldowns, energy, ultimate release, and target selection
+ * using pluggable strategies. Emits attack and ultimate events.
  */
 export class AbilitySystem {
   private context: CombatContext

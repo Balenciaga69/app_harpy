@@ -3,18 +3,10 @@ import type { IAttributeCalculator } from './interfaces/attribute.calculator.int
 import type { AttributeType } from './models/attribute.core.model'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from './models/attribute.modifier.model'
 /**
- * AttributeCalculator: Final value calculation engine for attributes.
+ * AttributeCalculator
  *
- * Design concept:
- * - SRP, pure calculation logic tool
- * - Follows single responsibility principle, focuses on attribute calculation logic, without business logic.
- * - Collaborates with AttributeContainer to achieve separation of calculation layer and data layer.
- *
- * Main responsibilities:
- * - Get base values and modifiers from container, calculate final attribute values.
- * - Sort modifiers by priority to ensure calculation order matches game logic.
- * - Separate processing of additive and multiplicative modifiers, apply correct mathematical formulas.
- * - Provide pure calculation methods for external testing and verification.
+ * Computes a final attribute value from base values and modifiers. Sorts modifiers by priority
+ * and applies additive modifiers first, then multiplicative modifiers.
  */
 export class AttributeCalculator implements IAttributeCalculator {
   private container: AttributeContainer

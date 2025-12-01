@@ -1,18 +1,8 @@
 import seedrandom from 'seedrandom'
 /**
- * CombatRandomGenerator: Reproducible pseudo-random number generator.
+ * CombatRandomGenerator
  *
- * Design concept:
- * - Based on seedrandom library, provides seeded random number generation to ensure reproducible results.
- * - Supports combat replay and testing, same seed produces same random sequence.
- * - Encapsulates commonly used random number generation methods, provides convenient probability judgment and range generation.
- * - As core component of CombatContext, uniformly manages all randomness in combat.
- *
- * Main responsibilities:
- * - Generate basic random numbers (floating point numbers between 0 and 1).
- * - Provide integer and floating point range random generation methods.
- * - Support probability judgment (critical judgment, evasion judgment).
- * - Save and provide seed, support saving and replaying combat status.
+ * Seeded random number generator for combat. Provides reproducible random, integer/float ranges, probability checks, and seed access.
  */
 export class CombatRandomGenerator {
   private rng: seedrandom.PRNG

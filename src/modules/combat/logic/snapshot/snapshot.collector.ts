@@ -4,21 +4,10 @@ import type { ICharacter } from '../../domain/character'
 import { isCharacter } from '../../infra/shared'
 import { CombatTiming } from '../../infra/config'
 /**
- * SnapshotCollector: Combat snapshot collector.
+ * SnapshotCollector
  *
- * Design concept:
- * - Single responsibility: only responsible for listening to events and collecting combat status snapshots in real-time.
- * - Event-driven: receives collection timing notifications through EventBus, does not actively poll.
- * - Data authenticity: directly reads current entity status, ensures snapshots accurately reflect combat progress.
- * - Configurable interval: supports flexible collection frequency settings, balances performance and replay precision.
- * - Responsibility separation: only collects, does not participate in combat logic or result building.
- *
- * Main responsibilities:
- * - Listens to tick:start event, judges whether collection interval is reached.
- * - Reads current status of all entities from CombatContext.
- * - Generates and stores snapshot objects containing real timestamps.
- * - Provides snapshot query interface for ResultBuilder use.
- * - Provides resource cleanup method to release memory after combat ends.
+ * Collects combat snapshots at configured intervals by listening to tick events. Stores entity states
+ * for replay and analysis. Provides query and cleanup methods.
  */
 export class SnapshotCollector {
   private snapshots: CombatSnapshot[] = []
