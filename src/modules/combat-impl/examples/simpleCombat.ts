@@ -7,7 +7,6 @@ import { Stormblade, GuardiansPlate } from '../equipment'
 import { PoisonVial } from '../relics'
 import { InMemoryResourceRegistry } from '@/modules/combat/infra/resource-registry'
 import { CombatContext } from '@/modules/combat/context'
-
 /**
  * Simple combat test example (v0.5)
  * Demonstrates:
@@ -19,13 +18,10 @@ import { CombatContext } from '@/modules/combat/context'
  */
 function runSimpleCombat() {
   console.log('=== Starting Combat Test (v0.5) ===\n')
-
   // Create resource registry
   const registry = new InMemoryResourceRegistry()
-
   // Create temporary context for equipment initialization
   const tempContext = new CombatContext(registry, 12345)
-
   // Create player team with equipment, relics, and ultimates
   const warrior = new Character({
     name: 'Warrior',
@@ -44,10 +40,8 @@ function runSimpleCombat() {
     ultimate: new BloodPactUltimate(), // Sacrifice HP to empower next 3 attacks
     registry,
   })
-
   // Equip Warrior with Guardian's Plate (armor boost at low HP)
-  warrior.equipItem(new GuardiansPlate(), tempContext)
-
+  warrior.equipItem(new GuardiansPlate(), 'armor', tempContext)
   const archer = new Character({
     name: 'Archer',
     team: 'player',
@@ -66,14 +60,12 @@ function runSimpleCombat() {
     ultimate: new ThunderStrikeUltimate(2.5), // Massive AOE lightning damage
     registry,
   })
-
   // Equip Archer with Stormblade (doubles crit chance when charged)
   // and 2 stacks of Poison Vial (apply poison on attacks)
   const poisonVial = new PoisonVial()
   poisonVial.addStack() // Stack to 2
-  archer.equipItem(new Stormblade(), tempContext)
+  archer.equipItem(new Stormblade(), 'weapon', tempContext)
   archer.addRelic(poisonVial, tempContext)
-
   // Create enemy team
   const goblin1 = new Character({
     name: 'Goblin1',
@@ -89,7 +81,6 @@ function runSimpleCombat() {
     }),
     registry,
   })
-
   const goblin2 = new Character({
     name: 'Goblin2',
     team: 'enemy',

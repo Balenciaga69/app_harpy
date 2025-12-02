@@ -1,5 +1,6 @@
 // Public classes (for external use)
 export { Character } from './character'
+export type { EquipmentSlot } from '../item/equipment.manager'
 // Character template factory functions (for external use)
 export {
   createWarriorTemplate,

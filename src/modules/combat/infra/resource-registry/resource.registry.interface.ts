@@ -2,7 +2,6 @@ import type { IEffect } from '../../domain/effect/models/effect.model'
 import type { Equipment } from '../../domain/item/models/equipment.model'
 import type { Relic } from '../../domain/item/models/relic.model'
 import type { IUltimateAbility } from '../../domain/ultimate'
-
 /**
  * Resource Registry Interface
  *
@@ -21,25 +20,21 @@ export interface IResourceRegistry {
   unregisterEffect(id: string): void
   getEffect(id: string): IEffect | undefined
   hasEffect(id: string): boolean
-
   // === Ultimate Catalog ===
   // Ultimates are typically stateless and can be shared
   registerUltimate(ultimate: IUltimateAbility): void
   getUltimate(id: string): IUltimateAbility | undefined
   hasUltimate(id: string): boolean
-
   // === Equipment Catalog ===
   // Equipment instances, registered when created
   registerEquipment(equipment: Equipment): void
   getEquipment(id: string): Equipment | undefined
   hasEquipment(id: string): boolean
-
   // === Relic Catalog ===
   // Relic instances, registered when created
   registerRelic(relic: Relic): void
   getRelic(id: string): Relic | undefined
   hasRelic(id: string): boolean
-
   // === Lifecycle ===
   /** Clear all registered resources (typically called after combat ends) */
   clear(): void
