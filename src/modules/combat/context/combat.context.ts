@@ -1,19 +1,24 @@
 import { EventBus } from '../infra/event-bus'
 import { CombatRandomGenerator, type IEntity } from '../infra/shared'
+import type { IResourceRegistry } from '../infra/resource-registry'
+
 /**
  * CombatContext
  *
- * Holds global resources for combat: event bus, RNG, entity list, and current tick. Provides read/write
- * access for systems to share state and coordinate combat progress.
+ * Holds global resources for combat: event bus, RNG, resource registry, entity list, and current tick.
+ * Provides read/write access for systems to share state and coordinate combat progress.
  */
 export class CombatContext {
   public readonly eventBus: EventBus
   public readonly rng: CombatRandomGenerator
+  public readonly registry: IResourceRegistry
   private currentTick: number = 0
   private entities: Map<string, IEntity> = new Map()
-  constructor(seed?: string | number) {
+
+  constructor(registry: IResourceRegistry, seed?: string | number) {
     this.eventBus = new EventBus()
     this.rng = new CombatRandomGenerator(seed)
+    this.registry = registry
   }
   // ===Entity===
   public getEntity(id: string): IEntity | undefined {

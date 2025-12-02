@@ -103,7 +103,7 @@
 
 如果團隊不想切換到純 ECS，應優化現有架構：
 
-1.  **引入物件池 (Object Pooling):** `DamageEvent` 和 `CombatEvent` 不應該每次 `new`，應該重用物件，減少 GC 觸發。
+1.  **引入物件容器 (Object Pooling):** `DamageEvent` 和 `CombatEvent` 不應該每次 `new`，應該重用物件，減少 GC 觸發。
 2.  **屬性緩存 (Attribute Caching):** 在 `AttributeContainer` 中實作 Dirty Flag。
     - _目前:_ 每次 get 都重算。
     - _改進:_ `addModifier` 時標記 `isDirty = true`。`getValue` 時若 `!isDirty` 直接回傳 `cachedValue`。

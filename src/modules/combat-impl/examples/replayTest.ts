@@ -6,6 +6,8 @@ import { SimpleDamageUltimate } from '../ultimates'
 import { ReplayEngine } from '@/modules/replay/replay.engine'
 import { PlaybackController } from '@/modules/replay/controllers/playback.controller'
 import { TimelineController } from '@/modules/replay/controllers/timeline.controller'
+import { InMemoryResourceRegistry } from '@/modules/combat/infra/resource-registry'
+
 /**
  * Simple replay system test
  * Demonstrates:
@@ -16,6 +18,10 @@ import { TimelineController } from '@/modules/replay/controllers/timeline.contro
  */
 export function runReplayTest() {
   console.log('=== Starting Replay System Test ===\n')
+
+  // Create resource registry
+  const registry = new InMemoryResourceRegistry()
+
   // Step 1: Create and run a simple combat
   console.log('Step 1: Running combat...')
   const player = new Character({
@@ -29,7 +35,9 @@ export function runReplayTest() {
       energyGainOnAttack: 10,
     }),
     ultimate: new SimpleDamageUltimate('Power Strike', 'Deal massive damage', 2.0),
+    registry,
   })
+
   const enemy = new Character({
     name: 'Enemy',
     team: 'enemy',
@@ -41,6 +49,7 @@ export function runReplayTest() {
       energyGainOnAttack: 8,
     }),
     ultimate: new SimpleDamageUltimate('Heavy Blow', 'Deal heavy damage', 1.8),
+    registry,
   })
   const combatEngine = new CombatEngine({
     seed: 12345,
