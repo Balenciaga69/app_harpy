@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
+import { CharacterAccessor } from '@/modules/combat/infra/shared'
 /**
  * Chill effect
  * - Extends enemy attack/spell cooldown time
@@ -19,11 +20,15 @@ export class ChillEffect extends StackableEffect {
     super(`chill-${nanoid(6)}`, 'Chill', 16)
     this.setStacks(initialStacks)
   }
-  onApply(character: ICharacter, context: CombatContext): void {
+  onApply(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     this.lastDecayTick = context.getCurrentTick()
     this.updateCooldownModifiers(character)
   }
-  onRemove(character: ICharacter, _context: CombatContext): void {
+  onRemove(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     if (this.attackModifierId) {
       character.removeAttributeModifier(this.attackModifierId)
       this.attackModifierId = null
@@ -33,7 +38,9 @@ export class ChillEffect extends StackableEffect {
       this.spellModifierId = null
     }
   }
-  onTick(character: ICharacter, context: CombatContext): void {
+  onTick(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     const currentTick = context.getCurrentTick()
     const ticksPassed = currentTick - this.lastDecayTick
     // Assume 100 ticks = 1 second

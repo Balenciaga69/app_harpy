@@ -1,5 +1,5 @@
-import type { CombatLogEntry } from '../../combat/logic/logger'
-import type { ReplayEngine } from '../replay.engine'
+import type { IReplayEngine } from '../replay.engine.interface'
+import type { LogQueryService } from '../services'
 /**
  * Important moment on the timeline
  */
@@ -17,9 +17,11 @@ export interface TimelineMoment {
  * Converts between tick and progress, detects important events, and provides timeline marker queries for replay.
  */
 export class TimelineController {
-  private engine: ReplayEngine
-  constructor(engine: ReplayEngine) {
+  private engine: IReplayEngine
+  private logQuery: LogQueryService
+  constructor(engine: IReplayEngine, logQuery: LogQueryService) {
     this.engine = engine
+    this.logQuery = logQuery
   }
   /** Convert tick to progress (0-1) */
   public tickToProgress(tick: number): number {
@@ -47,17 +49,17 @@ export class TimelineController {
   public getImportantMoments(): TimelineMoment[] {
     const moments: TimelineMoment[] = []
     // Add ultimate moments
-    const ultimateTicks = this.getUltimateTicks()
+    const ultimateTicks = this.logQuery.getUltimateTicks()
     ultimateTicks.forEach((tick) => {
       moments.push({ tick, type: 'ultimate', label: 'Ultimate' })
     })
     // Add death moments
-    const deathTicks = this.getDeathTicks()
+    const deathTicks = this.logQuery.getDeathTicks()
     deathTicks.forEach((tick) => {
       moments.push({ tick, type: 'death', label: 'Death' })
     })
     // Add critical hit moments (optional)
-    const criticalTicks = this.getCriticalTicks()
+    const criticalTicks = this.logQuery.getCriticalTicks()
     criticalTicks.forEach((tick) => {
       moments.push({ tick, type: 'critical', label: 'Critical Hit' })
     })
@@ -66,30 +68,15 @@ export class TimelineController {
   }
   /** Get ticks where ultimates were cast */
   public getUltimateTicks(): number[] {
-    const state = this.engine.getState()
-    const logs = this.engine.getLogsInRange(0, state.totalTicks)
-    return logs
-      .filter((log) => this.isUltimateEvent(log))
-      .map((log) => log.tick)
-      .sort((a, b) => a - b)
+    return this.logQuery.getUltimateTicks()
   }
   /** Get ticks where deaths occurred */
   public getDeathTicks(): number[] {
-    const state = this.engine.getState()
-    const logs = this.engine.getLogsInRange(0, state.totalTicks)
-    return logs
-      .filter((log) => log.eventType === 'entity:death')
-      .map((log) => log.tick)
-      .sort((a, b) => a - b)
+    return this.logQuery.getDeathTicks()
   }
   /** Get ticks where critical hits occurred */
   public getCriticalTicks(): number[] {
-    const state = this.engine.getState()
-    const logs = this.engine.getLogsInRange(0, state.totalTicks)
-    return logs
-      .filter((log) => log.eventType === 'entity:critical')
-      .map((log) => log.tick)
-      .sort((a, b) => a - b)
+    return this.logQuery.getCriticalTicks()
   }
   /** Get tick range for a given percentage range */
   public getTickRange(startProgress: number, endProgress: number): { start: number; end: number } {
@@ -97,10 +84,5 @@ export class TimelineController {
       start: this.progressToTick(startProgress),
       end: this.progressToTick(endProgress),
     }
-  }
-  // === Helper methods ===
-  /** Check if log entry is an ultimate event */
-  private isUltimateEvent(log: CombatLogEntry): boolean {
-    return log.eventType === 'entity:attack' && (log.payload.isUltimate as boolean) === true
   }
 }

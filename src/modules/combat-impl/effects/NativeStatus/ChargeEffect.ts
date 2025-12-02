@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
+import { CharacterAccessor } from '@/modules/combat/infra/shared'
 import { EffectNames, ChargeEffectConfig, TickConfig } from '@/modules/combat/infra/config'
 /**
  * Charge effect
@@ -20,11 +21,15 @@ export class ChargeEffect extends StackableEffect {
     super(`charge-${nanoid(6)}`, EffectNames.CHARGE, ChargeEffectConfig.MAX_STACKS)
     this.setStacks(initialStacks)
   }
-  onApply(character: ICharacter, context: CombatContext): void {
+  onApply(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     this.lastDecayTick = context.getCurrentTick()
     this.updateCooldownModifiers(character)
   }
-  onRemove(character: ICharacter, _context: CombatContext): void {
+  onRemove(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     if (this.attackModifierId) {
       character.removeAttributeModifier(this.attackModifierId)
       this.attackModifierId = null
@@ -34,7 +39,9 @@ export class ChargeEffect extends StackableEffect {
       this.spellModifierId = null
     }
   }
-  onTick(character: ICharacter, context: CombatContext): void {
+  onTick(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     const currentTick = context.getCurrentTick()
     const ticksPassed = currentTick - this.lastDecayTick
     // Assume TickConfig.TICKS_PER_SECOND ticks = 1 second (this value can be adjusted)

@@ -3,9 +3,7 @@ import { CombatEngine } from '@/modules/combat/combat-engine/combat.engine'
 import { Character } from '@/modules/combat/domain/character/character'
 import { createDefaultAttributes } from '@/modules/combat/domain/character/models/attribute.core.model'
 import { SimpleDamageUltimate } from '../ultimates'
-import { ReplayEngine } from '@/modules/replay/replay.engine'
-import { PlaybackController } from '@/modules/replay/controllers/playback.controller'
-import { TimelineController } from '@/modules/replay/controllers/timeline.controller'
+import { ReplayEngine, PlaybackController, TimelineController, LogQueryService } from '@/modules/replay'
 import { InMemoryResourceRegistry } from '@/modules/combat/infra/resource-registry'
 /**
  * Simple replay system test
@@ -95,8 +93,10 @@ export function runReplayTest() {
   replayEngine.load(result)
   // Step 3: Test playback control
   console.log('\nStep 3: Testing playback...')
-  const playbackCtrl = new PlaybackController(replayEngine)
-  const timelineCtrl = new TimelineController(replayEngine)
+  // Create LogQueryService with combat logs
+  const logQuery = new LogQueryService(result.logs)
+  const playbackCtrl = new PlaybackController(replayEngine, logQuery)
+  const timelineCtrl = new TimelineController(replayEngine, logQuery)
   console.log('Playing for 2 seconds...')
   replayEngine.play()
   setTimeout(() => {

@@ -3,12 +3,17 @@ import type { CombatLogEntry } from '../combat/logic/logger'
 import {
   DEFAULT_REPLAY_CONFIG,
   createInitialReplayState,
+  ReplayError,
   type ReplayConfig,
   type ReplayState,
   type ReplayEventType,
   type ReplayEvent,
 } from './models'
 import { ReplayEventEmitter } from './utils'
+import { LogQueryService } from './services'
+import type { ITickScheduler } from './infra'
+import { BrowserTickScheduler } from './infra'
+import type { IReplayEngine } from './replay.engine.interface'
 /**
  * ReplayEngine: Core replay system engine
  *
@@ -22,31 +27,39 @@ import { ReplayEventEmitter } from './utils'
  * - Load and validate combat result data
  * - Manage playback state (play/pause/stop/seek)
  * - Emit tick events with current snapshot and logs
- * - Handle time-based progression using requestAnimationFrame
+ * - Coordinate with ITickScheduler for time progression
  */
-export class ReplayEngine {
+export class ReplayEngine implements IReplayEngine {
   private result: CombatResult | null = null
   private state: ReplayState
   private config: ReplayConfig
   private eventEmitter: ReplayEventEmitter
-  private animationFrameId: number | null = null
+  private tickScheduler: ITickScheduler
+  private logQueryService: LogQueryService
   private lastFrameTime: number = 0
-  constructor(config?: Partial<ReplayConfig>) {
+  constructor(config?: Partial<ReplayConfig>, tickScheduler?: ITickScheduler) {
     this.config = { ...DEFAULT_REPLAY_CONFIG, ...config }
     this.state = createInitialReplayState()
     this.eventEmitter = new ReplayEventEmitter()
+    this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
+    this.logQueryService = new LogQueryService([])
     this.state.speed = this.config.playbackSpeed
   }
   /** Load combat result data */
   public load(result: CombatResult): void {
     if (!result?.snapshots || !result?.logs) {
-      throw new Error('Invalid CombatResult: missing snapshots or logs')
+      throw new ReplayError('Invalid CombatResult: missing snapshots or logs', 'INVALID_DATA', {
+        hasSnapshots: !!result?.snapshots,
+        hasLogs: !!result?.logs,
+      })
     }
     this.result = result
     this.state = createInitialReplayState()
     this.state.totalTicks = result.totalTicks
     this.state.isLoaded = true
     this.state.speed = this.config.playbackSpeed
+    // Update log query service with new logs
+    this.logQueryService.updateLogs(result.logs)
     this.eventEmitter.emit('replay:loaded', 0, { totalTicks: result.totalTicks })
     if (this.config.autoPlay) {
       this.play()
@@ -55,8 +68,7 @@ export class ReplayEngine {
   /** Start playback */
   public play(): void {
     if (!this.state.isLoaded) {
-      // Replay data not loaded
-      return
+      throw new ReplayError('Cannot play: replay data not loaded', 'NOT_LOADED')
     }
     if (this.state.isPlaying) {
       return // Already playing
@@ -80,10 +92,7 @@ export class ReplayEngine {
     }
     this.state.isPlaying = false
     this.state.isPaused = true
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId)
-      this.animationFrameId = null
-    }
+    this.tickScheduler.cancel()
     this.eventEmitter.emit('replay:paused', this.state.currentTick, { atTick: this.state.currentTick })
   }
   /** Stop and reset to start */
@@ -92,17 +101,13 @@ export class ReplayEngine {
     this.state.isPaused = false
     this.state.currentTick = 0
     this.state.hasEnded = false
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId)
-      this.animationFrameId = null
-    }
+    this.tickScheduler.cancel()
     this.eventEmitter.emit('replay:stopped', 0, {})
   }
   /** Seek to specific tick */
   public seek(tick: number): void {
     if (!this.state.isLoaded) {
-      // Replay data not loaded
-      return
+      throw new ReplayError('Cannot seek: replay data not loaded', 'NOT_LOADED')
     }
     const clampedTick = Math.max(0, Math.min(tick, this.state.totalTicks))
     const fromTick = this.state.currentTick
@@ -114,8 +119,7 @@ export class ReplayEngine {
   /** Change playback speed */
   public setSpeed(speed: number): void {
     if (speed <= 0) {
-      // Speed must be positive
-      return
+      throw new ReplayError('Playback speed must be positive', 'INVALID_SPEED', { speed })
     }
     const oldSpeed = this.state.speed
     this.state.speed = speed
@@ -138,12 +142,11 @@ export class ReplayEngine {
   }
   /** Get logs within tick range */
   public getLogsInRange(startTick: number, endTick: number): CombatLogEntry[] {
-    if (!this.result) return []
-    return this.result.logs.filter((log) => log.tick >= startTick && log.tick <= endTick)
+    return this.logQueryService.getLogsInRange(startTick, endTick)
   }
   /** Get logs at specific tick */
   public getLogsAtTick(tick: number): CombatLogEntry[] {
-    return this.getLogsInRange(tick, tick)
+    return this.logQueryService.getLogsAtTick(tick)
   }
   /** Subscribe to replay events */
   public on(eventType: ReplayEventType, handler: (event: ReplayEvent) => void): void {
@@ -205,6 +208,6 @@ export class ReplayEngine {
   }
   /** Schedule next animation frame */
   private scheduleNextFrame(): void {
-    this.animationFrameId = requestAnimationFrame((time) => this.tick(time))
+    this.tickScheduler.schedule((time) => this.tick(time))
   }
 }

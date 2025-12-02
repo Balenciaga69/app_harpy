@@ -1,4 +1,3 @@
-import type { CharacterId } from '../../domain/character'
 /**
  * CharacterStats
  *
@@ -6,7 +5,7 @@ import type { CharacterId } from '../../domain/character'
  */
 export interface CharacterStats {
   /** Character ID */
-  characterId: CharacterId
+  characterId: string
   /** Character name */
   name: string
   /** Total damage dealt */
@@ -40,7 +39,7 @@ export interface CharacterStats {
  */
 export interface CombatStatistics {
   /** Statistics for each character */
-  characterStats: Map<CharacterId, CharacterStats>
+  characterStats: Map<string, CharacterStats>
   /** Effect application statistics */
   effectsApplied: Map<string, number> // effectName -> count
   /** Total damage */

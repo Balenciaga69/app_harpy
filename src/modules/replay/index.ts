@@ -1,4 +1,14 @@
+// Core engine
+export type { IReplayEngine } from './replay.engine.interface'
+export { ReplayEngine } from './replay.engine'
+// Controllers
 export * from './controllers'
+// Models
 export * from './models'
-export * from './replay.engine'
+// Services
+export { LogQueryService } from './services'
+// Infrastructure
+export type { ITickScheduler, TickCallback } from './infra'
+export { BrowserTickScheduler, TestTickScheduler } from './infra'
+// Utils
 export * from './utils'

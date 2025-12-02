@@ -1,5 +1,5 @@
-import type { CombatLogEntry } from '../../combat/logic/logger'
-import type { ReplayEngine } from '../replay.engine'
+import type { IReplayEngine } from '../replay.engine.interface'
+import type { LogQueryService } from '../services'
 /**
  * PlaybackController: High-level playback control
  *
@@ -10,9 +10,11 @@ import type { ReplayEngine } from '../replay.engine'
  * - Toggle play/pause
  */
 export class PlaybackController {
-  private engine: ReplayEngine
-  constructor(engine: ReplayEngine) {
+  private engine: IReplayEngine
+  private logQuery: LogQueryService
+  constructor(engine: IReplayEngine, logQuery: LogQueryService) {
     this.engine = engine
+    this.logQuery = logQuery
   }
   /** Toggle between play and pause */
   public togglePlayPause(): void {
@@ -35,7 +37,7 @@ export class PlaybackController {
   /** Jump to next ultimate cast */
   public jumpToNextUltimate(): void {
     const state = this.engine.getState()
-    const ultimateTicks = this.getUltimateTicks()
+    const ultimateTicks = this.logQuery.getUltimateTicks()
     const nextTick = ultimateTicks.find((tick) => tick > state.currentTick)
     if (nextTick !== undefined) {
       this.engine.seek(nextTick)
@@ -44,7 +46,7 @@ export class PlaybackController {
   /** Jump to previous ultimate cast */
   public jumpToPrevUltimate(): void {
     const state = this.engine.getState()
-    const ultimateTicks = this.getUltimateTicks()
+    const ultimateTicks = this.logQuery.getUltimateTicks()
     const prevTick = ultimateTicks.reverse().find((tick) => tick < state.currentTick)
     if (prevTick !== undefined) {
       this.engine.seek(prevTick)
@@ -53,7 +55,7 @@ export class PlaybackController {
   /** Jump to next death event */
   public jumpToNextDeath(): void {
     const state = this.engine.getState()
-    const deathTicks = this.getDeathTicks()
+    const deathTicks = this.logQuery.getDeathTicks()
     const nextTick = deathTicks.find((tick) => tick > state.currentTick)
     if (nextTick !== undefined) {
       this.engine.seek(nextTick)
@@ -62,7 +64,7 @@ export class PlaybackController {
   /** Jump to previous death event */
   public jumpToPrevDeath(): void {
     const state = this.engine.getState()
-    const deathTicks = this.getDeathTicks()
+    const deathTicks = this.logQuery.getDeathTicks()
     const prevTick = deathTicks.reverse().find((tick) => tick < state.currentTick)
     if (prevTick !== undefined) {
       this.engine.seek(prevTick)
@@ -77,30 +79,5 @@ export class PlaybackController {
   public skipBackward(ticks: number): void {
     const state = this.engine.getState()
     this.engine.seek(state.currentTick - ticks)
-  }
-  // === Helper methods ===
-  /** Get all ticks where ultimates were cast */
-  private getUltimateTicks(): number[] {
-    const state = this.engine.getState()
-    const logs = this.engine.getLogsInRange(0, state.totalTicks)
-    return logs
-      .filter((log) => this.isUltimateEvent(log))
-      .map((log) => log.tick)
-      .sort((a, b) => a - b)
-  }
-  /** Get all ticks where deaths occurred */
-  private getDeathTicks(): number[] {
-    const state = this.engine.getState()
-    const logs = this.engine.getLogsInRange(0, state.totalTicks)
-    return logs
-      .filter((log) => log.eventType === 'entity:death')
-      .map((log) => log.tick)
-      .sort((a, b) => a - b)
-  }
-  /** Check if log entry is an ultimate event */
-  private isUltimateEvent(log: CombatLogEntry): boolean {
-    // Ultimate events can be identified by checking payload or event type
-    // This is a simplified check - adjust based on actual implementation
-    return log.eventType === 'entity:attack' && (log.payload.isUltimate as boolean) === true
   }
 }

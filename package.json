@@ -9,7 +9,7 @@
     "lint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
     "lint:fix": "eslint \"**/*.{ts,tsx,js,jsx}\" --fix",
     "check": "tsc --noEmit -p tsconfig.app.json",
-    "check:cic": "madge --circular --extensions ts,tsx src/modules/combat",
+    "check:cic": "madge --circular --extensions ts,tsx src/modules",
     "check:deps": "madge --image dev_log/combat-deps.svg --extensions ts,tsx src/modules/",
     "preview": "vite preview",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""

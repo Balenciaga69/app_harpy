@@ -1,7 +1,3 @@
-import type { IEffect } from '../../domain/effect/models/effect.model'
-import type { Equipment } from '../../domain/item/models/equipment.model'
-import type { Relic } from '../../domain/item/models/relic.model'
-import type { IUltimateAbility } from '../../domain/ultimate'
 /**
  * Resource Registry Interface
  *
@@ -12,28 +8,37 @@ import type { IUltimateAbility } from '../../domain/ultimate'
  * - Cross-system resource queries (e.g., debugging, analytics)
  * - Avoiding duplicate registration
  * - Centralized resource lifecycle tracking
+ *
+ * Design: Uses 'unknown' type to avoid circular dependencies with domain models.
+ * The actual implementation will handle type safety internally.
  */
 export interface IResourceRegistry {
+  // === Character Catalog ===
+  // Characters are registered when added to combat context
+  registerCharacter(character: unknown): void
+  unregisterCharacter(id: string): void
+  getCharacter(id: string): unknown | undefined
+  hasCharacter(id: string): boolean
   // === Effect Tracking ===
   // Effects are owned by Characters, registry only tracks for global queries
-  registerEffect(effect: IEffect): void
+  registerEffect(effect: unknown): void
   unregisterEffect(id: string): void
-  getEffect(id: string): IEffect | undefined
+  getEffect(id: string): unknown | undefined
   hasEffect(id: string): boolean
   // === Ultimate Catalog ===
   // Ultimates are typically stateless and can be shared
-  registerUltimate(ultimate: IUltimateAbility): void
-  getUltimate(id: string): IUltimateAbility | undefined
+  registerUltimate(ultimate: unknown): void
+  getUltimate(id: string): unknown | undefined
   hasUltimate(id: string): boolean
   // === Equipment Catalog ===
   // Equipment instances, registered when created
-  registerEquipment(equipment: Equipment): void
-  getEquipment(id: string): Equipment | undefined
+  registerEquipment(equipment: unknown): void
+  getEquipment(id: string): unknown | undefined
   hasEquipment(id: string): boolean
   // === Relic Catalog ===
   // Relic instances, registered when created
-  registerRelic(relic: Relic): void
-  getRelic(id: string): Relic | undefined
+  registerRelic(relic: unknown): void
+  getRelic(id: string): unknown | undefined
   hasRelic(id: string): boolean
   // === Lifecycle ===
   /** Clear all registered resources (typically called after combat ends) */

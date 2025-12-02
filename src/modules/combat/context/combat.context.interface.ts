@@ -1,6 +1,7 @@
 import type { EventBus } from '../infra/event-bus'
-import type { CombatRandomGenerator, IEntity } from '../infra/shared'
-import type { IResourceRegistry } from '../infra/resource-registry'
+import type { CombatRandomGenerator } from '../infra/shared/utils/random.util'
+import type { IEntity } from '../infra/shared/interfaces/entity.interface'
+import type { IResourceRegistry } from '../infra/resource-registry/resource.registry.interface'
 /**
  * ICombatContext
  *

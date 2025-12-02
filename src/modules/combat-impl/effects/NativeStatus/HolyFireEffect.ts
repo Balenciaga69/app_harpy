@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
+import { CharacterAccessor } from '@/modules/combat/infra/shared'
 /**
  * Holy fire effect
  * - Increases armor value per stack
@@ -15,17 +16,23 @@ export class ExampleHolyFireEffect extends StackableEffect {
     super(`holy-fire-${nanoid(6)}`, 'Holy Fire', 50)
     this.setStacks(initialStacks)
   }
-  onApply(character: ICharacter, context: CombatContext): void {
+  onApply(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     this.updateArmorModifier(character)
     this.checkThresholdEffects(character, context)
   }
-  onRemove(character: ICharacter, _context: CombatContext): void {
+  onRemove(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     if (this.modifierId) {
       character.removeAttributeModifier(this.modifierId)
       this.modifierId = null
     }
   }
-  onTick(character: ICharacter, context: CombatContext): void {
+  onTick(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     // Holy fire does not decay over time, only removed under specific conditions
     this.checkThresholdEffects(character, context)
   }
@@ -46,7 +53,7 @@ export class ExampleHolyFireEffect extends StackableEffect {
     })
   }
   /** Check stack threshold effects */
-  private checkThresholdEffects(character: ICharacter, context: CombatContext): void {
+  private checkThresholdEffects(character: ICharacter, context: ICombatContext): void {
     const thresholds = [10, 20, 30, 40, 50]
     const currentThreshold = thresholds.find((t) => this.stacks >= t) ?? 0
     // Different effects can be triggered based on different thresholds

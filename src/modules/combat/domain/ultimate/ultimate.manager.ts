@@ -21,7 +21,7 @@ export class UltimateManager {
    */
   get(context: ICombatContext): IUltimateAbility | undefined {
     if (!this.ultimateId) return undefined
-    return context.registry.getUltimate(this.ultimateId)
+    return context.registry.getUltimate(this.ultimateId) as IUltimateAbility | undefined
   }
   /**
    * Check if has ultimate
