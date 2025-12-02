@@ -16,8 +16,6 @@ Provide project context and coding guidelines that AI should follow when generat
 - Try...Catch 錯誤處理
 - 記憶體管理與效能優化(正式版前要處理)
 - 先假定我未來會導入 DB 與 快取 與全面實踐 DIP 可單元測試，為前提來思考
-- 資源容器查找效能優化（目前每次存取都需要 Map 查找，未來可考慮加入快取層）
-- Redis 資源容器實作（需要 async/await 重大重構，v0.6+ 處理）
 
 #### AI 給出的隱憂
 
