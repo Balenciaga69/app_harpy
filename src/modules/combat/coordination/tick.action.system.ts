@@ -1,17 +1,17 @@
-import type { CombatContext } from '../../context'
-import type { CharacterId, ICharacter } from '../../domain/character'
-import { EnergySystem, UltimateDefaults, UltimateEnergy } from '../../infra/config'
-import { isCharacter } from '../../infra/shared'
-import { DamageChain } from '../../logic/damage'
+import type { CombatContext } from '../context'
+import type { CharacterId, ICharacter } from '../domain/character'
+import { EnergySystem, UltimateDefaults, UltimateEnergy } from '../infra/config'
+import { isCharacter } from '../infra/shared'
+import { DamageChain } from '../logic/damage'
 import { DamageFactory } from './factories'
 import { FirstAliveSelector, type ITargetSelector } from './target-select-strategies'
 /**
- * AbilitySystem
+ * TickActionSystem
  *
- * Coordinates character attack logic per tick. Manages cooldowns, energy, ultimate release, and target selection
+ * Coordinates character attack logic per tick. Manages cooldown, energy, ultimate release, and target selection
  * using pluggable strategies. Emits attack and ultimate events.
  */
-export class AbilitySystem {
+export class TickActionSystem {
   private context: CombatContext
   private damageChain: DamageChain
   private targetSelector: ITargetSelector
@@ -39,6 +39,8 @@ export class AbilitySystem {
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()
     const allEntities = this.context.getAllEntities()
+    // Process global effects
+    this.processEffects()
     // Iterate through all entities
     allEntities.forEach((entity) => {
       // Only process characters
@@ -46,6 +48,8 @@ export class AbilitySystem {
       const character = entity as ICharacter
       // Skip dead characters
       if (character.isDead) return
+      // Process effects for all characters
+      character.getAllEffects().forEach((effect) => effect.onTick?.(character, this.context))
       // Energy natural regen (triggers every 100 ticks)
       this.processEnergyRegen(character, currentTick)
       // Check if can attack
@@ -171,5 +175,12 @@ export class AbilitySystem {
   public dispose(): void {
     this.context.eventBus.off('tick:start', this.tickHandler)
     this.nextAttackTick.clear()
+  }
+  /** Process effects for all characters */
+  private processEffects(): void {
+    this.context.getAllEntities().forEach((entity) => {
+      if (!isCharacter(entity)) return
+      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
+    })
   }
 }

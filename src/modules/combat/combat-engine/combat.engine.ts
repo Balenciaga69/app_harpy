@@ -1,23 +1,22 @@
-import { AbilitySystem } from '../coordination'
 import { EventLogger } from '../logic/logger'
 import { SnapshotCollector } from '../logic/snapshot'
 import { CombatContext } from '../context'
 import type { CombatConfig, CombatResult, CombatResultData } from './models'
 import { ResultBuilder } from './builders'
-import { TickerDriver, TickerProcessor } from '../logic/tick'
+import { TickerDriver } from '../logic/tick'
 import { CombatTiming, CombatSystem } from '../infra/config'
+import { TickActionSystem } from '../coordination'
 /**
  * CombatEngine
  *
- * Orchestrates a combat run by initializing the core subsystems (TickerDriver, TickerProcessor, AbilitySystem,
+ * Orchestrates a combat run by initializing the core subsystems (TickerDriver, TickActionSystem,
  * EventLogger, SnapshotCollector), driving the tick loop and returning a CombatResult via ResultBuilder.
  * Responsible for subsystem lifecycle (initialize / dispose) and combat flow control.
  */
 export class CombatEngine {
   private context: CombatContext
   private ticker!: TickerDriver
-  private tickerSystem!: TickerProcessor
-  private abilitySystem!: AbilitySystem
+  private tickActionSystem!: TickActionSystem
   private eventLogger!: EventLogger
   private snapshotCollector!: SnapshotCollector
   private config: CombatConfig
@@ -53,9 +52,7 @@ export class CombatEngine {
   }
   /** Initialize core systems */
   private initializeSystems(): void {
-    this.ticker = new TickerDriver(this.context, this.config.maxTicks)
-    this.tickerSystem = new TickerProcessor(this.context)
-    this.abilitySystem = new AbilitySystem(this.context)
+    this.tickActionSystem = new TickActionSystem(this.context)
     this.eventLogger = new EventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
@@ -83,8 +80,7 @@ export class CombatEngine {
   /** Clean up resources */
   public dispose(): void {
     this.ticker.stop()
-    this.tickerSystem.dispose()
-    this.abilitySystem.dispose()
+    this.tickActionSystem.dispose()
     this.snapshotCollector.dispose()
   }
 }
