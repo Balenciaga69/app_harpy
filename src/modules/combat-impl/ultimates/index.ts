@@ -1,3 +1,3 @@
 export { SimpleDamageUltimate } from './SimpleDamageUltimate'
-export { ThunderStrikeUltimate } from './ThunderStrikeUltimate'
-export { BloodPactUltimate } from './BloodPactUltimate'
+export { ExampleThunderStrikeUltimate as ThunderStrikeUltimate } from './ThunderStrikeUltimate'
+export { ExampleBloodPactUltimate as BloodPactUltimate } from './BloodPactUltimate'
