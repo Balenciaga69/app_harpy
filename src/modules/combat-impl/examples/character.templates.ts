@@ -1,5 +1,5 @@
-import { createDefaultAttributes } from './models/attribute.core.model'
-import type { BaseAttributeValues } from './models/attribute.core.model'
+import { createDefaultAttributes } from '../../combat/domain/character/models/attribute.core.model'
+import type { BaseAttributeValues } from '../../combat/domain/character/models/attribute.core.model'
 /**
  * Character attribute templates
  * Provide balanced base attribute configurations as starting point for characters without equipment or ultimates

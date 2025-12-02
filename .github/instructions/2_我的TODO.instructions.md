@@ -10,22 +10,6 @@ Provide project context and coding guidelines that AI should follow when generat
 
 - 回放系統(UI)，但這個很麻煩，可能很考驗 UI/UX 不是我擅長的
 
-#### 資源容器改動
-
-- 建立資源容器 (需要介面以便 in-memory 或 redis 都能實現) 角色只持有資源 id（如 ultimateId, effectIds），需要時向 ResourcePool 查詢實體。
-- ResourcePool 可注入到 CombatContext 或單獨管理，避免 God Object 問題。
-- 資源容器包含 ultimateMap effectMap relicMap equipmentMap
-- 別把角色與屬性丟入容器子，這東西變動頻繁且耦合度高，不適合放入資源容器。
-
-#### 角色內容物更動
-
-- equippedItem 裝備本質上不是只有一個。(每個裝備部位為限定一個，但這會在戰鬥前就判別好)
-- relic 實際上可以堆疊層數(例如同時攜帶六個遠古火把入場)
-- character id 跟 entity id 我要刪除用 string 替代就好
-- 幫我改動這些邏輯
-- 現在角色內部太髒了。
-- 我要物件跟 大絕招管理器。你可以參考 effect manager 的寫法。
-
 #### 其他問題
 
 - 我在想循環依賴， IEffect -> IResourceRegistry -> CombatContext -> IEffect 這樣的循環依賴要怎麼解決?我把 CombatContext 抽象成 interface 會改進嗎?還是依然無法?

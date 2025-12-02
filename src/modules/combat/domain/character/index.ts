@@ -1,18 +1,6 @@
 // Public classes (for external use)
 export { Character } from './character'
 export type { EquipmentSlot } from '../item/equipment.manager'
-// Character template factory functions (for external use)
-export {
-  createWarriorTemplate,
-  createArcherTemplate,
-  createMageTemplate,
-  createAssassinTemplate,
-  createTankTemplate,
-  createMinionTemplate,
-  createEliteTemplate,
-  createBossTemplate,
-  createBalancedTemplate,
-} from './character.templates'
 // Public interfaces (type definitions)
 export type { ICharacter } from './interfaces/character.interface'
 export type { IAttributeProvider } from './interfaces/attribute.provider.interface'
