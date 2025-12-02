@@ -2,17 +2,17 @@ import { nanoid } from 'nanoid'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
 import { DamageChain } from '@/modules/combat/logic/damage'
-import type { IUltimateAbility } from '@/modules/combat/coordination/ability-system/ultimate/ultimate.ability.interface'
+import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate.ability.interface'
 import { UltimateDefaults } from '@/modules/combat/infra/config'
-import { FirstAliveSelector } from '@/modules/combat/coordination/ability-system/target-select-strategies'
-import { DamageFactory } from '@/modules/combat/coordination/ability-system/factories'
+import { FirstAliveSelector } from '@/modules/combat/coordination/target-select-strategies'
+import { DamageFactory } from '@/modules/combat/coordination/factories'
 /**
  * Thunder Strike Ultimate
  *
  * Ultimate ability that deals damage in a small area
  * (Currently single target, area feature to be implemented)
  */
-export class ThunderStrikeUltimate implements IUltimateAbility {
+export class ExampleThunderStrikeUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
   readonly description: string
@@ -46,7 +46,5 @@ export class ThunderStrikeUltimate implements IUltimateAbility {
     const damageEvent = damageFactory.createUltimateEvent(caster, target, ultimateDamage, context.getCurrentTick())
     const damageChain = new DamageChain(context)
     damageChain.execute(damageEvent)
-    // TODO: Add area damage logic (hit nearby enemies)
-    // TODO: Add thunder visual effect
   }
 }

@@ -1,4 +1,4 @@
-import type { IUltimateAbility } from '@/modules/combat/coordination'
+import type { IUltimateAbility } from '../../ultimate'
 /**
  * Ultimate owner interface
  *

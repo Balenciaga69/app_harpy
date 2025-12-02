@@ -9,9 +9,14 @@
 /** Combat timing configurations */
 export const CombatTiming = {
   /** Maximum ticks allowed in a combat (prevents infinite loops) */
-  MAX_TICKS: 100000,
+  MAX_TICKS: 10000,
   /** Default snapshot collection interval (ticks) */
   DEFAULT_SNAPSHOT_INTERVAL: 100,
+} as const
+/** Combat system configurations */
+export const CombatSystem = {
+  /** Default logging enabled state */
+  DEFAULT_ENABLE_LOGGING: true,
 } as const
 /** Energy system configurations */
 export const EnergySystem = {

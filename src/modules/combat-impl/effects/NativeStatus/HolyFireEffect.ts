@@ -8,7 +8,7 @@ import type { CombatContext } from '@/modules/combat/context'
  * - Triggers additional effects at specific stack counts (10, 20, 30, 40, 50)
  * - Maximum 50 stacks
  */
-export class HolyFireEffect extends StackableEffect {
+export class ExampleHolyFireEffect extends StackableEffect {
   private readonly armorPerStack: number = 10
   private modifierId: string | null = null
   constructor(initialStacks: number = 1) {
@@ -55,7 +55,7 @@ export class HolyFireEffect extends StackableEffect {
     if (currentThreshold > 0) {
       context.eventBus.emit('entity:heal', {
         targetId: character.id,
-        amount: 0, // TODO: Actual threshold effects to be implemented later
+        amount: 0,
       })
     }
   }

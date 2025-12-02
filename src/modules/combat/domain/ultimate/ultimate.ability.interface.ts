@@ -3,7 +3,7 @@
 //   1. Access to caster (ICharacter)'s attributes and methods
 //   2. Access to combat context (CombatContext) to affect other characters or query status
 // Migration note: If migrating to strongly typed language, suggest elevating these two interfaces to shared contract layer
-import type { ICharacter } from '../../../domain/character/interfaces/character.interface'
+import type { ICharacter } from '../character/interfaces/character.interface'
 import type { CombatContext } from '@/modules/combat/context'
 /**
  * Ultimate interface - behavior contract
@@ -22,20 +22,6 @@ export interface IUltimateAbility {
   readonly name: string
   /** Ultimate description */
   readonly description: string
-  /** Ultimate type tag (for UI display or categorization) */
-  readonly type: UltimateType
-  /**
-   * Execute ultimate
-   * @param caster The caster
-   * @param context Combat context
-   */
+  /** Execute ultimate    */
   execute(caster: ICharacter, context: CombatContext): void
 }
-/** Ultimate types */
-export type UltimateType =
-  | 'damage' // Damage type
-  | 'buff' // Buff type
-  | 'heal' // Heal type
-  | 'summon' // Summon type
-  | 'control' // Control type
-  | 'hybrid' // Hybrid type

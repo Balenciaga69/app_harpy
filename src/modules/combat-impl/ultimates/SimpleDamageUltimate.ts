@@ -2,9 +2,9 @@ import { nanoid } from 'nanoid'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
 import { DamageChain } from '@/modules/combat/logic/damage'
-import type { IUltimateAbility } from '@/modules/combat/coordination/ability-system/ultimate/ultimate.ability.interface'
+import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate.ability.interface'
 import { UltimateDefaults } from '@/modules/combat/infra/config'
-import { DamageFactory } from '@/modules/combat/coordination/ability-system/factories'
+import { DamageFactory } from '@/modules/combat/coordination/factories'
 import { FirstAliveSelector } from '@/modules/combat/coordination'
 /**
  * Basic damage ultimate - concrete implementation

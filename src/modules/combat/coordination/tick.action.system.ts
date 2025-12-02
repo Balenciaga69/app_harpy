@@ -1,17 +1,17 @@
-import type { CombatContext } from '../../context'
-import type { CharacterId, ICharacter } from '../../domain/character'
-import { EnergySystem, UltimateDefaults, UltimateEnergy } from '../../infra/config'
-import { isCharacter } from '../../infra/shared'
-import { DamageChain } from '../../logic/damage'
+import type { CombatContext } from '../context'
+import type { CharacterId, ICharacter } from '../domain/character'
+import { EnergySystem, UltimateDefaults, UltimateEnergy } from '../infra/config'
+import { isCharacter } from '../infra/shared'
+import { DamageChain } from '../logic/damage'
 import { DamageFactory } from './factories'
 import { FirstAliveSelector, type ITargetSelector } from './target-select-strategies'
 /**
- * AbilitySystem
+ * TickActionSystem
  *
- * Coordinates character attack logic per tick. Manages cooldowns, energy, ultimate release, and target selection
+ * Coordinates character attack logic per tick. Manages cooldown, energy, ultimate release, and target selection
  * using pluggable strategies. Emits attack and ultimate events.
  */
-export class AbilitySystem {
+export class TickActionSystem {
   private context: CombatContext
   private damageChain: DamageChain
   private targetSelector: ITargetSelector
@@ -39,16 +39,12 @@ export class AbilitySystem {
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()
     const allEntities = this.context.getAllEntities()
-    // Iterate through all entities
+    this.processEffects()
     allEntities.forEach((entity) => {
-      // Only process characters
       if (!isCharacter(entity)) return
       const character = entity as ICharacter
-      // Skip dead characters
       if (character.isDead) return
-      // Energy natural regen (triggers every 100 ticks)
       this.processEnergyRegen(character, currentTick)
-      // Check if can attack
       if (this.canAttack(character, currentTick)) {
         this.performAttack(character, currentTick)
       }
@@ -78,7 +74,7 @@ export class AbilitySystem {
     // 2. Use strategy to select target
     const target = this.targetSelector.selectTarget(character, aliveEnemies)
     if (!target) return
-    // 3. Check if can release ultimate // TODO: This part is complex, can consider making it a separate method or even class or other architecture
+    // 3. Check if can release ultimate
     const currentEnergy = character.getAttribute('currentEnergy') ?? 0
     const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
     const canUseUltimate = currentEnergy >= maxEnergy
@@ -157,6 +153,13 @@ export class AbilitySystem {
     if (energyRegen > 0) {
       this.gainEnergy(character, energyRegen)
     }
+  }
+  /** Process effects for all characters */
+  private processEffects(): void {
+    this.context.getAllEntities().forEach((entity) => {
+      if (!isCharacter(entity)) return
+      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
+    })
   }
   /** Update attack cooldown time */
   private updateCooldown(character: ICharacter, currentTick: number): void {

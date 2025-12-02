@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { CombatContext } from '@/modules/combat/context'
-import type { IUltimateAbility } from '@/modules/combat/coordination/ability-system/ultimate/ultimate.ability.interface'
+import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate.ability.interface'
 import { BloodPactEffect } from '../effects/BloodPactEffect'
 /**
  * Blood Pact Ultimate
@@ -11,7 +11,7 @@ import { BloodPactEffect } from '../effects/BloodPactEffect'
  * - Next 3 normal attacks deal 2x base damage
  * - If HP too low (< 20%), cannot activate
  */
-export class BloodPactUltimate implements IUltimateAbility {
+export class ExampleBloodPactUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
   readonly description: string
