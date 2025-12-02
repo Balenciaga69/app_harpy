@@ -1,4 +1,4 @@
-import { type IEntity, type CharacterId, type CharacterSnapshot } from '@/modules/combat/infra/shared'
+import { type IEntity, type CharacterSnapshot } from '@/modules/combat/infra/shared'
 import type { IAttributeProvider } from './attribute.provider.interface'
 import type { IEffectOwner } from './effect.owner.interface'
 import type { IUltimateOwner } from './ultimate.owner.interface'
@@ -16,5 +16,3 @@ export interface ICharacter extends IEntity, IAttributeProvider, IEffectOwner, I
   /** Create character snapshot (for replay, log recording) */
   createSnapshot(): CharacterSnapshot
 }
-// Re-export type aliases (maintain backward compatibility)
-export type { CharacterId, CharacterSnapshot }

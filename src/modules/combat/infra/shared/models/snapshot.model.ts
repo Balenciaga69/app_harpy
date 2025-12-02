@@ -1,4 +1,3 @@
-import type { CharacterId } from './entity.types'
 /**
  * Character snapshot - pure data model
  *
@@ -6,7 +5,7 @@ import type { CharacterId } from './entity.types'
  * Mainly used for: replay system, log recording, event transmission
  */
 export interface CharacterSnapshot {
-  id: CharacterId
+  id: string
   name: string
   currentHp: number
   maxHp: number

@@ -14,7 +14,7 @@ export {
   createBalancedTemplate,
 } from './character.templates'
 // Public interfaces (type definitions)
-export type { ICharacter, CharacterId, CharacterSnapshot } from './interfaces/character.interface'
+export type { ICharacter } from './interfaces/character.interface'
 export type { IAttributeProvider } from './interfaces/attribute.provider.interface'
 export type { IEffectOwner } from './interfaces/effect.owner.interface'
 export type { IUltimateOwner } from './interfaces/ultimate.owner.interface'

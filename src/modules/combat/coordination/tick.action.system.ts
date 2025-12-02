@@ -1,5 +1,5 @@
 import type { CombatContext } from '../context'
-import type { CharacterId, ICharacter } from '../domain/character'
+import type { ICharacter } from '../domain/character'
 import { EnergySystem, UltimateDefaults, UltimateEnergy } from '../infra/config'
 import { isCharacter } from '../infra/shared'
 import { DamageChain } from '../logic/damage'
@@ -17,7 +17,7 @@ export class TickActionSystem {
   private targetSelector: ITargetSelector
   private damageFactory: DamageFactory
   /** Track next attack tick for each character */
-  private nextAttackTick: Map<CharacterId, number> = new Map()
+  private nextAttackTick: Map<string, number> = new Map()
   private tickHandler: () => void
   constructor(context: CombatContext, targetSelector?: ITargetSelector) {
     this.context = context

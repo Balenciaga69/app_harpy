@@ -1,4 +1,4 @@
-import type { CharacterId, CharacterSnapshot } from '../../shared/models'
+import type { CharacterSnapshot } from '../../shared/models'
 /**
  * Combat start event
  */
@@ -15,16 +15,16 @@ export interface CombatEndPayload {
  * Combat miss event
  */
 export interface CombatMissPayload {
-  sourceId: CharacterId
-  targetId: CharacterId
+  sourceId: string
+  targetId: string
   tick: number
 }
 /**
  * Combat attack prevented event
  */
 export interface CombatPreventedPayload {
-  sourceId: CharacterId
-  targetId: CharacterId
+  sourceId: string
+  targetId: string
   reason: string
   tick: number
 }
@@ -50,37 +50,37 @@ export interface TickerStoppedPayload {
  * Entity damage event
  */
 export interface EntityDamagePayload {
-  targetId: CharacterId
+  targetId: string
   amount: number
-  sourceId?: CharacterId
+  sourceId?: string
 }
 /**
  * Entity heal event
  */
 export interface EntityHealPayload {
-  targetId: CharacterId
+  targetId: string
   amount: number
 }
 /**
  * Entity death event
  */
 export interface EntityDeathPayload {
-  targetId: CharacterId
+  targetId: string
 }
 /**
  * Entity attack event
  */
 export interface EntityAttackPayload {
-  sourceId: CharacterId
-  targetId: CharacterId
+  sourceId: string
+  targetId: string
   tick: number
 }
 /**
  * Entity critical event
  */
 export interface EntityCriticalPayload {
-  sourceId: CharacterId
-  targetId: CharacterId
+  sourceId: string
+  targetId: string
   multiplier: number
   tick: number
 }
