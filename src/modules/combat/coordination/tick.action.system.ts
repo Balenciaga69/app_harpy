@@ -119,8 +119,8 @@ export class TickActionSystem {
       this.performDefaultUltimate(character, _target, _currentTick)
       return
     }
-    // Execute character-specific ultimate
-    ultimate.execute(character, this.context)
+    // Execute character-specific ultimate (pass characterId instead of character instance)
+    ultimate.execute(character.id, this.context)
   }
   /** Default ultimate logic (backward compatibility, used when character has no ultimate set) */
   private performDefaultUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
@@ -158,7 +158,8 @@ export class TickActionSystem {
   private processEffects(): void {
     this.context.getAllEntities().forEach((entity) => {
       if (!isCharacter(entity)) return
-      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
+      // Pass characterId instead of character instance
+      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity.id, this.context))
     })
   }
   /** Update attack cooldown time */

@@ -1,7 +1,10 @@
 import { EventBus } from '../infra/event-bus'
-import { CombatRandomGenerator, type IEntity } from '../infra/shared'
-import type { IResourceRegistry } from '../infra/resource-registry'
+import { CombatRandomGenerator } from '../infra/shared/utils/random.util'
+import type { IEntity } from '../infra/shared/interfaces/entity.interface'
+import { isCharacter } from '../infra/shared/utils/type.guard.util'
+import type { IResourceRegistry } from '../infra/resource-registry/resource.registry.interface'
 import type { ICombatContext } from './combat.context.interface'
+import type { ICharacter } from '../domain/character/interfaces/character.interface'
 /**
  * CombatContext
  *
@@ -14,21 +17,34 @@ export class CombatContext implements ICombatContext {
   public readonly registry: IResourceRegistry
   private currentTick: number = 0
   private entities: Map<string, IEntity> = new Map()
+
   constructor(registry: IResourceRegistry, seed?: string | number) {
     this.eventBus = new EventBus()
     this.rng = new CombatRandomGenerator(seed)
     this.registry = registry
   }
+
   // ===Entity===
   public getEntity(id: string): IEntity | undefined {
     return this.entities.get(id)
   }
+
   public addEntity(entity: IEntity): void {
     this.entities.set(entity.id, entity)
+    // Auto-register character to registry for ID-based lookups
+    if (isCharacter(entity)) {
+      this.registry.registerCharacter(entity as ICharacter)
+    }
   }
+
   public removeEntity(id: string): void {
+    const entity = this.entities.get(id)
+    if (entity && isCharacter(entity)) {
+      this.registry.unregisterCharacter(id)
+    }
     this.entities.delete(id)
   }
+
   public getAllEntities(): readonly IEntity[] {
     return Array.from(this.entities.values())
   }

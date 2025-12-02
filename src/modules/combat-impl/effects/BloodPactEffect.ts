@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
 import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
 import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 /**
@@ -18,17 +18,17 @@ export class BloodPactEffect implements IEffect, ICombatHook {
     this.damageMultiplier = damageMultiplier
     this.remainingAttacks = attackCount
   }
-  onApply(_character: ICharacter, _context: CombatContext): void {
+  onApply(_characterId: string, _context: ICombatContext): void {
     // Passive effect, no initialization needed
   }
-  onRemove(_character: ICharacter, _context: CombatContext): void {
+  onRemove(_characterId: string, _context: ICombatContext): void {
     // No cleanup needed
   }
   /**
    * [Stage 4] Damage modification stage
    * Multiply base damage if this is a normal attack
    */
-  onDamageModify(event: DamageEvent, context: CombatContext): DamageEvent {
+  onDamageModify(event: DamageEvent, context: ICombatContext): DamageEvent {
     // Only affect attacks from the effect owner
     if (event.source.id !== this.getOwner(event)?.id) {
       return event

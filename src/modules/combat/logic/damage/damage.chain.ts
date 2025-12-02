@@ -1,4 +1,4 @@
-import type { CombatContext } from '@/modules/combat/context'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from './models/damage.event.model'
 import type { IDamageStep } from './steps/DamageStep.interface'
 import { AfterApplyStep } from './steps/AfterApplyStep'
@@ -17,8 +17,8 @@ import { HitCheckStep } from './steps/HitCheckStep'
  */
 export class DamageChain {
   private steps: IDamageStep[]
-  private context: CombatContext
-  constructor(context: CombatContext) {
+  private context: ICombatContext
+  constructor(context: ICombatContext) {
     this.context = context
     // Define complete damage calculation process
     this.steps = [

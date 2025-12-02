@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
+import type { ICombatContext } from '@/modules/combat/context'
+import { CharacterAccessor } from '@/modules/combat/infra/shared'
 import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate.ability.interface'
 import { BloodPactEffect } from '../effects/BloodPactEffect'
 /**
@@ -33,7 +33,9 @@ export class ExampleBloodPactUltimate implements IUltimateAbility {
     this.damageMultiplier = damageMultiplier
     this.attackCount = attackCount
   }
-  execute(caster: ICharacter, context: CombatContext): void {
+  execute(casterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const caster = chars.get(casterId)
     const currentHp = caster.getAttribute('currentHp')
     const maxHp = caster.getAttribute('maxHp')
     // Check if HP is sufficient (at least 20% of max HP)

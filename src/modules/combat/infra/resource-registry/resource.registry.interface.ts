@@ -2,6 +2,7 @@ import type { IEffect } from '../../domain/effect/models/effect.model'
 import type { Equipment } from '../../domain/item/models/equipment.model'
 import type { Relic } from '../../domain/item/models/relic.model'
 import type { IUltimateAbility } from '../../domain/ultimate'
+import type { ICharacter } from '../../domain/character/interfaces/character.interface'
 /**
  * Resource Registry Interface
  *
@@ -14,6 +15,13 @@ import type { IUltimateAbility } from '../../domain/ultimate'
  * - Centralized resource lifecycle tracking
  */
 export interface IResourceRegistry {
+  // === Character Catalog ===
+  // Characters are registered when added to combat context
+  registerCharacter(character: ICharacter): void
+  unregisterCharacter(id: string): void
+  getCharacter(id: string): ICharacter | undefined
+  hasCharacter(id: string): boolean
+
   // === Effect Tracking ===
   // Effects are owned by Characters, registry only tracks for global queries
   registerEffect(effect: IEffect): void

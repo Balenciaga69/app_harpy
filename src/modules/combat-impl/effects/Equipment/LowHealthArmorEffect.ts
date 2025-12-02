@@ -1,6 +1,6 @@
 import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 import { nanoid } from 'nanoid'
-import type { CombatContext } from '@/modules/combat/context'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
 /**
@@ -16,17 +16,17 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
   constructor() {
     this.id = `low-hp-armor-${nanoid(6)}`
   }
-  onApply(_character: ICharacter, _context: CombatContext): void {
+  onApply(_characterId: string, _context: ICombatContext): void {
     // Passive effect, no initialization needed
   }
-  onRemove(_character: ICharacter, _context: CombatContext): void {
+  onRemove(_characterId: string, _context: ICombatContext): void {
     // Passive effect, no cleanup needed
   }
   /**
    * [Stage 5] Defense calculation stage
    * If health below 30%, double armor value to reduce more physical damage
    */
-  onDefenseCalculation(event: DamageEvent, context: CombatContext): DamageEvent {
+  onDefenseCalculation(event: DamageEvent, context: ICombatContext): DamageEvent {
     // Only handle when target is self (when taking damage)
     if (event.target.id !== this.getOwner(event, context)?.id) {
       return event
@@ -48,7 +48,7 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
     return event
   }
   /** Helper method: Get the owner of this effect */
-  private getOwner(event: DamageEvent, _context: CombatContext): ICharacter | null {
+  private getOwner(event: DamageEvent, _context: ICombatContext): ICharacter | null {
     // Check if source has this effect
     if (event.source.hasEffect(this.id)) {
       return event.source

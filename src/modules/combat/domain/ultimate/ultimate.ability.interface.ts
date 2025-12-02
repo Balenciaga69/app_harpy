@@ -1,5 +1,4 @@
 import type { ICombatContext } from '@/modules/combat/context'
-import type { ICharacter } from '../character/interfaces/character.interface'
 /**
  * Ultimate interface - behavior contract
  *
@@ -16,5 +15,5 @@ export interface IUltimateAbility {
   /** Ultimate description */
   readonly description: string
   /** Execute ultimate */
-  execute(caster: ICharacter, context: ICombatContext): void
+  execute(casterId: string, context: ICombatContext): void
 }

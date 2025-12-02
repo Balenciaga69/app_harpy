@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid'
+import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
+import { CharacterAccessor } from '@/modules/combat/infra/shared'
 import { DamageChain } from '@/modules/combat/logic/damage'
 import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate.ability.interface'
 import { UltimateDefaults } from '@/modules/combat/infra/config'
@@ -24,7 +25,9 @@ export class ExampleThunderStrikeUltimate implements IUltimateAbility {
     this.description = 'Call down lightning to strike enemies'
     this.damageMultiplier = damageMultiplier
   }
-  execute(caster: ICharacter, context: CombatContext): void {
+  execute(casterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const caster = chars.get(casterId)
     // 1. Select target
     const enemyTeam = caster.team === 'player' ? 'enemy' : 'player'
     const enemies = context.getEntitiesByTeam(enemyTeam)

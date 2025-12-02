@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
-import type { ICharacter } from '@/modules/combat/domain/character'
-import type { CombatContext } from '@/modules/combat/context'
+import type { ICombatContext } from '@/modules/combat/context'
+import { CharacterAccessor } from '@/modules/combat/infra/shared'
 /**
  * Poison effect
  * - Deals fixed damage per stack per tick
@@ -13,20 +13,28 @@ export class PoisonEffect extends StackableEffect {
   private readonly damagePerStack: number = 1
   private readonly decayRate: number = 0.1
   private lastDecayTick: number = 0
+
   constructor(initialStacks: number = 1) {
     super(`poison-${nanoid(6)}`, 'Poison', undefined)
     this.setStacks(initialStacks)
   }
-  onApply(_character: ICharacter, context: CombatContext): void {
+
+  onApply(_characterId: string, context: ICombatContext): void {
     this.lastDecayTick = context.getCurrentTick()
   }
-  onRemove(_character: ICharacter, _context: CombatContext): void {
+
+  onRemove(_characterId: string, _context: ICombatContext): void {
     // No cleanup needed
   }
-  onTick(character: ICharacter, context: CombatContext): void {
+
+  onTick(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     const currentTick = context.getCurrentTick()
+
     // Deal true damage every tick
-    this.applyPoisonDamage(character, context)
+    this.applyPoisonDamage(characterId, context)
+
     // Check decay
     const ticksPassed = currentTick - this.lastDecayTick
     const secondsPassed = ticksPassed / 100 // Assume 100 ticks = 1 second
@@ -39,8 +47,11 @@ export class PoisonEffect extends StackableEffect {
       }
     }
   }
+
   /** Apply poison damage */
-  private applyPoisonDamage(character: ICharacter, context: CombatContext): void {
+  private applyPoisonDamage(characterId: string, context: ICombatContext): void {
+    const chars = new CharacterAccessor(context)
+    const character = chars.get(characterId)
     const damage = this.stacks * this.damagePerStack
     if (damage > 0) {
       // Directly reduce HP (true damage)

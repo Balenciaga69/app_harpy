@@ -4,22 +4,19 @@ applyTo: '**'
 
 Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
 
-#### Combat 模組目前有些事情還沒做:(但也不急著做)
-
-### 很急
-
-- 回放系統(UI)，但這個很麻煩，可能很考驗 UI/UX 不是我擅長的
-
-#### 其他問題
-
-- 我在想循環依賴， IEffect -> IResourceRegistry -> CombatContext -> IEffect 這樣的循環依賴要怎麼解決?我把 CombatContext 抽象成 interface 會改進嗎?還是依然無法?
-
-#### v0.5已發生更動
+## v0.5已發生更動
 
 - 新增資源註冊表（Resource Registry）機制
 - Character 改為持有資源 ID，透過 Registry 查詢實體
 - 移除 character id、entity id（實在沒意義，這不是 value object 而且沒用處）
 - 角色物件太髒亂，新增大絕招、裝備、聖物管理器，仿造效果管理器
+- 角色與效果、大絕招、裝備、聖物之間的依賴關係改為統一用註冊表解耦。
+
+## Combat 模組目前有些事情還沒做:(但也不急著做)
+
+### 很急
+
+- 回放系統(UI)，但這個很麻煩，可能很考驗 UI/UX 不是我擅長的
 
 ### 不急
 
@@ -30,7 +27,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - 資源容器查找效能優化（目前每次存取都需要 Map 查找，未來可考慮加入快取層）
 - Redis 資源容器實作（需要 async/await 重大重構，v0.6+ 處理）
 
-### AI 給出的隱憂
+#### AI 給出的隱憂
 
 - CombatContext 作為一切的門戶 EventBus, RandomProvider, 隊伍資訊)。這雖然簡化了依賴注入，但也使其成為一個超大物件 (God Object)，未來若系統擴展，這部分可能難以維護。但不符合單一職責原則 (SRP)。
 - Hook/Effect 介面的多重職責 IEffect 介面同時也是 ICombatHook。效果 (數據) 和鉤子 (行為) 被合併在同一個實體中。雖然方便，但在工程上，數據 (Effect) 和行為 (Hook) 通常應保持分離，以符合 SRP 原則。
@@ -39,32 +36,20 @@ Provide project context and coding guidelines that AI should follow when generat
 
 ### 循環依賴問題未解決
 
-1. context/combat.context.ts
-
-   > infra/resource-registry/index.ts
-   > infra/resource-registry/in-memory.registry.ts
-   > domain/effect/models/effect.model.ts
-   > context/index.ts
-
-2. domain/character/interfaces/character.interface.ts
+1. domain/character/interfaces/character.interface.ts
 
    > domain/character/interfaces/effect.owner.interface.ts
-   > context/combat.context.ts
-   > infra/resource-registry/index.ts
-   > infra/resource-registry/in-memory.registry.ts
+   > context/index.ts
+   > context/combat.context.interface.ts
+   > infra/resource-registry/resource.registry.interface.ts
+
+2. context/index.ts
+
+   > context/combat.context.interface.ts
+   > infra/resource-registry/resource.registry.interface.ts
    > domain/effect/models/effect.model.ts
 
 3. domain/character/interfaces/character.interface.ts
-
    > domain/character/interfaces/effect.owner.interface.ts
+   > context/index.ts
    > context/combat.context.ts
-   > infra/resource-registry/index.ts
-   > infra/resource-registry/in-memory.registry.ts
-   > domain/ultimate/index.ts
-   > domain/ultimate/ultimate.ability.interface.ts
-
-4. logic/damage/index.ts
-   > logic/damage/damage.chain.ts
-   > logic/damage/steps/AfterApplyStep.ts
-   > logic/damage/steps/utils/hookCollector.util.ts
-   > logic/damage/models/combat.hook.interface.ts
