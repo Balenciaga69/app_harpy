@@ -6,6 +6,7 @@ import { ResultBuilder } from './builders'
 import { TickerDriver } from '../logic/tick'
 import { CombatTiming, CombatSystem } from '../infra/config'
 import { TickActionSystem } from '../coordination'
+import { InMemoryResourceRegistry } from '../infra/resource-registry'
 /**
  * CombatEngine
  *
@@ -29,7 +30,9 @@ export class CombatEngine {
       enableLogging: CombatSystem.DEFAULT_ENABLE_LOGGING,
       ...config,
     }
-    this.context = new CombatContext(this.config.seed)
+    // Initialize resource registry before context
+    const registry = new InMemoryResourceRegistry()
+    this.context = new CombatContext(registry, this.config.seed)
     this.initializeSystems()
     this.ticker.setStopCondition(() => this.checkBattleEnd())
     this.setupCharacters()

@@ -113,7 +113,7 @@ export class TickActionSystem {
     // First consume energy
     character.setBaseAttribute('currentEnergy', 0)
     // Check if character has ultimate
-    const ultimate = character.getUltimate()
+    const ultimate = character.getUltimate(this.context)
     if (!ultimate) {
       // If no ultimate, use default ultimate logic (backward compatibility)
       this.performDefaultUltimate(character, _target, _currentTick)

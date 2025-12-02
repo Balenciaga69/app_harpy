@@ -5,19 +5,23 @@ import { createDefaultAttributes } from '@/modules/combat/domain/character/model
 import { ThunderStrikeUltimate, BloodPactUltimate } from '../ultimates'
 import { Stormblade, GuardiansPlate } from '../equipment'
 import { PoisonVial } from '../relics'
+import { InMemoryResourceRegistry } from '@/modules/combat/infra/resource-registry'
 import { CombatContext } from '@/modules/combat/context'
 /**
- * Simple combat test example (v0.3)
+ * Simple combat test example (v0.5)
  * Demonstrates:
+ * - Resource Registry pattern
  * - Equipment system (Stormblade, Guardian's Plate)
  * - Relic system (Poison Vial with stacking)
  * - Ultimate abilities (Thunder Strike, Blood Pact)
  * - Effect combinations and interactions
  */
 function runSimpleCombat() {
-  console.log('=== Starting Combat Test (v0.3) ===\n')
+  console.log('=== Starting Combat Test (v0.5) ===\n')
+  // Create resource registry
+  const registry = new InMemoryResourceRegistry()
   // Create temporary context for equipment initialization
-  const tempContext = new CombatContext(12345)
+  const tempContext = new CombatContext(registry, 12345)
   // Create player team with equipment, relics, and ultimates
   const warrior = new Character({
     name: 'Warrior',
@@ -34,9 +38,10 @@ function runSimpleCombat() {
       energyGainOnAttack: 4, // About 25 attacks to unleash ultimate
     }),
     ultimate: new BloodPactUltimate(), // Sacrifice HP to empower next 3 attacks
+    registry,
   })
   // Equip Warrior with Guardian's Plate (armor boost at low HP)
-  warrior.equipItem(new GuardiansPlate(), tempContext)
+  warrior.equipItem(new GuardiansPlate(), 'armor', tempContext)
   const archer = new Character({
     name: 'Archer',
     team: 'player',
@@ -53,12 +58,13 @@ function runSimpleCombat() {
       energyGainOnAttack: 5, // About 20 attacks to unleash ultimate
     }),
     ultimate: new ThunderStrikeUltimate(2.5), // Massive AOE lightning damage
+    registry,
   })
   // Equip Archer with Stormblade (doubles crit chance when charged)
   // and 2 stacks of Poison Vial (apply poison on attacks)
   const poisonVial = new PoisonVial()
   poisonVial.addStack() // Stack to 2
-  archer.equipItem(new Stormblade(), tempContext)
+  archer.equipItem(new Stormblade(), 'weapon', tempContext)
   archer.addRelic(poisonVial, tempContext)
   // Create enemy team
   const goblin1 = new Character({
@@ -73,6 +79,7 @@ function runSimpleCombat() {
       attackDamage: 50,
       attackCooldown: 120, // 1.2 seconds per attack
     }),
+    registry,
   })
   const goblin2 = new Character({
     name: 'Goblin2',
@@ -86,6 +93,7 @@ function runSimpleCombat() {
       attackDamage: 50,
       attackCooldown: 120,
     }),
+    registry,
   })
   // Create combat engine
   const engine = new CombatEngine({

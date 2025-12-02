@@ -51,9 +51,8 @@ export class Character implements ICharacter {
   private readonly equipmentManager: EquipmentManager
   private readonly relicManager: RelicManager
   private readonly ultimateManager: UltimateManager
-  private _pendingUltimate?: IUltimateAbility
   /** Initialize character, inject registry and set up subsystems */
-  constructor(config: CharacterConfig, context?: ICombatContext) {
+  constructor(config: CharacterConfig, context: ICombatContext) {
     // Use name as ID for simplicity (can be changed to nanoid if needed)
     this.id = config.name
     this.team = config.team
@@ -67,12 +66,9 @@ export class Character implements ICharacter {
     this.equipmentManager = new EquipmentManager(this, () => this.registry)
     this.relicManager = new RelicManager(this, () => this.registry)
     this.ultimateManager = new UltimateManager()
-    // Register ultimate if provided (only if context is available)
-    if (config.ultimate && context) {
+    // Register ultimate if provided
+    if (config.ultimate) {
       this.ultimateManager.set(config.ultimate, context)
-    } else if (config.ultimate) {
-      // Store for later initialization if context not available
-      this._pendingUltimate = config.ultimate
     }
   }
   // === Attribute-related methods ===
@@ -192,11 +188,6 @@ export class Character implements ICharacter {
   // === Ultimate-related methods (delegated to UltimateManager) ===
   /** Get ultimate (if any) */
   getUltimate(context: ICombatContext): IUltimateAbility | undefined {
-    // Initialize pending ultimate if exists
-    if (this._pendingUltimate) {
-      this.ultimateManager.set(this._pendingUltimate, context)
-      this._pendingUltimate = undefined
-    }
     return this.ultimateManager.get(context)
   }
   /** Set ultimate */
