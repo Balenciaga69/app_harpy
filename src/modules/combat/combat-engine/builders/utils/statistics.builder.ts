@@ -1,6 +1,5 @@
 import type { ICharacter } from '../../../domain/character'
 import type { CombatStatistics, CharacterStats } from '../../models'
-
 /**
  * StatisticsBuilder
  *
@@ -14,7 +13,6 @@ export class StatisticsBuilder {
   static build(playerTeam: ICharacter[], enemyTeam: ICharacter[], duration: number): CombatStatistics {
     const allCharacters = [...playerTeam, ...enemyTeam]
     const characterStats = new Map<string, CharacterStats>()
-
     // Initialize statistics for each character
     allCharacters.forEach((char) => {
       characterStats.set(char.id, {
@@ -29,12 +27,10 @@ export class StatisticsBuilder {
         dodges: 0,
       })
     })
-
     // TODO: Statistics calculation logic
     // Need to calculate data from eventLogger logs
     // Suggest implementing StatisticsCalculator class in the future
     const totalDamage = 0
-
     return {
       characterStats,
       effectsApplied: new Map(),

@@ -1,6 +1,5 @@
 import type { ICharacter } from '../../../domain/character'
 import type { CombatOutcome } from '../../models'
-
 /**
  * OutcomeAnalyzer
  *
@@ -19,7 +18,6 @@ export class OutcomeAnalyzer {
     const playerAlive = playerTeam.some((c) => !c.isDead)
     const enemyAlive = enemyTeam.some((c) => !c.isDead)
     const reachedMaxTicks = currentTick >= maxTicks
-
     if (playerAlive && !enemyAlive) {
       return { outcome: 'player-win', winner: 'player' }
     }

@@ -1,7 +1,6 @@
 import type { CombatContext } from '@/modules/combat/context'
 import type { CharacterSnapshot } from '@/modules/combat/infra/shared'
 import { nanoid } from 'nanoid'
-import type { IUltimateAbility } from '../../coordination'
 import { EffectManager } from '../effect/effect.manager'
 import type { IEffect } from '../effect/models/effect.model'
 import type { Equipment } from '../item/models/equipment.model'
@@ -12,6 +11,7 @@ import { AttributeContainer } from './attribute.container'
 import type { CharacterId, ICharacter } from './interfaces/character.interface'
 import type { AttributeType, BaseAttributeValues } from './models/attribute.core.model'
 import type { AttributeModifier } from './models/attribute.modifier.model'
+import type { IUltimateAbility } from '../ultimate'
 /**
  * Configuration parameters required for character initialization
  */

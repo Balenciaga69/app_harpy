@@ -1,5 +1,4 @@
 import type { ICharacter } from '../../../domain/character'
-
 /**
  * SurvivorCollector
  *
