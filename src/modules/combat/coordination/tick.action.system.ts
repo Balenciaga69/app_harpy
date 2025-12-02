@@ -39,20 +39,12 @@ export class TickActionSystem {
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()
     const allEntities = this.context.getAllEntities()
-    // Process global effects
     this.processEffects()
-    // Iterate through all entities
     allEntities.forEach((entity) => {
-      // Only process characters
       if (!isCharacter(entity)) return
       const character = entity as ICharacter
-      // Skip dead characters
       if (character.isDead) return
-      // Process effects for all characters
-      character.getAllEffects().forEach((effect) => effect.onTick?.(character, this.context))
-      // Energy natural regen (triggers every 100 ticks)
       this.processEnergyRegen(character, currentTick)
-      // Check if can attack
       if (this.canAttack(character, currentTick)) {
         this.performAttack(character, currentTick)
       }
@@ -162,6 +154,13 @@ export class TickActionSystem {
       this.gainEnergy(character, energyRegen)
     }
   }
+  /** Process effects for all characters */
+  private processEffects(): void {
+    this.context.getAllEntities().forEach((entity) => {
+      if (!isCharacter(entity)) return
+      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
+    })
+  }
   /** Update attack cooldown time */
   private updateCooldown(character: ICharacter, currentTick: number): void {
     // Get attack cooldown time (unit: Tick)
@@ -175,12 +174,5 @@ export class TickActionSystem {
   public dispose(): void {
     this.context.eventBus.off('tick:start', this.tickHandler)
     this.nextAttackTick.clear()
-  }
-  /** Process effects for all characters */
-  private processEffects(): void {
-    this.context.getAllEntities().forEach((entity) => {
-      if (!isCharacter(entity)) return
-      entity.getAllEffects().forEach((effect) => effect.onTick?.(entity, this.context))
-    })
   }
 }
