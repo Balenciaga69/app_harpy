@@ -11,7 +11,7 @@ import { BloodPactEffect } from '../effects/BloodPactEffect'
  * - Next 3 normal attacks deal 2x base damage
  * - If HP too low (< 20%), cannot activate
  */
-export class BloodPactUltimate implements IUltimateAbility {
+export class ExampleBloodPactUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
   readonly description: string

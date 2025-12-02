@@ -12,7 +12,7 @@ import { DamageFactory } from '@/modules/combat/coordination/factories'
  * Ultimate ability that deals damage in a small area
  * (Currently single target, area feature to be implemented)
  */
-export class ThunderStrikeUltimate implements IUltimateAbility {
+export class ExampleThunderStrikeUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
   readonly description: string
@@ -46,7 +46,5 @@ export class ThunderStrikeUltimate implements IUltimateAbility {
     const damageEvent = damageFactory.createUltimateEvent(caster, target, ultimateDamage, context.getCurrentTick())
     const damageChain = new DamageChain(context)
     damageChain.execute(damageEvent)
-    // TODO: Add area damage logic (hit nearby enemies)
-    // TODO: Add thunder visual effect
   }
 }

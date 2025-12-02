@@ -72,14 +72,5 @@ export class ChargeEffect extends StackableEffect {
       mode: 'multiply',
       source: this.id,
     })
-    // TODO: Spell cooldown not yet implemented, temporarily commented
-    // this.spellModifierId = `${this.id}-spell-cd`
-    // character.addAttributeModifier({
-    //   id: this.spellModifierId,
-    //   type: 'spellCooldown',
-    //   value: cooldownReduction,
-    //   mode: 'multiply',
-    //   source: this.id,
-    // })
   }
 }
