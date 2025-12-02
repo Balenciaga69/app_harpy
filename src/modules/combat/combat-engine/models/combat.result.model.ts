@@ -3,6 +3,21 @@ import type { CombatLogEntry } from '../../logic/logger'
 import type { CombatOutcome } from './combat.outcome.model'
 import type { CombatSnapshot } from './combat.snapshot.model'
 import type { CombatStatistics } from './combat.statistics.model'
+import type { CombatContext } from '../../context'
+import type { CombatConfig } from './combat.config.model'
+/**
+ * CombatResultData
+ *
+ * Encapsulates all data needed to build a CombatResult, reducing constructor parameters.
+ */
+export interface CombatResultData {
+  context: CombatContext
+  config: CombatConfig
+  logs: CombatLogEntry[]
+  snapshots: CombatSnapshot[]
+  startTime: number
+  endTime: number
+}
 /**
  * CombatResult
  *
