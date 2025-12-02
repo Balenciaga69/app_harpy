@@ -82,7 +82,7 @@ export class TickActionSystem {
     // 2. Use strategy to select target
     const target = this.targetSelector.selectTarget(character, aliveEnemies)
     if (!target) return
-    // 3. Check if can release ultimate // TODO: This part is complex, can consider making it a separate method or even class or other architecture
+    // 3. Check if can release ultimate
     const currentEnergy = character.getAttribute('currentEnergy') ?? 0
     const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
     const canUseUltimate = currentEnergy >= maxEnergy
