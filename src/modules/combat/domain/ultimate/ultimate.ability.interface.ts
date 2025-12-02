@@ -22,20 +22,6 @@ export interface IUltimateAbility {
   readonly name: string
   /** Ultimate description */
   readonly description: string
-  /** Ultimate type tag (for UI display or categorization) */
-  readonly type: UltimateType
-  /**
-   * Execute ultimate
-   * @param caster The caster
-   * @param context Combat context
-   */
+  /** Execute ultimate    */
   execute(caster: ICharacter, context: CombatContext): void
 }
-/** Ultimate types */
-export type UltimateType =
-  | 'damage' // Damage type
-  | 'buff' // Buff type
-  | 'heal' // Heal type
-  | 'summon' // Summon type
-  | 'control' // Control type
-  | 'hybrid' // Hybrid type

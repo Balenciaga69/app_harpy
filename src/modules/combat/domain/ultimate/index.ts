@@ -1,1 +1,1 @@
-export type { IUltimateAbility, UltimateType } from './ultimate.ability.interface'
+export type { IUltimateAbility } from './ultimate.ability.interface'
