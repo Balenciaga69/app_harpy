@@ -24,7 +24,7 @@ export class RelicManager {
     const existingRelicId = this.relics.get(relic.name)
     if (existingRelicId) {
       // Relic with same name already exists, add stack
-      const existingRelic = context.registry.getRelic(existingRelicId)
+      const existingRelic = context.registry.getRelic(existingRelicId) as Relic | undefined
       if (!existingRelic) return
       // Remove old effects before stacking
       existingRelic.getEffects().forEach((effect: IEffect) => {
@@ -51,7 +51,7 @@ export class RelicManager {
   remove(relicName: string, context: ICombatContext): void {
     const relicId = this.relics.get(relicName)
     if (!relicId) return
-    const relic = context.registry.getRelic(relicId)
+    const relic = context.registry.getRelic(relicId) as Relic | undefined
     if (!relic) return
     // Remove all effects from this relic
     relic.getEffects().forEach((effect) => {
@@ -65,7 +65,7 @@ export class RelicManager {
   getRelic(relicName: string): Relic | undefined {
     const relicId = this.relics.get(relicName)
     if (!relicId) return undefined
-    return this.getRegistry().getRelic(relicId)
+    return this.getRegistry().getRelic(relicId) as Relic | undefined
   }
   /**
    * Get all relics
@@ -73,7 +73,7 @@ export class RelicManager {
   getAllRelics(): Relic[] {
     const relics: Relic[] = []
     this.relics.forEach((relicId) => {
-      const relic = this.getRegistry().getRelic(relicId)
+      const relic = this.getRegistry().getRelic(relicId) as Relic | undefined
       if (relic) relics.push(relic)
     })
     return relics

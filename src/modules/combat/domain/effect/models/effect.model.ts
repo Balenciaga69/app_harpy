@@ -1,5 +1,4 @@
-import type { ICombatContext } from '../../../context'
-
+import type { ICombatContext } from '../../../context/combat.context.interface'
 export interface IEffect {
   readonly id: string
   readonly name: string

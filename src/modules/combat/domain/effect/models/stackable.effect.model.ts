@@ -27,39 +27,31 @@ export abstract class StackableEffect implements IStackableEffect {
   public readonly id: string
   public readonly name: string
   public readonly maxStacks?: number
-
   constructor(id: string, name: string, maxStacks?: number) {
     this.id = id
     this.name = name
     this.maxStacks = maxStacks
   }
-
   /** Add stacks */
   addStacks(amount: number): void {
     this.stacks = Math.min(this.stacks + amount, this.maxStacks ?? Infinity)
   }
-
   /** Remove stacks */
   removeStacks(amount: number): void {
     this.stacks = Math.max(0, this.stacks - amount)
   }
-
   /** Set stacks */
   setStacks(amount: number): void {
     this.stacks = Math.max(0, Math.min(amount, this.maxStacks ?? Infinity))
   }
-
   /** Get current stacks */
   getStacks(): number {
     return this.stacks
   }
-
   /** Called when effect is added */
   abstract onApply(characterId: string, context: ICombatContext): void
-
   /** Called when effect is removed */
   abstract onRemove(characterId: string, context: ICombatContext): void
-
   /** Called each Tick (optional) */
   abstract onTick?(characterId: string, context: ICombatContext): void
 }

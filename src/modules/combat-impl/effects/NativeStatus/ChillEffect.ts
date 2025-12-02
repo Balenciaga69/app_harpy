@@ -16,19 +16,16 @@ export class ChillEffect extends StackableEffect {
   private spellModifierId: string | null = null
   private readonly decayRate: number = 0.1 // Reduce 10% per second
   private lastDecayTick: number = 0
-
   constructor(initialStacks: number = 1) {
     super(`chill-${nanoid(6)}`, 'Chill', 16)
     this.setStacks(initialStacks)
   }
-
   onApply(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
     this.lastDecayTick = context.getCurrentTick()
     this.updateCooldownModifiers(character)
   }
-
   onRemove(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
@@ -41,7 +38,6 @@ export class ChillEffect extends StackableEffect {
       this.spellModifierId = null
     }
   }
-
   onTick(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
@@ -62,7 +58,6 @@ export class ChillEffect extends StackableEffect {
       this.updateCooldownModifiers(character)
     }
   }
-
   /** Update cooldown modifiers (increase cooldown time) */
   private updateCooldownModifiers(character: ICharacter): void {
     // Remove old modifiers

@@ -1,4 +1,4 @@
-import type { ICombatContext } from '../../../context'
+import type { ICombatContext } from '../../../context/combat.context.interface'
 import type { ICharacter } from '../../../domain/character/interfaces/character.interface'
 /**
  * CharacterAccessor
@@ -8,17 +8,15 @@ import type { ICharacter } from '../../../domain/character/interfaces/character.
  */
 export class CharacterAccessor {
   private context: ICombatContext
-
   constructor(context: ICombatContext) {
     this.context = context
   }
-
   /**
    * Get character by ID, throws error if not found
    * Use this when character must exist (internal logic)
    */
   get(id: string): ICharacter {
-    const character = this.context.registry.getCharacter(id)
+    const character = this.context.registry.getCharacter(id) as ICharacter | undefined
     if (!character) {
       throw new Error(`[CharacterAccessor] Character ${id} not found in registry`)
     }
@@ -29,7 +27,7 @@ export class CharacterAccessor {
    * Use this when character might not exist (edge cases)
    */
   tryGet(id: string): ICharacter | undefined {
-    return this.context.registry.getCharacter(id)
+    return this.context.registry.getCharacter(id) as ICharacter | undefined
   }
   /**
    * Check if character exists in registry

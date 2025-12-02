@@ -17,19 +17,16 @@ export class ChargeEffect extends StackableEffect {
   private spellModifierId: string | null = null
   private readonly decayRate: number = ChargeEffectConfig.DECAY_RATE_PER_SECOND // Reduce 10% per second
   private lastDecayTick: number = 0
-
   constructor(initialStacks: number = 1) {
     super(`charge-${nanoid(6)}`, EffectNames.CHARGE, ChargeEffectConfig.MAX_STACKS)
     this.setStacks(initialStacks)
   }
-
   onApply(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
     this.lastDecayTick = context.getCurrentTick()
     this.updateCooldownModifiers(character)
   }
-
   onRemove(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
@@ -42,7 +39,6 @@ export class ChargeEffect extends StackableEffect {
       this.spellModifierId = null
     }
   }
-
   onTick(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
@@ -63,7 +59,6 @@ export class ChargeEffect extends StackableEffect {
       this.updateCooldownModifiers(character)
     }
   }
-
   /** Update cooldown modifiers */
   private updateCooldownModifiers(character: ICharacter): void {
     // Remove old modifiers

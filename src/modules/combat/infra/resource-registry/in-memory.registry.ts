@@ -21,24 +21,19 @@ export class InMemoryResourceRegistry implements IResourceRegistry {
   private ultimates = new Map<string, IUltimateAbility>()
   private equipment = new Map<string, Equipment>()
   private relics = new Map<string, Relic>()
-
   // === Character Catalog ===
   registerCharacter(character: ICharacter): void {
     this.characters.set(character.id, character)
   }
-
   unregisterCharacter(id: string): void {
     this.characters.delete(id)
   }
-
   getCharacter(id: string): ICharacter | undefined {
     return this.characters.get(id)
   }
-
   hasCharacter(id: string): boolean {
     return this.characters.has(id)
   }
-
   // === Effect Tracking ===
   registerEffect(effect: IEffect): void {
     this.effects.set(effect.id, effect)

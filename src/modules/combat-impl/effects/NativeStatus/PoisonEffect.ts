@@ -13,28 +13,22 @@ export class PoisonEffect extends StackableEffect {
   private readonly damagePerStack: number = 1
   private readonly decayRate: number = 0.1
   private lastDecayTick: number = 0
-
   constructor(initialStacks: number = 1) {
     super(`poison-${nanoid(6)}`, 'Poison', undefined)
     this.setStacks(initialStacks)
   }
-
   onApply(_characterId: string, context: ICombatContext): void {
     this.lastDecayTick = context.getCurrentTick()
   }
-
   onRemove(_characterId: string, _context: ICombatContext): void {
     // No cleanup needed
   }
-
   onTick(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)
     const character = chars.get(characterId)
     const currentTick = context.getCurrentTick()
-
     // Deal true damage every tick
     this.applyPoisonDamage(characterId, context)
-
     // Check decay
     const ticksPassed = currentTick - this.lastDecayTick
     const secondsPassed = ticksPassed / 100 // Assume 100 ticks = 1 second
@@ -47,7 +41,6 @@ export class PoisonEffect extends StackableEffect {
       }
     }
   }
-
   /** Apply poison damage */
   private applyPoisonDamage(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)

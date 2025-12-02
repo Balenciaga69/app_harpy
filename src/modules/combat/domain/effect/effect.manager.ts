@@ -10,11 +10,9 @@ import type { IEffect } from './models/effect.model'
 export class EffectManager {
   private effects: Map<string, IEffect> = new Map()
   private readonly owner: ICharacter
-
   constructor(owner: ICharacter) {
     this.owner = owner
   }
-
   /** Add effect and register to global registry */
   addEffect(effect: IEffect, context: ICombatContext): void {
     if (this.effects.has(effect.id)) {
@@ -27,7 +25,6 @@ export class EffectManager {
     // Trigger lifecycle hook (pass characterId instead of character instance)
     effect.onApply(this.owner.id, context)
   }
-
   /** Remove effect and unregister from global registry */
   removeEffect(effectId: string, context: ICombatContext): void {
     const effect = this.effects.get(effectId)
@@ -39,22 +36,18 @@ export class EffectManager {
     // Unregister from global registry
     context.registry.unregisterEffect(effectId)
   }
-
   /** Get effect */
   getEffect(effectId: string): IEffect | undefined {
     return this.effects.get(effectId)
   }
-
   /** Check if has effect */
   hasEffect(effectId: string): boolean {
     return this.effects.has(effectId)
   }
-
   /** Get all effects */
   getAllEffects(): readonly IEffect[] {
     return Array.from(this.effects.values())
   }
-
   /** Call all effects each Tick */
   onTick(context: ICombatContext): void {
     this.effects.forEach((effect) => {
@@ -62,7 +55,6 @@ export class EffectManager {
       effect.onTick?.(this.owner.id, context)
     })
   }
-
   /** Clear all effects and unregister from registry */
   clear(context: ICombatContext): void {
     this.effects.forEach((effect) => {

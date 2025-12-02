@@ -45,7 +45,7 @@ export class EquipmentManager {
   unequip(slot: EquipmentSlot, context: ICombatContext): void {
     const equipmentId = this.slots.get(slot)
     if (!equipmentId) return
-    const equipment = context.registry.getEquipment(equipmentId)
+    const equipment = context.registry.getEquipment(equipmentId) as Equipment | undefined
     if (!equipment) return
     // Remove all effects from this equipment
     equipment.getEffects().forEach((effect) => {
@@ -59,7 +59,7 @@ export class EquipmentManager {
   getEquipment(slot: EquipmentSlot): Equipment | undefined {
     const equipmentId = this.slots.get(slot)
     if (!equipmentId) return undefined
-    return this.getRegistry().getEquipment(equipmentId)
+    return this.getRegistry().getEquipment(equipmentId) as Equipment | undefined
   }
   /**
    * Get all equipped items
@@ -67,7 +67,7 @@ export class EquipmentManager {
   getAllEquipment(): Equipment[] {
     const equipment: Equipment[] = []
     this.slots.forEach((equipmentId) => {
-      const eq = this.getRegistry().getEquipment(equipmentId)
+      const eq = this.getRegistry().getEquipment(equipmentId) as Equipment | undefined
       if (eq) equipment.push(eq)
     })
     return equipment

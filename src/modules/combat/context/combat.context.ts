@@ -17,18 +17,15 @@ export class CombatContext implements ICombatContext {
   public readonly registry: IResourceRegistry
   private currentTick: number = 0
   private entities: Map<string, IEntity> = new Map()
-
   constructor(registry: IResourceRegistry, seed?: string | number) {
     this.eventBus = new EventBus()
     this.rng = new CombatRandomGenerator(seed)
     this.registry = registry
   }
-
   // ===Entity===
   public getEntity(id: string): IEntity | undefined {
     return this.entities.get(id)
   }
-
   public addEntity(entity: IEntity): void {
     this.entities.set(entity.id, entity)
     // Auto-register character to registry for ID-based lookups
@@ -36,7 +33,6 @@ export class CombatContext implements ICombatContext {
       this.registry.registerCharacter(entity as ICharacter)
     }
   }
-
   public removeEntity(id: string): void {
     const entity = this.entities.get(id)
     if (entity && isCharacter(entity)) {
@@ -44,7 +40,6 @@ export class CombatContext implements ICombatContext {
     }
     this.entities.delete(id)
   }
-
   public getAllEntities(): readonly IEntity[] {
     return Array.from(this.entities.values())
   }
