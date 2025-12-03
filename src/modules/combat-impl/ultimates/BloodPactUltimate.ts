@@ -14,21 +14,18 @@ import { BloodPactEffect } from '../effects/BloodPactEffect'
 export class ExampleBloodPactUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
-  readonly description: string
   readonly type = 'buff' as const
   private hpCostPercent: number = 0.2 // Cost 20% of current HP
   private damageMultiplier: number = 2.0 // 2x damage
   private attackCount: number = 3 // Affects next 3 attacks
   constructor(
     name: string = 'Blood Pact',
-    description: string = 'Sacrifice HP to double damage of next 3 attacks',
     hpCostPercent: number = 0.2,
     damageMultiplier: number = 2.0,
     attackCount: number = 3
   ) {
     this.id = `ultimate-${nanoid(6)}`
     this.name = name
-    this.description = description
     this.hpCostPercent = hpCostPercent
     this.damageMultiplier = damageMultiplier
     this.attackCount = attackCount

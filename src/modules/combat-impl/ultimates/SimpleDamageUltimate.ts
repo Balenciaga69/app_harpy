@@ -15,13 +15,11 @@ import { FirstAliveSelector } from '@/modules/combat/coordination'
 export class SimpleDamageUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
-  readonly description: string
   readonly type = 'damage' as const
   private damageMultiplier: number
-  constructor(name: string, description: string, damageMultiplier: number = UltimateDefaults.simpleDamageMultiplier) {
+  constructor(name: string, damageMultiplier: number = UltimateDefaults.simpleDamageMultiplier) {
     this.id = `ultimate-${nanoid(6)}`
     this.name = name
-    this.description = description
     this.damageMultiplier = damageMultiplier
   }
   execute(casterId: string, context: ICombatContext): void {

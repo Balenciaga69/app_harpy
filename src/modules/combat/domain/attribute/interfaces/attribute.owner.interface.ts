@@ -1,7 +1,7 @@
 import type { AttributeType } from '../models/attribute.core.model'
 import type { AttributeModifier } from '../models/attribute.modifier.model'
 /** Attribute provider interface */
-export interface IAttributeProvider {
+export interface IAttributeOwner {
   getAttribute(type: AttributeType): number
   getBaseAttribute(type: AttributeType): number
   setBaseAttribute(type: AttributeType, value: number): void

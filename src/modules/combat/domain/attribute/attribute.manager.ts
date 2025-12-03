@@ -2,12 +2,12 @@ import type { AttributeType, BaseAttributeValues } from './models/attribute.core
 import type { AttributeModifier } from './models/attribute.modifier.model'
 import { AttributeLimits } from '../../infra/config'
 /**
- * AttributeContainer
+ * AttributeManager
  *
- * Stores base attribute values and manages attribute modifiers for a character. Handles validation and
- * provides methods to add, remove, and query modifiers by type.
+ * Manages base attribute values and attribute modifiers for a character.
+ * Handles validation and provides methods to add, remove, and query modifiers by type.
  */
-export class AttributeContainer {
+export class AttributeManager {
   private baseValues: Map<AttributeType, number>
   private modifiers: Map<AttributeType, AttributeModifier[]>
   constructor(baseAttributes: BaseAttributeValues) {
@@ -40,7 +40,7 @@ export class AttributeContainer {
     if (clamped !== value && import.meta.env.DEV) {
       // eslint-disable-next-line no-console
       console.warn(
-        `[AttributeContainer] Attribute '${type}' value ${value} clamped to ${clamped} (min: ${limit.min}, max: ${limit.max})`
+        `[AttributeManager] Attribute '${type}' value ${value} clamped to ${clamped} (min: ${limit.min}, max: ${limit.max})`
       )
     }
     return clamped

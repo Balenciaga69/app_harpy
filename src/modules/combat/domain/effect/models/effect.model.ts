@@ -1,8 +1,15 @@
-import type { ICombatContext } from '../../../context/combat.context.interface'
-export interface IEffect {
+import type { IEffectLifeHook } from './effect.life-hook.interface'
+/**
+ * Effect interface
+ *
+ * Base interface for all effects. Effects can modify character attributes or
+ * intercept combat events by implementing combat hooks.
+ * Each effect must have a unique ID and name for identification and logging.
+ *
+ * Extends IEffectLifeHook to provide lifecycle management (onApply/onRemove/onTick).
+ * Effects that need to modify damage should also implement ICombatHook.
+ */
+export interface IEffect extends IEffectLifeHook {
   readonly id: string
   readonly name: string
-  onApply?(characterId: string, context: ICombatContext): void
-  onRemove?(characterId: string, context: ICombatContext): void
-  onTick?(characterId: string, context: ICombatContext): void
 }

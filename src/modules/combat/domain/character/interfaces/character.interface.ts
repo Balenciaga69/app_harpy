@@ -1,5 +1,5 @@
-import { type IEntity, type CharacterSnapshot } from '@/modules/combat/infra/shared'
-import type { IAttributeProvider } from './attribute.provider.interface'
+import { type CharacterSnapshot, type IEntity } from '@/modules/combat/infra/shared'
+import type { IAttributeOwner } from '../../attribute'
 import type { IEffectOwner } from './effect.owner.interface'
 import type { IUltimateOwner } from './ultimate.owner.interface'
 /**
@@ -12,7 +12,7 @@ import type { IUltimateOwner } from './ultimate.owner.interface'
  * - Interface segregation principle: Each sub-interface has single responsibility, avoids implementing unnecessary methods
  * - Dependency inversion principle: High-level modules depend on this interface, not concrete implementations
  */
-export interface ICharacter extends IEntity, IAttributeProvider, IEffectOwner, IUltimateOwner {
+export interface ICharacter extends IEntity, IAttributeOwner, IEffectOwner, IUltimateOwner {
   /** Create character snapshot (for replay, log recording) */
   createSnapshot(): CharacterSnapshot
 }

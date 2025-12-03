@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Character } from '@/modules/combat/domain/character/character'
-import { createDefaultAttributes } from '@/modules/combat/domain/character/models/attribute.core.model'
+import { createDefaultAttributes } from '@/modules/combat/domain/attribute'
 import { InMemoryResourceRegistry } from '@/modules/combat/infra/resource-registry'
 import { CombatContext } from '@/modules/combat/context'
 import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
@@ -63,7 +63,7 @@ function testManagerSystem() {
         maxHp: 1000,
         currentHp: 1000,
       }),
-      ultimate: new SimpleDamageUltimate('Test Ultimate', 'A simple test ultimate', 2.0),
+      ultimate: new SimpleDamageUltimate('Test Ultimate', 2.0),
       registry,
     },
     context

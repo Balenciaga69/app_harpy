@@ -12,8 +12,6 @@ export interface IUltimateAbility {
   readonly id: string
   /** Ultimate name */
   readonly name: string
-  /** Ultimate description */
-  readonly description: string
   /** Execute ultimate */
   execute(casterId: string, context: ICombatContext): void
 }

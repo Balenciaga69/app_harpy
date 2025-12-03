@@ -16,13 +16,11 @@ import { DamageFactory } from '@/modules/combat/coordination/factories'
 export class ExampleThunderStrikeUltimate implements IUltimateAbility {
   readonly id: string
   readonly name: string
-  readonly description: string
   readonly type = 'damage' as const
   private damageMultiplier: number
   constructor(damageMultiplier: number = UltimateDefaults.thunderStrikeDamageMultiplier) {
     this.id = `ultimate-${nanoid(6)}`
     this.name = 'Thunder Strike'
-    this.description = 'Call down lightning to strike enemies'
     this.damageMultiplier = damageMultiplier
   }
   execute(casterId: string, context: ICombatContext): void {

@@ -1,4 +1,4 @@
-import type { AttributeContainer } from './attribute.container'
+import type { AttributeManager } from './attribute.manager'
 import type { IAttributeCalculator } from './interfaces/attribute.calculator.interface'
 import type { AttributeType } from './models/attribute.core.model'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from './models/attribute.modifier.model'
@@ -9,15 +9,15 @@ import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } fr
  * and applies additive modifiers first, then multiplicative modifiers.
  */
 export class AttributeCalculator implements IAttributeCalculator {
-  private container: AttributeContainer
-  /** Initialize attribute calculator, inject attribute container */
-  constructor(container: AttributeContainer) {
-    this.container = container
+  private manager: AttributeManager
+  /** Initialize attribute calculator, inject attribute manager */
+  constructor(manager: AttributeManager) {
+    this.manager = manager
   }
-  /** Calculate final value of specified attribute type (get data from container) */
+  /** Calculate final value of specified attribute type (get data from manager) */
   calculateAttribute(type: AttributeType): number {
-    const baseValue = this.container.getBase(type)
-    const modifiers = this.container.getModifiers(type)
+    const baseValue = this.manager.getBase(type)
+    const modifiers = this.manager.getModifiers(type)
     return this.calculate(baseValue, modifiers)
   }
   /** Calculate final value of specified attribute */

@@ -1,6 +1,9 @@
 import type { ICombatContext } from '@/modules/combat/context'
 import type { IResourceRegistry } from '@/modules/combat/infra/resource-registry'
 import type { CharacterSnapshot } from '@/modules/combat/infra/shared'
+import { AttributeCalculator, AttributeManager } from '../attribute'
+import type { AttributeType, BaseAttributeValues } from '../attribute/models/attribute.core.model'
+import type { AttributeModifier } from '../attribute/models/attribute.modifier.model'
 import { EffectManager } from '../effect/effect.manager'
 import type { IEffect } from '../effect/models/effect.model'
 import { EquipmentManager, type EquipmentSlot } from '../item/equipment.manager'
@@ -10,11 +13,7 @@ import type { Relic } from '../item/models/relic.model'
 import { RelicManager } from '../item/relic.manager'
 import type { IUltimateAbility } from '../ultimate'
 import { UltimateManager } from '../ultimate/ultimate.manager'
-import { AttributeCalculator } from './attribute.calculator'
-import { AttributeContainer } from './attribute.container'
 import type { ICharacter } from './interfaces/character.interface'
-import type { AttributeType, BaseAttributeValues } from './models/attribute.core.model'
-import type { AttributeModifier } from './models/attribute.modifier.model'
 /**
  * Configuration parameters required for character initialization
  */
@@ -45,7 +44,7 @@ export class Character implements ICharacter {
   /** Reference to resource registry (injected dependency) */
   private readonly registry: IResourceRegistry
   // Managers (SRP: each manager handles one responsibility)
-  private readonly attributeContainer: AttributeContainer
+  private readonly attributeManager: AttributeManager
   private readonly attributeCalculator: AttributeCalculator
   private readonly effectManager: EffectManager
   private readonly equipmentManager: EquipmentManager
@@ -60,8 +59,8 @@ export class Character implements ICharacter {
     this.name = config.name
     this.registry = config.registry
     // Initialize attribute system
-    this.attributeContainer = new AttributeContainer(config.baseAttributes)
-    this.attributeCalculator = new AttributeCalculator(this.attributeContainer)
+    this.attributeManager = new AttributeManager(config.baseAttributes)
+    this.attributeCalculator = new AttributeCalculator(this.attributeManager)
     // Initialize managers
     this.effectManager = new EffectManager(this)
     this.equipmentManager = new EquipmentManager(this, () => this.registry)
@@ -82,19 +81,19 @@ export class Character implements ICharacter {
   }
   /** Get base attribute value (without modifiers) */
   getBaseAttribute(type: AttributeType): number {
-    return this.attributeContainer.getBase(type)
+    return this.attributeManager.getBase(type)
   }
   /** Set base attribute value */
   setBaseAttribute(type: AttributeType, value: number): void {
-    this.attributeContainer.setBase(type, value)
+    this.attributeManager.setBase(type, value)
   }
   /** Add attribute modifier */
   addAttributeModifier(modifier: AttributeModifier): void {
-    this.attributeContainer.addModifier(modifier)
+    this.attributeManager.addModifier(modifier)
   }
   /** Remove attribute modifier */
   removeAttributeModifier(modifierId: string): void {
-    this.attributeContainer.removeModifier(modifierId)
+    this.attributeManager.removeModifier(modifierId)
   }
   /** Set current HP and limit within legal range (used when taking damage/healing) */
   setCurrentHpClamped(value: number): void {

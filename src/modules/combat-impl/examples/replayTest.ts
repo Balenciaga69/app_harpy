@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '@/modules/combat/combat-engine/combat.engine'
 import { Character } from '@/modules/combat/domain/character/character'
-import { createDefaultAttributes } from '@/modules/combat/domain/character/models/attribute.core.model'
+import { createDefaultAttributes } from '@/modules/combat/domain/attribute'
 import { SimpleDamageUltimate } from '../ultimates'
 import { ReplayEngine, PlaybackController, TimelineController, LogQueryService } from '@/modules/replay'
 import { InMemoryResourceRegistry } from '@/modules/combat/infra/resource-registry'
@@ -29,7 +29,7 @@ export function runReplayTest() {
       attackCooldown: 100,
       energyGainOnAttack: 10,
     }),
-    ultimate: new SimpleDamageUltimate('Power Strike', 'Deal massive damage', 2.0),
+    ultimate: new SimpleDamageUltimate('Power Strike', 2.0),
     registry,
   })
   const enemy = new Character({
@@ -42,7 +42,7 @@ export function runReplayTest() {
       attackCooldown: 120,
       energyGainOnAttack: 8,
     }),
-    ultimate: new SimpleDamageUltimate('Heavy Blow', 'Deal heavy damage', 1.8),
+    ultimate: new SimpleDamageUltimate('Heavy Blow', 1.8),
     registry,
   })
   const combatEngine = new CombatEngine({

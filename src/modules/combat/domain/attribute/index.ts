@@ -1,0 +1,8 @@
+export { AttributeManager } from './attribute.manager'
+export { AttributeCalculator } from './attribute.calculator'
+export type { IAttributeOwner } from './interfaces/attribute.owner.interface'
+export type { IAttributeCalculator } from './interfaces/attribute.calculator.interface'
+export type { AttributeType, BaseAttributeValues } from './models/attribute.core.model'
+export { createDefaultAttributes } from './models/attribute.core.model'
+export type { AttributeModifier, AttributeModifierEx, ModifierPriorityType } from './models/attribute.modifier.model'
+export { ModifierPriority } from './models/attribute.modifier.model'

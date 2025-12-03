@@ -34,7 +34,6 @@ export class TickActionSystem {
   setTargetSelector(selector: ITargetSelector): void {
     this.targetSelector = selector
   }
-
   /** Process ability logic for each tick */
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()
