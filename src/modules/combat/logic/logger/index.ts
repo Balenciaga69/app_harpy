@@ -1,3 +1,2 @@
-// Export all log-related modules
-export * from './combat.log.model'
-export * from './event.logger'
+export * from './combat-log-entry'
+export * from './EventLogger'

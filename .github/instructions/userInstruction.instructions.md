@@ -38,8 +38,9 @@ Provide project context and coding guidelines that AI should follow when generat
 File names:
 React Components: PascalCase (e.g., UserProfile.tsx)
 Class, Abstract Class: PascalCase (e.g., UserProfile.ts)
-Utility, Helper, Common: kebab-case (e.g., data-fetcher.ts)
+Utility, Helper, Common: PascalCase (e.g., data-fetcher.ts)
 Interface, Type, Enum: Kebab-case (e.g., user-profile.ts)
+
 InternalNaming:
 Class: PascalCase (e.g., UserProfile)
 Interface: I + PascalCase (e.g., IUserProfile)

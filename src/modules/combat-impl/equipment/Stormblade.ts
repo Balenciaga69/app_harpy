@@ -1,4 +1,4 @@
-import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
+import { Equipment } from '@/modules/combat/domain/item/models/equipment'
 import { ChargedCriticalEffect } from '../effects/Equipment/ChargedCriticalEffect'
 /**
  * Stormblade - Charged Critical Weapon

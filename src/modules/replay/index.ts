@@ -1,6 +1,6 @@
 // Core engine
-export type { IReplayEngine } from './replay.engine.interface'
-export { ReplayEngine } from './replay.engine'
+export type { IReplayEngine } from './replay.engine'
+export { ReplayEngine } from './ReplayEngine'
 // Controllers
 export * from './controllers'
 // Models

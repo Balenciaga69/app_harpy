@@ -1,5 +1,5 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from '../models/damage.event.model'
+import type { DamageEvent } from '../models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.

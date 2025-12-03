@@ -1,4 +1,4 @@
-import { Relic } from '@/modules/combat/domain/item/models/relic.model'
+import { Relic } from '@/modules/combat/domain/item/models/relic'
 import { PoisonEffect } from '../effects/NativeStatus/PoisonEffect'
 /**
  * Poison Vial - Stackable Poison Relic

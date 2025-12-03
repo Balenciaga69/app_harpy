@@ -3,10 +3,10 @@ import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
 import { CharacterAccessor } from '@/modules/combat/infra/shared'
 import { DamageChain } from '@/modules/combat/logic/damage'
-import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate.ability.interface'
+import type { IUltimateAbility } from '@/modules/combat/domain/ultimate/ultimate-ability'
 import { UltimateDefaults } from '@/modules/combat/infra/config'
-import { FirstAliveSelector } from '@/modules/combat/coordination/target-select-strategies'
-import { DamageFactory } from '@/modules/combat/coordination/factories'
+import { FirstAliveSelector } from '@/modules/combat/coordination'
+import { DamageFactory } from '@/modules/combat/coordination/utils/DamageFactory'
 /**
  * Thunder Strike Ultimate
  *
