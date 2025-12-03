@@ -1,1 +1,1 @@
-export * from './snapshot.collector'
+export * from './SnapshotCollector'

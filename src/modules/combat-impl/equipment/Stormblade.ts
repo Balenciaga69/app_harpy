@@ -1,4 +1,4 @@
-import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
+import { Equipment } from '@/modules/combat/domain/item/models/equipment'
 import { ChargedCriticalEffect } from '../effects/Equipment/ChargedCriticalEffect'
 /**
  * Stormblade - Charged Critical Weapon
@@ -11,7 +11,6 @@ export class Stormblade extends Equipment {
   constructor() {
     super({
       name: 'Stormblade',
-      description: 'Doubles critical chance when charged',
       rarity: 'epic',
     })
   }

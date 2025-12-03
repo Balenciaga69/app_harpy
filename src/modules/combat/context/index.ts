@@ -1,2 +1,2 @@
-export { CombatContext } from './combat.context'
-export type { ICombatContext } from './combat.context.interface'
+export { CombatContext } from './CombatContext'
+export type { ICombatContext } from './combat-context'

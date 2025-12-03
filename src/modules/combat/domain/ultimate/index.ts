@@ -1,2 +1,2 @@
-export type { IUltimateAbility } from './ultimate.ability.interface'
-export { UltimateManager } from './ultimate.manager'
+export type { IUltimateAbility } from './ultimate-ability'
+export { UltimateManager } from './UltimateManager'

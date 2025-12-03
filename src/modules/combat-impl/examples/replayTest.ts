@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { CombatEngine } from '@/modules/combat/combat-engine/combat.engine'
-import { Character } from '@/modules/combat/domain/character/character'
+import { Character } from '@/modules/combat/domain/character/Character'
 import { createDefaultAttributes } from '@/modules/combat/domain/attribute'
 import { SimpleDamageUltimate } from '../ultimates'
 import { ReplayEngine, PlaybackController, TimelineController, LogQueryService } from '@/modules/replay'

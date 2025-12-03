@@ -2,7 +2,7 @@ import type { DamageEvent, ICombatHook } from '@/modules/combat/logic/damage'
 import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/modules/combat/context'
 import type { ICharacter } from '@/modules/combat/domain/character'
-import type { IEffect } from '@/modules/combat/domain/effect/models/effect.model'
+import type { IEffect } from '@/modules/combat/domain/effect/models/effect'
 /**
  * LowHealthArmorEffect
  *

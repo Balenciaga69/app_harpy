@@ -1,1 +1,1 @@
-export { LogQueryService } from './log-query.service'
+export { LogQueryService } from './LogQueryService'

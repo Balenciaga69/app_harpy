@@ -1,8 +1,8 @@
 import type { CombatContext } from '@/modules/combat/context'
-import type { DamageEvent } from '../models/damage.event.model'
-import { calculateHitChance } from '../utils/damage.calculator.util'
+import type { DamageEvent } from '../models/damage-event'
+import { calculateHitChance } from '../utils/damage-calculator'
 import type { IDamageStep } from './DamageStep.interface'
-import { collectHooks } from './utils/hookCollector.util'
+import { collectHooks } from './utils/collect-hooks'
 /**
  * Hit check stage
  */

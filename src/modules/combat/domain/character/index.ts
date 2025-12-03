@@ -1,8 +1,7 @@
 // Public classes (for external use)
-export { Character } from './character'
-export type { EquipmentSlot } from '../item/equipment.manager'
+export { Character } from './Character'
 // Public interfaces (type definitions)
-export type { ICharacter } from './interfaces/character.interface'
-export type { IEffectOwner } from './interfaces/effect.owner.interface'
-export type { IUltimateOwner } from './interfaces/ultimate.owner.interface'
+export type { ICharacter } from './models/character'
+export type { IEffectOwner } from './models/effect-owner'
+export type { IUltimateOwner } from './models/ultimate-owner'
 // Note: AttributeManager, EffectManager are internal implementations, not exported

@@ -1,4 +1,4 @@
-import { Relic } from '@/modules/combat/domain/item/models/relic.model'
+import { Relic } from '@/modules/combat/domain/item/models/relic'
 import { PoisonEffect } from '../effects/NativeStatus/PoisonEffect'
 /**
  * Poison Vial - Stackable Poison Relic
@@ -12,7 +12,6 @@ export class PoisonVial extends Relic {
   constructor() {
     super({
       name: 'Poison Vial',
-      description: 'Apply poison on attacks. Stacks for multiple poison instances.',
       rarity: 'common',
     })
   }

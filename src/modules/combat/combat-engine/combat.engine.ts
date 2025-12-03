@@ -21,8 +21,6 @@ export class CombatEngine {
   private eventLogger!: EventLogger
   private snapshotCollector!: SnapshotCollector
   private config: CombatConfig
-  private startTime: number = 0
-  private endTime: number = 0
   constructor(config: CombatConfig) {
     this.config = {
       maxTicks: CombatTiming.MAX_TICKS,
@@ -39,16 +37,12 @@ export class CombatEngine {
   }
   /** Start combat and return complete result */
   public start(): CombatResult {
-    this.startTime = Date.now()
     this.executeCombat()
-    this.endTime = Date.now()
     const data: CombatResultData = {
       context: this.context,
       config: this.config,
       logs: [...this.eventLogger.getLogs()],
       snapshots: [...this.snapshotCollector.getSnapshots()],
-      startTime: this.startTime,
-      endTime: this.endTime,
     }
     const resultBuilder = new ResultBuilder(data)
     return resultBuilder.build()

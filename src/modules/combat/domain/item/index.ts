@@ -1,3 +1,4 @@
 export * from './models'
-export { EquipmentManager, type EquipmentSlot } from './equipment.manager'
-export { RelicManager } from './relic.manager'
+export { EquipmentManager } from './EquipmentManager'
+export type { EquipmentSlot } from './models/equipment-slot'
+export { RelicManager } from './RelicManager'

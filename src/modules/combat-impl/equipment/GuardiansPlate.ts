@@ -1,4 +1,4 @@
-import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
+import { Equipment } from '@/modules/combat/domain/item/models/equipment'
 import { LowHealthArmorEffect } from '../effects/Equipment/LowHealthArmorEffect'
 /**
  * Guardian's Plate - Low Health Armor
@@ -11,7 +11,6 @@ export class GuardiansPlate extends Equipment {
   constructor() {
     super({
       name: "Guardian's Plate",
-      description: 'Gain +20% armor when below 30% HP',
       rarity: 'rare',
     })
   }

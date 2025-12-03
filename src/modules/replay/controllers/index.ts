@@ -1,3 +1,3 @@
 // Export all replay controllers
-export * from './playback.controller'
-export * from './timeline.controller'
+export * from './PlaybackController'
+export * from './TimelineMoment'

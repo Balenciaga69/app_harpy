@@ -166,7 +166,7 @@ export class CurseOfPoisonRelic implements IRelic {
     context.eventBus.emit('relic:curse-applied', {
       relicId: this.id,
       targetId,
-      curseType: 'POISON_DAMAGE_BOOST'
+      curseType: 'POISON_DAMAGE_BOOST',
     })
   }
 }
@@ -180,7 +180,11 @@ class PoisonCurseModifier implements IEffectModifier {
 
   private triggerCount = 0
 
-  constructor(public readonly id: string, public readonly sourceId: string, private readonly maxTriggers: number) {}
+  constructor(
+    public readonly id: string,
+    public readonly sourceId: string,
+    private readonly maxTriggers: number
+  ) {}
 
   modifyDamage(baseDamage: number, context: IModifierContext): number {
     return baseDamage * 2
@@ -193,7 +197,7 @@ class PoisonCurseModifier implements IEffectModifier {
     context.combat.eventBus.emit('modifier:triggered', {
       modifierId: this.id,
       triggerCount: this.triggerCount,
-      maxTriggers: this.maxTriggers
+      maxTriggers: this.maxTriggers,
     })
   }
 
@@ -241,7 +245,9 @@ export class FrozenVenomRelic implements IRelic {
 
     const chillEffect = self.effects.findEffectByName('CHILL')
     if (chillEffect && 'addModifier' in chillEffect) {
-      const modifier = new NoDecayModifier(generateId(), this.id, this.activationTick + this.noDecayDuration)(chillEffect as ILayeredEffect).addModifier(modifier)
+      const modifier = new NoDecayModifier(generateId(), this.id, this.activationTick + this.noDecayDuration)(
+        chillEffect as ILayeredEffect
+      ).addModifier(modifier)
     }
   }
 
@@ -267,7 +273,11 @@ class NoDecayModifier implements IEffectModifier {
   readonly priority = 200 // High priority to override decay
   readonly targetEffectType = 'CHILL'
 
-  constructor(public readonly id: string, public readonly sourceId: string, private readonly expirationTick: number) {}
+  constructor(
+    public readonly id: string,
+    public readonly sourceId: string,
+    private readonly expirationTick: number
+  ) {}
 
   modifyDecay(baseDecay: number, context: IModifierContext): number {
     // Block all decay
@@ -344,7 +354,7 @@ export abstract class BaseLayeredEffect implements ILayeredEffect {
     const context: IModifierContext = {
       combat: this.getCombatContext(), // Need to inject this
       targetId: this.getOwnerId(), // Need to inject this
-      effect: this
+      effect: this,
     }
 
     const finalDecay = this.calculateModifiedDecay(baseDecay, context)
