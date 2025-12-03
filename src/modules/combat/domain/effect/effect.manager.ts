@@ -9,31 +9,25 @@ import type { IEffect } from './models/effect.model'
  */
 export class EffectManager {
   private effects: Map<string, IEffect> = new Map()
-  private readonly owner: ICharacter
-  constructor(owner: ICharacter) {
-    this.owner = owner
+  private readonly character: ICharacter
+  constructor(character: ICharacter) {
+    this.character = character
   }
   /** Add effect and register to global registry */
   addEffect(effect: IEffect, context: ICombatContext): void {
     if (this.effects.has(effect.id)) {
       return // Avoid duplicate addition
     }
-    // Store locally
     this.effects.set(effect.id, effect)
-    // Register to global registry for tracking
     context.registry.registerEffect(effect)
-    // Trigger lifecycle hook (pass characterId instead of character instance)
-    effect.onApply(this.owner.id, context)
+    effect.onApply?.(this.character.id, context)
   }
   /** Remove effect and unregister from global registry */
   removeEffect(effectId: string, context: ICombatContext): void {
     const effect = this.effects.get(effectId)
     if (!effect) return
-    // Trigger lifecycle hook (pass characterId instead of character instance)
-    effect.onRemove(this.owner.id, context)
-    // Remove locally
+    effect.onRemove?.(this.character.id, context)
     this.effects.delete(effectId)
-    // Unregister from global registry
     context.registry.unregisterEffect(effectId)
   }
   /** Get effect */
@@ -51,14 +45,13 @@ export class EffectManager {
   /** Call all effects each Tick */
   onTick(context: ICombatContext): void {
     this.effects.forEach((effect) => {
-      // Pass characterId instead of character instance
-      effect.onTick?.(this.owner.id, context)
+      effect.onTick?.(this.character.id, context)
     })
   }
   /** Clear all effects and unregister from registry */
   clear(context: ICombatContext): void {
     this.effects.forEach((effect) => {
-      effect.onRemove(this.owner.id, context)
+      effect.onRemove?.(this.character.id, context)
       context.registry.unregisterEffect(effect.id)
     })
     this.effects.clear()

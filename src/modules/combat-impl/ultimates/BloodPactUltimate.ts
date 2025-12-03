@@ -42,7 +42,6 @@ export class ExampleBloodPactUltimate implements IUltimateAbility {
     const minHpRequired = maxHp * this.hpCostPercent
     if (currentHp < minHpRequired) {
       // Cannot activate, HP too low
-      // TODO: Maybe emit a failed ultimate event
       return
     }
     // 1. Consume HP

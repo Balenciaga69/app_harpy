@@ -1,8 +1,3 @@
-// TODO: [Cross-layer dependency] Logic layer depends on Domain layer's ICharacter interface
-// Reason: DamageEvent needs to access character's attributes and status in damage chain
-// Migration note: If migrating to strongly typed language (like C#/Go), need to consider:
-//   1. Elevate ICharacter to shared contract layer
-//   2. Or let DamageEvent only hold CharacterId, query character through Context
 import type { ICharacter } from '@/modules/combat/domain/character'
 /**
  * Damage event - process data model

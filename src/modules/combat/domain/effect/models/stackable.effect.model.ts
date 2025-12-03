@@ -1,4 +1,3 @@
-import type { ICombatContext } from '../../../context'
 import type { IEffect } from './effect.model'
 /**
  * Stackable effect interface
@@ -48,10 +47,4 @@ export abstract class StackableEffect implements IStackableEffect {
   getStacks(): number {
     return this.stacks
   }
-  /** Called when effect is added */
-  abstract onApply(characterId: string, context: ICombatContext): void
-  /** Called when effect is removed */
-  abstract onRemove(characterId: string, context: ICombatContext): void
-  /** Called each Tick (optional) */
-  abstract onTick?(characterId: string, context: ICombatContext): void
 }

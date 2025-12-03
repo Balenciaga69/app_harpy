@@ -1,7 +1,7 @@
-import { nanoid } from 'nanoid'
-import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
 import type { ICombatContext } from '@/modules/combat/context'
+import { StackableEffect } from '@/modules/combat/domain/effect/models/stackable.effect.model'
 import { CharacterAccessor } from '@/modules/combat/infra/shared'
+import { nanoid } from 'nanoid'
 /**
  * Poison effect
  * - Deals fixed damage per stack per tick
@@ -19,9 +19,6 @@ export class PoisonEffect extends StackableEffect {
   }
   onApply(_characterId: string, context: ICombatContext): void {
     this.lastDecayTick = context.getCurrentTick()
-  }
-  onRemove(_characterId: string, _context: ICombatContext): void {
-    // No cleanup needed
   }
   onTick(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)

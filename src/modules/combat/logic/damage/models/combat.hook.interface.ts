@@ -1,6 +1,3 @@
-// TODO: [Cross-layer dependency] Logic layer depends on Context layer's ICombatContext
-// Reason: Hook needs to access combat context to query or modify status
-// Migration note: If migrating to strongly typed language, need to elevate ICombatContext interface to shared contract
 import type { ICombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from './damage.event.model'
 /**

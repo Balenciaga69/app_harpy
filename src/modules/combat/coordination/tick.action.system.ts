@@ -28,16 +28,13 @@ export class TickActionSystem {
     this.cooldownManager = new CooldownManager()
     this.effectProcessor = new EffectProcessor(context)
     this.tickHandler = () => this.processTick()
-    this.registerEventListeners()
+    this.context.eventBus.on('tick:start', this.tickHandler)
   }
   /** Set target selection strategy */
   setTargetSelector(selector: ITargetSelector): void {
     this.targetSelector = selector
   }
-  /** Register event listeners */
-  private registerEventListeners(): void {
-    this.context.eventBus.on('tick:start', this.tickHandler)
-  }
+
   /** Process ability logic for each tick */
   private processTick(): void {
     const currentTick = this.context.getCurrentTick()

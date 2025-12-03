@@ -19,6 +19,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - 物件關係不應形成循環依賴，依賴應該是單向的
 - 如果你要寫 markdown 請以中文為主。
 - 我們做邏輯(非UI)的內容一律以未來可能遷移語言能無痛轉移與乾淨為優先考量
+- 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
 
 ### 關於註解
 
