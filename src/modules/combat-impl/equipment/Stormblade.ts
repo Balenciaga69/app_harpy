@@ -11,7 +11,6 @@ export class Stormblade extends Equipment {
   constructor() {
     super({
       name: 'Stormblade',
-      description: 'Doubles critical chance when charged',
       rarity: 'epic',
     })
   }

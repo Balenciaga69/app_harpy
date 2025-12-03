@@ -7,7 +7,6 @@ import type { IItem, ItemRarity } from './item.interface'
 export interface RelicConfig {
   id?: string
   name: string
-  description: string
   rarity: ItemRarity
 }
 /**
@@ -23,7 +22,6 @@ export interface RelicConfig {
 export abstract class Relic implements IItem {
   readonly id: string
   readonly name: string
-  readonly description: string
   readonly rarity: ItemRarity
   readonly stackable = true
   protected effects: IEffect[] = []
@@ -31,7 +29,6 @@ export abstract class Relic implements IItem {
   constructor(config: RelicConfig) {
     this.id = config.id ?? `relic-${nanoid(6)}`
     this.name = config.name
-    this.description = config.description
     this.rarity = config.rarity
     this.initializeEffects()
   }

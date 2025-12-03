@@ -20,8 +20,6 @@ export interface IItem {
   readonly id: string
   /** Item name */
   readonly name: string
-  /** Item description */
-  readonly description: string
   /** Item rarity level */
   readonly rarity: ItemRarity
   /** Whether this item can stack (relics can, equipment cannot) */

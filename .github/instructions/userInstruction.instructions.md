@@ -32,3 +32,18 @@ Provide project context and coding guidelines that AI should follow when generat
 - Methods or function logic comments use // single-line description
 - I don't need any @param, @returns type comments, as these are redundant
 - I found that my colleague's computer does not support Chinese comments, so please use English comments throughout. However, my English level is not very good, so your English should not be too difficult, and should not exceed B2 level. I need to be able to read it and he needs to understand it.
+
+### Typescript 檔案與資料夾與物件命名規範
+
+File names:
+React Components: PascalCase (e.g., UserProfile.tsx)
+Class, Abstract Class: PascalCase (e.g., UserProfile.ts)
+Utility, Helper, Common: kebab-case (e.g., data-fetcher.ts)
+Interface, Type, Enum: Kebab-case (e.g., user-profile.ts)
+InternalNaming:
+Class: PascalCase (e.g., UserProfile)
+Interface: I + PascalCase (e.g., IUserProfile)
+Type Alias: PascalCase (e.g., UserID)
+Enum: PascalCase (e.g., UserRole)
+Constants: UPPER_SNAKE_CASE (e.g., MAX_RETRY_COUNT)
+Utility, Helper, Common Functions: camelCase (e.g., fetchData)

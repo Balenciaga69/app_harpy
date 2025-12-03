@@ -6,7 +6,6 @@ import type { AttributeType, BaseAttributeValues } from '../attribute/models/att
 import type { AttributeModifier } from '../attribute/models/attribute.modifier.model'
 import { EffectManager } from '../effect/effect.manager'
 import type { IEffect } from '../effect/models/effect.model'
-import { EquipmentManager, type EquipmentSlot } from '../item/equipment.manager'
 import type { Equipment } from '../item/models/equipment.model'
 import type { IItem } from '../item/models/item.interface'
 import type { Relic } from '../item/models/relic.model'
@@ -14,6 +13,7 @@ import { RelicManager } from '../item/relic.manager'
 import type { IUltimateAbility } from '../ultimate'
 import { UltimateManager } from '../ultimate/ultimate.manager'
 import type { ICharacter } from './interfaces/character.interface'
+import { EquipmentManager, type EquipmentSlot } from '../item'
 /**
  * Configuration parameters required for character initialization
  */

@@ -16,7 +16,6 @@ combat-impl/
 ## Purpose
 
 This module contains all concrete implementations, while the `combat` module only defines interfaces and core framework.
-
 **Benefits**:
 
 - Reduces token usage for AI code analysis

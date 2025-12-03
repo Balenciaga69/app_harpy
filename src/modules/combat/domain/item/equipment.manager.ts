@@ -2,10 +2,7 @@ import type { ICharacter } from '../character/interfaces/character.interface'
 import type { ICombatContext } from '@/modules/combat/context'
 import type { Equipment } from './models/equipment.model'
 import type { IEffect } from '../effect/models/effect.model'
-/**
- * Equipment slot types
- */
-export type EquipmentSlot = 'weapon' | 'helmet' | 'armor' | 'necklace'
+import type { EquipmentSlot } from './models'
 /**
  * EquipmentManager
  *

@@ -7,7 +7,6 @@ import type { IItem, ItemRarity } from './item.interface'
 export interface EquipmentConfig {
   id?: string
   name: string
-  description: string
   rarity: ItemRarity
 }
 /**
@@ -23,14 +22,12 @@ export interface EquipmentConfig {
 export abstract class Equipment implements IItem {
   readonly id: string
   readonly name: string
-  readonly description: string
   readonly rarity: ItemRarity
   readonly stackable = false
   protected effects: IEffect[] = []
   constructor(config: EquipmentConfig) {
     this.id = config.id ?? `equipment-${nanoid(6)}`
     this.name = config.name
-    this.description = config.description
     this.rarity = config.rarity
     this.initializeEffects()
   }

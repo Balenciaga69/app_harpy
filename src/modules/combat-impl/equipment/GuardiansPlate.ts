@@ -11,7 +11,6 @@ export class GuardiansPlate extends Equipment {
   constructor() {
     super({
       name: "Guardian's Plate",
-      description: 'Gain +20% armor when below 30% HP',
       rarity: 'rare',
     })
   }

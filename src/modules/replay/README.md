@@ -32,27 +32,23 @@ CombatEngine → CombatResult → ReplayEngine → Events → UI
 ```typescript
 import { ReplayEngine } from '@/modules/replay'
 import { CombatEngine } from '@/modules/combat/combat-engine'
-
 // 1. Run combat and get result
 const combatEngine = new CombatEngine({
   /* config */
 })
 const result = combatEngine.start()
-
 // 2. Create replay engine
 const replayEngine = new ReplayEngine({
   playbackSpeed: 1.0,
   msPerTick: 10,
   autoPlay: false,
 })
-
 // 3. Subscribe to events
 replayEngine.on('replay:tick', (event) => {
   const snapshot = replayEngine.getCurrentSnapshot()
   const logs = replayEngine.getLogsAtTick(event.tick)
   // Update UI with snapshot and logs
 })
-
 // 4. Load and play
 replayEngine.load(result)
 replayEngine.play()
@@ -62,22 +58,17 @@ replayEngine.play()
 
 ```typescript
 import { PlaybackController, TimelineController, LogQueryService } from '@/modules/replay'
-
 // Create log query service
 const logQuery = new LogQueryService(result.logs)
-
 // Create controllers with dependencies
 const playbackCtrl = new PlaybackController(replayEngine, logQuery)
 const timelineCtrl = new TimelineController(replayEngine, logQuery)
-
 // Jump to important moments
 playbackCtrl.jumpToNextUltimate()
 playbackCtrl.jumpToNextDeath()
-
 // Timeline navigation
 const progress = timelineCtrl.getCurrentProgress() // 0-1
 timelineCtrl.seekByProgress(0.5) // Jump to 50%
-
 // Get important moments for timeline markers
 const moments = timelineCtrl.getImportantMoments()
 ```
@@ -86,14 +77,11 @@ const moments = timelineCtrl.getImportantMoments()
 
 ```typescript
 import { ReplayEngine, TestTickScheduler } from '@/modules/replay'
-
 // Use test scheduler for controllable time
 const testScheduler = new TestTickScheduler()
 const replayEngine = new ReplayEngine({}, testScheduler)
-
 replayEngine.load(result)
 replayEngine.play()
-
 // Manually advance time in tests
 testScheduler.triggerTick(16) // Advance 16ms
 testScheduler.triggerTick(16) // Advance another 16ms
@@ -178,7 +166,6 @@ Controllable scheduler for testing:
 ```typescript
 const scheduler = new TestTickScheduler()
 scheduler.schedule((time) => console.log(`Tick at ${time}ms`))
-
 // Manually trigger ticks
 scheduler.triggerTick(16) // Advance 16ms
 scheduler.resetTime() // Reset to 0
@@ -306,7 +293,6 @@ replayEngine.on('replay:tick', (event) => {
 
 ```typescript
 import { runReplayTest } from '@/modules/combat-impl/examples'
-
 runReplayTest() // Runs combat and demonstrates replay
 ```
 
@@ -314,13 +300,10 @@ runReplayTest() // Runs combat and demonstrates replay
 
 ```typescript
 import { ReplayEngine, LogQueryService } from '@/modules/replay'
-
 const replayEngine = new ReplayEngine()
 const logQuery = new LogQueryService(combatResult.logs)
-
 replayEngine.on('replay:tick', (event) => {
   const snapshot = replayEngine.getCurrentSnapshot()
-
   // Update character HP bars
   snapshot?.characters.forEach((char) => {
     updateCharacterUI(char.id, {
@@ -329,7 +312,6 @@ replayEngine.on('replay:tick', (event) => {
       energy: char.currentEnergy,
     })
   })
-
   // Show floating damage numbers
   const logs = replayEngine.getLogsAtTick(event.tick)
   logs.forEach((log) => {
@@ -338,7 +320,6 @@ replayEngine.on('replay:tick', (event) => {
     }
   })
 })
-
 replayEngine.load(combatResult)
 replayEngine.play()
 ```
@@ -363,7 +344,6 @@ replayEngine.on('replay:tick', (event) => {
   const now = performance.now()
   if (now - lastRenderTime < 16) return // Limit to ~60fps
   lastRenderTime = now
-
   // Update UI
 })
 ```

@@ -6,37 +6,34 @@ import { CombatContext } from '@/modules/combat/context'
 import { Equipment } from '@/modules/combat/domain/item/models/equipment.model'
 import { Relic } from '@/modules/combat/domain/item/models/relic.model'
 import { SimpleDamageUltimate } from '../ultimates'
-// 測試裝備
+// Test equipment
 class TestWeapon extends Equipment {
   constructor() {
     super({
       name: 'Test Weapon',
-      description: 'A test weapon',
       rarity: 'common',
     })
   }
   protected initializeEffects(): void {
-    // 無效果
+    // No effects
   }
 }
 class TestArmor extends Equipment {
   constructor() {
     super({
       name: 'Test Armor',
-      description: 'A test armor',
       rarity: 'common',
     })
   }
   protected initializeEffects(): void {
-    // 無效果
+    // No effects
   }
 }
-// 測試遺物
+// Test relic
 class TestRelic extends Relic {
   constructor() {
     super({
       name: 'Test Relic',
-      description: 'A stackable test relic',
       rarity: 'common',
     })
   }
