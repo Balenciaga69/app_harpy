@@ -14,7 +14,6 @@ import { ArmorFormula, EvasionFormula, CriticalFormula } from '@/modules/combat/
 export function calculateArmorReduction(armor: number): number {
   return ArmorFormula.calculate(armor)
 }
-
 /**
  * Calculate evasion rate
  *

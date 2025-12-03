@@ -3,19 +3,6 @@ import type { CombatLogEntry } from '../../logic/logger'
 import type { CombatOutcome } from './combat-outcome'
 import type { CombatSnapshot } from './combat-snapshot'
 import type { CombatStatistics } from './combat-statistics'
-import type { CombatContext } from '../../context'
-import type { CombatConfig } from './combat-config'
-/**
- * CombatResultData
- *
- * Encapsulates all data needed to build a CombatResult, reducing constructor parameters.
- */
-export interface CombatResultData {
-  context: CombatContext
-  config: CombatConfig
-  logs: CombatLogEntry[]
-  snapshots: CombatSnapshot[]
-}
 /**
  * CombatResult
  *
@@ -25,7 +12,7 @@ export interface CombatResultData {
 export interface CombatResult {
   // The outcome of the combat (win, loss, draw, etc.)
   outcome: CombatOutcome
-  // Which side won: 'player', 'enemy', or null for no winner
+  // Which side won: 'player', 'enemy' , or null for no winner
   winner: 'player' | 'enemy' | null
   // Characters that survived the combat
   survivors: ICharacter[]
