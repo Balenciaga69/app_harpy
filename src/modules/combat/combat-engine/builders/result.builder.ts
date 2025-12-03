@@ -37,8 +37,6 @@ export class ResultBuilder {
       logs,
       snapshots,
       statistics,
-      startedAt: this.data.startTime,
-      endedAt: this.data.endTime,
     }
   }
 }

@@ -15,8 +15,6 @@ export interface CombatResultData {
   config: CombatConfig
   logs: CombatLogEntry[]
   snapshots: CombatSnapshot[]
-  startTime: number
-  endTime: number
 }
 /**
  * CombatResult
@@ -39,8 +37,4 @@ export interface CombatResult {
   snapshots: CombatSnapshot[]
   // Aggregated statistics about the combat (damage done, kills, etc.)
   statistics: CombatStatistics
-  // Tick when the combat started
-  startedAt: number
-  // Tick when the combat ended
-  endedAt: number
 }
