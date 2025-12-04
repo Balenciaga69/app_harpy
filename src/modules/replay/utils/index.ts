@@ -1,2 +1,5 @@
 // Export all replay utilities
-export * from './ReplayEventEmitter'
+// Utils module is deprecated
+// All functionality has been moved to other modules:
+// - Event emission: see infra/IReplayEventEmitter
+// - Time scheduling: see infra/ITickScheduler

@@ -25,3 +25,44 @@
 - replay,combat 的桶輸出與連動修改 確實要做 這個也要納入等等調整內容
 - replay 我們來依賴 mitt 而不是自己實作事件系統 這樣比較好維護
   上述都照著你想法處理吧!
+  ✅ 已完成 (2025/12/04)
+
+---
+
+## 重構完成總結
+
+### 完成項目
+
+1. ✅ 建立 IReplayEventEmitter 接口和 MittReplayEventEmitter 實現
+2. ✅ 建立 ReplayDataAdapter 隔離 Combat 模組依賴
+3. ✅ 建立 PlaybackStateMachine 管理播放狀態轉換
+4. ✅ 重構 ReplayEngine 為協調者（從 250+ 行簡化到 200 行）
+5. ✅ 建立 combat/index.ts 統一導出公共 API
+6. ✅ 更新 replay/index.ts 導出新架構的類型和類別
+7. ✅ 刪除舊的 ReplayEventEmitter.ts
+
+### 架構改進
+
+- **職責分離**: ReplayEngine 從 6 個職責減少到 1 個（協調）
+- **依賴隔離**: Combat 依賴集中到 ReplayDataAdapter
+- **事件系統**: 使用 mitt 並提供類型安全的封裝
+- **狀態管理**: PlaybackStateMachine 獨立管理狀態轉換
+- **模組化**: 清晰的桶輸出，隱藏內部實現
+
+### 新檔案結構
+
+```
+src/modules/
+├── combat/
+│   └── index.ts (新增桶輸出)
+└── replay/
+    ├── index.ts (更新桶輸出)
+    ├── ReplayEngine.ts (重構為協調者)
+    ├── adapters/
+    │   └── ReplayDataAdapter.ts (新增)
+    ├── core/
+    │   └── PlaybackStateMachine.ts (新增)
+    └── infra/
+        ├── replay-event-emitter.ts (新增接口)
+        └── MittReplayEventEmitter.ts (新增實現)
+```

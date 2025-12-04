@@ -1,153 +1,166 @@
-import type { CombatResult, CombatSnapshot } from '../combat/combat-engine/models'
-import type { CombatLogEntry } from '../combat/logic/logger'
+import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../combat'
 import {
   DEFAULT_REPLAY_CONFIG,
   createInitialReplayState,
-  ReplayError,
   type ReplayConfig,
   type ReplayState,
   type ReplayEventType,
   type ReplayEvent,
 } from './models'
-import { ReplayEventEmitter } from './utils'
 import { LogQueryService } from './services'
-import type { ITickScheduler } from './infra'
-import { BrowserTickScheduler } from './infra'
+import type { ITickScheduler, IReplayEventEmitter } from './infra'
+import { BrowserTickScheduler, MittReplayEventEmitter } from './infra'
 import type { IReplayEngine } from './replay.engine'
+import { ReplayDataAdapter } from './adapters'
+import { PlaybackStateMachine } from './core'
 /**
- * ReplayEngine: Core replay system engine
+ * ReplayEngine: Coordinator for replay system
  *
  * Design concept:
- * - Consumes CombatResult data and provides timeline-based playback
- * - Maintains independent state machine (loaded → playing → paused → ended)
- * - Emits events at each tick for UI to consume
- * - Supports speed control, seeking, and looping
+ * - Thin coordination layer that delegates to specialized components
+ * - Does NOT contain complex business logic (delegated to adapter/state machine)
+ * - Focuses on orchestrating time progression and event emission
+ *
+ * Architecture:
+ * - ReplayDataAdapter: Isolates Combat module dependencies
+ * - PlaybackStateMachine: Manages playback state transitions
+ * - IReplayEventEmitter: Type-safe event emission (mitt-based)
+ * - ITickScheduler: Time progression abstraction (browser/test)
+ * - LogQueryService: Advanced log query capabilities
  *
  * Key responsibilities:
- * - Load and validate combat result data
- * - Manage playback state (play/pause/stop/seek)
- * - Emit tick events with current snapshot and logs
- * - Coordinate with ITickScheduler for time progression
+ * - Load combat data (delegate to adapter)
+ * - Coordinate playback control (delegate to state machine)
+ * - Emit events at appropriate times
+ * - Advance time and calculate tick progression
+ * - Provide unified API for UI consumption
  */
 export class ReplayEngine implements IReplayEngine {
-  private result: CombatResult | null = null
-  private state: ReplayState
-  private config: ReplayConfig
-  private eventEmitter: ReplayEventEmitter
+  private dataAdapter: ReplayDataAdapter
+  private stateMachine: PlaybackStateMachine
+  private eventEmitter: IReplayEventEmitter
   private tickScheduler: ITickScheduler
   private logQueryService: LogQueryService
+  private config: ReplayConfig
   private lastFrameTime: number = 0
   constructor(config?: Partial<ReplayConfig>, tickScheduler?: ITickScheduler) {
     this.config = { ...DEFAULT_REPLAY_CONFIG, ...config }
-    this.state = createInitialReplayState()
-    this.eventEmitter = new ReplayEventEmitter()
+    this.dataAdapter = new ReplayDataAdapter()
+    this.stateMachine = new PlaybackStateMachine(createInitialReplayState())
+    this.eventEmitter = new MittReplayEventEmitter()
     this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
     this.logQueryService = new LogQueryService([])
-    this.state.speed = this.config.playbackSpeed
+    // Set initial speed from config
+    this.stateMachine.setSpeed(this.config.playbackSpeed)
   }
+  // === Lifecycle methods ===
   /** Load combat result data */
   public load(result: CombatResult): void {
-    if (!result?.snapshots || !result?.logs) {
-      throw new ReplayError('Invalid CombatResult: missing snapshots or logs', 'INVALID_DATA', {
-        hasSnapshots: !!result?.snapshots,
-        hasLogs: !!result?.logs,
-      })
-    }
-    this.result = result
-    this.state = createInitialReplayState()
-    this.state.totalTicks = result.totalTicks
-    this.state.isLoaded = true
-    this.state.speed = this.config.playbackSpeed
-    // Update log query service with new logs
-    this.logQueryService.updateLogs(result.logs)
-    this.eventEmitter.emit('replay:loaded', 0, { totalTicks: result.totalTicks })
+    // Delegate data loading to adapter
+    this.dataAdapter.load(result)
+    // Update state machine
+    this.stateMachine.markLoaded(this.dataAdapter.getTotalTicks())
+    // Update log query service
+    this.logQueryService.updateLogs(this.dataAdapter.getAllLogs())
+    // Emit loaded event
+    this.eventEmitter.emit('replay:loaded', 0, { totalTicks: this.dataAdapter.getTotalTicks() })
+    // Auto-play if configured
     if (this.config.autoPlay) {
       this.play()
     }
   }
+  /** Cleanup and release resources */
+  public dispose(): void {
+    this.tickScheduler.cancel()
+    this.dataAdapter.clear()
+    this.eventEmitter.clear()
+    this.lastFrameTime = 0
+  }
+  // === Playback control ===
   /** Start playback */
   public play(): void {
-    if (!this.state.isLoaded) {
-      throw new ReplayError('Cannot play: replay data not loaded', 'NOT_LOADED')
-    }
-    if (this.state.isPlaying) {
-      return // Already playing
-    }
-    // If ended, restart from beginning
-    if (this.state.hasEnded) {
-      this.state.currentTick = 0
-      this.state.hasEnded = false
-    }
-    this.state.isPlaying = true
-    this.state.isPaused = false
-    this.lastFrameTime = performance.now()
-    const eventType = this.state.currentTick === 0 ? 'replay:started' : 'replay:resumed'
-    this.eventEmitter.emit(eventType, this.state.currentTick, { fromTick: this.state.currentTick })
+    const wasEnded = this.stateMachine.hasEnded()
+    const currentTick = this.stateMachine.getCurrentTick()
+    // Delegate state change to state machine
+    this.stateMachine.play()
+    // Emit appropriate event
+    const eventType = wasEnded || currentTick === 0 ? 'replay:started' : 'replay:resumed'
+    this.eventEmitter.emit(eventType, this.stateMachine.getCurrentTick(), {
+      fromTick: this.stateMachine.getCurrentTick(),
+    })
+    // Start time progression
+    this.lastFrameTime = 0
     this.scheduleNextFrame()
   }
   /** Pause playback */
   public pause(): void {
-    if (!this.state.isPlaying) {
-      return
+    if (!this.stateMachine.isPlaying()) {
+      return // Already paused
     }
-    this.state.isPlaying = false
-    this.state.isPaused = true
+    // Delegate state change to state machine
+    this.stateMachine.pause()
+    // Stop time progression
     this.tickScheduler.cancel()
-    this.eventEmitter.emit('replay:paused', this.state.currentTick, { atTick: this.state.currentTick })
+    // Emit event
+    this.eventEmitter.emit('replay:paused', this.stateMachine.getCurrentTick(), {
+      atTick: this.stateMachine.getCurrentTick(),
+    })
   }
   /** Stop and reset to start */
   public stop(): void {
-    this.state.isPlaying = false
-    this.state.isPaused = false
-    this.state.currentTick = 0
-    this.state.hasEnded = false
+    // Delegate state change to state machine
+    this.stateMachine.stop()
+    // Stop time progression
     this.tickScheduler.cancel()
+    this.lastFrameTime = 0
+    // Emit event
     this.eventEmitter.emit('replay:stopped', 0, {})
   }
   /** Seek to specific tick */
   public seek(tick: number): void {
-    if (!this.state.isLoaded) {
-      throw new ReplayError('Cannot seek: replay data not loaded', 'NOT_LOADED')
-    }
-    const clampedTick = Math.max(0, Math.min(tick, this.state.totalTicks))
-    const fromTick = this.state.currentTick
-    this.state.currentTick = clampedTick
-    this.state.hasEnded = clampedTick >= this.state.totalTicks
-    this.eventEmitter.emit('replay:seeked', clampedTick, { fromTick, toTick: clampedTick })
+    const fromTick = this.stateMachine.getCurrentTick()
+    // Delegate seek to state machine
+    this.stateMachine.seek(tick)
+    // Emit events
+    this.eventEmitter.emit('replay:seeked', this.stateMachine.getCurrentTick(), {
+      fromTick,
+      toTick: this.stateMachine.getCurrentTick(),
+    })
     this.emitTickEvent()
   }
   /** Change playback speed */
   public setSpeed(speed: number): void {
-    if (speed <= 0) {
-      throw new ReplayError('Playback speed must be positive', 'INVALID_SPEED', { speed })
-    }
-    const oldSpeed = this.state.speed
-    this.state.speed = speed
-    this.eventEmitter.emit('replay:speedChanged', this.state.currentTick, { oldSpeed, newSpeed: speed })
+    const oldSpeed = this.stateMachine.getState().speed
+    // Delegate speed change to state machine
+    this.stateMachine.setSpeed(speed)
+    // Emit event
+    this.eventEmitter.emit('replay:speedChanged', this.stateMachine.getCurrentTick(), {
+      oldSpeed,
+      newSpeed: speed,
+    })
   }
+  // === State queries ===
   /** Get current snapshot at current tick */
   public getCurrentSnapshot(): CombatSnapshot | null {
-    if (!this.result) return null
-    // Find closest snapshot at or before current tick
-    const snapshots = this.result.snapshots
-    let closestSnapshot: CombatSnapshot | null = null
-    for (const snapshot of snapshots) {
-      if (snapshot.tick <= this.state.currentTick) {
-        closestSnapshot = snapshot
-      } else {
-        break // Snapshots are ordered, no need to continue
-      }
-    }
-    return closestSnapshot
+    return this.dataAdapter.getSnapshotAtTick(this.stateMachine.getCurrentTick())
   }
   /** Get logs within tick range */
   public getLogsInRange(startTick: number, endTick: number): CombatLogEntry[] {
-    return this.logQueryService.getLogsInRange(startTick, endTick)
+    return this.dataAdapter.getLogsInRange(startTick, endTick)
   }
   /** Get logs at specific tick */
   public getLogsAtTick(tick: number): CombatLogEntry[] {
-    return this.logQueryService.getLogsAtTick(tick)
+    return this.dataAdapter.getLogsAtTick(tick)
   }
+  /** Get current state (read-only) */
+  public getState(): Readonly<ReplayState> {
+    return this.stateMachine.getState()
+  }
+  /** Get config (read-only) */
+  public getConfig(): Readonly<ReplayConfig> {
+    return { ...this.config }
+  }
+  // === Event subscription ===
   /** Subscribe to replay events */
   public on(eventType: ReplayEventType, handler: (event: ReplayEvent) => void): void {
     this.eventEmitter.on(eventType, handler)
@@ -156,55 +169,53 @@ export class ReplayEngine implements IReplayEngine {
   public off(eventType: ReplayEventType, handler: (event: ReplayEvent) => void): void {
     this.eventEmitter.off(eventType, handler)
   }
-  /** Get current state (read-only) */
-  public getState(): Readonly<ReplayState> {
-    return { ...this.state }
-  }
-  /** Get config (read-only) */
-  public getConfig(): Readonly<ReplayConfig> {
-    return { ...this.config }
-  }
-  /** Cleanup and release resources */
-  public dispose(): void {
-    this.stop()
-    this.eventEmitter.clear()
-    this.result = null
-    this.state = createInitialReplayState()
-  }
   // === Private methods ===
   /** Advance tick based on elapsed time */
   private tick(currentTime: number): void {
+    // Initialize last frame time on first tick
+    if (this.lastFrameTime === 0) {
+      this.lastFrameTime = currentTime
+    }
     const deltaTime = currentTime - this.lastFrameTime
-    this.lastFrameTime = currentTime
-    // Calculate how many ticks should advance based on speed and time
-    const ticksToAdvance = Math.floor((deltaTime * this.state.speed) / this.config.msPerTick)
+    const speed = this.stateMachine.getState().speed
+    const ticksToAdvance = Math.floor((deltaTime * speed) / this.config.msPerTick)
     if (ticksToAdvance > 0) {
-      this.state.currentTick += ticksToAdvance
-      // Check if reached end
-      if (this.state.currentTick >= this.state.totalTicks) {
-        this.state.currentTick = this.state.totalTicks
-        this.state.hasEnded = true
-        this.state.isPlaying = false
-        this.eventEmitter.emit('replay:ended', this.state.currentTick, { totalTicks: this.state.totalTicks })
-        if (this.config.loop) {
-          this.state.currentTick = 0
-          this.state.hasEnded = false
-          this.play()
-        }
-        return
-      }
+      // Delegate tick advancement to state machine
+      this.stateMachine.advanceTick(ticksToAdvance)
+      this.lastFrameTime = currentTime
+      // Emit tick event
       this.emitTickEvent()
     }
-    if (this.state.isPlaying) {
+    // Check if playback ended
+    if (this.stateMachine.hasEnded()) {
+      this.handlePlaybackEnd()
+      return
+    }
+    // Continue if still playing
+    if (this.stateMachine.isPlaying()) {
       this.scheduleNextFrame()
     }
   }
   /** Emit tick event with current state */
   private emitTickEvent(): void {
-    this.eventEmitter.emit('replay:tick', this.state.currentTick, {
-      currentTick: this.state.currentTick,
-      deltaTime: this.config.msPerTick / this.state.speed,
+    this.eventEmitter.emit('replay:tick', this.stateMachine.getCurrentTick(), {
+      currentTick: this.stateMachine.getCurrentTick(),
+      deltaTime: this.config.msPerTick / this.stateMachine.getState().speed,
     })
+  }
+  /** Handle playback end (loop or stop) */
+  private handlePlaybackEnd(): void {
+    this.eventEmitter.emit('replay:ended', this.stateMachine.getCurrentTick(), {
+      totalTicks: this.dataAdapter.getTotalTicks(),
+    })
+    if (this.config.loop) {
+      // Restart from beginning
+      this.stateMachine.seek(0)
+      this.play()
+    } else {
+      // Stop scheduler
+      this.tickScheduler.cancel()
+    }
   }
   /** Schedule next animation frame */
   private scheduleNextFrame(): void {
