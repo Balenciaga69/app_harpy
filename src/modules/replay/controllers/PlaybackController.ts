@@ -35,6 +35,7 @@ export class PlaybackController {
     this.engine.seek(state.totalTicks)
   }
   /** Jump to next ultimate cast */
+  // TODO: 我不需要這個
   public jumpToNextUltimate(): void {
     const state = this.engine.getState()
     const ultimateTicks = this.logQuery.getUltimateTicks()
@@ -44,6 +45,7 @@ export class PlaybackController {
     }
   }
   /** Jump to previous ultimate cast */
+  // TODO: 我不需要這個
   public jumpToPrevUltimate(): void {
     const state = this.engine.getState()
     const ultimateTicks = this.logQuery.getUltimateTicks()
@@ -54,6 +56,7 @@ export class PlaybackController {
   }
   /** Jump to next death event */
   public jumpToNextDeath(): void {
+    // TODO: 我不需要這個
     const state = this.engine.getState()
     const deathTicks = this.logQuery.getDeathTicks()
     const nextTick = deathTicks.find((tick) => tick > state.currentTick)
@@ -62,6 +65,7 @@ export class PlaybackController {
     }
   }
   /** Jump to previous death event */
+  // TODO: 我不需要這個
   public jumpToPrevDeath(): void {
     const state = this.engine.getState()
     const deathTicks = this.logQuery.getDeathTicks()

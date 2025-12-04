@@ -4,6 +4,8 @@ applyTo: '**'
 
 Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
 
+### 關於代碼
+
 - 乾淨代碼
 - 低耦合
 - 高內聚
@@ -18,8 +20,8 @@ Provide project context and coding guidelines that AI should follow when generat
 - 代碼就是最好的文檔
 - 物件關係不應形成循環依賴，依賴應該是單向的
 - 如果你要寫 markdown 請以中文為主。
-- 我們做邏輯(非UI)的內容一律以未來可能遷移語言能無痛轉移與乾淨為優先考量
 - 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
+- 一個檔案裡面應該只會包含一個類別或是一個主要功能的程式碼。(Type,Interface 也是如此) 當我搜尋檔案名可以很有效率的找到我想要的東西。
 
 ### 關於註解
 
@@ -48,3 +50,20 @@ Type Alias: PascalCase (e.g., UserID)
 Enum: PascalCase (e.g., UserRole)
 Constants: UPPER_SNAKE_CASE (e.g., MAX_RETRY_COUNT)
 Utility, Helper, Common Functions: camelCase (e.g., fetchData)
+
+### 本專案限定內容
+
+- 我們做邏輯(非UI)的內容一律以未來邏輯內容能被 CSharp Python Go 等語言無痛轉移為優先考量
+- 再遷移時候不會煩惱依賴某套件、或者耦合某個框架
+- 我們使用了模組化架構來做專案結構
+- 我們使用了 TS 套件包括:
+- 純 TS 套件
+  - mitt
+  - chance
+  - seedrandom
+  - nanoid
+- 與瀏覽器或 React 互動的 TS 套件
+  - heroui/react
+  - tailwindcss
+  - localforage
+  - zustand
