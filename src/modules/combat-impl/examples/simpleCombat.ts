@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { CombatEngine } from '@/modules/combat/combat-engine/combat.engine'
+import { CombatEngine } from '@/modules/combat/combat-engine/CombatEngine'
 import { Character } from '@/modules/combat/domain/character/Character'
 import { createDefaultAttributes } from '@/modules/combat/domain/attribute'
 import { ThunderStrikeUltimate, BloodPactUltimate } from '../ultimates'

@@ -11,6 +11,7 @@ import type { ICharacter } from '../domain/character/models/character'
  * Holds global resources for combat: event bus, RNG, resource registry, entity list, and current tick.
  * Provides read/write access for systems to share state and coordinate combat progress.
  */
+//TODO: 上下文與資料庫混合 在 CombatContext 的 addEntity 方法中，不僅將實體儲存到自己的 entities Map 中，還主動判斷並將 ICharacter 註冊到 registry 中 。
 export class CombatContext implements ICombatContext {
   public readonly eventBus: EventBus
   public readonly rng: CombatRandomGenerator

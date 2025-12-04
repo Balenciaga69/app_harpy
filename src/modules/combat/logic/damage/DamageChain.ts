@@ -18,6 +18,7 @@ import { HitCheckStep } from './steps/HitCheckStep'
 export class DamageChain {
   private steps: IDamageStep[]
   private context: ICombatContext
+  //TODO: DamageChain 使用了**「責任鏈模式」（Chain of Responsibility）來處理傷害計算流程，這本是個優雅的設計模式。然而，它將鏈的結構硬編碼在建構子中，嚴重違反了開放/封閉原則（OCP）**如果未來需要增加一個新的傷害步驟（如「護盾計算」），或是調整某個步驟的順序，我們就必須修改 DamageChain.ts 這個核心類別。。
   constructor(context: ICombatContext) {
     this.context = context
     // Define complete damage calculation process

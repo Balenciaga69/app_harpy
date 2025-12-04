@@ -1,2 +1,2 @@
-export * from './combat.engine'
+export * from './CombatEngine'
 export * from './models'

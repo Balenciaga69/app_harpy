@@ -38,9 +38,9 @@
 ### v0.5
 
 - 引入資源 Registry 作為中央資源管理系統，並將介面改為 unknown 型別以避免循環依賴。
-- 移除無用的 character id、entity id；改以資源 ID 並透過 Registry 查詢實體，使物件結構更精簡。
+- 移除無用的 character id、entity id；改以資源 ID 並透過 Registry 查詢實體。
 - 為大招、裝備、聖物新增專屬管理器（比照效果管理器），皆透過 Registry 解耦角色依賴。
-- 將 TickActionSystem 拆成更小的子系統，降低複雜度並提升可維護性。
+- 將 TickActionSystem 拆成更小的子系統。
 - 調整為「每 Tick 發事件」與「每 Tick 處理事件」的雙元件模式，並將效果、大招全面物件化、註冊化、管理化。導入更細緻的事件觸發與戰鬥流程鉤子，每個鉤子負責當前階段的專屬事件處理。
 
 ## _2025/12/03_
@@ -51,5 +51,6 @@
 
 ### v0.5.1:
 
-- 屬性與效果模塊代碼拆分細緻化，同時重新定義語意表達，提升可讀性與可維護性。
+- 屬性與效果模塊代碼拆分細緻化，同時重新定義語意表達。
 - 重新 rename folder,file names 與 internal naming，使其更符合專案命名規範與語意。
+- TickActionSystem 添加 Phase 拼裝概念，讓觸發流程可以被拆分成更細的階段。
