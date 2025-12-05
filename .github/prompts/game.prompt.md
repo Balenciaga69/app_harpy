@@ -80,3 +80,4 @@ Provide project context and coding guidelines that AI should follow when generat
 - InventoryModule: 管理玩家背包
 - ShopModule: 生成商店邏輯
 - PersistentStorageModule: 存與讀檔案
+  CombatEngine → Replay → GameManager → EncounterModule → Creature/Equipment/Reward → Shop/Inventory → PersistentStorage → EventModule
