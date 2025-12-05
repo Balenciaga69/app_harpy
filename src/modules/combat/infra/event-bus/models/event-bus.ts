@@ -1,5 +1,4 @@
 import type { CombatEventMap } from './combat-event-map'
-
 export interface IEventBus {
   /* Subscribe to event */
   on<K extends keyof CombatEventMap>(event: K, handler: (payload: CombatEventMap[K]) => void): void

@@ -2,12 +2,9 @@
 
 ## 很急
 
-- 當我們使用了大量 DI 與 介面之後開始發現constructor 參數過多
-  - 我想要超過五個建構參數就開始考慮使用 Facade or Builder.
-- 介面(需要被實作豐富類的)名稱通通 I開頭，儘管不符合我的最初想法，但為了語言轉換方便。這是必須的
-- 新增限制:禁止使用全局單例(順便告訴我原因)
-- 新增限制:每個目錄最多 10 個檔案
-- 我發現 `character.ts` 裡面有一堆很醜的箭頭建構有些箭頭函數很醜的 DI這個也要改，類似的也要改
+- (討論)Effect, Item,Ultimate 等東西都會調用 ICharacter 的方法。是否該改成 character ID 而非物件本身? 你來TradeOff一下。
+- CombatContext 物件 我同意包含 EventBus,Rng,Registry.
+- CombatContext 內的 Entity,Tick這些東西與相關操作如果要搬移 應該移動到?要建立新系統嗎?
 
 ## 需要討論(暫時先不提及)
 

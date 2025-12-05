@@ -8,12 +8,6 @@ import type { IResourceRegistry } from './resource-registry'
  * In-Memory Resource Registry
  *
  * Simple Map-based implementation for single-player combat.
- * All lookups are O(1) with minimal overhead.
- *
- * Lifecycle:
- * - Created once per combat session
- * - Cleared after combat ends
- * - Resources registered during combat setup
  */
 export class InMemoryResourceRegistry implements IResourceRegistry {
   private characters = new Map<string, ICharacter>()

@@ -20,7 +20,9 @@
 
 ## 戰鬥上下文
 
-- `CombatContext`：全局共享狀態：所有角色、RNG、EventBus、ResourceRegistry
+- `CombatContext`：基礎設施容器，持有 EventBus、RNG、ResourceRegistry
+- `BattleState`：領域狀態管理，持有 entities 集合與 tick 計數器
+- 職責分離：CombatContext 組合 BattleState，將狀態操作委派給 BattleState
 
 ## 事件系統
 
@@ -61,6 +63,7 @@
 ## 角色核心
 
 - `Character`：屬性、效果、裝備、聖遺物、大招的 Owner
+- `CharacterBuilder`：簡化角色建構流程，支援模板與屬性覆寫
 
 ## 屬性系統
 
@@ -119,6 +122,11 @@
 ## Builder
 
 - `ResultBuilder` 把原始資料組裝成最終 CombatResult
+- `CharacterBuilder` 簡化角色建構流程，支援模板與屬性覆寫
+
+## Composition
+
+- `CombatContext` 組合 `BattleState`，職責分離：基礎設施 vs 領域狀態
 
 ## Command（部分）
 

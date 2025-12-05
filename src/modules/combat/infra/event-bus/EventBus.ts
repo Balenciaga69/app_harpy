@@ -2,7 +2,6 @@
 import mitt from 'mitt'
 import type { CombatEventMap } from './models/combat-event-map'
 import type { IEventBus } from './models/event-bus'
-
 export class EventBus implements IEventBus {
   // mitt instance for event management
   private emitter = mitt<CombatEventMap>()
