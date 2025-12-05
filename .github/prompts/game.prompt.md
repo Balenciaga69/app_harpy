@@ -66,3 +66,17 @@ Provide project context and coding guidelines that AI should follow when generat
 ## 死亡與重試
 
 - 玩家有 n 次死亡機會，失敗將回到戰鬥前，並且商店老闆會給你一個抽獎盲盒作為補償並刷新商店內容。
+
+## 模組分割
+
+- CombatEngine: 戰鬥運算回傳結果與日誌、武器效果等等運算都集中在此
+- Replay: 基於日誌與快照驅動的日誌控制邏輯
+- GameManager: 管理從第 1 層到第 n 層的完整流程，處理死亡、存檔、場景切換。
+- Encounter: 生成敵人、商店、偶遇事件等等與路線三選一等等
+- EquipmentModule: 生成裝備
+- RewardModule: 負責生成獎勵物品、Reward, Loot 等等
+- EventModule: 生成偶遇事件
+- CreatureModule: 生成戰鬥敵人、角色等等
+- InventoryModule: 管理玩家背包
+- ShopModule: 生成商店邏輯
+- PersistentStorageModule: 存與讀檔案

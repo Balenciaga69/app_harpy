@@ -1,8 +1,0 @@
-export { AttributeManager } from './AttributeManager.ts'
-export { AttributeCalculator } from './AttributeCalculator.ts'
-export type { IAttributeOwner } from './models/attribute-owner.ts'
-export type { IAttributeCalculator } from './models/attribute-calculator'
-export type { AttributeType, BaseAttributeValues } from './models/attribute-core'
-export { createDefaultAttributes } from './models/attribute-core'
-export type { AttributeModifier, AttributeModifierEx, ModifierPriorityType } from './models/attribute-modifier.ts'
-export { ModifierPriority } from './models/attribute-modifier.ts'
