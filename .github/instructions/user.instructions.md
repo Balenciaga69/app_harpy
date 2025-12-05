@@ -23,6 +23,11 @@ Provide project context and coding guidelines that AI should follow when generat
 - 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
 - 一個檔案裡面應該只會包含一個類別或是一個主要功能的程式碼。(Type,Interface 也是如此) 當我搜尋檔案名可以很有效率的找到我想要的東西。
 
+### 如果這是 OOP
+
+- 建構子不要有過多參數，若有就要用設計模式簡化。
+- 禁止使用全局單例
+
 ### 關於註解
 
 - When you refactor or modify code, be sure to update related comments to maintain consistency

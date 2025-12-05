@@ -1,25 +1,29 @@
----
-applyTo: '**'
----
+# Combat 模組
 
-Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
+## 很急
 
-## Combat 模組目前有些事情還沒做:(但也不急著做)
+- 當我們使用了大量 DI 與 介面之後開始發現constructor 參數過多
+  - 我想要超過五個建構參數就開始考慮使用 Facade or Builder.
+- 介面(需要被實作豐富類的)名稱通通 I開頭，儘管不符合我的最初想法，但為了語言轉換方便。這是必須的
+- 新增限制:禁止使用全局單例(順便告訴我原因)
+- 新增限制:每個目錄最多 10 個檔案
+- 我發現 `character.ts` 裡面有一堆很醜的箭頭建構有些箭頭函數很醜的 DI這個也要改，類似的也要改
 
-### 很急
+## 需要討論(暫時先不提及)
 
-- 回放系統(UI)，但這個很麻煩，可能很考驗 UI/UX 不是我擅長的
+- 我目前代碼轉不可變純函數特性，TradeOffs下，假設轉換成本為0 因為是 AI 重構。
+- 探討不可變純函數的遊戲管理機制用的語法以及特性
+- 狀態分散在 Context + 各 Manager → 改用「純資料狀態 + 純函數系統」是否可行?
 
-### 不急
+## 不急
 
-- 單元測試
-- Try...Catch 錯誤處理
-- 記憶體管理與效能優化(正式版前要處理)
-- 先假定我未來會導入 DB 與 快取 與全面實踐 DIP 可單元測試，為前提來思考
+- 引入領域錯誤 CombatError Extends Errors
+- 導入 immer.js 實現不可變
 
-#### AI 給出的隱憂
+## 未來統一實作
 
-- CombatContext 作為一切的門戶 EventBus, RandomProvider, 隊伍資訊)。這雖然簡化了依賴注入，但也使其成為一個超大物件 (God Object)，未來若系統擴展，這部分可能難以維護。但不符合單一職責原則 (SRP)。
-- Hook/Effect 介面的多重職責 IEffect 介面同時也是 ICombatHook。效果 (數據) 和鉤子 (行為) 被合併在同一個實體中。雖然方便，但在工程上，數據 (Effect) 和行為 (Hook) 通常應保持分離，以符合 SRP 原則。
-- 回放與遊戲邏輯耦合 ReplayEngine 似乎直接使用瀏覽器的 requestAnimationFrame (animationFrameId) 進行時間控制。這將回放系統與特定運行環境 (如 Web) 耦合，缺乏抽象層。缺乏解耦。更正規的做法是將 Tick 速率抽象出來，不依賴瀏覽器 API。
-- (這邊我會考慮重構)在 PoisonEffect.ts 中，使用 ticksPassed / 100 來計算秒數。這假設了固定 100 Tick/秒，是一種簡單粗暴的遊戲時間管理方式。適用於單一幀率的模擬。但若要支持可變幀率，則需要更複雜的時間同步邏輯。
+- 單元測試 (Jest)
+- 錯誤處理 (Try...Catch)
+  - 對每個模組評估是否該做 Exception 或者 純粹回傳 Result 型別
+  - 這一塊有爭議，有人說戰鬥模組不應該有拋例外狀況
+- 記憶體管理與效能優化

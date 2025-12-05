@@ -66,11 +66,3 @@ Provide project context and coding guidelines that AI should follow when generat
 ## 死亡與重試
 
 - 玩家有 n 次死亡機會，失敗將回到戰鬥前，並且商店老闆會給你一個抽獎盲盒作為補償並刷新商店內容。
-
-## (combat模組)分層架構設計
-
-- 分層依賴：infra, context, domain, logic, coordination, combat-engine。
-- 下層不依賴上層，保持低耦合、高內聚，易維護。
-- 遊戲邏輯被分成 戰鬥與戰鬥外兩大部分。各自可以獨立運作，可以假設另一塊模組已經完成，無縫接軌。
-- 遊戲邏輯不應依賴 UI 與 任何程式語言與框架。
-- UI 基於遊戲邏輯驅動
