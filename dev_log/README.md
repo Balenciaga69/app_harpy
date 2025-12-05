@@ -76,3 +76,7 @@
 - 新增 CharacterBuilder 讓建立角色更方便
 - 將 BattleState 從 CombatContext 中拆分出來，讓系統對戰鬥過程的數據追蹤更集中、更單純。
 - 預計在 v0.4 從物件導向設計改為資料驅動的不可變純函數版本，讓狀態溯源、複雜邏輯交互更好追蹤。
+
+### v0.3.2:(combat)
+
+- 新增 Error Handling 與 更詳細的事件日誌
