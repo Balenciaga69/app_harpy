@@ -3,28 +3,28 @@ import { ReplayError } from '../models'
 /**
  * PlaybackStateMachine
  *
- * State machine for managing replay playback states and transitions.
- * Enforces valid state transitions and provides immutable state access.
+ * 回放狀態機，管理重播的狀態與切換。
+ * 保證狀態合法、提供不可變狀態查詢。
  *
- * Purpose:
- * - Centralize playback state management logic
- * - Enforce valid state transitions (prevent invalid operations)
- * - Separate state management from time progression logic
- * - Provide clear API for state queries and mutations
+ * 主要用途：
+ * - 集中管理回放狀態
+ * - 保證狀態切換合法
+ * - 狀態管理與時間推進分離
+ * - 提供明確 API 查詢/操作
  *
- * Responsibilities:
- * - Manage state transitions (play/pause/stop/seek)
- * - Validate state changes
- * - Track playback position (currentTick)
- * - Calculate derived states (hasEnded)
+ * 主要職責：
+ * - 管理 play/pause/stop/seek 狀態切換
+ * - 驗證狀態變化
+ * - 記錄目前 tick
+ * - 計算 hasEnded 等衍生狀態
  *
- * State transitions:
- * - not loaded → loaded (via markLoaded)
- * - loaded → playing (via play)
- * - playing → paused (via pause)
- * - playing → stopped (via stop)
- * - any → seeking (via seek)
- * - playing → ended (when currentTick >= totalTicks)
+ * 狀態轉換：
+ * - 未載入 → 已載入 (markLoaded)
+ * - 已載入 → 播放中 (play)
+ * - 播放中 → 暫停 (pause)
+ * - 播放中 → 停止 (stop)
+ * - 任意 → 跳轉 (seek)
+ * - 播放中 → 結束 (currentTick >= totalTicks)
  */
 export class PlaybackStateMachine {
   private state: ReplayState
@@ -80,12 +80,11 @@ export class PlaybackStateMachine {
       this.state.currentTick = newTick
     }
   }
-  /** Set playback speed */
+  /** Set playback speed (clamped to 0.5x - 3x) */
   public setSpeed(speed: number): void {
-    if (speed <= 0 || speed > 10) {
-      throw new ReplayError('Invalid speed: must be between 0 and 10', 'INVALID_SPEED', { speed })
-    }
-    this.state.speed = speed
+    // Clamp to valid range instead of throwing
+    const clampedSpeed = Math.max(0.5, Math.min(3, speed))
+    this.state.speed = clampedSpeed
   }
   /** Mark data as loaded with total ticks */
   public markLoaded(totalTicks: number): void {

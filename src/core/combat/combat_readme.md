@@ -87,7 +87,7 @@
 
 ## 領域錯誤
 
-- `CombatError`：TODO: AI 請你填寫
+- `CombatError`：拋出戰鬥核心專屬錯誤
 
 # 三、使用的主要設計模式與軟體實踐
 

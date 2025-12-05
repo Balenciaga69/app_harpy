@@ -1,8 +1,8 @@
 /**
  * ReplayState
  *
- * Represents current state of the replay engine.
- * Used internally to manage playback status and progress.
+ * 回放引擎目前狀態。
+ * 用於管理播放進度與狀態。
  */
 export interface ReplayState {
   /** Current tick position in the replay timeline */
@@ -21,7 +21,7 @@ export interface ReplayState {
   isLoaded: boolean
 }
 /**
- * Create initial replay state
+ * 建立初始回放狀態
  */
 export function createInitialReplayState(): ReplayState {
   return {

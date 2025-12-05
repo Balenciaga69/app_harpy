@@ -2,13 +2,13 @@ import type { ReplayEvent, ReplayEventType } from '../../models'
 /**
  * IEventBus
  *
- * Event emitter abstraction for replay system.
- * Decouples replay engine from specific event library implementation.
+ * 回放系統事件總線抽象介面。
+ * 隔離 replay engine 與具體事件庫實作。
  *
- * Purpose:
- * - Provide type-safe event emission and subscription
- * - Enable dependency inversion (replay depends on abstraction, not concrete implementation)
- * - Allow easy testing with mock event emitter
+ * 主要用途：
+ * - 型別安全的事件發送與訂閱
+ * - 依賴反轉（只依賴抽象）
+ * - 測試方便，可用 mock emitter
  */
 export interface IEventBus {
   /** Emit event with payload */

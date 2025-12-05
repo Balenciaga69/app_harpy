@@ -1,8 +1,8 @@
 /**
- * Replay event types
+ * 回放事件類型
  *
- * All possible events emitted by the replay engine.
- * UI can subscribe to these events to react to playback changes.
+ * 回放引擎可能發出的所有事件。
+ * UI 可訂閱這些事件以響應播放狀態。
  */
 export type ReplayEventType =
   | 'replay:loaded' // Replay data loaded and ready
@@ -17,7 +17,7 @@ export type ReplayEventType =
 /**
  * ReplayEvent
  *
- * Event object emitted by replay engine with type and optional payload.
+ * 回放引擎發出的事件物件，包含類型與可選資料。
  */
 export interface ReplayEvent<T = unknown> {
   /** Type of event */
@@ -30,7 +30,7 @@ export interface ReplayEvent<T = unknown> {
   timestamp: number
 }
 /**
- * Type-safe event payloads for specific events
+ * 各事件型別對應的型別安全 payload
  */
 export interface ReplayEventPayloads {
   'replay:loaded': { totalTicks: number }

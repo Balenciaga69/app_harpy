@@ -1,12 +1,12 @@
 /**
- * Replay error codes for categorizing errors
+ * 回放錯誤碼類型
  */
 export type ReplayErrorCode = 'NOT_LOADED' | 'INVALID_DATA' | 'INVALID_TICK' | 'INVALID_SPEED' | 'INVALID_STATE'
 /**
  * ReplayError
  *
- * Custom error class for replay system.
- * Provides better error context and debugging information.
+ * 回放系統專用錯誤類別。
+ * 提供更好的錯誤上下文與除錯資訊。
  */
 export class ReplayError extends Error {
   public readonly code: ReplayErrorCode

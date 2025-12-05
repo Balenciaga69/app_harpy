@@ -2,25 +2,25 @@ import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat'
 /**
  * ReplayDataAdapter
  *
- * Adapter for converting Combat module data to Replay module format.
- * Isolates Combat module dependencies from the rest of Replay system.
+ * 戰鬥資料轉換器，將 Combat 模組資料轉為 Replay 模組格式。
+ * 隔離 Combat 依賴，方便 Replay 系統維護。
  *
- * Purpose:
- * - Centralize Combat module dependencies in one place
- * - Provide optimized snapshot lookup with binary search
- * - Validate combat result data integrity on load
- * - Abstract combat data access for replay engine
+ * 主要用途：
+ * - 集中管理 Combat 依賴
+ * - 快速查找 snapshot（二分搜尋）
+ * - 載入時驗證資料完整性
+ * - 提供 replay engine 查詢介面
  *
- * Responsibilities:
- * - Load and validate CombatResult
- * - Build snapshot index for O(log n) lookup
- * - Provide snapshot query at specific tick
- * - Provide log query in tick ranges
+ * 主要職責：
+ * - 載入並驗證 CombatResult
+ * - 建立 snapshot 索引 O(log n)
+ * - 查詢指定 tick 的 snapshot
+ * - 查詢 tick 範圍內的 log
  *
- * Implementation notes:
- * - Snapshots are sorted by tick (guaranteed by combat engine)
- * - Uses binary search for efficient snapshot lookup
- * - Immutable data (never modifies combat result)
+ * 實作說明：
+ * - snapshot 依 tick 排序（CombatEngine 保證）
+ * - 查找用二分搜尋
+ * - 資料不可變（不修改原始 combat result）
  */
 export class ReplayDataAdapter {
   private snapshots: CombatSnapshot[] = []

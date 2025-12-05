@@ -4,18 +4,18 @@ import type { ReplayEvent, ReplayEventType } from '../../models'
 /**
  * EventBus
  *
- * Mitt-based implementation of IEventBus.
- * Wraps mitt library to provide type-safe replay event emission.
+ * 基於 Mitt 的 IEventBus 實作。
+ * 封裝 mitt 函式庫，提供型別安全的 replay 事件發送。
  *
- * Purpose:
- * - Hide mitt implementation details from replay engine
- * - Provide adapter for mitt's event system to match our interface
- * - Allow future migration to other event libraries if needed
+ * 目的：
+ * - 隱藏 mitt 的實作細節，讓 replay 引擎不需關心底層
+ * - 提供 mitt 事件系統的介面轉接，符合我們的接口
+ * - 未來如需更換事件函式庫，可輕鬆遷移
  *
- * Implementation notes:
- * - Uses mitt's generic type parameter for type safety
- * - Converts tick + payload to ReplayEvent format
- * - Only this file knows about mitt's existence
+ * 實作說明：
+ * - 使用 mitt 的泛型參數確保型別安全
+ * - 將 tick 和 payload 轉換為 ReplayEvent 格式
+ * - 只有此檔案會引用 mitt
  */
 export class EventBus implements IEventBus {
   private emitter: Emitter<Record<ReplayEventType, ReplayEvent>>

@@ -1,11 +1,11 @@
 /**
- * ReplayConfig
+ * ReplayConfig (v0.4)
  *
- * Configuration options for replay engine behavior.
- * Controls playback speed, looping, timing, and visual features.
+ * 回放引擎設定。
+ * 控制播放速度、循環、tick 間隔等。
  */
 export interface ReplayConfig {
-  /** Playback speed multiplier (0.5x slow, 1x normal, 2x fast, 4x very fast) */
+  /** Playback speed multiplier (0.5x - 3x, default: 1x) */
   playbackSpeed: number
   /** Whether to loop the replay when reaching the end */
   loop: boolean
@@ -13,8 +13,6 @@ export interface ReplayConfig {
   msPerTick: number
   /** Whether to auto-play immediately after loading */
   autoPlay: boolean
-  /** Enable smooth interpolation between snapshots for animations */
-  enableInterpolation: boolean
 }
 /**
  * Default replay configuration
@@ -24,5 +22,4 @@ export const DEFAULT_REPLAY_CONFIG: ReplayConfig = {
   loop: false,
   msPerTick: 10,
   autoPlay: false,
-  enableInterpolation: true,
 }

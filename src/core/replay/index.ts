@@ -1,24 +1,25 @@
 // === Core Engine ===
 export { ReplayEngine } from './replay-engine'
 export type { IReplayEngine } from './replay-engine'
-// === Controllers (High-level API) ===
-export { PlaybackController } from './controllers/PlaybackController'
-export type { TimelineMoment } from './controllers/time-line-moment'
-export { TimelineController } from './controllers/TimelineController'
 // === Models (Public API) ===
 export { DEFAULT_REPLAY_CONFIG, ReplayError } from './models'
 export type { ReplayConfig, ReplayEvent, ReplayEventPayloads, ReplayEventType, ReplayState } from './models'
 // === Infrastructure (For DI and testing) ===
 export { BrowserTickScheduler, EventBus, TestTickScheduler } from './infra'
 export type { IEventBus, ITickScheduler, TickCallback } from './infra'
-// === Services (Advanced usage) ===
-export { LogQueryService } from './services'
 /**
- * Internal modules are NOT exported:
- * - adapters/ - Internal Combat data adapter
- * - core/ - Internal state machine
- * - utils/ - Deprecated utilities
+ * Replay Module v0.4 (Simplified)
  *
- * These are implementation details and should not be accessed directly.
- * All necessary functionality is exposed through ReplayEngine and controllers.
+ * Core features:
+ * - load(result): Load combat result data
+ * - play() / pause() / stop(): Control playback
+ * - seek(tick): Jump to specific tick
+ * - setSpeed(speed): Change playback speed (0.5x - 3x)
+ * - getState(): Get current playback state
+ * - on/off: Subscribe to replay events (mitt-based)
+ *
+ * [REMOVED in v0.4] The following were deprecated:
+ * - TimelineController: Use engine.seek() and getState() directly
+ * - LogQueryService: Use engine.getLogsAtTick() directly
+ * - TimelineMoment type: Implement markers in UI layer
  */

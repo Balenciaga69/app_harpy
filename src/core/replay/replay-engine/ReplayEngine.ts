@@ -7,40 +7,32 @@ import {
   type ReplayEventType,
   type ReplayEvent,
 } from '../models'
-import { LogQueryService } from '../services'
 import type { ITickScheduler, IEventBus } from '../infra'
 import { BrowserTickScheduler, EventBus } from '../infra'
 import type { IReplayEngine } from './replay.engine'
 import { ReplayDataAdapter } from '../adapters'
 import { PlaybackStateMachine } from '../core'
 /**
- * ReplayEngine: Coordinator for replay system
+ * ReplayEngine：重播系統協調器（簡化版 v0.4）
  *
- * Design concept:
- * - Thin coordination layer that delegates to specialized components
- * - Does NOT contain complex business logic (delegated to adapter/state machine)
- * - Focuses on orchestrating time progression and event emission
+ * 最小 API，方便 UI 整合：
+ * - load(result)：載入戰鬥結果資料
+ * - play() / pause() / stop()：控制播放
+ * - seek(tick)：跳到指定 tick
+ * - setSpeed(speed)：調整播放速度（0.5x - 3x）
+ * - getState()：取得目前播放狀態
+ * - on/off：訂閱重播事件
  *
- * Architecture:
- * - ReplayDataAdapter: Isolates Combat module dependencies
- * - PlaybackStateMachine: Manages playback state transitions
- * - IEventBus: Type-safe event emission (mitt-based)
- * - ITickScheduler: Time progression abstraction (browser/test)
- * - LogQueryService: Advanced log query capabilities
- *
- * Key responsibilities:
- * - Load combat data (delegate to adapter)
- * - Coordinate playback control (delegate to state machine)
- * - Emit events at appropriate times
- * - Advance time and calculate tick progression
- * - Provide unified API for UI consumption
+ * 【v0.4 已移除】以下功能為簡化而移除：
+ * - LogQueryService 整合（直接用 getLogsAtTick/getLogsInRange）
+ * - enableInterpolation 設定選項
+ * - 進階日誌查詢功能
  */
 export class ReplayEngine implements IReplayEngine {
   private dataAdapter: ReplayDataAdapter
   private stateMachine: PlaybackStateMachine
   private eventEmitter: IEventBus
   private tickScheduler: ITickScheduler
-  private logQueryService: LogQueryService
   private config: ReplayConfig
   private lastFrameTime: number = 0
   constructor(config?: Partial<ReplayConfig>, tickScheduler?: ITickScheduler) {
@@ -49,9 +41,8 @@ export class ReplayEngine implements IReplayEngine {
     this.stateMachine = new PlaybackStateMachine(createInitialReplayState())
     this.eventEmitter = new EventBus()
     this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
-    this.logQueryService = new LogQueryService([])
-    // Set initial speed from config
-    this.stateMachine.setSpeed(this.config.playbackSpeed)
+    // Set initial speed from config (clamped to 0.5-3x)
+    this.stateMachine.setSpeed(this.clampSpeed(this.config.playbackSpeed))
   }
   // === Lifecycle methods ===
   /** Load combat result data */
@@ -60,8 +51,6 @@ export class ReplayEngine implements IReplayEngine {
     this.dataAdapter.load(result)
     // Update state machine
     this.stateMachine.markLoaded(this.dataAdapter.getTotalTicks())
-    // Update log query service
-    this.logQueryService.updateLogs(this.dataAdapter.getAllLogs())
     // Emit loaded event
     this.eventEmitter.emit('replay:loaded', 0, { totalTicks: this.dataAdapter.getTotalTicks() })
     // Auto-play if configured
@@ -119,25 +108,39 @@ export class ReplayEngine implements IReplayEngine {
   /** Seek to specific tick */
   public seek(tick: number): void {
     const fromTick = this.stateMachine.getCurrentTick()
+    // Cancel any scheduled frame to avoid large delta on next tick
+    this.tickScheduler.cancel()
     // Delegate seek to state machine
     this.stateMachine.seek(tick)
+    // Reset time base so next tick calculation starts fresh
+    this.lastFrameTime = 0
     // Emit events
     this.eventEmitter.emit('replay:seeked', this.stateMachine.getCurrentTick(), {
       fromTick,
       toTick: this.stateMachine.getCurrentTick(),
     })
+    // Emit immediate tick so UI can render the new position
     this.emitTickEvent()
+    // If still playing, schedule next frame to continue playback
+    if (this.stateMachine.isPlaying()) {
+      this.scheduleNextFrame()
+    }
   }
-  /** Change playback speed */
+  /** Change playback speed (clamped to 0.5x - 3x) */
   public setSpeed(speed: number): void {
     const oldSpeed = this.stateMachine.getState().speed
+    const clampedSpeed = this.clampSpeed(speed)
     // Delegate speed change to state machine
-    this.stateMachine.setSpeed(speed)
+    this.stateMachine.setSpeed(clampedSpeed)
     // Emit event
     this.eventEmitter.emit('replay:speedChanged', this.stateMachine.getCurrentTick(), {
       oldSpeed,
-      newSpeed: speed,
+      newSpeed: clampedSpeed,
     })
+  }
+  /** Clamp speed to valid range (0.5x - 3x) */
+  private clampSpeed(speed: number): number {
+    return Math.max(0.5, Math.min(3, speed))
   }
   // === State queries ===
   /** Get current snapshot at current tick */

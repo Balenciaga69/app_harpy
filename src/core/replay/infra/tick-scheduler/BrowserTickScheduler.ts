@@ -2,8 +2,8 @@ import type { ITickScheduler, TickCallback } from './tick-scheduler'
 /**
  * BrowserTickScheduler
  *
- * Browser-based tick scheduler using requestAnimationFrame.
- * Provides smooth frame-synchronized playback in browser environments.
+ * 基於瀏覽器的 tick 排程器，使用 requestAnimationFrame。
+ * 在瀏覽器環境下提供平滑且與畫面同步的播放。
  */
 export class BrowserTickScheduler implements ITickScheduler {
   private animationFrameId: number | null = null
