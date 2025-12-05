@@ -1,15 +1,15 @@
-import { EventLogger } from '../logic/logger'
-import { SnapshotCollector } from '../logic/snapshot'
 import { CombatContext } from '../context'
-import type { CombatConfig, CombatResult, CombatResultData } from './models'
-import { ResultBuilder } from './builders'
-import { TickerDriver } from '../logic/tick'
-import { CombatTiming, CombatSystem } from '../infra/config'
 import { TickActionSystem } from '../coordination'
+import { CombatSystem, CombatTiming } from '../infra/config'
+import { CombatError, CombatFailureCode } from '../infra/errors'
+import { EventBus } from '../infra/event-bus'
 import { InMemoryResourceRegistry } from '../infra/resource-registry'
 import type { IResourceRegistry } from '../infra/resource-registry/resource-registry'
-import { EventBus } from '../infra/event-bus'
-import { CombatError, CombatFailureCode } from '../infra/errors'
+import { EventLogger } from '../logic/logger'
+import { SnapshotCollector } from '../logic/snapshot'
+import { TickerDriver } from '../logic/tick'
+import { ResultBuilder } from './builders'
+import type { CombatConfig, CombatResult, CombatResultData } from './models'
 
 /**
  * Combat Engine

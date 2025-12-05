@@ -29,10 +29,10 @@ export class ReplayDataAdapter {
   /** Load and validate combat result data */
   public load(result: CombatResult): void {
     if (!result?.snapshots || !result?.logs) {
-      throw new Error('Invalid combat result: missing snapshots or logs')
+      throw new Error('Invalid combat result: missing snapshots or logs') // TODO: 改用 domain error
     }
     if (result.snapshots.length === 0) {
-      throw new Error('Invalid combat result: snapshots array is empty')
+      throw new Error('Invalid combat result: snapshots array is empty') // TODO: 改用 domain error
     }
     this.snapshots = result.snapshots
     this.logs = result.logs
@@ -43,6 +43,7 @@ export class ReplayDataAdapter {
     if (this.snapshots.length === 0) {
       return null
     }
+    // TODO: 考慮直接用 log(1) 的方式儲存快照索引
     // Binary search for closest snapshot at or before tick
     let left = 0
     let right = this.snapshots.length - 1

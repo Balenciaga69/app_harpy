@@ -1,5 +1,5 @@
 import type { CombatSnapshot } from '../../combat-engine/models'
-import type { CombatContext } from '@/core/combat/context'
+import type { CombatContext } from '@/core/combat'
 import type { ICharacter } from '../../domain/character'
 import { isCharacter } from '../../infra/shared'
 import { CombatTiming } from '../../infra/config'
