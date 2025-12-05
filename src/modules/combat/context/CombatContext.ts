@@ -1,4 +1,4 @@
-import { EventBus } from '../infra/event-bus'
+import type { IEventBus } from '../infra/event-bus'
 import { CombatRandomGenerator } from '../infra/shared/utils/CombatRandomGenerator'
 import type { IEntity } from '../infra/shared/interfaces/entity.interface'
 import { isCharacter } from '../infra/shared/utils/TypeGuardUtil'
@@ -13,13 +13,13 @@ import type { ICharacter } from '../domain/character/models/character'
  */
 //TODO: 上下文與資料庫混合 在 CombatContext 的 addEntity 方法中，不僅將實體儲存到自己的 entities Map 中，還主動判斷並將 ICharacter 註冊到 registry 中 。
 export class CombatContext implements ICombatContext {
-  public readonly eventBus: EventBus
+  public readonly eventBus: IEventBus
   public readonly rng: CombatRandomGenerator
   public readonly registry: IResourceRegistry
   private currentTick: number = 0
   private entities: Map<string, IEntity> = new Map()
-  constructor(registry: IResourceRegistry, seed?: string | number) {
-    this.eventBus = new EventBus()
+  constructor(eventBus: IEventBus, registry: IResourceRegistry, seed?: string | number) {
+    this.eventBus = eventBus
     this.rng = new CombatRandomGenerator(seed)
     this.registry = registry
   }

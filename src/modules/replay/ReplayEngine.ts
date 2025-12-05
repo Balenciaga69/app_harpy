@@ -8,8 +8,8 @@ import {
   type ReplayEvent,
 } from './models'
 import { LogQueryService } from './services'
-import type { ITickScheduler, IReplayEventEmitter } from './infra'
-import { BrowserTickScheduler, MittReplayEventEmitter } from './infra'
+import type { ITickScheduler, IEventBus } from './infra'
+import { BrowserTickScheduler, EventBus } from './infra'
 import type { IReplayEngine } from './replay.engine'
 import { ReplayDataAdapter } from './adapters'
 import { PlaybackStateMachine } from './core'
@@ -24,7 +24,7 @@ import { PlaybackStateMachine } from './core'
  * Architecture:
  * - ReplayDataAdapter: Isolates Combat module dependencies
  * - PlaybackStateMachine: Manages playback state transitions
- * - IReplayEventEmitter: Type-safe event emission (mitt-based)
+ * - IEventBus: Type-safe event emission (mitt-based)
  * - ITickScheduler: Time progression abstraction (browser/test)
  * - LogQueryService: Advanced log query capabilities
  *
@@ -38,7 +38,7 @@ import { PlaybackStateMachine } from './core'
 export class ReplayEngine implements IReplayEngine {
   private dataAdapter: ReplayDataAdapter
   private stateMachine: PlaybackStateMachine
-  private eventEmitter: IReplayEventEmitter
+  private eventEmitter: IEventBus
   private tickScheduler: ITickScheduler
   private logQueryService: LogQueryService
   private config: ReplayConfig
@@ -47,7 +47,7 @@ export class ReplayEngine implements IReplayEngine {
     this.config = { ...DEFAULT_REPLAY_CONFIG, ...config }
     this.dataAdapter = new ReplayDataAdapter()
     this.stateMachine = new PlaybackStateMachine(createInitialReplayState())
-    this.eventEmitter = new MittReplayEventEmitter()
+    this.eventEmitter = new EventBus()
     this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
     this.logQueryService = new LogQueryService([])
     // Set initial speed from config

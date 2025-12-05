@@ -1,6 +1,6 @@
 import type { ReplayEvent, ReplayEventType } from '../../models'
 /**
- * IReplayEventEmitter
+ * IEventBus
  *
  * Event emitter abstraction for replay system.
  * Decouples replay engine from specific event library implementation.
@@ -10,7 +10,7 @@ import type { ReplayEvent, ReplayEventType } from '../../models'
  * - Enable dependency inversion (replay depends on abstraction, not concrete implementation)
  * - Allow easy testing with mock event emitter
  */
-export interface IReplayEventEmitter {
+export interface IEventBus {
   /** Emit event with payload */
   emit(eventType: ReplayEventType, tick: number, payload?: unknown): void
   /** Subscribe to event type */

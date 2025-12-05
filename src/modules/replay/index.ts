@@ -9,8 +9,8 @@ export { TimelineController } from './controllers/TimelineController'
 export { DEFAULT_REPLAY_CONFIG, ReplayError } from './models'
 export type { ReplayConfig, ReplayEvent, ReplayEventPayloads, ReplayEventType, ReplayState } from './models'
 // === Infrastructure (For DI and testing) ===
-export { BrowserTickScheduler, MittReplayEventEmitter, TestTickScheduler } from './infra'
-export type { IReplayEventEmitter, ITickScheduler, TickCallback } from './infra'
+export { BrowserTickScheduler, EventBus, TestTickScheduler } from './infra'
+export type { IEventBus, ITickScheduler, TickCallback } from './infra'
 // === Services (Advanced usage) ===
 export { LogQueryService } from './services'
 /**

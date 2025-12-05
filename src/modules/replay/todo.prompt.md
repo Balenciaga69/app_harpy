@@ -33,7 +33,7 @@
 
 ### 完成項目
 
-1. ✅ 建立 IReplayEventEmitter 接口和 MittReplayEventEmitter 實現
+1. ✅ 建立 IEventBus 接口和 EventBus 實現
 2. ✅ 建立 ReplayDataAdapter 隔離 Combat 模組依賴
 3. ✅ 建立 PlaybackStateMachine 管理播放狀態轉換
 4. ✅ 重構 ReplayEngine 為協調者（從 250+ 行簡化到 200 行）
@@ -64,5 +64,5 @@ src/modules/
     │   └── PlaybackStateMachine.ts (新增)
     └── infra/
         ├── replay-event-emitter.ts (新增接口)
-        └── MittReplayEventEmitter.ts (新增實現)
+        └── EventBus.ts (新增實現)
 ```

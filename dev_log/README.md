@@ -51,11 +51,16 @@
 
 ### v0.5.1:
 
-- 屬性與效果模塊代碼拆分細緻化，同時重新定義語意表達。
+- combat 屬性與效果模塊代碼拆分細緻化，同時重新定義語意表達。
 - 重新 rename folder,file names 與 internal naming，使其更符合專案命名規範與語意。
 - TickActionSystem 添加 Phase 拼裝概念，讓觸發流程可以被拆分成更細的階段。
 
 ## _2025/12/04_
 
-- 繼續構思與修正 Replay 模組
+- 繼續構思與修正 Replay 模組並對 AI 生成的代碼進行 Code Review
 - 上班太累，懶得更深入思考新的業務邏輯。做些簡單的事情。
+
+### v0.5.1:
+
+- 定義好 replay 模組內部架構 model-service-controller
+- 對模組 export 的代碼附加更嚴格限制

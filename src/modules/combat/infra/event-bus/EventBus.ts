@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
 import type { CombatEventMap } from './models/combat-event-map'
-/**
- * EventBus
- *
- * Provides event subscription, publishing, and listener management for combat systems. Uses mitt for event handling.
- */
-export class EventBus {
+import type { IEventBus } from './models/event-bus'
+
+export class EventBus implements IEventBus {
   // mitt instance for event management
   private emitter = mitt<CombatEventMap>()
   /** Subscribe to event */
@@ -27,6 +24,6 @@ export class EventBus {
   }
   /** Clear all listeners (for cleanup after combat ends) */
   public clear(): void {
-    this.emitter = mitt<CombatEventMap>() // mitt has no built-in clear method, so create new instance to reset
+    this.emitter.all.clear()
   }
 }

@@ -1,4 +1,4 @@
-import type { EventBus } from '../../infra/event-bus'
+import type { IEventBus } from '../../infra/event-bus'
 import type { CombatLogEntry } from './combat-log-entry'
 /**
  * EventLogger
@@ -8,9 +8,9 @@ import type { CombatLogEntry } from './combat-log-entry'
  */
 export class EventLogger {
   private logs: CombatLogEntry[] = []
-  private eventBus: EventBus
+  private eventBus: IEventBus
   private currentTick: number = 0
-  constructor(eventBus: EventBus) {
+  constructor(eventBus: IEventBus) {
     this.eventBus = eventBus
     this.setupListeners()
   }

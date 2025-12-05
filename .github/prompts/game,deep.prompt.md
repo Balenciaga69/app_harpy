@@ -212,7 +212,7 @@ replay.play()
 為什麼 Replay 導出多個類別？
 
 - 與 Combat 不同，Replay 是「框架」而非「引擎」
-- 需要依賴注入（`ITickScheduler`、`IReplayEventEmitter`）
+- 需要依賴注入（`ITickScheduler`、`IEventBus`）
 - 需要類型安全（`ReplayEventType`、`ReplayEvent`）
 - 需要高階控制器（`PlaybackController`、`TimelineController`）
 
