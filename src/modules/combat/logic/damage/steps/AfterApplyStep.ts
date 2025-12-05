@@ -1,7 +1,7 @@
 import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '../models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
-import { collectHooks } from './utils/collect-hooks'
+import { collectHooks } from './collect-hooks'
 /**
  * AfterApplyStep: Post-damage application step for cleanup and effects.
  */

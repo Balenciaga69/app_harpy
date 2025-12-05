@@ -1,60 +1,60 @@
 import type { CombatContext } from '../context'
-import type { ICharacter } from '../domain/character'
-import { isCharacter } from '../infra/shared'
 import { FirstAliveSelector } from './target-select-strategies/FirstAliveSelector'
 import type { ITargetSelector } from './target-select-strategies/target-selector'
-import { AttackExecutor } from './utils/AttackExecutor'
-import { CooldownManager } from './utils/CooldownManager'
-import { EffectProcessor } from './utils/EffectProcessor'
-import { EnergyManager } from './utils/EnergyManager'
+import type { ITickPhase } from './phases/tick-phase'
+import { EffectTickPhase } from './phases/EffectTickPhase'
+import { EnergyRegenPhase } from './phases/EnergyRegenPhase'
+import { AttackExecutionPhase } from './phases/AttackExecutionPhase'
 /**
- * TickActionSystem
+ * Tick Action System
  *
- * Coordinates character attack logic per tick. Manages cooldown, energy, ultimate release, and target selection
- * using pluggable strategies. Emits attack and ultimate events.
+ * Orchestrates tick processing using a pipeline of independent phases.
+ * Each phase handles a specific responsibility (effects, energy, attacks).
+ * Phases can be added, replaced, or removed for extensibility.
  */
 export class TickActionSystem {
   private context: CombatContext
-  private targetSelector: ITargetSelector
-  private energyManager: EnergyManager
-  private attackExecutor: AttackExecutor
-  private cooldownManager: CooldownManager
-  private effectProcessor: EffectProcessor
+  private phases: ITickPhase[] = []
   private tickHandler: () => void
   constructor(context: CombatContext, targetSelector?: ITargetSelector) {
     this.context = context
-    this.targetSelector = targetSelector ?? new FirstAliveSelector()
-    this.energyManager = new EnergyManager()
-    this.attackExecutor = new AttackExecutor(context, this.targetSelector, this.energyManager)
-    this.cooldownManager = new CooldownManager()
-    this.effectProcessor = new EffectProcessor(context)
+    const selector = targetSelector ?? new FirstAliveSelector()
+    // Assemble default execution pipeline
+    this.phases = [new EffectTickPhase(context), new EnergyRegenPhase(), new AttackExecutionPhase(context, selector)]
     this.tickHandler = () => this.processTick()
     this.context.eventBus.on('tick:start', this.tickHandler)
   }
-  /** Set target selection strategy */
-  setTargetSelector(selector: ITargetSelector): void {
-    this.targetSelector = selector
-  }
-  /** Process ability logic for each tick */
+  /** Process all phases sequentially for the current tick */
   private processTick(): void {
-    const currentTick = this.context.getCurrentTick()
-    const allEntities = this.context.getAllEntities()
-    this.effectProcessor.processEffects()
-    allEntities.forEach((entity) => {
-      if (!isCharacter(entity)) return
-      const character = entity as ICharacter
-      if (character.isDead) return
-      this.energyManager.processEnergyRegen(character, currentTick)
-      const cooldown = character.getAttribute('attackCooldown')
-      if (this.cooldownManager.canAttack(character.id, currentTick, cooldown, () => this.context.rng.next())) {
-        this.attackExecutor.performAttack(character, currentTick)
-        this.cooldownManager.updateCooldown(character.id, currentTick, cooldown)
-      }
-    })
+    const tick = this.context.getCurrentTick()
+    for (const phase of this.phases) {
+      phase.execute(this.context, tick)
+    }
   }
-  /** Clean up system (remove event listeners) */
+  /** Add a custom phase to the pipeline */
+  addPhase(phase: ITickPhase): void {
+    this.phases.push(phase)
+  }
+  /** Replace a phase by name with a new implementation */
+  replacePhase(name: string, newPhase: ITickPhase): void {
+    const index = this.phases.findIndex((p) => p.name === name)
+    if (index !== -1) {
+      this.phases[index]?.dispose?.()
+      this.phases[index] = newPhase
+    }
+  }
+  /** Remove a phase by name */
+  removePhase(name: string): void {
+    const index = this.phases.findIndex((p) => p.name === name)
+    if (index !== -1) {
+      this.phases[index]?.dispose?.()
+      this.phases.splice(index, 1)
+    }
+  }
+  /** Clean up system resources */
   public dispose(): void {
     this.context.eventBus.off('tick:start', this.tickHandler)
-    this.cooldownManager.clear()
+    this.phases.forEach((phase) => phase.dispose?.())
+    this.phases = []
   }
 }

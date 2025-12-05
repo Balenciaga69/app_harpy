@@ -10,7 +10,6 @@ import type { BaseAttributeValues } from '../../combat/domain/attribute'
  * Features: High HP, medium armor, high attack damage, low attack speed, low evasion
  * Positioning: Front-line tank output
  */
-
 export function createWarriorTemplate(): BaseAttributeValues {
   return createDefaultAttributes({
     maxHp: 1200,

@@ -1,4 +1,4 @@
-import type { IReplayEngine } from '../replay.engine'
+import type { IReplayEngine } from '../replay-engine/replay.engine'
 import type { LogQueryService } from '../services'
 /**
  * PlaybackController: High-level playback control

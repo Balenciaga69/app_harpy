@@ -1,16 +1,6 @@
-import type { IReplayEngine } from '../replay.engine'
+import type { IReplayEngine } from '../replay-engine/replay.engine'
 import type { LogQueryService } from '../services'
-/**
- * Important moment on the timeline
- */
-export interface TimelineMoment {
-  /** Tick when this moment occurs */
-  tick: number
-  /** Type of moment (ultimate, death, critical, etc) */
-  type: string
-  /** Optional label for display */
-  label?: string
-}
+import type { TimelineMoment } from './time-line-moment'
 /**
  * TimelineController
  *

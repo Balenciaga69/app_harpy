@@ -1,11 +1,13 @@
 import type { ICombatContext } from '@/modules/combat/context'
 import type { IResourceRegistry } from '@/modules/combat/infra/resource-registry'
 import type { CharacterSnapshot } from '@/modules/combat/infra/shared'
+import { nanoid } from 'nanoid'
 import { AttributeCalculator, AttributeManager } from '../attribute/index.ts'
 import type { AttributeType, BaseAttributeValues } from '../attribute/models/attribute-core.ts'
 import type { AttributeModifier } from '../attribute/models/attribute-modifier.ts'
 import { EffectManager } from '../effect/EffectManager.ts'
 import type { IEffect } from '../effect/models/effect.ts'
+import { EquipmentManager, type EquipmentSlot } from '../item/index.ts'
 import type { Equipment } from '../item/models/equipment.ts'
 import type { IItem } from '../item/models/item.ts'
 import type { Relic } from '../item/models/relic.ts'
@@ -13,7 +15,6 @@ import { RelicManager } from '../item/RelicManager.ts'
 import type { IUltimateAbility } from '../ultimate/index.ts'
 import { UltimateManager } from '../ultimate/UltimateManager.ts'
 import type { ICharacter } from './models/character.ts'
-import { EquipmentManager, type EquipmentSlot } from '../item/index.ts'
 /**
  * Configuration parameters required for character initialization
  */
@@ -41,9 +42,7 @@ export class Character implements ICharacter {
   readonly name: string
   readonly team: ICharacter['team']
   isDead: boolean = false
-  /** Reference to resource registry (injected dependency) */
   private readonly registry: IResourceRegistry
-  // Managers (SRP: each manager handles one responsibility)
   private readonly attributeManager: AttributeManager
   private readonly attributeCalculator: AttributeCalculator
   private readonly effectManager: EffectManager
@@ -51,20 +50,18 @@ export class Character implements ICharacter {
   private readonly relicManager: RelicManager
   private readonly ultimateManager: UltimateManager
   private _pendingUltimate?: IUltimateAbility
-  /** Initialize character, inject registry and set up subsystems */
   constructor(config: CharacterConfig, context?: ICombatContext) {
-    // Use name as ID for simplicity (can be changed to nanoid if needed)
-    this.id = config.name
+    this.id = nanoid()
     this.team = config.team
     this.name = config.name
     this.registry = config.registry
     // Initialize attribute system
     this.attributeManager = new AttributeManager(config.baseAttributes)
     this.attributeCalculator = new AttributeCalculator(this.attributeManager)
-    // Initialize managers
+    // Initialize managers with registry
     this.effectManager = new EffectManager(this)
-    this.equipmentManager = new EquipmentManager(this, () => this.registry)
-    this.relicManager = new RelicManager(this, () => this.registry)
+    this.equipmentManager = new EquipmentManager(this, this.registry)
+    this.relicManager = new RelicManager(this, this.registry)
     this.ultimateManager = new UltimateManager()
     // Register ultimate if provided (only if context is available)
     if (config.ultimate && context) {

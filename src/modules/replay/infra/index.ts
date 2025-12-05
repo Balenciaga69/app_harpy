@@ -1,3 +1,5 @@
-export type { ITickScheduler, TickCallback } from './tick-scheduler'
-export { BrowserTickScheduler } from './BrowserTickScheduler'
-export { TestTickScheduler } from './TestTickScheduler'
+export type { IEventBus } from './event-bus/event-bus'
+export { EventBus } from './event-bus/EventBus'
+export { BrowserTickScheduler } from './tick-scheduler/BrowserTickScheduler'
+export { TestTickScheduler } from './tick-scheduler/TestTickScheduler'
+export type { ITickScheduler, TickCallback } from './tick-scheduler/tick-scheduler'

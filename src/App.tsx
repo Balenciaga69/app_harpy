@@ -2,7 +2,6 @@
 import { StrictMode } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './index.css'
-import { runReplayTest } from './modules/combat-impl'
 function App() {
   return (
     <StrictMode>
@@ -19,6 +18,5 @@ function App() {
 /* eslint-disable no-console */
 // Test replay system
 console.info('=== Testing Replay System ===')
-runReplayTest()
 /* eslint-enable no-console */
 export default App

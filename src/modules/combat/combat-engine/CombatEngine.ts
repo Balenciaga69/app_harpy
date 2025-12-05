@@ -7,12 +7,14 @@ import { TickerDriver } from '../logic/tick'
 import { CombatTiming, CombatSystem } from '../infra/config'
 import { TickActionSystem } from '../coordination'
 import { InMemoryResourceRegistry } from '../infra/resource-registry'
+import type { IResourceRegistry } from '../infra/resource-registry/resource-registry'
+import { EventBus } from '../infra/event-bus'
 /**
- * CombatEngine
+ * Combat Engine
  *
- * Orchestrates a combat run by initializing the core subsystems (TickerDriver, TickActionSystem,
- * EventLogger, SnapshotCollector), driving the tick loop and returning a CombatResult via ResultBuilder.
- * Responsible for subsystem lifecycle (initialize / dispose) and combat flow control.
+ * Orchestrates combat execution by coordinating subsystems (TickerDriver, TickActionSystem,
+ * EventLogger, SnapshotCollector). Manages combat lifecycle and produces final CombatResult.
+ * Supports dependency injection for resource registry to enable testing and future persistence layers.
  */
 export class CombatEngine {
   private context: CombatContext
@@ -21,21 +23,22 @@ export class CombatEngine {
   private eventLogger!: EventLogger
   private snapshotCollector!: SnapshotCollector
   private config: CombatConfig
-  constructor(config: CombatConfig) {
+  constructor(config: CombatConfig, registry?: IResourceRegistry) {
     this.config = {
       maxTicks: CombatTiming.MAX_TICKS,
       snapshotInterval: CombatTiming.DEFAULT_SNAPSHOT_INTERVAL,
       enableLogging: CombatSystem.DEFAULT_ENABLE_LOGGING,
       ...config,
     }
-    // Initialize resource registry before context
-    const registry = new InMemoryResourceRegistry()
-    this.context = new CombatContext(registry, this.config.seed)
+    // Use provided registry or create default in-memory implementation
+    const resourceRegistry = registry ?? new InMemoryResourceRegistry()
+    const eventBus = new EventBus()
+    this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed)
     this.initializeSystems()
     this.ticker.setStopCondition(() => this.checkBattleEnd())
     this.setupCharacters()
   }
-  /** Start combat and return complete result */
+
   public start(): CombatResult {
     this.executeCombat()
     const data: CombatResultData = {
@@ -47,17 +50,14 @@ export class CombatEngine {
     const resultBuilder = new ResultBuilder(data)
     return resultBuilder.build()
   }
-  /** Initialize core systems */
   private initializeSystems(): void {
     this.tickActionSystem = new TickActionSystem(this.context)
     this.eventLogger = new EventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
-  /** Execute the combat loop */
   private executeCombat(): void {
     this.ticker.start()
   }
-  /** Set up characters */
   private setupCharacters(): void {
     // Add player team characters
     this.config.playerTeam.forEach((character) => {
@@ -68,13 +68,11 @@ export class CombatEngine {
       this.context.addEntity(character)
     })
   }
-  /** Check if combat has ended */
   private checkBattleEnd(): boolean {
     const playerAlive = this.config.playerTeam.some((c) => !c.isDead)
     const enemyAlive = this.config.enemyTeam.some((c) => !c.isDead)
     return !playerAlive || !enemyAlive
   }
-  /** Clean up resources */
   public dispose(): void {
     this.ticker.stop()
     this.tickActionSystem.dispose()

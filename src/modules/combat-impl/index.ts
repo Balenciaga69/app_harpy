@@ -6,5 +6,3 @@ export * from './relics'
 export * from './ultimates'
 // Effect implementations
 export * from './effects'
-// Examples and demos
-export * from './examples'

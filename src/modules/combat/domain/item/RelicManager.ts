@@ -2,6 +2,7 @@ import type { ICharacter } from '../character/models/character'
 import type { ICombatContext } from '@/modules/combat/context'
 import type { Relic } from './models/relic'
 import type { IEffect } from '../effect/models/effect'
+import type { IResourceRegistry } from '@/modules/combat/infra/resource-registry'
 /**
  * RelicManager
  *
@@ -12,10 +13,10 @@ import type { IEffect } from '../effect/models/effect'
 export class RelicManager {
   private relics: Map<string, string> = new Map() // relicName -> relicId
   private readonly owner: ICharacter
-  private readonly getRegistry: () => ICombatContext['registry']
-  constructor(owner: ICharacter, getRegistry: () => ICombatContext['registry']) {
+  private readonly registry: IResourceRegistry
+  constructor(owner: ICharacter, registry: IResourceRegistry) {
     this.owner = owner
-    this.getRegistry = getRegistry
+    this.registry = registry
   }
   /**
    * Add a relic. If same relic exists, adds stack instead.
@@ -65,7 +66,7 @@ export class RelicManager {
   getRelic(relicName: string): Relic | undefined {
     const relicId = this.relics.get(relicName)
     if (!relicId) return undefined
-    return this.getRegistry().getRelic(relicId) as Relic | undefined
+    return this.registry.getRelic(relicId) as Relic | undefined
   }
   /**
    * Get all relics
@@ -73,7 +74,7 @@ export class RelicManager {
   getAllRelics(): Relic[] {
     const relics: Relic[] = []
     this.relics.forEach((relicId) => {
-      const relic = this.getRegistry().getRelic(relicId) as Relic | undefined
+      const relic = this.registry.getRelic(relicId) as Relic | undefined
       if (relic) relics.push(relic)
     })
     return relics

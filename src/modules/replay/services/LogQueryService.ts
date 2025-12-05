@@ -1,4 +1,4 @@
-import type { CombatLogEntry } from '../../combat/logic/logger'
+import type { CombatLogEntry } from '../../combat'
 /**
  * LogQueryService
  *
