@@ -1,4 +1,4 @@
-import type { IReplayEngine } from '../replay.engine'
+import type { IReplayEngine } from '../replay-engine/replay.engine'
 import type { LogQueryService } from '../services'
 import type { TimelineMoment } from './time-line-moment'
 /**

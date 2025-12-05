@@ -9,7 +9,7 @@ import type { ITargetSelector } from '../target-select-strategies/target-selecto
 /**
  * AttackExecutor
  *
- * Handles attack logic, including checking if a character can attack, selecting targets, and executing normal attacks or ultimates.
+ * Handles attack logic, including checking if a character selecting targets, and executing normal attacks or ultimates.
  */
 export class AttackExecutor {
   private context: CombatContext
@@ -24,18 +24,6 @@ export class AttackExecutor {
     this.damageFactory = new DamageFactory()
     this.energyManager = energyManager
   }
-  /** Check if character can attack */
-  canAttack(character: ICharacter, currentTick: number, nextAttackTick: Map<string, number>): boolean {
-    const nextAttack = nextAttackTick.get(character.id)
-    if (nextAttack === undefined) {
-      const cooldown = character.getAttribute('attackCooldown')
-      const randomDelay = Math.floor(this.context.rng.next() * cooldown)
-      nextAttackTick.set(character.id, currentTick + randomDelay)
-      return false
-    }
-    return currentTick >= nextAttack
-  }
-  /** Perform attack */
   performAttack(character: ICharacter, currentTick: number): void {
     const enemyTeam = character.team === 'player' ? 'enemy' : 'player'
     const enemies = this.context.getEntitiesByTeam(enemyTeam)
@@ -53,7 +41,6 @@ export class AttackExecutor {
       this.performNormalAttack(character, target, currentTick)
     }
   }
-  /** Perform normal attack */
   private performNormalAttack(character: ICharacter, target: ICharacter, currentTick: number): void {
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
@@ -69,7 +56,6 @@ export class AttackExecutor {
       }
     }
   }
-  /** Perform ultimate */
   private performUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
     character.setBaseAttribute('currentEnergy', 0)
     const ultimate = character.getUltimate(this.context)
@@ -79,7 +65,6 @@ export class AttackExecutor {
     }
     ultimate.execute(character.id, this.context)
   }
-  /** Default ultimate logic */
   private performDefaultUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,

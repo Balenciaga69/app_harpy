@@ -1,6 +1,6 @@
 // === Core Engine ===
-export type { IReplayEngine } from './replay.engine'
-export { ReplayEngine } from './ReplayEngine'
+export { ReplayEngine } from './replay-engine'
+export type { IReplayEngine } from './replay-engine'
 // === Controllers (High-level API) ===
 export { PlaybackController } from './controllers/PlaybackController'
 export type { TimelineMoment } from './controllers/time-line-moment'

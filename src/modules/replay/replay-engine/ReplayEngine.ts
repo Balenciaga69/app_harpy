@@ -1,4 +1,4 @@
-import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../combat'
+import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat'
 import {
   DEFAULT_REPLAY_CONFIG,
   createInitialReplayState,
@@ -6,13 +6,13 @@ import {
   type ReplayState,
   type ReplayEventType,
   type ReplayEvent,
-} from './models'
-import { LogQueryService } from './services'
-import type { ITickScheduler, IEventBus } from './infra'
-import { BrowserTickScheduler, EventBus } from './infra'
+} from '../models'
+import { LogQueryService } from '../services'
+import type { ITickScheduler, IEventBus } from '../infra'
+import { BrowserTickScheduler, EventBus } from '../infra'
 import type { IReplayEngine } from './replay.engine'
-import { ReplayDataAdapter } from './adapters'
-import { PlaybackStateMachine } from './core'
+import { ReplayDataAdapter } from '../adapters'
+import { PlaybackStateMachine } from '../core'
 /**
  * ReplayEngine: Coordinator for replay system
  *
