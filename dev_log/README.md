@@ -28,13 +28,13 @@
 - 回放系統交由 AI 自動生成初版，雖然還沒檢視效果，但預感不妙，後續需要打磨。
 - 開始反思循環依賴與多個 combat 元件之間的關係，AI 自動生成的部分有些混亂，考慮導入洋蔥架構並以 eslint 約束依賴邊界。
 
-### v0.4(combat)
+### v0.3(combat)
 
 - 目的: 降低耦合度、解決物件循環依賴問題。
 - 改善介面與依賴，降低耦合度，但目前戰鬥與角色仍深度綁定，未來若要支援非同步模式會受限。
 - 將 ability-system 與 Tick 功能整合為 tick-action-system，使其更貼合 Tick 機制的實際運作。
 
-### v0.5(combat)
+### v0.3(combat)
 
 - 目的: 統一管理資源、遵循單一職責原則。
 - 引入資源 Registry 作為中央資源管理系統，並將介面改為 unknown 型別以避免循環依賴。
@@ -49,7 +49,7 @@
 - 重新構思 效果系統與疊層機制
 - CODE REVIEW AI 生成的回放系統與戰鬥範例
 
-### v0.5.1:(combat)
+### v0.3.1:(combat)
 
 - 目的: 統一管理資源、遵循單一職責原則、乾淨代碼。
 - combat 屬性與效果模塊代碼拆分細緻化，同時重新定義語意表達。
@@ -61,7 +61,7 @@
 - 繼續構思與修正 Replay 模組並對 AI 生成的代碼進行 Code Review
 - 上班太累，懶得更深入思考新的業務邏輯。做些簡單的事情。
 
-### v0.5.1:(replay)
+### v0.3.2:(replay)
 
 - 定義好 replay 模組內部架構 model-service-controller
 - 對模組 export 的代碼附加更嚴格限制
@@ -72,7 +72,7 @@
 - 研究 immer.js 與純函數
 - 研究 不使用 Global Singleton 的依賴注入模式的原因(單例測試困難、跨語言移植、多實例支援)
 
-### v0.5.1:(combat)
+### v0.3.2:(combat)
 
 - 新增 CharacterBuilder 讓建立角色更方便
 - 拆分 CombatContext 分離出 BattleState 物件
