@@ -3,6 +3,7 @@ import type { ICombatContext } from '@/modules/combat/context'
 import type { Equipment } from './models/equipment'
 import type { IEffect } from '../effect/models/effect'
 import type { EquipmentSlot } from './models'
+import type { IResourceRegistry } from '@/modules/combat/infra/resource-registry'
 /**
  * EquipmentManager
  *
@@ -13,10 +14,10 @@ import type { EquipmentSlot } from './models'
 export class EquipmentManager {
   private slots: Map<EquipmentSlot, string> = new Map() // slot -> equipmentId
   private readonly owner: ICharacter
-  private readonly getRegistry: () => ICombatContext['registry']
-  constructor(owner: ICharacter, getRegistry: () => ICombatContext['registry']) {
+  private readonly registry: IResourceRegistry
+  constructor(owner: ICharacter, registry: IResourceRegistry) {
     this.owner = owner
-    this.getRegistry = getRegistry
+    this.registry = registry
   }
   /**
    * Equip an equipment to specified slot
@@ -56,7 +57,7 @@ export class EquipmentManager {
   getEquipment(slot: EquipmentSlot): Equipment | undefined {
     const equipmentId = this.slots.get(slot)
     if (!equipmentId) return undefined
-    return this.getRegistry().getEquipment(equipmentId) as Equipment | undefined
+    return this.registry.getEquipment(equipmentId) as Equipment | undefined
   }
   /**
    * Get all equipped items
@@ -64,7 +65,7 @@ export class EquipmentManager {
   getAllEquipment(): Equipment[] {
     const equipment: Equipment[] = []
     this.slots.forEach((equipmentId) => {
-      const eq = this.getRegistry().getEquipment(equipmentId) as Equipment | undefined
+      const eq = this.registry.getEquipment(equipmentId) as Equipment | undefined
       if (eq) equipment.push(eq)
     })
     return equipment

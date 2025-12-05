@@ -27,6 +27,8 @@ Provide project context and coding guidelines that AI should follow when generat
 
 - 建構子不要有過多參數，若有就要用設計模式簡化。
 - 禁止使用全局單例
+  - 原因: 測試困難(狀態共享)、隱藏依賴、生命週期失控、難以支援多實例場景、跨語言移植困難
+- 每個目錄最多 10 個檔案，超過應重構或分類
 
 ### 關於註解
 

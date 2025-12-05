@@ -18,6 +18,7 @@ export class CharacterAccessor {
   get(id: string): ICharacter {
     const character = this.context.registry.getCharacter(id) as ICharacter | undefined
     if (!character) {
+      // TODO: 改用領域錯誤 CombatError
       throw new Error(`[CharacterAccessor] Character ${id} not found in registry`)
     }
     return character

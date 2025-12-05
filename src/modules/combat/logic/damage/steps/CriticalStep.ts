@@ -1,7 +1,7 @@
 import type { CombatContext } from '@/modules/combat/context'
 import type { DamageEvent } from '../models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
-import { collectHooks } from './utils/collect-hooks'
+import { collectHooks } from './collect-hooks'
 import { CriticalFormula } from '@/modules/combat/infra/config'
 /**
  * CriticalStep: Determines if damage is critical and applies critical multiplier.

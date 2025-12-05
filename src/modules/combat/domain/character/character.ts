@@ -58,10 +58,10 @@ export class Character implements ICharacter {
     // Initialize attribute system
     this.attributeManager = new AttributeManager(config.baseAttributes)
     this.attributeCalculator = new AttributeCalculator(this.attributeManager)
-    // Initialize managers
+    // Initialize managers with registry
     this.effectManager = new EffectManager(this)
-    this.equipmentManager = new EquipmentManager(this, () => this.registry)
-    this.relicManager = new RelicManager(this, () => this.registry)
+    this.equipmentManager = new EquipmentManager(this, this.registry)
+    this.relicManager = new RelicManager(this, this.registry)
     this.ultimateManager = new UltimateManager()
     // Register ultimate if provided (only if context is available)
     if (config.ultimate && context) {
