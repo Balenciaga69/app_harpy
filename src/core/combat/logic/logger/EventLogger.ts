@@ -27,7 +27,6 @@ export class EventLogger {
     return this.logs.filter((log) => log.tick >= startTick && log.tick <= endTick)
   }
   /** Set up event listeners */
-  // TODO: This part is not rigorous enough, blindly destructures events, and listens to all events, can be changed in the future to only listen to specific events
   private setupListeners() {
     // 1. Track Tick
     this.eventBus.on('tick:start', (payload) => {

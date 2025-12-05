@@ -1,15 +1,15 @@
 /**
  * Result<T, F>
  *
- * A type-safe container for operation results that may succeed or fail.
- * Inspired by Railway-Oriented Programming and Rust's Result type.
+ * 一個類型安全的容器，用於表示操作結果可能成功或失敗。
+ * 參考了 Railway-Oriented Programming 與 Rust 的 Result 類型。
  *
- * Usage:
- * - T: Success value type (e.g., ICharacter, DamageEvent)
- * - F: Failure type (e.g., CombatFailure)
+ * 用法：
+ * - T: 成功值類型 (例如 ICharacter, DamageEvent)
+ * - F: 失敗類型 (例如 CombatFailure)
  *
- * This pattern avoids throwing exceptions in combat loop,
- * making error handling explicit and composable.
+ * 此模式避免在戰鬥迴圈中丟出例外，
+ * 讓錯誤處理變得明確且可組合。
  */
 export class Result<T, F> {
   private readonly _value?: T

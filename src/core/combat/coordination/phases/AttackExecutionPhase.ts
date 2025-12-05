@@ -6,7 +6,6 @@ import { AttackExecutor } from '../utils/AttackExecutor'
 import { CooldownManager } from '../utils/CooldownManager'
 import { EnergyManager } from '../utils/EnergyManager'
 import type { ITickPhase } from './tick-phase'
-
 /**
  * Attack Execution Phase
  *
@@ -17,7 +16,6 @@ export class AttackExecutionPhase implements ITickPhase {
   readonly name = 'AttackExecution'
   private attackExecutor: AttackExecutor
   private cooldownManager: CooldownManager
-
   constructor(context: CombatContext, targetSelector: ITargetSelector) {
     const energyManager = new EnergyManager(context)
     this.attackExecutor = new AttackExecutor(context, targetSelector, energyManager)

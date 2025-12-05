@@ -1,7 +1,6 @@
 import type { ICombatContext } from '../../../context/combat-context'
 import type { ICharacter } from '../../../domain/character/models/character'
 import { Result, Failures, CombatError, type CombatFailure } from '../../errors'
-
 /**
  * CharacterAccessor
  *
@@ -14,11 +13,9 @@ import { Result, Failures, CombatError, type CombatFailure } from '../../errors'
  */
 export class CharacterAccessor {
   private context: ICombatContext
-
   constructor(context: ICombatContext) {
     this.context = context
   }
-
   /**
    * Get character by ID, throws CombatError if not found
    * Use this when character must exist (internal logic)
@@ -30,7 +27,6 @@ export class CharacterAccessor {
     }
     return character
   }
-
   /**
    * Get character by ID with Result pattern
    * Use this for operations that may fail gracefully (no exception thrown)
@@ -42,7 +38,6 @@ export class CharacterAccessor {
     }
     return Result.ok(character)
   }
-
   /**
    * Try to get character by ID, returns undefined if not found
    * Use this when character might not exist (edge cases)
@@ -50,14 +45,12 @@ export class CharacterAccessor {
   tryGet(id: string): ICharacter | undefined {
     return this.context.registry.getCharacter(id) as ICharacter | undefined
   }
-
   /**
    * Check if character exists in registry
    */
   has(id: string): boolean {
     return this.context.registry.hasCharacter(id)
   }
-
   /**
    * Get character if alive, returns failure if dead or not found
    */

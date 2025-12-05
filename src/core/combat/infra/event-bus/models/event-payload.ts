@@ -1,12 +1,10 @@
 import type { CharacterSnapshot } from '../../shared/models'
-
 /**
  * Combat start event
  */
 export interface CombatStartPayload {
   tick: number
 }
-
 /**
  * Combat end event
  */
@@ -14,7 +12,6 @@ export interface CombatEndPayload {
   winnerId: string
   tick: number
 }
-
 /**
  * Combat miss event (attack missed due to evasion)
  */
@@ -23,7 +20,6 @@ export interface CombatMissPayload {
   targetId: string
   tick: number
 }
-
 /**
  * Combat dodge event (more semantic alias for miss)
  */
@@ -32,7 +28,6 @@ export interface CombatDodgePayload {
   targetId: string
   tick: number
 }
-
 /**
  * Combat attack prevented event
  */
@@ -42,28 +37,24 @@ export interface CombatPreventedPayload {
   reason: string
   tick: number
 }
-
 /**
  * Tick start event
  */
 export interface TickStartPayload {
   tick: number
 }
-
 /**
  * Tick end event
  */
 export interface TickEndPayload {
   tick: number
 }
-
 /**
  * Ticker stopped event
  */
 export interface TickerStoppedPayload {
   tick: number
 }
-
 /**
  * Entity damage event
  */
@@ -76,7 +67,6 @@ export interface EntityDamagePayload {
   damageType: 'normal' | 'ultimate' | 'effect' | 'true'
   tick: number
 }
-
 /**
  * Entity heal event
  */
@@ -87,7 +77,6 @@ export interface EntityHealPayload {
   healType: 'effect' | 'item' | 'regen'
   tick: number
 }
-
 /**
  * Entity death event
  */
@@ -96,7 +85,6 @@ export interface EntityDeathPayload {
   killerId?: string
   tick: number
 }
-
 /**
  * Entity attack event
  */
@@ -106,7 +94,6 @@ export interface EntityAttackPayload {
   attackType: 'normal' | 'ultimate'
   tick: number
 }
-
 /**
  * Entity critical event
  */
@@ -116,7 +103,6 @@ export interface EntityCriticalPayload {
   multiplier: number
   tick: number
 }
-
 /**
  * Effect applied event
  */
@@ -128,7 +114,6 @@ export interface EffectAppliedPayload {
   stacks?: number
   tick: number
 }
-
 /**
  * Effect removed event
  */
@@ -139,7 +124,6 @@ export interface EffectRemovedPayload {
   reason: 'expired' | 'dispelled' | 'replaced' | 'death'
   tick: number
 }
-
 /**
  * Effect tick event (for DOT effects)
  */
@@ -151,7 +135,6 @@ export interface EffectTickPayload {
   heal?: number
   tick: number
 }
-
 /**
  * Ultimate used event
  */
@@ -162,7 +145,6 @@ export interface UltimateUsedPayload {
   targetIds: string[]
   tick: number
 }
-
 /**
  * Energy gained event
  */
@@ -174,7 +156,6 @@ export interface EnergyGainedPayload {
   maxEnergy: number
   tick: number
 }
-
 /**
  * Tick snapshot event
  */

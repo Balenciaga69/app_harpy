@@ -1,7 +1,6 @@
 import type { CombatContext } from '@/core/combat'
 import type { DamageEvent } from '../models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
-
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.
  */
@@ -13,7 +12,6 @@ export class ApplyDamageStep implements IDamageStep {
     const currentHp = event.target.getAttribute('currentHp')
     const newHp = Math.max(0, currentHp - event.finalDamage)
     event.target.setCurrentHpClamped(newHp)
-
     // Emit damage event
     context.eventBus.emit('entity:damage', {
       sourceId: event.source.id,
@@ -24,7 +22,6 @@ export class ApplyDamageStep implements IDamageStep {
       damageType: event.isUltimate ? 'ultimate' : event.isTrueDamage ? 'true' : 'normal',
       tick: event.tick,
     })
-
     // Check if target died
     if (newHp <= 0 && !event.target.isDead) {
       event.target.isDead = true

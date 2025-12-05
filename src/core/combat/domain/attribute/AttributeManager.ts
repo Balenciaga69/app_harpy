@@ -34,16 +34,8 @@ export class AttributeManager {
       // If no limit defined, return original value (backward compatibility)
       return value
     }
-    // Clamp between min and max values
-    const clamped = Math.min(limit.max, Math.max(limit.min, value))
-    // Warn about out-of-range values in development mode
-    if (clamped !== value && import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[AttributeManager] Attribute '${type}' value ${value} clamped to ${clamped} (min: ${limit.min}, max: ${limit.max})`
-      )
-    }
-    return clamped
+    // Clamp between min and max values (silent operation, clamping is expected behavior)
+    return Math.min(limit.max, Math.max(limit.min, value))
   }
   /** Add attribute modifier */
   addModifier(modifier: AttributeModifier): void {

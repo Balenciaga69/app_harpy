@@ -3,7 +3,6 @@ import type { ICharacter } from '../../domain/character'
 import { isCharacter } from '../../infra/shared'
 import { EnergyManager } from '../utils/EnergyManager'
 import type { ITickPhase } from './tick-phase'
-
 /**
  * Energy Regeneration Phase
  *
@@ -13,7 +12,6 @@ import type { ITickPhase } from './tick-phase'
 export class EnergyRegenPhase implements ITickPhase {
   readonly name = 'EnergyRegen'
   private manager: EnergyManager
-
   constructor(context: CombatContext) {
     this.manager = new EnergyManager(context)
   }

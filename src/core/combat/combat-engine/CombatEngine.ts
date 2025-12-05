@@ -10,17 +10,16 @@ import { SnapshotCollector } from '../logic/snapshot'
 import { TickerDriver } from '../logic/tick'
 import { ResultBuilder } from './builders'
 import type { CombatConfig, CombatResult, CombatResultData } from './models'
-
 /**
- * Combat Engine
+ * 戰鬥引擎
  *
- * Orchestrates combat execution by coordinating subsystems (TickerDriver, TickActionSystem,
- * EventLogger, SnapshotCollector). Manages combat lifecycle and produces final CombatResult.
+ * 負責協調各子系統 (TickerDriver, TickActionSystem, EventLogger, SnapshotCollector)，
+ * 管理戰鬥生命週期並產生最終 CombatResult。
  *
- * Error handling strategy:
- * - This is the ONLY boundary layer that may throw CombatError
- * - All internal systems use Result pattern or graceful degradation
- * - Catches any unexpected errors and wraps them in CombatError
+ * 錯誤處理策略：
+ * - 這是唯一可能拋出 CombatError 的邊界層
+ * - 所有內部系統都使用 Result 模式或優雅降級
+ * - 捕捉任何未預期錯誤並包裝成 CombatError
  */
 export class CombatEngine {
   private context: CombatContext
@@ -29,7 +28,6 @@ export class CombatEngine {
   private eventLogger!: EventLogger
   private snapshotCollector!: SnapshotCollector
   private config: CombatConfig
-
   constructor(config: CombatConfig, registry?: IResourceRegistry) {
     this.config = {
       maxTicks: CombatTiming.MAX_TICKS,
@@ -45,7 +43,6 @@ export class CombatEngine {
     this.ticker.setStopCondition(() => this.checkBattleEnd())
     this.setupCharacters()
   }
-
   /**
    * Start combat execution
    * This is the boundary layer - catches all internal errors and converts to CombatError
@@ -70,17 +67,14 @@ export class CombatEngine {
       throw new CombatError(`Combat execution failed: ${message}`, CombatFailureCode.UNKNOWN)
     }
   }
-
   private initializeSystems(): void {
     this.tickActionSystem = new TickActionSystem(this.context)
     this.eventLogger = new EventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
-
   private executeCombat(): void {
     this.ticker.start()
   }
-
   private setupCharacters(): void {
     // Add player team characters
     this.config.playerTeam.forEach((character) => {
@@ -91,13 +85,11 @@ export class CombatEngine {
       this.context.addEntity(character)
     })
   }
-
   private checkBattleEnd(): boolean {
     const playerAlive = this.config.playerTeam.some((c) => !c.isDead)
     const enemyAlive = this.config.enemyTeam.some((c) => !c.isDead)
     return !playerAlive || !enemyAlive
   }
-
   public dispose(): void {
     this.ticker.stop()
     this.tickActionSystem.dispose()

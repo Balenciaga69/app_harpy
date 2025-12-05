@@ -1,5 +1,4 @@
 import type { IEntity } from '../infra/shared/interfaces/entity.interface'
-
 /**
  * IBattleState
  *
@@ -14,7 +13,6 @@ export interface IBattleState {
   removeEntity(id: string): IEntity | undefined
   getAllEntities(): readonly IEntity[]
   getEntitiesByTeam(team: IEntity['team']): readonly IEntity[]
-
   // === Tick Management ===
   getCurrentTick(): number
   incrementTick(): void

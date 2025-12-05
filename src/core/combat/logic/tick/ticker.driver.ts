@@ -1,6 +1,5 @@
 import type { CombatContext } from '../../context'
 import { CombatTiming } from '../../infra/config'
-
 /**
  * TickerDriver
  *
@@ -8,36 +7,30 @@ import { CombatTiming } from '../../infra/config'
  * configurable stop logic.
  */
 const MAX_TICKS = CombatTiming.MAX_TICKS
-
 export class TickerDriver {
   private context: CombatContext
   private readonly maxTicks: number
   private isRunning: boolean = false
   private stopCondition: () => boolean = () => false
-
   constructor(context: CombatContext, maxTicks: number = MAX_TICKS) {
     this.context = context
     this.maxTicks = maxTicks
   }
-
   /** Set combat end condition */
   public setStopCondition(condition: () => boolean): void {
     this.stopCondition = condition
   }
-
   /** Execute single Tick */
   public tick(): void {
     this.context.eventBus.emit('tick:start', { tick: this.context.getCurrentTick() })
     this.context.incrementTick()
     this.context.eventBus.emit('tick:end', { tick: this.context.getCurrentTick() })
   }
-
   /** Start combat loop (pre-calculation mode) */
   public start(): void {
     this.isRunning = true
     this.context.resetTick()
     this.context.eventBus.emit('combat:start', { tick: 0 })
-
     while (this.isRunning && this.context.getCurrentTick() < this.maxTicks) {
       this.tick()
       if (this.checkCombatEnd()) {

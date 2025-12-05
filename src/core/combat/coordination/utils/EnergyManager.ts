@@ -1,7 +1,6 @@
 import type { CombatContext } from '../../context'
 import type { ICharacter } from '../../domain/character'
 import { EnergySystem, UltimateEnergy } from '../../infra/config'
-
 /**
  * EnergyManager
  *
@@ -9,18 +8,15 @@ import { EnergySystem, UltimateEnergy } from '../../infra/config'
  */
 export class EnergyManager {
   private context: CombatContext
-
   constructor(context: CombatContext) {
     this.context = context
   }
-
   /** Accumulate energy for a character */
   gainEnergy(character: ICharacter, amount: number, source: 'attack' | 'regen' | 'effect' | 'item'): void {
     const currentEnergy = character.getAttribute('currentEnergy') ?? 0
     const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
     const newEnergy = Math.min(currentEnergy + amount, maxEnergy)
     character.setBaseAttribute('currentEnergy', newEnergy)
-
     // Emit energy gained event
     this.context.eventBus.emit('energy:gained', {
       targetId: character.id,
@@ -31,7 +27,6 @@ export class EnergyManager {
       tick: this.context.getCurrentTick(),
     })
   }
-
   /** Process natural energy regeneration (triggers every 100 ticks) */
   processEnergyRegen(character: ICharacter, currentTick: number): void {
     if (currentTick % EnergySystem.REGEN_INTERVAL_TICKS !== 0) return

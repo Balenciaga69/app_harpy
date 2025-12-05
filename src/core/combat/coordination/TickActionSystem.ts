@@ -5,7 +5,6 @@ import type { ITickPhase } from './phases/tick-phase'
 import { EffectTickPhase } from './phases/EffectTickPhase'
 import { EnergyRegenPhase } from './phases/EnergyRegenPhase'
 import { AttackExecutionPhase } from './phases/AttackExecutionPhase'
-
 /**
  * Tick Action System
  *
@@ -17,7 +16,6 @@ export class TickActionSystem {
   private context: CombatContext
   private phases: ITickPhase[] = []
   private tickHandler: () => void
-
   constructor(context: CombatContext, targetSelector?: ITargetSelector) {
     this.context = context
     const selector = targetSelector ?? new FirstAliveSelector()
