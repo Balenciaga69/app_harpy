@@ -9,12 +9,18 @@ import { TickActionSystem } from '../coordination'
 import { InMemoryResourceRegistry } from '../infra/resource-registry'
 import type { IResourceRegistry } from '../infra/resource-registry/resource-registry'
 import { EventBus } from '../infra/event-bus'
+import { CombatError, CombatFailureCode } from '../infra/errors'
+
 /**
  * Combat Engine
  *
  * Orchestrates combat execution by coordinating subsystems (TickerDriver, TickActionSystem,
  * EventLogger, SnapshotCollector). Manages combat lifecycle and produces final CombatResult.
- * Supports dependency injection for resource registry to enable testing and future persistence layers.
+ *
+ * Error handling strategy:
+ * - This is the ONLY boundary layer that may throw CombatError
+ * - All internal systems use Result pattern or graceful degradation
+ * - Catches any unexpected errors and wraps them in CombatError
  */
 export class CombatEngine {
   private context: CombatContext
@@ -23,6 +29,7 @@ export class CombatEngine {
   private eventLogger!: EventLogger
   private snapshotCollector!: SnapshotCollector
   private config: CombatConfig
+
   constructor(config: CombatConfig, registry?: IResourceRegistry) {
     this.config = {
       maxTicks: CombatTiming.MAX_TICKS,
@@ -39,25 +46,41 @@ export class CombatEngine {
     this.setupCharacters()
   }
 
+  /**
+   * Start combat execution
+   * This is the boundary layer - catches all internal errors and converts to CombatError
+   */
   public start(): CombatResult {
-    this.executeCombat()
-    const data: CombatResultData = {
-      context: this.context,
-      config: this.config,
-      logs: [...this.eventLogger.getLogs()],
-      snapshots: [...this.snapshotCollector.getSnapshots()],
+    try {
+      this.executeCombat()
+      const data: CombatResultData = {
+        context: this.context,
+        config: this.config,
+        logs: [...this.eventLogger.getLogs()],
+        snapshots: [...this.snapshotCollector.getSnapshots()],
+      }
+      const resultBuilder = new ResultBuilder(data)
+      return resultBuilder.build()
+    } catch (error) {
+      // Convert any unexpected error to CombatError
+      if (error instanceof CombatError) {
+        throw error
+      }
+      const message = error instanceof Error ? error.message : 'Unknown combat error'
+      throw new CombatError(`Combat execution failed: ${message}`, CombatFailureCode.UNKNOWN)
     }
-    const resultBuilder = new ResultBuilder(data)
-    return resultBuilder.build()
   }
+
   private initializeSystems(): void {
     this.tickActionSystem = new TickActionSystem(this.context)
     this.eventLogger = new EventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
+
   private executeCombat(): void {
     this.ticker.start()
   }
+
   private setupCharacters(): void {
     // Add player team characters
     this.config.playerTeam.forEach((character) => {
@@ -68,11 +91,13 @@ export class CombatEngine {
       this.context.addEntity(character)
     })
   }
+
   private checkBattleEnd(): boolean {
     const playerAlive = this.config.playerTeam.some((c) => !c.isDead)
     const enemyAlive = this.config.enemyTeam.some((c) => !c.isDead)
     return !playerAlive || !enemyAlive
   }
+
   public dispose(): void {
     this.ticker.stop()
     this.tickActionSystem.dispose()

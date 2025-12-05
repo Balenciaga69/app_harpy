@@ -36,11 +36,20 @@ export class ExampleThunderStrikeUltimate implements IUltimateAbility {
     // 2. Calculate damage
     const baseDamage = caster.getAttribute('attackDamage') ?? 0
     const ultimateDamage = baseDamage * this.damageMultiplier
-    // 3. Send event (use entity:attack event for now, ultimate event to be added)
+    // 3. Send events
+    const currentTick = context.getCurrentTick()
     context.eventBus.emit('entity:attack', {
       sourceId: caster.id,
       targetId: target.id,
-      tick: context.getCurrentTick(),
+      attackType: 'ultimate',
+      tick: currentTick,
+    })
+    context.eventBus.emit('ultimate:used', {
+      sourceId: caster.id,
+      ultimateId: this.id,
+      ultimateName: this.name,
+      targetIds: [target.id],
+      tick: currentTick,
     })
     // 4. Create damage event and execute
     const damageFactory = new DamageFactory()

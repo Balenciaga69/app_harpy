@@ -47,11 +47,20 @@ export class ExampleBloodPactUltimate implements IUltimateAbility {
     // 2. Apply Blood Pact effect
     const bloodPactEffect = new BloodPactEffect(this.damageMultiplier, this.attackCount)
     caster.addEffect(bloodPactEffect, context)
-    // 3. Emit event
+    // 3. Emit events
+    const currentTick = context.getCurrentTick()
     context.eventBus.emit('entity:attack', {
       sourceId: caster.id,
-      targetId: caster.id, // Self-buff ultimate targets self
-      tick: context.getCurrentTick(),
+      targetId: caster.id,
+      attackType: 'ultimate',
+      tick: currentTick,
+    })
+    context.eventBus.emit('ultimate:used', {
+      sourceId: caster.id,
+      ultimateId: this.id,
+      ultimateName: this.name,
+      targetIds: [caster.id],
+      tick: currentTick,
     })
   }
 }

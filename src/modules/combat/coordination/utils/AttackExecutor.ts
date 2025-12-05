@@ -45,6 +45,7 @@ export class AttackExecutor {
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
       targetId: target.id,
+      attackType: 'normal',
       tick: currentTick,
     })
     const damageEvent = this.damageFactory.createAttackEvent(character, target, currentTick)
@@ -52,7 +53,7 @@ export class AttackExecutor {
     if (damageEvent.isHit && !damageEvent.prevented) {
       const energyGain = character.getAttribute('energyGainOnAttack') ?? 0
       if (energyGain > 0) {
-        this.energyManager.gainEnergy(character, energyGain)
+        this.energyManager.gainEnergy(character, energyGain, 'attack')
       }
     }
   }
@@ -69,6 +70,7 @@ export class AttackExecutor {
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
       targetId: target.id,
+      attackType: 'ultimate',
       tick: currentTick,
     })
     const baseDamage = character.getAttribute('attackDamage') ?? 0

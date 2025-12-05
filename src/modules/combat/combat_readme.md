@@ -1,8 +1,4 @@
-以下是將原始內容轉換為 heading + bullet point 的 Markdown 結構，內容未做更動：
-
----
-
-# 一、主要用途總結
+# 一、主要用途總結 (v0.3.1)
 
 這套引擎的終極目標是：
 
@@ -89,6 +85,10 @@
 
 - `ResultBuilder` + 多個 Analyzer：輸出勝負、生還者、統計等結構化結果
 
+## 領域錯誤
+
+- `CombatError`：TODO: AI 請你填寫
+
 # 三、使用的主要設計模式與軟體實踐
 
 ## Facade
@@ -147,6 +147,13 @@
 ## Resource Registry
 
 - 解決 Effect/Equipment 被多個角色引用時的生命週期問題
+
+## Railway-Oriented Error Handling
+
+- `Result<T, F>`：內部操作回傳值，避免在戰鬥迴圈中拋出例外
+- `CombatFailure`：值物件，描述失敗原因（含錯誤碼、訊息、上下文）
+- `CombatError`：僅在邊界層（CombatEngine.start()）拋出的 Error 子類別
+- 戰鬥迴圈 100% 禁止拋 Exception，確保戰鬥完整執行
 
 # 四、系統執行流程簡圖（每 tick）
 

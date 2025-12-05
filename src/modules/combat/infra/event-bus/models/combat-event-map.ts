@@ -2,6 +2,7 @@ import type {
   CombatStartPayload,
   CombatEndPayload,
   CombatMissPayload,
+  CombatDodgePayload,
   CombatPreventedPayload,
   TickStartPayload,
   TickEndPayload,
@@ -11,6 +12,11 @@ import type {
   EntityDeathPayload,
   EntityAttackPayload,
   EntityCriticalPayload,
+  EffectAppliedPayload,
+  EffectRemovedPayload,
+  EffectTickPayload,
+  UltimateUsedPayload,
+  EnergyGainedPayload,
   TickSnapshotPayload,
 } from './event-payload'
 /**
@@ -24,6 +30,7 @@ export type CombatEventMap = {
   'combat:start': CombatStartPayload
   'combat:end': CombatEndPayload
   'combat:miss': CombatMissPayload
+  'combat:dodge': CombatDodgePayload
   'combat:prevented': CombatPreventedPayload
   // === Tick related events ===
   'tick:start': TickStartPayload
@@ -35,6 +42,14 @@ export type CombatEventMap = {
   'entity:death': EntityDeathPayload
   'entity:attack': EntityAttackPayload
   'entity:critical': EntityCriticalPayload
+  // === Effect related events ===
+  'effect:applied': EffectAppliedPayload
+  'effect:removed': EffectRemovedPayload
+  'effect:tick': EffectTickPayload
+  // === Ultimate related events ===
+  'ultimate:used': UltimateUsedPayload
+  // === Energy related events ===
+  'energy:gained': EnergyGainedPayload
   // === Snapshot related events ===
   'tick:snapshot': TickSnapshotPayload
 }
