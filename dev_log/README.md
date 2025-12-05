@@ -75,3 +75,4 @@
 ### v0.5.1:(combat)
 
 - 新增 CharacterBuilder 讓建立角色更方便
+- 拆分 CombatContext 分離出 BattleState 物件

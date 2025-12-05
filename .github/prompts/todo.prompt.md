@@ -1,10 +1,8 @@
-# Combat 模組
+# Combat 模組TODO
 
 ## 很急
 
-- (討論)Effect, Item,Ultimate 等東西都會調用 ICharacter 的方法。是否該改成 character ID 而非物件本身? 你來TradeOff一下。
-- CombatContext 物件 我同意包含 EventBus,Rng,Registry.
-- CombatContext 內的 Entity,Tick這些東西與相關操作如果要搬移 應該移動到?要建立新系統嗎?
+- 無
 
 ## 需要討論(暫時先不提及)
 
