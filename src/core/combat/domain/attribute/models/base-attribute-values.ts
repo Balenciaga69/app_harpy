@@ -23,6 +23,9 @@ export interface BaseAttributeValues {
   // === Critical related ===
   criticalChance: number // 0-1 range (0.05 = 5%)
   criticalMultiplier: number // Multiplier (1.5 = 150%)
+  // === Resurrection related ===
+  resurrectionChance: number // 0.03-0.50 range (3%-50%)
+  resurrectionHpPercent: number // 0.10-1.00 range (10%-100%)
 }
 export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>): BaseAttributeValues {
   return {
@@ -39,6 +42,8 @@ export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>
     accuracy: AttributeDefaults.accuracy,
     criticalChance: AttributeDefaults.criticalChance,
     criticalMultiplier: AttributeDefaults.criticalMultiplier,
+    resurrectionChance: AttributeDefaults.resurrectionChance,
+    resurrectionHpPercent: AttributeDefaults.resurrectionHpPercent,
     ...overrides, // Allow overriding partial attributes
   }
 }

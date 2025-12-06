@@ -10,6 +10,8 @@ import type {
   EntityDamagePayload,
   EntityHealPayload,
   EntityDeathPayload,
+  EntityHpZeroPayload,
+  EntityResurrectionPayload,
   EntityAttackPayload,
   EntityCriticalPayload,
   EffectAppliedPayload,
@@ -40,6 +42,8 @@ export type CombatEventMap = {
   'entity:damage': EntityDamagePayload
   'entity:heal': EntityHealPayload
   'entity:death': EntityDeathPayload
+  'entity:hp-zero': EntityHpZeroPayload
+  'entity:resurrection': EntityResurrectionPayload
   'entity:attack': EntityAttackPayload
   'entity:critical': EntityCriticalPayload
   // === Effect related events ===

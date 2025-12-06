@@ -7,4 +7,10 @@ export interface IEffectOwner {
   hasEffect(effectId: string): boolean
   getEffect(effectId: string): IEffect | undefined
   getAllEffects(): readonly IEffect[]
+  /** Cleanse effects with cleanseOnRevive: true (used for resurrection) */
+  cleanseCanCleanseEffects(context: ICombatContext): void
+  /** Trigger onHpZero hook for all effects */
+  triggerHpZero(context: ICombatContext): void
+  /** Trigger onRevive hook for all effects */
+  triggerRevive(context: ICombatContext): void
 }

@@ -10,6 +10,7 @@ import { SnapshotCollector } from '../logic/snapshot'
 import { TickerDriver } from '../logic/tick'
 import { ResultBuilder } from './builders'
 import type { CombatConfig, CombatResult, CombatResultData } from './models'
+import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 /**
  * 戰鬥引擎
  *
@@ -73,6 +74,10 @@ export class CombatEngine {
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
   private executeCombat(): void {
+    // Apply pre-match effects before combat starts
+    if (this.config.preMatchEffects && this.config.preMatchEffects.length > 0) {
+      PreMatchEffectApplicator.applyEffects(this.config.preMatchEffects, this.context)
+    }
     this.ticker.start()
   }
   private setupCharacters(): void {

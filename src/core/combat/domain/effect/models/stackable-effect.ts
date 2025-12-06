@@ -20,16 +20,19 @@ export interface IStackableEffect extends IEffect {
 /**
  * Abstract base class for stackable effects
  * Provides basic implementation of stack management
+ * Default cleanseOnRevive is true (status effects should be cleansed)
  */
 export abstract class StackableEffect implements IStackableEffect {
   public stacks: number = 0
   public readonly id: string
   public readonly name: string
   public readonly maxStacks?: number
-  constructor(id: string, name: string, maxStacks?: number) {
+  public readonly cleanseOnRevive: boolean
+  constructor(id: string, name: string, maxStacks?: number, cleanseOnRevive: boolean = true) {
     this.id = id
     this.name = name
     this.maxStacks = maxStacks
+    this.cleanseOnRevive = cleanseOnRevive
   }
   /** Add stacks */
   addStacks(amount: number): void {

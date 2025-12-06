@@ -2,7 +2,7 @@ import type { CombatContext } from '@/core/combat'
 import type { DamageEvent } from '../models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
 import { collectHooks } from './collect-hooks'
-import { calculateArmorReduction } from '../utils/damage-calculator'
+import { calculateArmorReduction } from '../utils/DamageCalculator'
 /**
  * DefenseCalculationStep
  *

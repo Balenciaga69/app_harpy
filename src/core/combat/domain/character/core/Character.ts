@@ -120,6 +120,18 @@ export class Character implements ICharacter {
   getAllEffects(): readonly IEffect[] {
     return this.effectManager.getAllEffects()
   }
+  /** Cleanse effects with cleanseOnRevive: true (used for resurrection) */
+  cleanseCanCleanseEffects(context: ICombatContext): void {
+    this.effectManager.cleanseCanCleanseEffects(context)
+  }
+  /** Trigger onHpZero hook for all effects */
+  triggerHpZero(context: ICombatContext): void {
+    this.effectManager.triggerHpZero(context)
+  }
+  /** Trigger onRevive hook for all effects */
+  triggerRevive(context: ICombatContext): void {
+    this.effectManager.triggerRevive(context)
+  }
   // === Equipment-related methods (delegated to EquipmentManager) ===
   /**
    * Equip an equipment to specified slot

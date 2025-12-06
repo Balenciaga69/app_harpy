@@ -11,6 +11,7 @@ import type { DamageEvent, ICombatHook } from '@/core/combat/logic/damage'
 export class BloodPactEffect implements IEffect, ICombatHook {
   readonly id: string
   readonly name: string = 'Blood Pact'
+  readonly cleanseOnRevive: boolean = true // Buff should be removed on revival
   private damageMultiplier: number
   private remainingAttacks: number
   constructor(damageMultiplier: number, attackCount: number) {

@@ -12,6 +12,7 @@ import type { IEffect } from '@/core/combat/domain/effect/models/effect'
 export class ChargedCriticalEffect implements IEffect, ICombatHook {
   readonly id: string
   readonly name: string = 'Charged Critical'
+  readonly cleanseOnRevive: boolean = false
   constructor() {
     this.id = `charged-crit-${nanoid(6)}`
   }
