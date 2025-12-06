@@ -127,28 +127,34 @@ idle ──(start)──→ route_selection
 
 ### RunEngine 發出的事件
 
-| 事件              | 時機        | Payload                  |
-| ----------------- | ----------- | ------------------------ |
-| `run:started`     | 新 Run 開始 | `{ seed, floor }`        |
-| `run:loaded`      | 讀檔完成    | `{ runState }`           |
-| `route:selected`  | 選擇路線    | `{ routeIndex, rooms }`  |
-| `room:entered`    | 進入房間    | `{ roomType, roomData }` |
-| `floor:changed`   | 進入新層    | `{ floor, chapter }`     |
-| `chapter:changed` | 進入新章節  | `{ chapter }`            |
+| 事件              | 時機        | Payload                     |
+| ----------------- | ----------- | --------------------------- |
+| `run:started`     | 新 Run 開始 | `{ seed, floor }`           |
+| `run:loaded`      | 讀檔完成    | `{ runState }`              |
+| `route:selected`  | 選擇路線    | `{ routeIndex, rooms }`     |
+| `room:entered`    | 進入房間    | `{ roomType, roomData }`    |
+| `floor:changed`   | 進入新層    | `{ floor, chapter }`        |
+| `chapter:changed` | 進入新章節  | `{ chapter }`               |
+| `shop:entered`    | 進入商店    | `{ seed?, chapter? }`       |
+| `bet:placed`      | 下賭注      | `{ betId, amount, target }` |
+| `bet:resolved`    | 賭注結果    | `{ betId, result, payout }` |
 
 ### Handler 發出的事件
 
-| 事件                 | 來源 Handler      | Payload            |
-| -------------------- | ----------------- | ------------------ |
-| `combat:started`     | CombatHandler     | `{ enemies }`      |
-| `combat:ended`       | CombatHandler     | `{ result, logs }` |
-| `combat:victory`     | CombatHandler     | `{ reward }`       |
-| `combat:defeat`      | CombatHandler     | `{}`               |
-| `player:died`        | DeathHandler      | `{ canRevive }`    |
-| `player:revived`     | DeathHandler      | `{}`               |
-| `reward:generated`   | RewardHandler     | `{ items, gold }`  |
-| `reward:claimed`     | RewardHandler     | `{}`               |
-| `difficulty:updated` | DifficultyHandler | `{ multiplier }`   |
+| 事件                 | 來源 Handler                     | Payload             |
+| -------------------- | -------------------------------- | ------------------- |
+| `combat:started`     | CombatHandler                    | `{ enemies }`       |
+| `combat:ended`       | CombatHandler                    | `{ result, logs }`  |
+| `combat:victory`     | CombatHandler                    | `{ reward }`        |
+| `combat:defeat`      | CombatHandler                    | `{}`                |
+| `player:died`        | DeathHandler                     | `{ canRevive }`     |
+| `player:revived`     | DeathHandler                     | `{}`                |
+| `reward:generated`   | RewardHandler                    | `{ items, gold }`   |
+| `reward:claimed`     | RewardHandler                    | `{}`                |
+| `difficulty:updated` | DifficultyHandler                | `{ multiplier }`    |
+| `bet:won`            | BetHandler/ShopHandler           | `{ betId, payout }` |
+| `bet:lost`           | BetHandler/ShopHandler           | `{ betId }`         |
+| `prebattle:applied`  | CombatHandler or ModifierHandler | `{ modifiers }`     |
 
 ---
 
@@ -184,6 +190,7 @@ RunEngine(eventBus: IEventBus)
 - 沒有 `startCombat()`、`claimReward()` 等方法
 - 這些邏輯由 Handler 自動處理
 - RunEngine 只負責「進入房間」，後續流程由事件驅動
+- RunEngine 應該清楚 emit 與賭博/商店/預賽相關的事件（例如 `shop:entered`, `bet:placed`, `bet:resolved`, `prebattle:applied`），讓專責 Handler 插入額外流程（下注、賭局、預賽變數注入）
 
 ---
 
@@ -193,6 +200,7 @@ RunEngine(eventBus: IEventBus)
 
 - 監聽：`room:entered` (roomType === 'combat')
 - 職責：呼叫 CombatEngine、emit 結果
+- 額外職責：在戰鬥開始前實作賽前變數（pre-battle modifiers）生成與注入，並 emit `prebattle:applied`，供 CombatEngine 或其他 handler 使用；若玩家在進入房間/戰鬥前下注，應協同 `BetHandler` 預先解析賠率並記錄。
 - 發出：`combat:started`, `combat:ended`, `combat:victory/defeat`
 
 ### ReplayHandler
@@ -212,6 +220,21 @@ RunEngine(eventBus: IEventBus)
 - 監聽：`combat:defeat`
 - 職責：檢查復活道具、處理死亡流程
 - 發出：`player:died`, `player:revived`, `run:game-over`
+- 擴充：復活機制詳細規則如下：
+  - 起死回生概率（base）：下限 3% 上限 50%，可被 item/ relic/ modifier 調整。
+  - 復活後復原 HP 比例：下限 10% 上限 100%。
+  - 復活後清除全部異常狀態。
+  - 復活可觸發消耗道具或商店補償；若是商店補償，應先 emit `shop:entered` 與 `bet:placed` 等事件。
+
+### BetHandler / ShopHandler
+
+- 監聽：`shop:entered`, `bet:placed`
+- 職責：接收玩家下注、計算賠率、驗證投注結果（如基於戰鬥前產生的 deterministic result 或 Replay 結果）、發出 `bet:won`, `bet:lost`, `bet:resolved`；並管理商店交易（購買復活、道具、換牌等）。
+
+### ModifierHandler
+
+- 監聽：`run:started`, `room:entered`, `combat:started`
+- 職責：產生並發佈 "賽前變數"（pre-battle modifiers），包括但不限於：復活率加成、充能效率、傷害加成/減免、buff/debuff 層數等，並 emit `prebattle:applied`。
 
 ### PersistenceHandler
 
@@ -235,6 +258,7 @@ RunEngine(eventBus: IEventBus)
 - 第 5、10 層為 Boss 關卡（必經）
 - 每章節提供 2~3 條路線選擇
 - 超過 30 層進入無盡模式
+- 路線與房間生成應支援基於 `seed` 的 deterministic 產生，以便儲存/回放與賭局驗證；route/room 內可能包含 `shop` 或 `bet` 節點。
 
 ### 房間類型
 
@@ -311,3 +335,30 @@ test('entering combat room emits room:entered', () => {
 - 純事件驅動：所有業務邏輯在外部 Handler
 - 零直接依賴：RunEngine 不 import 任何業務模組
 - 單向數據流：RunEngine → EventBus → Handler → RunState
+
+---
+
+## 十一、開發 TODO / Implementation tasks
+
+基於本文檔與新版 prompt（賭博、復活、賽前變數等），以下為開發 TODO（優先排序）：
+
+- RunEngine:
+  - TODO: implement deterministic route generation using `seed` and incorporate `shop`/`bet` nodes inside routes.
+  - TODO: provide events `shop:entered`, `bet:placed`, `bet:resolved` to integrate with ShopHandler/BetHandler.
+  - TODO: ensure `generateRouteOptions()` produces reproducible `RouteInfo[]` and includes metadata for betting/shops.
+- ChapterManager:
+  - TODO: add helper to create rooms per chapter with RNG/seed injection.
+- CombatHandler:
+  - TODO: implement pre-battle modifiers integration and coordinate with BetHandler for bet resolution prior to CombatEngine execution.
+  - TODO: ensure CombatEngine receives modifiers and outputs deterministic results for replay and bet validation.
+- DeathHandler:
+  - TODO: implement revival probability rule, HP restore percent, and status clearing; support shop compensation or item usage.
+- RewardHandler:
+  - TODO: integrate with bet payouts and shop transactions when awarding gold/items.
+- PersistenceHandler:
+  - TODO: store seed, pending bets, route options and other deterministic data to support bet validation and replay.
+- New Handlers:
+  - TODO: create `BetHandler`/`ShopHandler` for shop and betting logic
+  - TODO: create `ModifierHandler` for generating pre-battle modifiers
+
+以上為本輪開發需要修改與新增的核心部分，後續可依需求微調功能實作細節。

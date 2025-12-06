@@ -24,3 +24,8 @@ export type FloorChangedPayload = {
 export type ChapterChangedPayload = {
   chapter: number
 }
+export type ShopEnteredPayload = {
+  seed?: string
+  chapter?: number
+  shopId?: string
+}

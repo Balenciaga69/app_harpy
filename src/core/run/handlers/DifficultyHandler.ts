@@ -1,20 +1,21 @@
 import type { IRunEventBus } from '../infra/event-bus'
 import type { IRunHandler } from './run-handler'
 /**
- * Difficulty Handler (Skeleton)
+ * 難度處理器（骨架）
  *
- * Listens to floor:changed events and updates difficulty multiplier.
- * NOT IMPLEMENTED - This is a skeleton for future development.
+ * 監聽 floor:changed 事件並更新難度乘數（multiplier）。
+ * 尚未實作 - 此為未來開發保留的樣板。
  */
 export class DifficultyHandler implements IRunHandler {
   readonly name = 'DifficultyHandler'
   initialize(_eventBus: IRunEventBus): void {
-    // TODO: Subscribe to 'floor:changed' event
-    // TODO: Calculate difficulty multiplier based on floor/chapter
-    // TODO: Emit 'difficulty:updated' event
+    // TODO: 訂閱 'floor:changed' 事件
+    // TODO: 根據 floor/chapter 與可選的 RunConfig 計算難度乘數
+    // TODO: 發出 'difficulty:updated' 事件
+    // TODO: 此乘數應對 CombatEngine 可見，並可能影響敵人強度、獎勵與 pre_battle modifiers
     throw new Error('DifficultyHandler not implemented')
   }
   dispose(): void {
-    // TODO: Unsubscribe from events
+    // TODO: 退訂（unsubscribe）所有事件
   }
 }

@@ -13,6 +13,7 @@ export class RewardHandler implements IRunHandler {
     // TODO: Subscribe to 'event:resolved' event (future)
     // TODO: Generate rewards and emit 'reward:generated'
     // TODO: Handle reward claiming and emit 'reward:claimed'
+    // TODO: If there are pending bets resolved by combat result, notify BetHandler/ShopHandler and adjust rewards/gold accordingly
     throw new Error('RewardHandler not implemented')
   }
   dispose(): void {

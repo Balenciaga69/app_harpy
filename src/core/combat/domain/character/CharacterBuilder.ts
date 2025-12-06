@@ -117,6 +117,16 @@ export class CharacterBuilder {
     this.attributeOverrides = { ...this.attributeOverrides, ...attributes }
     return this
   }
+  /** Set resurrection chance (0.03-0.50 range) */
+  withResurrectionChance(value: number): this {
+    this.attributeOverrides.resurrectionChance = value
+    return this
+  }
+  /** Set resurrection HP percent (0.10-1.00 range) */
+  withResurrectionHpPercent(value: number): this {
+    this.attributeOverrides.resurrectionHpPercent = value
+    return this
+  }
   /**
    * Build the Character instance
    * @param context Optional combat context for immediate initialization

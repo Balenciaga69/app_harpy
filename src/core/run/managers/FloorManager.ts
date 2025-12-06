@@ -6,6 +6,8 @@ import { type RunConfig, DEFAULT_RUN_CONFIG } from '../infra/configs'
  * Pure data manager with no side effects.
  */
 export class FloorManager {
+  // TODO: Validate startFloor and maxFloors; consider exposing hooks/events for 'floor advanced' edge cases
+  // TODO: Support 'endless' mode toggling and ensure floor/chapter math is stable for large numbers
   private floor: number
   private chapter: number
   private readonly floorsPerChapter: number

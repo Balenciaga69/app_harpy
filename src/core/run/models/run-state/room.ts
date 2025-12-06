@@ -1,8 +1,8 @@
 import type { RoomType } from '../run-event-map/room-type.ts'
 /**
- * Room Info
+ * 房間資訊
  *
- * Represents a single room in a route.
+ * 表示路線中的單一房間。
  */
 export type RoomInfo = {
   readonly id: string
@@ -10,15 +10,19 @@ export type RoomInfo = {
   readonly data: RoomData
 }
 /**
- * Room Data
+ * 房間資料
  *
- * Room-specific data based on room type.
+ * 根據房間類型（room type）定義的房間專屬資料。
  */
-export type RoomData = CombatRoomData | EventRoomData
+export type RoomData = CombatRoomData | EventRoomData | ShopRoomData
 export type CombatRoomData = {
   readonly enemies: readonly string[]
   readonly difficulty: number
 }
 export type EventRoomData = {
   readonly eventId: string
+}
+export type ShopRoomData = {
+  readonly shopId: string
+  readonly shopType?: 'slot' | 'store' | 'bet'
 }
