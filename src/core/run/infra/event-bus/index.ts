@@ -1,2 +1,2 @@
-export * from './event-bus'
+export * from './run-event-bus'
 export * from './RunEventBus'

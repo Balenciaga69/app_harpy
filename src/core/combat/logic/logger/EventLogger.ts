@@ -1,4 +1,5 @@
-import type { IEventBus } from '../../infra/event-bus'
+import type { IEventBus } from '@/core/shared/event-bus'
+import type { CombatEventMap } from '../../infra/event-bus'
 import type { CombatLogEntry } from './combat-log-entry'
 /**
  * EventLogger
@@ -8,9 +9,9 @@ import type { CombatLogEntry } from './combat-log-entry'
  */
 export class EventLogger {
   private logs: CombatLogEntry[] = []
-  private eventBus: IEventBus
+  private eventBus: IEventBus<CombatEventMap>
   private currentTick: number = 0
-  constructor(eventBus: IEventBus) {
+  constructor(eventBus: IEventBus<CombatEventMap>) {
     this.eventBus = eventBus
     this.setupListeners()
   }
@@ -33,7 +34,7 @@ export class EventLogger {
       this.currentTick = payload.tick
     })
     // 2. Record all events
-    this.eventBus.onAll((type, payload) => {
+    this.eventBus.onAll?.((type, payload) => {
       const entry: CombatLogEntry = {
         tick: this.currentTick,
         eventType: type,

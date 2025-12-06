@@ -1,4 +1,4 @@
-import type { RoomType } from '../run-event-map/room.ts'
+import type { RoomType } from '../run-event-map/room-type.ts'
 /**
  * Room Info
  *

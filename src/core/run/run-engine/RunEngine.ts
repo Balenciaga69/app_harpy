@@ -1,9 +1,10 @@
 import { nanoid } from 'nanoid'
 import { RunStateMachine } from '../core/RunStateMachine'
-import type { IRunEventBus } from '../infra/event-bus/event-bus'
+import type { IRunEventBus } from '../infra/event-bus'
 import { ChapterManager } from '../managers/ChapterManager'
 import { FloorManager } from '../managers/FloorManager'
-import type { RouteInfo, RunConfig, RunState } from '../models'
+import type { RouteInfo, RunState } from '../models'
+import type { RunConfig } from '../infra/configs'
 /**
  * Run Engine
  *

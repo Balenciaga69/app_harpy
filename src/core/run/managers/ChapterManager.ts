@@ -1,5 +1,5 @@
-import type { RoomInfo, RouteInfo, RunConfig } from '../models'
-import { DEFAULT_RUN_CONFIG } from '../models'
+import { type RunConfig, DEFAULT_RUN_CONFIG } from '../infra/configs'
+import type { RoomInfo, RouteInfo } from '../models'
 /**
  * Chapter Manager
  *

@@ -1,10 +1,10 @@
 import mitt, { type Emitter } from 'mitt'
-import type { IEventBus } from './event-bus'
 import type { ReplayEvent, ReplayEventType } from '../../models'
+import type { IReplayEventBus } from './replay-event-bus'
 /**
  * EventBus
  *
- * 基於 Mitt 的 IEventBus 實作。
+ * 基於 Mitt 的 IReplayEventBus 實作。
  * 封裝 mitt 函式庫，提供型別安全的 replay 事件發送。
  *
  * 目的：
@@ -17,7 +17,7 @@ import type { ReplayEvent, ReplayEventType } from '../../models'
  * - 將 tick 和 payload 轉換為 ReplayEvent 格式
  * - 只有此檔案會引用 mitt
  */
-export class EventBus implements IEventBus {
+export class EventBus implements IReplayEventBus {
   private emitter: Emitter<Record<ReplayEventType, ReplayEvent>>
   constructor() {
     this.emitter = mitt<Record<ReplayEventType, ReplayEvent>>()

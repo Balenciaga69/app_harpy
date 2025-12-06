@@ -4,16 +4,17 @@
 
 ### 核心目標
 
-管理單次 RogueLite 遊玩流程（Run），採用**純事件驅動 + 狀態機**架構，確保極低耦合與高可擴展性。
+管理單次 RogueLite 遊玩流程（Run），採用純事件驅動 + 狀態機架構，確保極低耦合與高可擴展性。
 
-### RunEngine 只做三件事
+### RunEngine 只做幾件事
 
 1. 維護 Floor / Chapter 進度
-2. 提供路線選擇- **極薄 Facade**：RunEngine 核心短小精悍
+2. 提供路線選擇
 
-- **純事件驅動**：所有業務邏輯在外部 Handler
-- **零直接依賴**：RunEngine 不 import 任何業務模組
-- **單向數據流**：RunEngine → EventBus → Handler → RunState
+- 極薄 Facade：RunEngine 核心短小精悍
+- 純事件驅動：所有業務邏輯在外部 Handler
+- 零直接依賴：RunEngine 不 import 任何業務模組
+- 單向數據流：RunEngine → EventBus → Handler → RunState
 
 3. 驅動場景狀態機
 
@@ -246,9 +247,9 @@ RunEngine(eventBus: IEventBus)
 
 ### 死亡與重試
 
-- 若持有復活道具，可復活一次
-- 死亡後回到戰鬥前狀態
-- 商店老闆給予一次免費賭博
+- - 玩家死亡後會有死亡檢查機。
+- 若玩家有 某種道具 則能復活機會，失敗將回到戰鬥前，並且商店老闆會給你一次賭博作為補償同時刷新商店內容。
+- 否則直接進入本Run的Game Over狀態。
 - 允許玩家自由 save/load
 
 ---
@@ -277,7 +278,7 @@ class DailyChallengeHandler {
 }
 ```
 
-**完全不需要修改 RunEngine！**
+完全不需要修改 RunEngine！
 
 ---
 
@@ -304,9 +305,9 @@ test('entering combat room emits room:entered', () => {
 
 ## 十、設計原則摘要
 
-- **狀態機封裝**：場景跳轉只在 StateMachine
-- **開放封閉**：新功能 = 新 Handler
-- **極薄 Facade**：RunEngine 核心短小精悍
-- **純事件驅動**：所有業務邏輯在外部 Handler
-- **零直接依賴**：RunEngine 不 import 任何業務模組
-- **單向數據流**：RunEngine → EventBus → Handler → RunState
+- 狀態機封裝：場景跳轉只在 StateMachine
+- 開放封閉：新功能 = 新 Handler
+- 極薄 Facade：RunEngine 核心短小精悍
+- 純事件驅動：所有業務邏輯在外部 Handler
+- 零直接依賴：RunEngine 不 import 任何業務模組
+- 單向數據流：RunEngine → EventBus → Handler → RunState

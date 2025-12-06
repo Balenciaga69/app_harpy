@@ -7,7 +7,7 @@ import {
   type ReplayEventType,
   type ReplayEvent,
 } from '../models'
-import type { ITickScheduler, IEventBus } from '../infra'
+import type { ITickScheduler, IReplayEventBus } from '../infra'
 import { BrowserTickScheduler, EventBus } from '../infra'
 import type { IReplayEngine } from './replay.engine'
 import { ReplayDataAdapter } from '../adapters'
@@ -27,7 +27,7 @@ import { PlaybackStateMachine } from '../core'
 export class ReplayEngine implements IReplayEngine {
   private dataAdapter: ReplayDataAdapter
   private stateMachine: PlaybackStateMachine
-  private eventEmitter: IEventBus
+  private eventEmitter: IReplayEventBus
   private tickScheduler: ITickScheduler
   private config: ReplayConfig
   private lastFrameTime: number = 0

@@ -47,7 +47,7 @@
 
 ### 事件層
 
-- `EventBus`：replay 專屬事件中心（獨立於 Combat 的 EventBus）
+- `EventBus`：replay 事件通訊中心
 
 ---
 

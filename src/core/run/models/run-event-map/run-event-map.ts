@@ -5,7 +5,7 @@ import type {
   RoomEnteredPayload,
   FloorChangedPayload,
   ChapterChangedPayload,
-} from './payloads/run'
+} from './payloads/run-payload'
 import type {
   CombatStartedPayload,
   CombatEndedPayload,
@@ -17,7 +17,7 @@ import type {
   RewardClaimedPayload,
   DifficultyUpdatedPayload,
   RunGameOverPayload,
-} from './payloads/handlers'
+} from './payloads/handle-payload'
 export type RunEventMap = {
   // RunEngine events
   'run:started': RunStartedPayload

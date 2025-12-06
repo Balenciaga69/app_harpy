@@ -1,4 +1,5 @@
-import type { IEventBus } from '../infra/event-bus'
+import type { IEventBus } from '@/core/shared/event-bus'
+import type { CombatEventMap } from '../infra/event-bus'
 import type { CombatRandomGenerator } from '../infra/shared/utils/CombatRandomGenerator'
 import type { IEntity } from '../infra/shared/interfaces/entity.interface'
 import type { IResourceRegistry } from '../infra/resource-registry/resource-registry'
@@ -9,7 +10,7 @@ import type { IResourceRegistry } from '../infra/resource-registry/resource-regi
  * Provides read/write access to global combat resources: event bus, RNG, registry, entities, tick.
  */
 export interface ICombatContext {
-  readonly eventBus: IEventBus
+  readonly eventBus: IEventBus<CombatEventMap>
   readonly rng: CombatRandomGenerator
   readonly registry: IResourceRegistry
   // Entity management

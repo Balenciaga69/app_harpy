@@ -1,10 +1,10 @@
+import type { IEventBus } from '@/core/shared/event-bus'
 import mitt from 'mitt'
 import type { RunEventMap } from '../../models'
-import type { IRunEventBus } from './event-bus'
 /**
  * Run Event Bus implementation using mitt
  */
-export class RunEventBus implements IRunEventBus {
+export class RunEventBus implements IEventBus<RunEventMap> {
   private emitter = mitt<RunEventMap>()
   public on<K extends keyof RunEventMap>(event: K, handler: (payload: RunEventMap[K]) => void): void {
     this.emitter.on(event, handler)

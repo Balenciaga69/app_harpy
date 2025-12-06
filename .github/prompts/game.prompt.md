@@ -50,6 +50,8 @@
 
 ## 關卡與進程
 
+### 初步概述
+
 - 關卡分一般、小型 Boss、大型 Boss、正面事件。
 - 層數遞增，怪物屬性依難度係數調整。
 - 最高 30 關，每 5 關有中型 Boss，每 10 關有大型 Boss。
@@ -58,6 +60,8 @@
 - 章節提供三條或兩條路線選擇，路線影響敵人與事件類型。第 5 關與第 10 關為集中點必經 Boss 關卡。
 - 房間分為 敵人、菁英敵人、事件三種
 - 事件有: 純粹正面事件、一正一負兩種(發想中)。
+
+###
 
 ## 掉落與商店
 
@@ -75,7 +79,9 @@
 
 ## 死亡與重試
 
+- 玩家死亡後會有死亡檢查機制。
 - 若玩家有 某種道具 則能復活機會，失敗將回到戰鬥前，並且商店老闆會給你一次賭博作為補償同時刷新商店內容。
+- 否則直接進入本Run的Game Over狀態。
 - 這遊戲沒那麼嚴格，其實允許玩家瘋狂 save & load
 
 ## 模組分割
@@ -92,4 +98,7 @@
 - InventoryModule: 管理玩家背包
 - ShopModule: 生成商店邏輯
 - PersistentStorageModule: 存與讀檔案
-  CombatEngine → Replay → RunModule → EncounterModule → Creature/Equipment/Reward → Shop/Inventory -> Gamble → PersistentStorage → EventModule
+
+## 初步構思發想
+
+- CombatEngine → Replay → RunModule → EncounterModule → Creature/Equipment/Reward → Shop/Inventory -> Gamble → PersistentStorage → EventModule
