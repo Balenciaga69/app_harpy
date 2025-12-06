@@ -13,7 +13,7 @@ import type { IReplayEngine } from './replay.engine'
 import { ReplayDataAdapter } from '../adapters'
 import { PlaybackStateMachine } from '../core'
 /**
- * ReplayEngine：重播系統協調器（簡化版 v0.4）
+ * ReplayEngine
  *
  * 最小 API，方便 UI 整合：
  * - load(result)：載入戰鬥結果資料
@@ -23,10 +23,6 @@ import { PlaybackStateMachine } from '../core'
  * - getState()：取得目前播放狀態
  * - on/off：訂閱重播事件
  *
- * 【v0.4 已移除】以下功能為簡化而移除：
- * - LogQueryService 整合（直接用 getLogsAtTick/getLogsInRange）
- * - enableInterpolation 設定選項
- * - 進階日誌查詢功能
  */
 export class ReplayEngine implements IReplayEngine {
   private dataAdapter: ReplayDataAdapter
