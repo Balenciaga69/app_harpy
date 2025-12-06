@@ -1,5 +1,4 @@
 import { type RunConfig, DEFAULT_RUN_CONFIG } from '../infra/configs'
-
 /**
  * Floor Manager
  *

@@ -2,7 +2,7 @@ import { CombatContext } from '../context'
 import { TickActionSystem } from '../coordination'
 import { CombatSystem, CombatTiming } from '../infra/config'
 import { CombatError, CombatFailureCode } from '../infra/errors'
-import { EventBus } from '../infra/event-bus'
+import { CombatEventBus } from '../infra/event-bus'
 import { InMemoryResourceRegistry } from '../infra/resource-registry'
 import type { IResourceRegistry } from '../infra/resource-registry/resource-registry'
 import { EventLogger } from '../logic/logger'
@@ -37,7 +37,7 @@ export class CombatEngine {
     }
     // Use provided registry or create default in-memory implementation
     const resourceRegistry = registry ?? new InMemoryResourceRegistry()
-    const eventBus = new EventBus()
+    const eventBus = new CombatEventBus()
     this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed)
     this.initializeSystems()
     this.ticker.setStopCondition(() => this.checkBattleEnd())

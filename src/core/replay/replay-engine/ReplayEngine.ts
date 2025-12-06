@@ -8,7 +8,7 @@ import {
   type ReplayEvent,
 } from '../models'
 import type { ITickScheduler, IReplayEventBus } from '../infra'
-import { BrowserTickScheduler, EventBus } from '../infra'
+import { BrowserTickScheduler, ReplayEventBus } from '../infra'
 import type { IReplayEngine } from './replay.engine'
 import { ReplayDataAdapter } from '../adapters'
 import { PlaybackStateMachine } from '../core'
@@ -35,7 +35,7 @@ export class ReplayEngine implements IReplayEngine {
     this.config = { ...DEFAULT_REPLAY_CONFIG, ...config }
     this.dataAdapter = new ReplayDataAdapter()
     this.stateMachine = new PlaybackStateMachine(createInitialReplayState())
-    this.eventEmitter = new EventBus()
+    this.eventEmitter = new ReplayEventBus()
     this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
     // Set initial speed from config (clamped to 0.5-3x)
     this.stateMachine.setSpeed(this.clampSpeed(this.config.playbackSpeed))
