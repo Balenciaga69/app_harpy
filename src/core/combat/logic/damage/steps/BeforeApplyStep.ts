@@ -15,14 +15,17 @@ export class BeforeApplyStep implements IDamageStep {
     }
     // Check if damage is prevented
     if (event.prevented) {
-      context.eventBus.emit('combat:prevented', {
-        sourceId: event.source.id,
-        targetId: event.target.id,
-        reason: 'damage-prevented-by-effect',
-        tick: event.tick,
-      })
+      this.emitPrevented(context, event)
       return false // Terminate the flow
     }
     return true // Continue processing
+  }
+  private emitPrevented(context: CombatContext, event: DamageEvent): void {
+    context.eventBus.emit('combat:prevented', {
+      sourceId: event.source.id,
+      targetId: event.target.id,
+      reason: 'damage-prevented-by-effect',
+      tick: event.tick,
+    })
   }
 }
