@@ -22,14 +22,16 @@ export class CriticalStep implements IDamageStep {
     if (event.isCrit) {
       const critMultiplier = event.source.getAttribute('criticalMultiplier') ?? CriticalFormula.DEFAULT_MULTIPLIER
       event.amount *= critMultiplier
-      // Emit critical event
-      context.eventBus.emit('entity:critical', {
-        sourceId: event.source.id,
-        targetId: event.target.id,
-        multiplier: critMultiplier,
-        tick: event.tick,
-      })
+      this.emitCriticalEvent(context, event, critMultiplier)
     }
     return true
+  }
+  private emitCriticalEvent(context: CombatContext, event: DamageEvent, critMultiplier: number): void {
+    context.eventBus.emit('entity:critical', {
+      sourceId: event.source.id,
+      targetId: event.target.id,
+      multiplier: critMultiplier,
+      tick: event.tick,
+    })
   }
 }
