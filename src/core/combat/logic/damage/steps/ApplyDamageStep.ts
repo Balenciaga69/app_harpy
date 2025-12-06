@@ -13,20 +13,19 @@ export class ApplyDamageStep implements IDamageStep {
     const newHp = Math.max(0, currentHp - event.finalDamage)
     event.target.setCurrentHpClamped(newHp)
     this.emitDamageEvent(event, context)
-    // HP zero check (before death/resurrection)
     if (newHp <= 0 && !event.target.isDead) {
-      // Emit HP zero event
       this.emitHpZeroEvent(event, context)
-      // Trigger onHpZero hook for all effects (e.g., death explosion)
       event.target.triggerHpZero(context)
-      // Attempt resurrection
-      const resurrected = ResurrectionHandler.attemptResurrection(event.target, context, event.tick)
+      const resurrected = this.tryResurrection(event, context)
       if (!resurrected) {
         event.target.isDead = true
         this.emitDeathEvent(event, context)
       }
     }
     return true
+  }
+  private tryResurrection(event: DamageEvent, context: CombatContext): boolean {
+    return ResurrectionHandler.attemptResurrection(event.target, context, event.tick)
   }
   private emitDamageEvent(event: DamageEvent, context: CombatContext) {
     context.eventBus.emit('entity:damage', {

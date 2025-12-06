@@ -48,15 +48,15 @@
 
 ### 階段系統
 
-- `TickActionSystem`：每 tick 依序執行多個 Phase
-- `EffectTickPhase`：效果 onTick
+- `TickActionSystem`：每 tick 依序執行多個 Phase（可擴充）
+- `EffectTickPhase`：效果 onTick 處理
 - `EnergyRegenPhase`：能量回復
-- `AttackExecutionPhase`：攻擊判定與執行
-- `DeathCheckPhase`：死亡檢查與復活判定（新增）
+- `AttackExecutionPhase`：攻擊判定、目標選擇、執行傷害鏈
 
 ### 復活系統
 
-- 觸發時機：角色血量歸零時
+- 處理類別：`ResurrectionHandler`（獨立處理器，由 `ApplyDamageStep` 呼叫）
+- 觸發時機：角色血量歸零時（傷害管線內即時判定）
 - 復活率：3%～50%（由 `resurrectionChance` 屬性決定）
 - 復活血量：10%～100% maxHp（由 `resurrectionHpPercent` 屬性決定）
 - 復活後僅清除 `cleanseOnRevive: true` 的效果（裝備效果不清除）
@@ -83,9 +83,19 @@
 
 ### 傷害管線
 
-- `DamageChain`：責任鏈，8 個步驟依序執行
-- 流程：BeforeDamage → HitCheck → Critical → DamageModify → Defense → BeforeApply → Apply → AfterApply
-- Apply 階段觸發死亡檢查 → 復活判定
+- `DamageChain`：責任鏈模式，8 個步驟依序執行
+- 流程：
+  1. `BeforeDamageStep` — 傷害起始，觸發 onBeforeDamage 鉤子
+  2. `HitCheckStep` — 命中檢定（命中值 vs 閃避）
+  3. `CriticalStep` — 暴擊判定
+  4. `DamageModifyStep` — 傷害修正（效果增減傷）
+  5. `DefenseCalculationStep` — 防禦計算（護甲減傷）
+  6. `BeforeApplyStep` — 應用前最終確認
+  7. `ApplyDamageStep` — 扣血、HP 歸零檢查、復活判定
+  8. `AfterApplyStep` — 傷害後處理，觸發 onAfterDamage 鉤子
+
+- 復活處理：`ApplyDamageStep` 內呼叫 `ResurrectionHandler` 處理即時復活判定
+- 提前終止：任一步驟回傳 `false` 則中斷管線（如閃避成功）
 
 ### 領域模型
 
