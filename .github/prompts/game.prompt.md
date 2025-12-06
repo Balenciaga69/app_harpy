@@ -1,22 +1,14 @@
----
-applyTo: '**'
----
-
-Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
-
-# 遊戲機制與設計大綱（2025/12/01）
+# 遊戲機制與設計大綱（2025/12/05）
 
 ## 遊戲核心概念
 
-- 單機即時制戰鬥 Roguelite，玩家配置角色、裝備、技能，挑戰層層關卡。
-- 戰鬥以 tick 為單位，自動進行，玩家僅於戰前配置與選擇技能。Replay 的時候是以 1x速度播放，同時10ms = 1tick。
-- 具備裝備、大絕招、遺物等多元養成與策略選擇。
+- 單機即時制戰鬥 RogueLite，玩家配置角色、裝備、技能，挑戰層層關卡。
 
 ## 戰鬥系統
 
 ### 1. 攻擊邏輯
 
-- 僅分「普通攻擊」與「大招」兩種，無元素傷害規則。
+- 僅分「普通攻擊」與「大招」兩種，無元素或物理魔法傷害規則之分。
 - 普通攻擊有 cooldown（等待時間，單位 tick），大招需能量條充滿後釋放，無 cooldown。
 - 能量條由角色屬性決定獲取速度，並有自然回復。
 - 傷害分為「一般傷害」與「真實傷害 True Damage」（無視任何減免）。
@@ -25,9 +17,15 @@ Provide project context and coding guidelines that AI should follow when generat
 
 ### 2. 戰鬥流程
 
-- 玩家與敵人依據冷卻時間自動執行行動。
-- 主攻擊僅能有一種（武器或法術），法術必中、無暴擊，武器有命中與暴擊判定。
+- 具備裝備、大絕招、遺物等多元養成與策略選擇。
+- 戰鬥前會來個抽獎或賭博，決定戰前事件，事件結果將會以效果策略注入戰鬥模組中。
+- Tick-based 自動戰鬥，玩家僅於戰前配置與選擇技能。
+- 進入戰鬥後運算完，玩家實際上是在看運算後日誌的運行結果
+- 玩家與敵人依據冷卻時間自動執行行動。(會附加隨機延遲)
 - 戰鬥結果於載入時即決定，過程不可干預。
+- 傷害流程為線性步驟：BeforeDamage → HitCheck → Critical → DamageModify → Defense → BeforeApply → Apply → AfterApply。
+- 攻擊目標選擇支援策略模式(攻擊第一位、攻擊血最少、攻擊血最多等等)
+- 重點行動都會塞入戰鬥日誌隊列
 
 ### 3. 異常狀態與效果
 
@@ -56,13 +54,42 @@ Provide project context and coding guidelines that AI should follow when generat
 - 層數遞增，怪物屬性依難度係數調整。
 - 最高 30 關，每 5 關有中型 Boss，每 10 關有大型 Boss。
 - 超過 30 關，則進入無盡模式，難度持續提升。
+- 每 10 關稱為一個「章節」，可以看到每個節點上的敵人。
+- 章節提供三條或兩條路線選擇，路線影響敵人與事件類型。第 5 關與第 10 關為集中點必經 Boss 關卡。
+- 房間分為 敵人、菁英敵人、事件三種
+- 事件有: 純粹正面事件、一正一負兩種(發想中)。
 
 ## 掉落與商店
 
-- 每關結束可三選一獎勵（裝備、遺物）。
-- 商店可隨時進入，購買物品。
+- 每關勝利後會掉落金幣。
+- 金幣可以進入商店拉霸或水果機賭博
+- 商店可隨時進入，拓過金幣購買物品。
 - 物品價格被係數控制，隨關卡提升而通膨。
+- 商店常駐不用偶遇生成。
+
+## 賭博
+
+- 賭博可以獲得金錢或高價物(Jackpot)
+- 賭博可以連鎖倍率樂賭越兇
+- 賭博以老虎機或水果機為主(還在構思哪個比較好做)
 
 ## 死亡與重試
 
-- 玩家有 n 次死亡機會，失敗將回到戰鬥前，並且商店老闆會給你一個抽獎盲盒作為補償並刷新商店內容。
+- 若玩家有 某種道具 則能復活機會，失敗將回到戰鬥前，並且商店老闆會給你一次賭博作為補償同時刷新商店內容。
+- 這遊戲沒那麼嚴格，其實允許玩家瘋狂 save & load
+
+## 模組分割
+
+- CombatEngine: 戰鬥純粹運算回傳結果與日誌、武器效果等等運算都集中在此。
+- Replay: 基於日誌與快照驅動的日誌控制邏輯
+- RunModule: 管理從第 1 層到第 n 層的完整流程，處理死亡、存檔、場景切換。
+- Encounter: 生成敵人、商店、偶遇事件等等與路線三選一等等
+- EquipmentModule: 生成裝備
+- RewardModule: 負責生成獎勵物品、Reward, Loot 等等
+- EventModule: 生成偶遇事件
+- SlotMachine: 生成商店賭場
+- CreatureModule: 生成戰鬥敵人、角色等等
+- InventoryModule: 管理玩家背包
+- ShopModule: 生成商店邏輯
+- PersistentStorageModule: 存與讀檔案
+  CombatEngine → Replay → RunModule → EncounterModule → Creature/Equipment/Reward → Shop/Inventory -> Gamble → PersistentStorage → EventModule

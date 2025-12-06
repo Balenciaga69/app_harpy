@@ -12,7 +12,7 @@
     "check:cic": "madge --circular --extensions ts,tsx src/modules",
     "check:deps": "madge --image dev_log/combat-deps.svg --extensions ts,tsx src/modules/",
     "preview": "vite preview",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
