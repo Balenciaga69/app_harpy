@@ -1,67 +1,234 @@
-# Run 模組規格書 v0.1（前瞻設計）
+# Run 模組規格書 v0.2（事件驅動架構）
 
 ## 一、目標功能與範圍
 
 ### 核心目標
 
-管理單次 RogueLite 遊玩流程（Run），從第 1 層到第 n 層，處理關卡推進、戰鬥觸發、死亡重試、場景切換、存檔讀檔。
+管理單次 RogueLite 遊玩流程（Run），採用**純事件驅動 + 狀態機**架構，確保極低耦合與高可擴展性。
 
-### 會實現的功能
+### RunEngine 只做三件事
 
-- 關卡進度管理（當前層數、章節）
-- 戰鬥觸發與結果處理
-- 路線選擇（章節內 2~3 條路線）
-- 死亡與重試流程
-- 遊戲狀態存檔/讀檔委派
-- 場景切換（戰鬥、商店、事件）
-- 難度係數計算
+1. 維護 Floor / Chapter 進度
+2. 提供路線選擇- **極薄 Facade**：RunEngine 核心短小精悍
 
-### 不會實現的功能
+- **純事件驅動**：所有業務邏輯在外部 Handler
+- **零直接依賴**：RunEngine 不 import 任何業務模組
+- **單向數據流**：RunEngine → EventBus → Handler → RunState
 
-- 戰鬥運算（由 Combat 模組負責）
-- 戰鬥回放（由 Replay 模組負責）
-- 敵人生成（由 Creature 模組負責）
-- 裝備生成（由 Equipment 模組負責）
-- 獎勵生成（由 Reward 模組負責）
-- 商店邏輯（由 Shop 模組負責）
-- 存檔實作（由 PersistentStorage 模組負責）
+3. 驅動場景狀態機
+
+### 不在 RunEngine 內的功能（由獨立 Handler 處理）
+
+- 戰鬥觸發與結果 → `CombatHandler`
+- 死亡與重試 → `DeathHandler`
+- 獎勵分發 → `RewardHandler`
+- 存讀檔 → `PersistenceHandler`
+- 難度計算 → `DifficultyHandler`
+- 商店互動 → `ShopHandler`
 
 ---
 
 ## 二、架構與元件關係
 
-### 入口層
+### 核心層（RunEngine 直接持有）
 
-- `RunEngine`：Facade，管理整個 Run 生命週期
+```
+RunEngine
+  ├── RunEventBus      // 事件中心
+  ├── RunStateMachine  // 場景狀態機
+  ├── FloorManager     // 層數進度（純資料）
+  └── ChapterManager   // 章節路線（純資料）
+```
 
-### 狀態層
+### Handler 層（透過事件訂閱，零耦合）
 
-- `RunState`：當前 Run 狀態（層數、章節、路線、玩家狀態）
-- `RunStateMachine`：場景狀態機（idle → combat → reward → event → shop）
+```
+RunEventBus
+  ├── CombatHandler      // 監聽 room:entered → 執行戰鬥 → emit combat:ended
+  ├── ReplayHandler      // 監聽 combat:ended → 播放回放
+  ├── RewardHandler      // 監聽 combat:victory → 發放獎勵
+  ├── DeathHandler       // 監聽 combat:defeat → 處理死亡/復活
+  ├── PersistenceHandler // 監聽 run:* 事件 → 自動存檔
+  ├── DifficultyHandler  // 監聽 floor:changed → 更新難度係數
+  └── AchievementHandler // （未來）監聽各種事件 → 解鎖成就
+```
 
-### 進度層
+### 數據流
 
-- `FloorManager`：關卡進度追蹤，Boss 關卡判定
-- `ChapterManager`：章節管理，路線選擇
-
-### 戰鬥整合層
-
-- `CombatBridge`：呼叫 CombatEngine，處理戰鬥結果
-- `ReplayBridge`：呼叫 ReplayEngine，播放戰鬥
-
-### 存檔層
-
-- `RunPersistence`：委派 PersistentStorage，處理存/讀檔
-
-### 事件層
-
-- `RunEventBus`：Run 專屬事件中心
+```
+UI 操作
+   ↓
+RunEngine.selectRoute() / enterRoom()
+   ↓
+RunEventBus.emit('route:selected') / emit('room:entered')
+   ↓
+各 Handler 監聯並處理
+   ↓
+Handler 可能 emit 新事件 或 回寫 RunState
+   ↓
+RunStateMachine 根據事件跳轉狀態
+   ↓
+UI 訂閱狀態變化更新畫面
+```
 
 ---
 
-## 三、核心概念
+## 三、狀態機定義
 
-### 關卡結構
+### 場景狀態（RunStateMachine）
+
+```
+idle ──(start)──→ route_selection
+                       │
+         (route:selected)
+                       ↓
+                  room_preview
+                       │
+         (room:entered)
+                       ↓
+              ┌────────┴────────┐
+              ↓                 ↓
+           combat            event
+              │                 │
+   (combat:ended)        (event:resolved)
+              │                 │
+              └────────┬────────┘
+                       ↓
+                    reward
+                       │
+            (reward:claimed)
+                       ↓
+              ┌────────┴────────┐
+              ↓                 ↓
+         next_floor          game_over
+              │
+    (floor:changed)
+              ↓
+      route_selection (loop)
+```
+
+### 狀態說明
+
+| 狀態              | 說明          |
+| ----------------- | ------------- |
+| `idle`            | 初始/結束狀態 |
+| `route_selection` | 選擇章節路線  |
+| `room_preview`    | 預覽房間內容  |
+| `combat`          | 戰鬥進行中    |
+| `event`           | 事件進行中    |
+| `reward`          | 領取獎勵      |
+| `next_floor`      | 進入下一層    |
+| `game_over`       | 遊戲結束      |
+
+---
+
+## 四、事件契約
+
+### RunEngine 發出的事件
+
+| 事件              | 時機        | Payload                  |
+| ----------------- | ----------- | ------------------------ |
+| `run:started`     | 新 Run 開始 | `{ seed, floor }`        |
+| `run:loaded`      | 讀檔完成    | `{ runState }`           |
+| `route:selected`  | 選擇路線    | `{ routeIndex, rooms }`  |
+| `room:entered`    | 進入房間    | `{ roomType, roomData }` |
+| `floor:changed`   | 進入新層    | `{ floor, chapter }`     |
+| `chapter:changed` | 進入新章節  | `{ chapter }`            |
+
+### Handler 發出的事件
+
+| 事件                 | 來源 Handler      | Payload            |
+| -------------------- | ----------------- | ------------------ |
+| `combat:started`     | CombatHandler     | `{ enemies }`      |
+| `combat:ended`       | CombatHandler     | `{ result, logs }` |
+| `combat:victory`     | CombatHandler     | `{ reward }`       |
+| `combat:defeat`      | CombatHandler     | `{}`               |
+| `player:died`        | DeathHandler      | `{ canRevive }`    |
+| `player:revived`     | DeathHandler      | `{}`               |
+| `reward:generated`   | RewardHandler     | `{ items, gold }`  |
+| `reward:claimed`     | RewardHandler     | `{}`               |
+| `difficulty:updated` | DifficultyHandler | `{ multiplier }`   |
+
+---
+
+## 五、對外暴露的主要功能
+
+### RunEngine API（極簡）
+
+```
+RunEngine(eventBus: IEventBus)
+  .start(config: RunConfig): void
+  .load(state: RunState): void
+  .getState(): RunState
+  .selectRoute(index: number): void
+  .enterRoom(index: number): void
+  .dispose(): void
+```
+
+### RunState（純資料，可序列化）
+
+```
+{
+  floor: number
+  chapter: number
+  scene: SceneState
+  currentRoute: RouteInfo | null
+  routeOptions: RouteInfo[]
+  roomIndex: number
+}
+```
+
+### 注意
+
+- 沒有 `startCombat()`、`claimReward()` 等方法
+- 這些邏輯由 Handler 自動處理
+- RunEngine 只負責「進入房間」，後續流程由事件驅動
+
+---
+
+## 六、Handler 職責分離
+
+### CombatHandler
+
+- 監聽：`room:entered` (roomType === 'combat')
+- 職責：呼叫 CombatEngine、emit 結果
+- 發出：`combat:started`, `combat:ended`, `combat:victory/defeat`
+
+### ReplayHandler
+
+- 監聽：`combat:ended`
+- 職責：呼叫 ReplayEngine 播放
+- 發出：`replay:started`, `replay:ended`
+
+### RewardHandler
+
+- 監聽：`combat:victory`, `event:resolved`
+- 職責：生成獎勵、更新玩家背包
+- 發出：`reward:generated`, `reward:claimed`
+
+### DeathHandler
+
+- 監聽：`combat:defeat`
+- 職責：檢查復活道具、處理死亡流程
+- 發出：`player:died`, `player:revived`, `run:game-over`
+
+### PersistenceHandler
+
+- 監聽：`floor:changed`, `reward:claimed`, `run:*`
+- 職責：自動存檔快照
+- 發出：`save:completed`, `save:failed`
+
+### DifficultyHandler
+
+- 監聽：`floor:changed`
+- 職責：計算難度係數
+- 發出：`difficulty:updated`
+
+---
+
+## 七、關卡結構
+
+### 基本規則
 
 - 每 10 層為一章節
 - 第 5、10 層為 Boss 關卡（必經）
@@ -70,27 +237,12 @@
 
 ### 房間類型
 
-- `combat` — 一般敵人戰鬥
-- `elite` — 菁英敵人戰鬥（更難、獎勵更好）
-- `boss` — Boss 戰鬥
-- `event` — 隨機事件
-- `shop` — 商店（可隨時進入，不佔房間）
-
-### 場景流程
-
-```
-開始 Run
-  ↓
-選擇路線（每章節開始）
-  ↓
-進入房間 → 戰鬥/事件
-  ↓
-戰鬥結束 → 獎勵結算
-  ↓
-下一層 or 死亡重試
-  ↓
-章節結束 → 下一章節 or 遊戲結束
-```
+| 類型     | 說明                       |
+| -------- | -------------------------- |
+| `combat` | 一般敵人戰鬥               |
+| `elite`  | 菁英敵人（更難、獎勵更好） |
+| `boss`   | Boss 戰鬥                  |
+| `event`  | 隨機事件                   |
 
 ### 死亡與重試
 
@@ -101,95 +253,60 @@
 
 ---
 
-## 四、對外暴露的主要功能
+## 八、擴展性範例
 
-### RunEngine API
+### 新增成就系統
 
-```
-RunEngine(config: RunConfig)
-  .startNewRun(): void
-  .loadRun(saveData: RunSaveData): void
-  .getCurrentState(): RunState
-  .selectRoute(routeIndex: number): void
-  .enterRoom(roomIndex: number): void
-  .startCombat(): CombatResult
-  .playReplay(result: CombatResult): void
-  .claimReward(): void
-  .openShop(): void
-  .saveRun(): RunSaveData
-  .on(event, handler): void
-  .dispose(): void
+```typescript
+class AchievementHandler {
+  constructor(eventBus: IEventBus) {
+    eventBus.on('combat:victory', this.checkCombatAchievements)
+    eventBus.on('floor:changed', this.checkProgressAchievements)
+  }
+}
 ```
 
-### RunConfig 輸入
+### 新增每日挑戰模式
 
-- `player: ICharacter` — 玩家角色
-- `seed?: string` — 隨機種子（可選）
-- `startFloor?: number` — 起始層數（預設 1）
+```typescript
+class DailyChallengeHandler {
+  constructor(eventBus: IEventBus) {
+    eventBus.on('run:started', this.applyDailyModifiers)
+    eventBus.on('run:game-over', this.submitScore)
+  }
+}
+```
 
-### RunState 輸出
-
-- `floor: number` — 當前層數
-- `chapter: number` — 當前章節（1~3+）
-- `scene: 'idle' | 'combat' | 'reward' | 'event' | 'shop'`
-- `routeOptions: RouteInfo[]` — 可選路線
-- `currentRoute: RouteInfo | null` — 已選路線
-- `playerSnapshot: CharacterSnapshot` — 玩家狀態
-- `gold: number` — 金幣
-- `inventory: Item[]` — 背包
-
-### 事件類型
-
-- `run:started` — 新 Run 開始
-- `run:loaded` — 讀檔完成
-- `run:floor-changed` — 進入新層
-- `run:chapter-changed` — 進入新章節
-- `run:route-selected` — 選擇路線
-- `run:room-entered` — 進入房間
-- `run:combat-started` — 戰鬥開始
-- `run:combat-ended` — 戰鬥結束
-- `run:player-died` — 玩家死亡
-- `run:player-revived` — 玩家復活
-- `run:reward-claimed` — 領取獎勵
-- `run:game-over` — 遊戲結束（勝利或失敗）
+**完全不需要修改 RunEngine！**
 
 ---
 
-## 五、與其他模組的關係
+## 九、測試策略
 
-```
-         ┌─────────────────┐
-         │   RunEngine     │
-         └────────┬────────┘
-                  │
-    ┌─────────────┼─────────────┐
-    ↓             ↓             ↓
-┌────────┐  ┌──────────┐  ┌──────────┐
-│ Combat │  │ Creature │  │ Encounter│
-│ Engine │  │ Module   │  │ Module   │
-└────────┘  └──────────┘  └──────────┘
-    ↓
-┌────────┐
-│ Replay │
-│ Engine │
-└────────┘
+```typescript
+test('entering combat room emits room:entered', () => {
+  const eventBus = new EventBus()
+  const engine = new RunEngine(eventBus)
+  const spy = jest.fn()
+
+  eventBus.on('room:entered', spy)
+  engine.start({ seed: 'test' })
+  engine.selectRoute(0)
+  engine.enterRoom(0)
+
+  expect(spy).toHaveBeenCalledWith({ roomType: 'combat', ... })
+})
 ```
 
-### 依賴方向
-
-- RunEngine 呼叫 CombatEngine 執行戰鬥
-- RunEngine 呼叫 ReplayEngine 播放戰鬥
-- RunEngine 呼叫 Creature/Equipment 生成敵人/裝備
-- RunEngine 呼叫 Encounter 生成關卡結構
-- RunEngine 呼叫 PersistentStorage 存讀檔
-- RunEngine 呼叫 Shop/Inventory 處理商店與背包
+不需要 mock Combat/Reward/Shop 等模組。
 
 ---
 
-## 六、設計原則摘要
+## 十、設計原則摘要
 
-- **Facade**：RunEngine 單一入口
-- **State Machine**：場景狀態管理
-- **Bridge**：隔離 Combat/Replay 依賴
-- **Observer**：事件驅動 UI 更新
-- **低耦合**：透過介面依賴其他模組
+- **狀態機封裝**：場景跳轉只在 StateMachine
+- **開放封閉**：新功能 = 新 Handler
+- **極薄 Facade**：RunEngine 核心短小精悍
+- **純事件驅動**：所有業務邏輯在外部 Handler
+- **零直接依賴**：RunEngine 不 import 任何業務模組
+- **單向數據流**：RunEngine → EventBus → Handler → RunState
