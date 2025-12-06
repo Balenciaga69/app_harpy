@@ -139,7 +139,7 @@
 
 ## 模組分割（調整後）
 
-### 後端純運算模組
+### 後端純運算模組(不共享 EventBus)
 
 - [幾乎完工]CombatEngine（瞬間運算戰鬥 + 返回戰鬥日誌）
 - CharacterModifierSystem (角色身上的基礎詞綴計算模組)
