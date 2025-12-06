@@ -1,9 +1,10 @@
+import type { IEventBus } from '@/core/shared/event-bus'
 import mitt from 'mitt'
 import type { RunEventMap } from '../../models'
-import type { IRunEventBus } from './event-bus'
-/**
- * Run Event Bus implementation using mitt
- */
+/** Run Event Bus Interface */
+// TODO: The RunEventMap now includes shop/bet/pre_battle events; ensure all listeners/emitters validate payload shapes
+export interface IRunEventBus extends IEventBus<RunEventMap> {}
+/** Run Event Bus Implementation */
 export class RunEventBus implements IRunEventBus {
   private emitter = mitt<RunEventMap>()
   public on<K extends keyof RunEventMap>(event: K, handler: (payload: RunEventMap[K]) => void): void {

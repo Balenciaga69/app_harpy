@@ -5,7 +5,7 @@ import type {
   RoomEnteredPayload,
   FloorChangedPayload,
   ChapterChangedPayload,
-} from './payloads/run'
+} from './payloads/run-payload'
 import type {
   CombatStartedPayload,
   CombatEndedPayload,
@@ -17,7 +17,7 @@ import type {
   RewardClaimedPayload,
   DifficultyUpdatedPayload,
   RunGameOverPayload,
-} from './payloads/handlers'
+} from './payloads/handle-payload'
 export type RunEventMap = {
   // RunEngine events
   'run:started': RunStartedPayload
@@ -27,14 +27,21 @@ export type RunEventMap = {
   'room:entered': RoomEnteredPayload
   'floor:changed': FloorChangedPayload
   'chapter:changed': ChapterChangedPayload
+  'shop:entered': import('./payloads/run-payload').ShopEnteredPayload
   // Combat Handler events
   'combat:started': CombatStartedPayload
   'combat:ended': CombatEndedPayload
   'combat:victory': CombatVictoryPayload
   'combat:defeat': CombatDefeatPayload
+  'pre_battle:applied': import('./payloads/handle-payload').PrebattleAppliedPayload
   // Death Handler events
   'player:died': PlayerDiedPayload
   'player:revived': PlayerRevivedPayload
+  // Bet / Shop events (Handler emitted)
+  'bet:placed': import('./payloads/handle-payload').BetPlacedPayload
+  'bet:resolved': import('./payloads/handle-payload').BetResolvedPayload
+  'bet:won': import('./payloads/handle-payload').BetResolvedPayload
+  'bet:lost': import('./payloads/handle-payload').BetResolvedPayload
   // Reward Handler events
   'reward:generated': RewardGeneratedPayload
   'reward:claimed': RewardClaimedPayload

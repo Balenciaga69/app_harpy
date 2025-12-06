@@ -1,5 +1,5 @@
-import type { RoomInfo, RouteInfo, RunConfig } from '../models'
-import { DEFAULT_RUN_CONFIG } from '../models'
+import { type RunConfig, DEFAULT_RUN_CONFIG } from '../infra/configs'
+import type { RoomInfo, RouteInfo } from '../models'
 /**
  * Chapter Manager
  *
@@ -7,6 +7,9 @@ import { DEFAULT_RUN_CONFIG } from '../models'
  * Uses provided RNG for deterministic route generation.
  */
 export class ChapterManager {
+  // TODO: Implement deterministic route generation using a provided RNG/seed.
+  //  - Routes should include a mix of `combat`, `elite`, `boss`, `event`, and optionally `shop/bet` nodes
+  //  - Expose helper to calculate rooms for a given chapter/seed
   private routeOptions: RouteInfo[] = []
   private currentRoute: RouteInfo | null = null
   private roomIndex: number = 0

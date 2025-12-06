@@ -26,3 +26,16 @@ export type RunGameOverPayload = {
   floor: number
   chapter: number
 }
+export type BetPlacedPayload = {
+  betId: string
+  amount: number
+  target: string
+}
+export type BetResolvedPayload = {
+  betId: string
+  result: 'won' | 'lost' | 'push'
+  payout: number
+}
+export type PrebattleAppliedPayload = {
+  modifiers: Record<string, unknown>
+}

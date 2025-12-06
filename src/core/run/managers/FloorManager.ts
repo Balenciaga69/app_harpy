@@ -1,5 +1,4 @@
-import type { RunConfig } from '../models'
-import { DEFAULT_RUN_CONFIG } from '../models'
+import { type RunConfig, DEFAULT_RUN_CONFIG } from '../infra/configs'
 /**
  * Floor Manager
  *
@@ -7,6 +6,8 @@ import { DEFAULT_RUN_CONFIG } from '../models'
  * Pure data manager with no side effects.
  */
 export class FloorManager {
+  // TODO: Validate startFloor and maxFloors; consider exposing hooks/events for 'floor advanced' edge cases
+  // TODO: Support 'endless' mode toggling and ensure floor/chapter math is stable for large numbers
   private floor: number
   private chapter: number
   private readonly floorsPerChapter: number

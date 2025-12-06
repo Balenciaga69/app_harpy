@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
 import type { CombatEventMap } from './models/combat-event-map'
-import type { IEventBus } from './models/event-bus'
-export class EventBus implements IEventBus {
+import type { IEventBus } from '@/core/shared/event-bus'
+/** Combat Event Bus Interface */
+export interface ICombatEventBus extends IEventBus<CombatEventMap> {
+  /** Listen to all events (for Logger or Debug) */
+  onAll(handler: (type: keyof CombatEventMap, payload: any) => void): void
+}
+/** Combat Event Bus Implementation */
+export class CombatEventBus implements ICombatEventBus {
   // mitt instance for event management
   private emitter = mitt<CombatEventMap>()
   /** Subscribe to event */

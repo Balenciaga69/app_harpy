@@ -1,4 +1,4 @@
-import type { IRunEventBus } from '../infra/event-bus/event-bus'
+import type { IRunEventBus } from '../infra/event-bus'
 /**
  * Run Handler interface
  *

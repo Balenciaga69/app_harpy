@@ -1,4 +1,5 @@
 import type { ICharacter } from '../../domain/character'
+import type { IEffect } from '../../domain/effect'
 /**
  * CombatConfig
  *
@@ -17,4 +18,6 @@ export interface CombatConfig {
   snapshotInterval?: number
   /** Whether to enable logging */
   enableLogging?: boolean
+  /** Pre-match effects to apply to all characters at combat start (tick 0). */
+  preMatchEffects?: IEffect[]
 }

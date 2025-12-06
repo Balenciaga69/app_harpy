@@ -86,6 +86,23 @@ export interface EntityDeathPayload {
   tick: number
 }
 /**
+ * Entity HP zero event (before death/resurrection check)
+ */
+export interface EntityHpZeroPayload {
+  targetId: string
+  attackerId?: string
+  tick: number
+}
+/**
+ * Entity resurrection event
+ */
+export interface EntityResurrectionPayload {
+  targetId: string
+  restoredHp: number
+  restoredHpPercent: number
+  tick: number
+}
+/**
  * Entity attack event
  */
 export interface EntityAttackPayload {

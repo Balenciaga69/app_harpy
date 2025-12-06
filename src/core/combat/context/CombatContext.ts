@@ -1,4 +1,4 @@
-import type { IEventBus } from '../infra/event-bus'
+import type { ICombatEventBus } from '../infra/event-bus'
 import { CombatRandomGenerator } from '../infra/shared/utils/CombatRandomGenerator'
 import type { IEntity } from '../infra/shared/interfaces/entity.interface'
 import { isCharacter } from '../infra/shared/utils/TypeGuardUtil'
@@ -18,11 +18,11 @@ import { BattleState } from './BattleState'
  * registry synchronization for character lookups.
  */
 export class CombatContext implements ICombatContext {
-  public readonly eventBus: IEventBus
+  public readonly eventBus: ICombatEventBus
   public readonly rng: CombatRandomGenerator
   public readonly registry: IResourceRegistry
   private readonly battleState: BattleState
-  constructor(eventBus: IEventBus, registry: IResourceRegistry, seed?: string | number) {
+  constructor(eventBus: ICombatEventBus, registry: IResourceRegistry, seed?: string | number) {
     this.eventBus = eventBus
     this.rng = new CombatRandomGenerator(seed)
     this.registry = registry

@@ -1,22 +1,23 @@
 import type { SceneState } from '../models'
 import { SCENE_TRANSITIONS } from './scene-transition'
 /**
- * Run State Machine
+ * 執行流程狀態機
  *
- * Manages scene state transitions during a run.
- * Validates transitions and provides current state information.
+ * 管理執行（run）中的場景狀態轉換。
+ * 驗證轉換並提供當前狀態資訊。
  */
 export class RunStateMachine {
+  // TODO: 如果商店/投注 UI 成為執行流程的一部分，考慮新增場景狀態，例如 'shop' 或 'betting'
   private currentState: SceneState = 'idle'
-  /** Get current scene state */
+  /** 取得當前場景狀態 */
   getState(): SceneState {
     return this.currentState
   }
-  /** Check if a transition is valid from current state */
+  /** 檢查從當前狀態是否能夠進行指定觸發器的轉換 */
   canTransition(trigger: string): boolean {
     return SCENE_TRANSITIONS.some((t) => t.from === this.currentState && t.trigger === trigger)
   }
-  /** Attempt to transition to a new state */
+  /** 嘗試轉換到新狀態 */
   transition(trigger: string): boolean {
     const transition = SCENE_TRANSITIONS.find((t) => t.from === this.currentState && t.trigger === trigger)
     if (!transition) {
@@ -25,15 +26,15 @@ export class RunStateMachine {
     this.currentState = transition.to
     return true
   }
-  /** Force set state (for loading saved games) */
+  /** 強制設定狀態（用於載入存檔） */
   setState(state: SceneState): void {
     this.currentState = state
   }
-  /** Reset to idle state */
+  /** 重置為空閒狀態 */
   reset(): void {
     this.currentState = 'idle'
   }
-  /** Check if run is in a terminal state */
+  /** 檢查執行是否處於終止狀態 */
   isTerminal(): boolean {
     return this.currentState === 'game_over' || this.currentState === 'idle'
   }

@@ -11,6 +11,7 @@ import type { IEffect } from '@/core/combat/domain/effect/models/effect'
 export class LowHealthArmorEffect implements IEffect, ICombatHook {
   readonly id: string
   readonly name: string = 'Crisis Armor'
+  readonly cleanseOnRevive: boolean = false
   private readonly healthThreshold: number = 0.3 // 30%
   private readonly armorMultiplier: number = 2 // 2x
   constructor() {

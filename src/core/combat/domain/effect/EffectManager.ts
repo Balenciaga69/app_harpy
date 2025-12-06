@@ -48,12 +48,37 @@ export class EffectManager {
       effect.onTick?.(this.character.id, context)
     })
   }
-  /** Clear all effects and unregister from registry */
-  clear(context: ICombatContext): void {
+  /**
+   * Cleanse effects that have cleanseOnRevive: true
+   * Used during resurrection to remove debuffs while keeping equipment effects
+   */
+  cleanseCanCleanseEffects(context: ICombatContext): void {
+    const effectsToRemove: string[] = []
     this.effects.forEach((effect) => {
-      effect.onRemove?.(this.character.id, context)
-      context.registry.unregisterEffect(effect.id)
+      if (effect.cleanseOnRevive) {
+        effectsToRemove.push(effect.id)
+      }
     })
-    this.effects.clear()
+    effectsToRemove.forEach((effectId) => {
+      this.removeEffect(effectId, context)
+    })
+  }
+  /**
+   * Trigger onHpZero hook for all effects
+   * Called when character's HP reaches zero (before death/resurrection check)
+   */
+  triggerHpZero(context: ICombatContext): void {
+    this.effects.forEach((effect) => {
+      effect.onHpZero?.(this.character.id, context)
+    })
+  }
+  /**
+   * Trigger onRevive hook for all effects
+   * Called after successful resurrection
+   */
+  triggerRevive(context: ICombatContext): void {
+    this.effects.forEach((effect) => {
+      effect.onRevive?.(this.character.id, context)
+    })
   }
 }

@@ -26,6 +26,9 @@ export const AttributeDefaults = {
   // === Critical related ===
   criticalChance: 0.05, // 5%
   criticalMultiplier: 1.5, // 150%
+  // === Resurrection related ===
+  resurrectionChance: 0, // 0% by default (no resurrection)
+  resurrectionHpPercent: 0.1, // 10% HP on resurrection
 } as const
 /** Attribute upper limits (for validation) */
 export const AttributeLimits = {
@@ -47,6 +50,9 @@ export const AttributeLimits = {
   // === Critical ===
   criticalChance: { min: 0, max: 1 }, // 0% - 100%
   criticalMultiplier: { min: 1, max: 10 }, // 100% - 1000%
+  // === Resurrection ===
+  resurrectionChance: { min: 0.03, max: 0.5 }, // 3% - 50%
+  resurrectionHpPercent: { min: 0.1, max: 1 }, // 10% - 100%
 } as const
 /** Attribute type checking */
 export type AttributeLimitKey = keyof typeof AttributeLimits

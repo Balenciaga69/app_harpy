@@ -2,7 +2,7 @@ import { CombatContext } from '../context'
 import { TickActionSystem } from '../coordination'
 import { CombatSystem, CombatTiming } from '../infra/config'
 import { CombatError, CombatFailureCode } from '../infra/errors'
-import { EventBus } from '../infra/event-bus'
+import { CombatEventBus } from '../infra/event-bus'
 import { InMemoryResourceRegistry } from '../infra/resource-registry'
 import type { IResourceRegistry } from '../infra/resource-registry/resource-registry'
 import { EventLogger } from '../logic/logger'
@@ -10,6 +10,7 @@ import { SnapshotCollector } from '../logic/snapshot'
 import { TickerDriver } from '../logic/tick'
 import { ResultBuilder } from './builders'
 import type { CombatConfig, CombatResult, CombatResultData } from './models'
+import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 /**
  * 戰鬥引擎
  *
@@ -37,7 +38,7 @@ export class CombatEngine {
     }
     // Use provided registry or create default in-memory implementation
     const resourceRegistry = registry ?? new InMemoryResourceRegistry()
-    const eventBus = new EventBus()
+    const eventBus = new CombatEventBus()
     this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed)
     this.initializeSystems()
     this.ticker.setStopCondition(() => this.checkBattleEnd())
@@ -73,6 +74,10 @@ export class CombatEngine {
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
   private executeCombat(): void {
+    // Apply pre-match effects before combat starts
+    if (this.config.preMatchEffects && this.config.preMatchEffects.length > 0) {
+      PreMatchEffectApplicator.applyEffects(this.config.preMatchEffects, this.context)
+    }
     this.ticker.start()
   }
   private setupCharacters(): void {

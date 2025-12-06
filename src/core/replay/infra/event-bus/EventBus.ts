@@ -1,23 +1,28 @@
 import mitt, { type Emitter } from 'mitt'
-import type { IEventBus } from './event-bus'
 import type { ReplayEvent, ReplayEventType } from '../../models'
 /**
- * EventBus
+ * Replay Event Bus Interface
  *
- * 基於 Mitt 的 IEventBus 實作。
- * 封裝 mitt 函式庫，提供型別安全的 replay 事件發送。
- *
- * 目的：
- * - 隱藏 mitt 的實作細節，讓 replay 引擎不需關心底層
- * - 提供 mitt 事件系統的介面轉接，符合我們的接口
- * - 未來如需更換事件函式庫，可輕鬆遷移
- *
- * 實作說明：
- * - 使用 mitt 的泛型參數確保型別安全
- * - 將 tick 和 payload 轉換為 ReplayEvent 格式
- * - 只有此檔案會引用 mitt
+ * Specialized event bus for replay module with tick-aware emit signature.
+ * Different from the generic IEventBus due to replay-specific requirements.
  */
-export class EventBus implements IEventBus {
+export interface IReplayEventBus {
+  /** Emit event with tick context */
+  emit(eventType: ReplayEventType, tick: number, payload?: unknown): void
+  /** Subscribe to event type */
+  on(eventType: ReplayEventType, handler: (event: ReplayEvent) => void): void
+  /** Unsubscribe from event type */
+  off(eventType: ReplayEventType, handler: (event: ReplayEvent) => void): void
+  /** Clear all listeners */
+  clear(): void
+}
+/**
+ * ReplayEventBus
+ *
+ * Replay event bus implementation using mitt.
+ * Wraps tick and payload into ReplayEvent format.
+ */
+export class ReplayEventBus implements IReplayEventBus {
   private emitter: Emitter<Record<ReplayEventType, ReplayEvent>>
   constructor() {
     this.emitter = mitt<Record<ReplayEventType, ReplayEvent>>()
@@ -43,10 +48,5 @@ export class EventBus implements IEventBus {
   /** Clear all listeners */
   public clear(): void {
     this.emitter.all.clear()
-  }
-  /** Get listener count for debugging/testing */
-  public listenerCount(eventType: ReplayEventType): number {
-    const handlers = this.emitter.all.get(eventType)
-    return handlers ? 1 : 0 // mitt doesn't expose handler count, simplified check
   }
 }

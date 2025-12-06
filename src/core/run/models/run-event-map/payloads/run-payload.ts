@@ -1,6 +1,6 @@
 import type { RoomInfo } from '../../run-state/room.ts'
 import type { RunState } from '../../run-state/run.ts'
-import type { RoomType } from '../room'
+import type { RoomType } from '../room-type.ts'
 // === RunEngine emitted events ===
 export type RunStartedPayload = {
   seed: string
@@ -23,4 +23,9 @@ export type FloorChangedPayload = {
 }
 export type ChapterChangedPayload = {
   chapter: number
+}
+export type ShopEnteredPayload = {
+  seed?: string
+  chapter?: number
+  shopId?: string
 }
