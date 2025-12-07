@@ -11,6 +11,9 @@
  *
  * Design: Uses 'unknown' type to avoid circular dependencies with domain models.
  * The actual implementation will handle type safety internally.
+ *
+ * Note: Equipment/Relic 已改為由 EquipmentManager/RelicManager 直接管理，
+ * 不再需要透過 ResourceRegistry 追蹤。
  */
 export interface IResourceRegistry {
   // === Character Catalog ===
@@ -30,16 +33,6 @@ export interface IResourceRegistry {
   registerUltimate(ultimate: unknown): void
   getUltimate(id: string): unknown | undefined
   hasUltimate(id: string): boolean
-  // === Equipment Catalog ===
-  // Equipment instances, registered when created
-  registerEquipment(equipment: unknown): void
-  getEquipment(id: string): unknown | undefined
-  hasEquipment(id: string): boolean
-  // === Relic Catalog ===
-  // Relic instances, registered when created
-  registerRelic(relic: unknown): void
-  getRelic(id: string): unknown | undefined
-  hasRelic(id: string): boolean
   // === Lifecycle ===
   /** Clear all registered resources (typically called after combat ends) */
   clear(): void

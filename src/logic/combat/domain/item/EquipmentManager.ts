@@ -1,88 +1,56 @@
 import type { ICharacter } from '../character/models/character'
 import type { ICombatContext } from '@/logic/combat/context'
-import type { Equipment } from './models/equipment'
-import type { IEffect } from '../effect/models/effect'
-import type { EquipmentSlot } from './models'
-import type { IResourceRegistry } from '@/logic/combat/infra/resource-registry'
+import type { ICombatEquipment } from './models/combat-item'
+import type { EquipmentSlot } from '@/domain/item'
 /**
  * EquipmentManager
  *
- * Manages multiple equipment slots for a character.
- * Each slot can only hold one equipment at a time.
- * Applies/removes equipment effects when equipping/unequipping.
+ * 管理角色的裝備槽位。
+ * 每個槽位只能持有一件裝備，裝備時自動應用效果。
  */
 export class EquipmentManager {
-  private slots: Map<EquipmentSlot, string> = new Map() // slot -> equipmentId
+  private readonly slots = new Map<EquipmentSlot, ICombatEquipment>()
   private readonly owner: ICharacter
-  private readonly registry: IResourceRegistry
-  constructor(owner: ICharacter, registry: IResourceRegistry) {
+  constructor(owner: ICharacter) {
     this.owner = owner
-    this.registry = registry
   }
-  /**
-   * Equip an equipment to specified slot
-   * Automatically unequips old equipment in that slot if exists
-   */
-  equip(equipment: Equipment, slot: EquipmentSlot, context: ICombatContext): void {
-    // Unequip old equipment in this slot if exists
-    const oldEquipmentId = this.slots.get(slot)
-    if (oldEquipmentId) {
-      this.unequip(slot, context)
+  /** 裝備到指定槽位，自動卸下舊裝備 */
+  equip(equipment: ICombatEquipment, context: ICombatContext): void {
+    const oldEquipment = this.slots.get(equipment.slot)
+    if (oldEquipment) {
+      this.unequip(equipment.slot, context)
     }
-    // Register to registry
-    context.registry.registerEquipment(equipment)
-    this.slots.set(slot, equipment.id)
-    // Apply all effects from this equipment
-    equipment.getEffects().forEach((effect: IEffect) => {
+    this.slots.set(equipment.slot, equipment)
+    for (const effect of equipment.effects) {
       this.owner.addEffect(effect, context)
-    })
+    }
   }
-  /**
-   * Unequip equipment from specified slot
-   */
+  /** 卸下指定槽位的裝備 */
   unequip(slot: EquipmentSlot, context: ICombatContext): void {
-    const equipmentId = this.slots.get(slot)
-    if (!equipmentId) return
-    const equipment = context.registry.getEquipment(equipmentId) as Equipment | undefined
+    const equipment = this.slots.get(slot)
     if (!equipment) return
-    // Remove all effects from this equipment
-    equipment.getEffects().forEach((effect) => {
+    for (const effect of equipment.effects) {
       this.owner.removeEffect(effect.id, context)
-    })
+    }
     this.slots.delete(slot)
   }
-  /**
-   * Get equipment in specified slot
-   */
-  getEquipment(slot: EquipmentSlot): Equipment | undefined {
-    const equipmentId = this.slots.get(slot)
-    if (!equipmentId) return undefined
-    return this.registry.getEquipment(equipmentId) as Equipment | undefined
+  /** 取得指定槽位的裝備 */
+  getEquipment(slot: EquipmentSlot): ICombatEquipment | undefined {
+    return this.slots.get(slot)
   }
-  /**
-   * Get all equipped items
-   */
-  getAllEquipment(): Equipment[] {
-    const equipment: Equipment[] = []
-    this.slots.forEach((equipmentId) => {
-      const eq = this.registry.getEquipment(equipmentId) as Equipment | undefined
-      if (eq) equipment.push(eq)
-    })
-    return equipment
+  /** 取得所有已裝備的物品 */
+  getAllEquipment(): ICombatEquipment[] {
+    return Array.from(this.slots.values())
   }
-  /**
-   * Check if slot is empty
-   */
+  /** 檢查槽位是否為空 */
   isSlotEmpty(slot: EquipmentSlot): boolean {
     return !this.slots.has(slot)
   }
-  /**
-   * Clear all equipment
-   */
+  /** 清除所有裝備 */
   clear(context: ICombatContext): void {
     const slotsToUnequip = Array.from(this.slots.keys())
-    slotsToUnequip.forEach((slot) => {
+    for (const slot of slotsToUnequip) {
       this.unequip(slot, context)
-    })
+    }
   }
 }

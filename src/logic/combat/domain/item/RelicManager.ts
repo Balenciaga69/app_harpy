@@ -1,104 +1,65 @@
 import type { ICharacter } from '../character/models/character'
 import type { ICombatContext } from '@/logic/combat/context'
-import type { Relic } from './models/relic'
-import type { IEffect } from '../effect/models/effect'
-import type { IResourceRegistry } from '@/logic/combat/infra/resource-registry'
+import type { ICombatRelic } from './models/combat-item'
 /**
  * RelicManager
  *
- * Manages stackable relics for a character.
- * Relics with the same name can stack, increasing their effectiveness.
- * When adding a duplicate relic, increments stack count instead of creating new instance.
+ * 管理角色的遺物。
+ * 遺物以 name 為 key，同名遺物會增加堆疊數。
+ * 效果會隨堆疊數變化而重新計算。
  */
 export class RelicManager {
-  private relics: Map<string, string> = new Map() // relicName -> relicId
+  private readonly relics = new Map<string, ICombatRelic>()
   private readonly owner: ICharacter
-  private readonly registry: IResourceRegistry
-  constructor(owner: ICharacter, registry: IResourceRegistry) {
+  constructor(owner: ICharacter) {
     this.owner = owner
-    this.registry = registry
   }
-  /**
-   * Add a relic. If same relic exists, adds stack instead.
-   */
-  add(relic: Relic, context: ICombatContext): void {
-    const existingRelicId = this.relics.get(relic.name)
-    if (existingRelicId) {
-      // Relic with same name already exists, add stack
-      const existingRelic = context.registry.getRelic(existingRelicId) as Relic | undefined
-      if (!existingRelic) return
-      // Remove old effects before stacking
-      existingRelic.getEffects().forEach((effect: IEffect) => {
+  /** 添加遺物，同名遺物會更新（呼叫方需提供新的堆疊效果） */
+  add(relic: ICombatRelic, context: ICombatContext): void {
+    const existingRelic = this.relics.get(relic.name)
+    if (existingRelic) {
+      // 移除舊效果
+      for (const effect of existingRelic.effects) {
         this.owner.removeEffect(effect.id, context)
-      })
-      // Add stack
-      existingRelic.addStack()
-      // Apply new effects (may have changed due to stack count)
-      existingRelic.getEffects().forEach((effect: IEffect) => {
-        this.owner.addEffect(effect, context)
-      })
-    } else {
-      // New relic, register and apply effects
-      context.registry.registerRelic(relic)
-      this.relics.set(relic.name, relic.id)
-      relic.getEffects().forEach((effect: IEffect) => {
-        this.owner.addEffect(effect, context)
-      })
+      }
+    }
+    // 註冊新遺物（含更新後的堆疊數與效果）
+    this.relics.set(relic.name, relic)
+    // 應用新效果
+    for (const effect of relic.effects) {
+      this.owner.addEffect(effect, context)
     }
   }
-  /**
-   * Remove a relic completely (all stacks)
-   */
+  /** 移除遺物（所有堆疊） */
   remove(relicName: string, context: ICombatContext): void {
-    const relicId = this.relics.get(relicName)
-    if (!relicId) return
-    const relic = context.registry.getRelic(relicId) as Relic | undefined
+    const relic = this.relics.get(relicName)
     if (!relic) return
-    // Remove all effects from this relic
-    relic.getEffects().forEach((effect) => {
+    for (const effect of relic.effects) {
       this.owner.removeEffect(effect.id, context)
-    })
+    }
     this.relics.delete(relicName)
   }
-  /**
-   * Get relic by name
-   */
-  getRelic(relicName: string): Relic | undefined {
-    const relicId = this.relics.get(relicName)
-    if (!relicId) return undefined
-    return this.registry.getRelic(relicId) as Relic | undefined
+  /** 取得指定名稱的遺物 */
+  getRelic(relicName: string): ICombatRelic | undefined {
+    return this.relics.get(relicName)
   }
-  /**
-   * Get all relics
-   */
-  getAllRelics(): Relic[] {
-    const relics: Relic[] = []
-    this.relics.forEach((relicId) => {
-      const relic = this.registry.getRelic(relicId) as Relic | undefined
-      if (relic) relics.push(relic)
-    })
-    return relics
+  /** 取得所有遺物 */
+  getAllRelics(): ICombatRelic[] {
+    return Array.from(this.relics.values())
   }
-  /**
-   * Check if has specific relic
-   */
+  /** 檢查是否擁有指定遺物 */
   hasRelic(relicName: string): boolean {
     return this.relics.has(relicName)
   }
-  /**
-   * Get stack count of a relic
-   */
+  /** 取得遺物的堆疊數 */
   getStackCount(relicName: string): number {
-    const relic = this.getRelic(relicName)
-    return relic?.getStackCount() ?? 0
+    return this.relics.get(relicName)?.stackCount ?? 0
   }
-  /**
-   * Clear all relics
-   */
+  /** 清除所有遺物 */
   clear(context: ICombatContext): void {
     const relicNames = Array.from(this.relics.keys())
-    relicNames.forEach((name) => {
+    for (const name of relicNames) {
       this.remove(name, context)
-    })
+    }
   }
 }

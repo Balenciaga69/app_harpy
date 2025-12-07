@@ -1,6 +1,4 @@
 import type { ICombatContext } from '@/logic/combat/context'
-import type { IResourceRegistry } from '@/logic/combat/infra/resource-registry'
-import { CombatError, Failures } from '@/logic/combat/infra/errors'
 import type { BaseAttributeValues } from '../attribute/models/base-attribute-values'
 import { createDefaultAttributes } from '../attribute/models/base-attribute-values'
 import type { IUltimateAbility } from '../ultimate'
@@ -16,7 +14,6 @@ import type { ICharacter } from './models/character'
 export class CharacterBuilder {
   private name: string = 'Unnamed'
   private team: ICharacter['team'] = 'player'
-  private registry: IResourceRegistry | null = null
   private ultimate?: IUltimateAbility
   private attributeOverrides: Partial<BaseAttributeValues> = {}
   private templateAttributes?: BaseAttributeValues
@@ -28,11 +25,6 @@ export class CharacterBuilder {
   /** Set character team */
   withTeam(team: ICharacter['team']): this {
     this.team = team
-    return this
-  }
-  /** Set resource registry (required) */
-  withRegistry(registry: IResourceRegistry): this {
-    this.registry = registry
     return this
   }
   /** Set ultimate ability */
@@ -130,12 +122,8 @@ export class CharacterBuilder {
   /**
    * Build the Character instance
    * @param context Optional combat context for immediate initialization
-   * @throws CombatError if registry is not set
    */
   build(context?: ICombatContext): Character {
-    if (!this.registry) {
-      throw CombatError.fromFailure(Failures.missingRequiredField('registry', 'Use withRegistry() before build()'))
-    }
     // Merge template with overrides
     const baseAttributes = this.templateAttributes
       ? { ...this.templateAttributes, ...this.attributeOverrides }
@@ -144,7 +132,6 @@ export class CharacterBuilder {
       {
         name: this.name,
         team: this.team,
-        registry: this.registry,
         baseAttributes,
         ultimate: this.ultimate,
       },
@@ -155,7 +142,6 @@ export class CharacterBuilder {
   reset(): this {
     this.name = 'Unnamed'
     this.team = 'player'
-    this.registry = null
     this.ultimate = undefined
     this.attributeOverrides = {}
     this.templateAttributes = undefined

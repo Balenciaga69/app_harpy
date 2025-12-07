@@ -1,32 +1,32 @@
-# Combat 模組規格書
+# Combat 模組規格書 (更新版)
 
 ## 一、目標功能與範圍
 
 ### 核心目標
 
-給定兩隊角色（含屬性、裝備、遺物、效果、大招），在可重現的隨機種子下，模擬整場戰鬥直到一方全滅或超時，輸出日誌、快照、統計數據。
+模擬兩隊角色（含屬性、裝備、遺物、效果、大招）在可重現的隨機種子下進行戰鬥，直到一方全滅或超時，並輸出戰鬥日誌、快照與統計數據。
 
 ### 會實現的功能
 
 - Tick-based 自動戰鬥迴圈
 - 完整傷害計算流程（命中、暴擊、減傷、應用）
 - 效果系統（Buff/Debuff 生命週期管理）
-- 效果鉤子系統（生命週期鉤子 + 角色狀態鉤子）
+- 效果鉤子系統（生命週期鉤子 + 狀態鉤子）
 - 能量與冷卻系統
 - 大招觸發機制
-- 裝備與遺物效果注入（統一以效果導入，不區分部位）
+- 裝備與遺物效果統一注入（不區分部位）
 - 戰鬥日誌與快照輸出
 - 可重現隨機數（seedrandom）
-- **復活系統**（死亡檢查 → 復活判定 → 血量恢復 → 選擇性清除效果）
-- **賽前變數注入**（開局對雙方注入 1~n 個效果）
+- 復活系統（死亡檢查 → 復活判定 → 血量恢復 → 選擇性清除效果）
+- 賽前變數注入（開局對雙方注入效果）
 
 ### 不會實現的功能
 
 - 戰鬥 UI 渲染（由 Replay 模組負責）
 - 關卡流程管理（由 Run 模組負責）
-- 角色/裝備生成（由 Creature/Equipment 模組負責）
+- 角色/裝備生成（由外部模組負責）
 - 存讀檔（由 PersistentStorage 模組負責）
-- 裝備部位限制邏輯（由外部模組負責，戰鬥引擎只處理效果）
+- 裝備部位限制邏輯（由外部模組負責）
 
 ---
 
@@ -34,7 +34,7 @@
 
 ### 入口層
 
-- `CombatEngine`：Facade，唯一對外介面，呼叫 `.start()` 執行戰鬥
+- `CombatEngine`：唯一對外介面，呼叫 `.start()` 執行戰鬥
 - 支援 `preMatchEffects` 賽前變數注入
 
 ### 時間層
@@ -44,72 +44,46 @@
 ### 上下文層
 
 - `CombatContext`：基礎設施容器（EventBus、RNG、ResourceRegistry）
-- `BattleState`：領域狀態（entities 集合、tick 計數器）
+- `BattleState`：領域狀態（角色集合、tick 計數器）
 
 ### 階段系統
 
-- `TickActionSystem`：每 tick 依序執行多個 Phase（可擴充）
-- `EffectTickPhase`：效果 onTick 處理
+- `TickActionSystem`：每 tick 執行多個 Phase（可擴充）
+- `EffectTickPhase`：處理效果 onTick
 - `EnergyRegenPhase`：能量回復
-- `AttackExecutionPhase`：攻擊判定、目標選擇、執行傷害鏈
+- `AttackExecutionPhase`：執行攻擊與傷害計算
+
+### 傷害管線
+
+- `DamageChain`：責任鏈模式，包含以下步驟：
+  1. `BeforeDamageStep` — 傷害起始，觸發 onBeforeDamage 鉤子
+  2. `HitCheckStep` — 命中檢定
+  3. `CriticalStep` — 暴擊判定
+  4. `DamageModifyStep` — 傷害修正
+  5. `DefenseCalculationStep` — 防禦計算
+  6. `BeforeApplyStep` — 應用前確認
+  7. `ApplyDamageStep` — 扣血、復活判定
+  8. `AfterApplyStep` — 傷害後處理
+
+- 提前終止：任一步驟回傳 `false` 則中斷管線
 
 ### 復活系統
 
-- 處理類別：`ResurrectionHandler`（獨立處理器，由 `ApplyDamageStep` 呼叫）
-- 觸發時機：角色血量歸零時（傷害管線內即時判定）
+- 處理類別：`ResurrectionHandler`（由 `ApplyDamageStep` 呼叫）
 - 復活率：3%～50%（由 `resurrectionChance` 屬性決定）
 - 復活血量：10%～100% maxHp（由 `resurrectionHpPercent` 屬性決定）
-- 復活後僅清除 `cleanseOnRevive: true` 的效果（裝備效果不清除）
-- 觸發效果的 `onRevive` 鉤子
+- 復活後清除 `cleanseOnRevive: true` 的效果
 - 事件：`entity:resurrection` 復活成功
-
-### 效果鉤子系統
-
-分離為多個介面，設計師可選擇性實作：
-
-- `IEffectLifeHook`：效果生命週期（onApply / onRemove / onTick）
-- `ICharacterStateHook`：角色狀態變化（onRevive / onHpZero）
-- `IThresholdHook`：血量閾值觸發（onTick 內自行檢查，每場戰鬥僅觸發一次）
-
-效果必填屬性：
-
-- `cleanseOnRevive: boolean`：復活時是否清除此效果
 
 ### 賽前變數系統
 
 - 由 `CombatConfig.preMatchEffects` 傳入效果陣列
-- 戰鬥開始時（tick 0）對雙方所有角色注入效果
-- 可用於開局 Chill、復活率提升、充能效率修改等
-
-### 傷害管線
-
-- `DamageChain`：責任鏈模式，8 個步驟依序執行
-- 流程：
-  1. `BeforeDamageStep` — 傷害起始，觸發 onBeforeDamage 鉤子
-  2. `HitCheckStep` — 命中檢定（命中值 vs 閃避）
-  3. `CriticalStep` — 暴擊判定
-  4. `DamageModifyStep` — 傷害修正（效果增減傷）
-  5. `DefenseCalculationStep` — 防禦計算（護甲減傷）
-  6. `BeforeApplyStep` — 應用前最終確認
-  7. `ApplyDamageStep` — 扣血、HP 歸零檢查、復活判定
-  8. `AfterApplyStep` — 傷害後處理，觸發 onAfterDamage 鉤子
-
-- 復活處理：`ApplyDamageStep` 內呼叫 `ResurrectionHandler` 處理即時復活判定
-- 提前終止：任一步驟回傳 `false` 則中斷管線（如閃避成功）
-
-### 領域模型
-
-- `Character`：角色核心，持有屬性、效果、裝備、大招
-- `AttributeManager`：屬性基礎值與修飾器（含復活相關屬性）
-- `EffectManager`：效果生命週期管理（含選擇性清除方法）
-- `EquipmentManager`：統一管理所有裝備部位
-- `RelicManager`：遺物管理
-- `UltimateManager`：大招觸發
+- 戰鬥開始時（tick 0）對雙方角色注入效果
 
 ### 輔助系統
 
 - `EventBus`：事件通訊中心
-- `ResourceRegistry`：跨角色資源生命週期
+- `ResourceRegistry`：跨角色資源管理
 - `EventLogger`：日誌記錄
 - `SnapshotCollector`：快照收集
 
@@ -119,61 +93,98 @@
 
 ### CombatEngine API
 
-```
+```typescript
 CombatEngine(config: CombatConfig)
   .start(): CombatResult
 ```
-
-### CombatConfig 輸入
-
-- `playerTeam: ICharacter[]` — 玩家隊伍
-- `enemyTeam: ICharacter[]` — 敵方隊伍
-- `seed: string` — 隨機種子
-- `maxTicks?: number` — 最大 tick 數
-- `snapshotInterval?: number` — 快照間隔
-- `preMatchEffects?: IEffect[]` — 賽前變數效果（開局注入雙方）
-
-### CombatResult 輸出
-
-- `outcome: 'victory' | 'defeat' | 'timeout'` — 戰鬥結果
-- `survivors: CharacterSnapshot[]` — 生還者快照
-- `logs: CombatLogEntry[]` — 完整日誌
-- `snapshots: CombatSnapshot[]` — 定時快照
-- `statistics: CombatStatistics` — 統計數據
-- `duration: number` — 戰鬥 tick 數
-
-### 事件（EventBus）
-
-- `tick:start` / `tick:end` — tick 生命週期
-- `combat:start` — 戰鬥開始（賽前效果注入後）
-- `entity:damage` / `entity:death` — 傷害與死亡
-- `entity:hp-zero` — 血量歸零（不等於死亡，可能復活）
-- `entity:resurrection` — 復活成功
-- `entity:effect-applied` / `entity:effect-removed` — 效果變化
-- `combat:miss` / `entity:critical` — 命中與暴擊
-- `ultimate:activated` — 大招觸發
-
-### 新增屬性類型
-
-- `resurrectionChance` — 復活率（0.03～0.50）
-- `resurrectionHpPercent` — 復活後血量百分比（0.10～1.00）
 
 ---
 
 ## 四、設計原則摘要
 
-- **Facade**：CombatEngine 單一入口
-- **Chain of Responsibility**：DamageChain 傷害管線
-- **Strategy**：ITargetSelector 目標選擇
-- **Observer**：EventBus 事件驅動
-- **Railway-Oriented**：Result<T,F> 避免迴圈內拋例外
-- **Seedable RNG**：100% 可重現戰鬥
+- Facade：CombatEngine 單一入口
+- Chain of Responsibility：DamageChain 傷害管線
+- Observer：EventBus 事件驅動
+- Seedable RNG：100% 可重現戰鬥
+
+### 元件用途概述
+
+#### CombatEngine
+
+- 作為戰鬥模組的入口，負責初始化戰鬥並執行主要邏輯。
+
+#### TickerDriver
+
+- 驅動戰鬥的時間進程，觸發每個 tick 的開始與結束事件。
+
+#### CombatContext
+
+- 提供戰鬥所需的基礎設施，包括事件總線（EventBus）、隨機數生成器（RNG）和資源管理。
+
+#### BattleState
+
+- 儲存戰鬥的當前狀態，例如角色集合和當前 tick 計數。
+
+#### TickActionSystem
+
+- 負責在每個 tick 中執行多個階段（Phase），例如效果處理、能量回復和攻擊執行。
+
+#### EffectTickPhase
+
+- 處理所有角色的效果（Buff/Debuff）在當前 tick 的影響。
+
+#### EnergyRegenPhase
+
+- 管理角色的能量回復邏輯。
+
+#### AttackExecutionPhase
+
+- 負責執行攻擊邏輯，包括目標選擇和傷害計算。
+
+#### DamageChain
+
+- 定義傷害計算的責任鏈，依序執行命中檢定、暴擊判定、防禦計算等步驟。
+
+#### ResurrectionHandler
+
+- 處理角色的復活邏輯，包括復活概率計算和效果清除。
+
+#### EventBus
+
+- 作為事件通訊中心，協調模組間的事件傳遞。
+
+#### ResourceRegistry
+
+- 管理戰鬥中共享的資源，例如效果或狀態的生命週期。
+
+#### EventLogger
+
+- 記錄戰鬥過程中的重要事件，生成日誌供後續分析。
+
+#### SnapshotCollector
+
+- 定期收集戰鬥快照，用於重播或狀態回溯。
+
+### Domain 元件描述
+
+#### Attribute 模組
+
+- 用途：管理角色的屬性，處理屬性計算與增減。
+
+#### Character 模組
+
+- 用途：定義角色的核心邏輯，包含屬性、裝備與效果的管理。
+
+#### Effect 模組
+
+- 用途：管理角色的效果（Buff/Debuff），處理效果的應用與移除。
+
+#### Item 模組
+
+- 用途：管理角色的裝備與遺物，處理穿戴、卸下與效果注入。
+
+#### Ultimate 模組
+
+- 用途：管理角色的大招，處理充能與釋放邏輯。
 
 ---
-
-## 五、裝備系統補充說明
-
-- 裝備部位（weapon、helmet、armor、necklace、shoes 等）僅作為外部限制
-- 戰鬥引擎不區分部位，統一透過 `Equipment.getEffects()` 注入效果
-- 每個部位只能裝備一件，由 `EquipmentManager` 透過 slot 機制管理
-- 新增部位只需擴充 `EquipmentSlot` 類型，無需修改引擎核心
