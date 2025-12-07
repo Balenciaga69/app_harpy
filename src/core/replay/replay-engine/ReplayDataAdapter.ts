@@ -14,14 +14,8 @@ import { ReplayError } from '../infra/replay-error'
  *
  * 主要職責：
  * - 載入並驗證 CombatResult
- * - 建立 snapshot 索引 O(log n)
  * - 查詢指定 tick 的 snapshot
  * - 查詢 tick 範圍內的 log
- *
- * 實作說明：
- * - snapshot 依 tick 排序（CombatEngine 保證）
- * - 查找用二分搜尋
- * - 資料不可變（不修改原始 combat result）
  */
 export class ReplayDataAdapter {
   private snapshots: CombatSnapshot[] = []

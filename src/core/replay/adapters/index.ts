@@ -1,1 +1,0 @@
-export { ReplayDataAdapter } from './ReplayDataAdapter'

@@ -21,12 +21,6 @@ import type {
   EnergyGainedPayload,
   TickSnapshotPayload,
 } from './event-payload'
-/**
- * Combat event mapping table
- *
- * Defines all combat-related event names and corresponding Payload types.
- * Ensures type safety when sending and listening to events through TypeScript's type system.
- */
 export type CombatEventMap = {
   // === Combat related events ===
   'combat:start': CombatStartPayload
