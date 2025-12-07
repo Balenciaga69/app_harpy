@@ -1,5 +1,5 @@
 // Public classes (for external use)
-export { Character } from './core/Character'
+export { Character } from './Character'
 export { CharacterBuilder } from './CharacterBuilder'
 // Public interfaces (type definitions)
 export type { ICharacter } from './models/character'
