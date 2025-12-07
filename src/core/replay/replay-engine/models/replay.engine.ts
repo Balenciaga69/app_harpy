@@ -1,5 +1,6 @@
-import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat'
-import type { ReplayConfig, ReplayState, ReplayEventType, ReplayEvent } from '../models'
+import type { CombatLogEntry, CombatResult, CombatSnapshot } from '@/core/combat'
+import type { ReplayConfig, ReplayEvent, ReplayEventType, ReplayState } from '../../models'
+
 /**
  * IReplayEngine
  *

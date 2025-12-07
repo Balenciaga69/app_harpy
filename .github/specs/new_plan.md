@@ -135,7 +135,7 @@
 
 ## 五、資料流程設計
 
-### 裝備生成流程
+### 裝備生成流程(TODO:先不做)
 
 1. ItemGenerator 根據難度係數選擇 IEquipmentDefinition
 2. AffixRoller 根據定義的 affixPool 生成 IAffixInstance 陣列
@@ -144,12 +144,12 @@
 
 ### 進入戰鬥流程
 
-1. 從 Inventory 取得 InventoryItem
+1. 從 Inventory 取得 InventoryItem(這不是CombatEngine的事,調用前要做好準備)
 2. CombatItemFactory 將 InventoryItem 轉換為 ICombatItemView
 3. EffectFactory 根據詞綴實例生成 IEffect 陣列
 4. Combat Engine 只接收 IEffect 陣列進行戰鬥計算
 
-### 顯示 UI 流程
+### 顯示 UI 流程(TODO:先不做)
 
 1. 從 Inventory 取得 InventoryItem
 2. UIItemViewFactory 將 InventoryItem 轉換為 IUIItemView

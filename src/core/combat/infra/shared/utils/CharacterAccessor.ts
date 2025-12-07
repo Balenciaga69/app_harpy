@@ -1,15 +1,16 @@
 import type { ICombatContext } from '../../../context/combat-context'
 import type { ICharacter } from '../../../domain/character/models/character'
 import { Result, Failures, CombatError, type CombatFailure } from '../../errors'
+
 /**
  * CharacterAccessor
  *
- * Helper to retrieve characters from registry with error handling.
- * Reduces boilerplate in Effect and Ultimate implementations.
+ * 從登記表取得角色的輔助工具，並處理錯誤。
+ * 可減少 Effect 與 Ultimate 實作中的樣板程式碼。
  *
- * Provides both throwing and Result-based methods:
- * - get(): For internal trusted code where character must exist
- * - getResult(): For operations that may fail gracefully
+ * 同時提供會拋例外與回傳 Result 的方法：
+ * - get(): 用於內部可信任邏輯，角色必須存在
+ * - getResult(): 用於可能失敗並需優雅處理的操作
  */
 export class CharacterAccessor {
   private context: ICombatContext
@@ -17,8 +18,8 @@ export class CharacterAccessor {
     this.context = context
   }
   /**
-   * Get character by ID, throws CombatError if not found
-   * Use this when character must exist (internal logic)
+   * 以 ID 取得角色，若找不到會拋出 CombatError
+   * 用於角色必須存在（內部邏輯）
    */
   get(id: string): ICharacter {
     const character = this.context.registry.getCharacter(id) as ICharacter | undefined
@@ -28,8 +29,8 @@ export class CharacterAccessor {
     return character
   }
   /**
-   * Get character by ID with Result pattern
-   * Use this for operations that may fail gracefully (no exception thrown)
+   * 以 Result 模式取得角色（不拋例外）
+   * 用於可能失敗並需優雅處理的操作
    */
   getResult(id: string): Result<ICharacter, CombatFailure> {
     const character = this.context.registry.getCharacter(id) as ICharacter | undefined
@@ -39,20 +40,20 @@ export class CharacterAccessor {
     return Result.ok(character)
   }
   /**
-   * Try to get character by ID, returns undefined if not found
-   * Use this when character might not exist (edge cases)
+   * 嘗試以 ID 取得角色，找不到時回傳 undefined
+   * 用於角色可能不存在的情況（邊界情境）
    */
   tryGet(id: string): ICharacter | undefined {
     return this.context.registry.getCharacter(id) as ICharacter | undefined
   }
   /**
-   * Check if character exists in registry
+   * 檢查 registry 中是否存在該角色
    */
   has(id: string): boolean {
     return this.context.registry.hasCharacter(id)
   }
   /**
-   * Get character if alive, returns failure if dead or not found
+   * 取得存活的角色；若角色不存在或已死亡則回傳失敗
    */
   getAlive(id: string): Result<ICharacter, CombatFailure> {
     const result = this.getResult(id)
