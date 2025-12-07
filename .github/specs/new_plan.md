@@ -33,7 +33,7 @@
 
 ### 新增模組
 
-將新增一個獨立模組 `item-system`，負責管理裝備與遺物的核心定義與視角投影。這個模組不依賴 Combat Engine 或 Inventory，而是作為共享的資料層。
+將新增一個獨立模組 `item`，負責管理裝備與遺物的核心定義與視角投影。這個模組不依賴 Combat Engine 或 Inventory，而是作為共享的資料層。
 
 ---
 
@@ -41,7 +41,7 @@
 
 ### 模組位置
 
-新增 `src/core/item-system/` 目錄
+新增 `src/domain/item/` 目錄
 
 ### 目錄結構
 
@@ -179,7 +179,7 @@
 
 ### 階段一：建立基礎架構
 
-1. 建立 item-system 模組目錄結構
+1. 建立 item 模組目錄結構
 2. 定義 IItemDefinition 介面
 3. 定義 IAffixDefinition 與 IAffixInstance 介面
 4. 實作 AffixRoller 類別
