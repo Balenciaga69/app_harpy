@@ -9,6 +9,7 @@ import { EventLogger } from '../logic/logger'
 import { SnapshotCollector } from '../logic/snapshot'
 import { TickerDriver } from '../logic/tick'
 import { ResultBuilder } from './builders'
+import { OutcomeAnalyzer } from './builders/utils/OutcomeAnalyzer'
 import type { CombatConfig, CombatResult, CombatResultData } from './models'
 import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 /**
@@ -79,6 +80,22 @@ export class CombatEngine {
       PreMatchEffectApplicator.applyEffects(this.config.preMatchEffects, this.context)
     }
     this.ticker.start()
+    // Emit combat:end event after combat finishes
+    this.emitCombatEnd()
+  }
+
+  private emitCombatEnd(): void {
+    const { outcome, winner } = OutcomeAnalyzer.analyze(
+      this.config.playerTeam,
+      this.config.enemyTeam,
+      this.context.getCurrentTick(),
+      this.config.maxTicks ?? CombatTiming.MAX_TICKS
+    )
+    this.context.eventBus.emit('combat:end', {
+      winner,
+      outcome,
+      tick: this.context.getCurrentTick(),
+    })
   }
   private setupCharacters(): void {
     // Add player team characters

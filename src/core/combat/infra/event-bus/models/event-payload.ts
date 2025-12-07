@@ -9,7 +9,8 @@ export interface CombatStartPayload {
  * Combat end event
  */
 export interface CombatEndPayload {
-  winnerId: string
+  winner: 'player' | 'enemy' | null
+  outcome: 'player-win' | 'enemy-win' | 'draw' | 'timeout'
   tick: number
 }
 /**

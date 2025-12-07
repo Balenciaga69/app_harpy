@@ -76,8 +76,14 @@
 
 - 裝備：每類僅裝備一件（武器、頭盔、裝甲、項鍊、鞋子等），可放入倉庫或售出。
 - 遺物：可無限堆疊，僅可穿戴或售出。
-- 兩者皆為 Modifier 容器，無固定屬性類型。
+- 兩者皆為 Affixes 容器，無固定屬性類型。
 - 裝備無升級系統，過時即淘汰。
+
+#### Affixes 原理
+
+- 有固定模板，決定可出現屬性類型與數量範圍。
+- 撈取當前難度係數與職業，隨機生成具體屬性值。
+- 戰鬥中或計算傷害才轉換成效果去運算。
 
 ### 3. 裝備稀有度與生成
 
@@ -142,19 +148,19 @@
 ### 後端純運算模組(不共享 EventBus)
 
 - [幾乎完工]CombatEngine（瞬間運算戰鬥 + 返回戰鬥日誌）
-- CharacterModifierSystem (角色身上的基礎詞綴計算模組)
-- DifficultyScaler (難度係數計算模組)
-- ItemGenerator (獨立物品生成模組)
-- EnemyGenerator (敵人生成模組)
+- CharacterModifierSystem 根據基礎屬性、裝備、遺物、Buff，計算出角色最終屬性面板。
+- DifficultyScaler 根據 Run 進度（關卡層數）或其他因子，計算當前難度係數。
+- ItemGenerator 根據難度係數與職業，獨立生成裝備和遺物（帶有隨機屬性）。
+- EnemyGenerator 根據難度係數，生成帶有裝備與遺物的敵人實例。
 
 ### 後端遊戲模組(他們共用同的 EventBus)
 
-- CharacterManager: 角色管理與面板展示
-- Encounter: 關卡地圖、房間、事件生成的控制器
-- PreCombat: 賽前事宜準備模組
-- Shop: 商店邏輯模組
-- ShopGambling: 賭博模組
-- Inventory: 背包／倉庫管理模組
+- CharacterManager: 儲存和管理玩家的基礎角色實例；處理角色選擇與面板展示。
+- Encounter: 負責關卡地圖結構、路線分支、事件生成的控制器。
+- PreCombat: 處理進入戰鬥前的所有事宜
+- Shop: 管理商品列表的刷新、購買/出售邏輯。
+- ShopGambling: 處理拉霸機賭博的邏輯與結果結算。
+- Inventory: 管理倉庫及角色的裝備與遺物清單；處理穿戴/卸下/出售/購買的數據變更。
 - Run(RunOrchestrator): 關卡進程控制模組
 - PersistentStorage (存讀檔模組)
 
