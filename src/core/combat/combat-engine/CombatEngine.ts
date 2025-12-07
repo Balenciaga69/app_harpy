@@ -14,8 +14,8 @@ import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 /**
  * 戰鬥引擎
  *
- * 負責協調各子系統 (TickerDriver, TickActionSystem, EventLogger, SnapshotCollector)，
- * 管理戰鬥生命週期並產生最終 CombatResult。
+ * 負責協調各子系統
+ * 管理戰鬥生命週期並產生最終結果。
  *
  * 錯誤處理策略：
  * - 這是唯一可能拋出 CombatError 的邊界層
