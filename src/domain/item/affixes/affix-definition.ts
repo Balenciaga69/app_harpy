@@ -1,4 +1,4 @@
-/** 詞綴階級 */
+/** 詞綴階級（可選，用於分層生成權重或 UI 顯示） */
 export type AffixTier = 1 | 2 | 3 | 4 | 5
 /**
  * IAffixDefinition
@@ -15,8 +15,8 @@ export interface IAffixDefinition {
   readonly minValue: number
   /** 數值上限 */
   readonly maxValue: number
-  /** 詞綴階級，影響生成權重 */
-  readonly tier: AffixTier
   /** 生成權重，數值越大越容易出現 */
   readonly weight: number
+  /** 詞綴階級（可選），用於分層生成或 UI 顯示 */
+  readonly tier?: AffixTier
 }

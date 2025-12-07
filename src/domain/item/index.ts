@@ -24,3 +24,6 @@ export { CombatItemFactory, EffectFactory } from './factories'
 export type { EffectBuilder } from './factories'
 // === Registries ===
 export { ItemDefinitionRegistry, AffixDefinitionRegistry } from './registries'
+// === Errors ===
+export { ItemError } from './errors'
+export type { ItemErrorCode } from './errors'

@@ -1,4 +1,5 @@
 import type { IAffixDefinition } from '../affixes'
+import { ItemError } from '../errors'
 /**
  * AffixDefinitionRegistry
  *
@@ -10,7 +11,7 @@ export class AffixDefinitionRegistry {
   /** 註冊詞綴定義 */
   register(definition: IAffixDefinition): void {
     if (this.definitions.has(definition.id)) {
-      throw new Error(`AffixDefinition with id '${definition.id}' already registered`)
+      throw ItemError.duplicateDefinition('AffixDefinition', definition.id)
     }
     this.definitions.set(definition.id, definition)
   }

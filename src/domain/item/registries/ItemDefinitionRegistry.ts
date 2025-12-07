@@ -1,4 +1,5 @@
 import type { IItemDefinition } from '../definitions'
+import { ItemError } from '../errors'
 /**
  * ItemDefinitionRegistry
  *
@@ -10,7 +11,7 @@ export class ItemDefinitionRegistry {
   /** 註冊物品定義 */
   register(definition: IItemDefinition): void {
     if (this.definitions.has(definition.id)) {
-      throw new Error(`ItemDefinition with id '${definition.id}' already registered`)
+      throw ItemError.duplicateDefinition('ItemDefinition', definition.id)
     }
     this.definitions.set(definition.id, definition)
   }
