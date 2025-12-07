@@ -14,4 +14,6 @@ Provide project context and coding guidelines that AI should follow when generat
   - 架構與元件關係
   - 對外暴露的主要功能(不管是 API 還是其他模組調用的方式)
 - 整份規格書以簡潔、沒有代碼、圖片為首要目標，最好每一段都是 15 秒以內可以閱讀完的長度
+- 不要寫任何程式碼!、不要畫圖!、不要用 Table!、不要用 UML!
+- 整份完件看起來就像是 乾淨的 Heading + Bulleted List + 文字段落組成!!!
 - 不需要寫計畫書、使用的語言、安全、驗收等等這些不重要。最重要的是功能敘述

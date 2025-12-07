@@ -1,4 +1,7 @@
-# Combat 模組規格書 (更新版)
+# Combat 模組規格書
+
+> **最後更新**: 2025/12/07  
+> **版本**: v0.4.1
 
 ## 一、目標功能與範圍
 
@@ -27,10 +30,37 @@
 - 角色/裝備生成（由外部模組負責）
 - 存讀檔（由 PersistentStorage 模組負責）
 - 裝備部位限制邏輯（由外部模組負責）
+- 屬性類型定義（由 domain/attribute 負責）
+- 裝備槽位定義（由 domain/item 負責）
+- 角色模板定義（由 domain/character 負責）
 
 ---
 
-## 二、架構與元件關係
+## 二、依賴的 Domain 模組（v0.4.1 新增）
+
+### domain/attribute
+
+```typescript
+import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
+import { AttributeDefaults, AttributeLimits } from '@/domain/attribute'
+```
+
+- 提供屬性類型定義
+- 提供預設值與限制常數
+- Combat Engine 的屬性計算器依賴此定義
+
+### domain/item
+
+```typescript
+import type { EquipmentSlot } from '@/domain/item'
+```
+
+- 提供裝備槽位類型定義
+- Combat Engine 的裝備管理器依賴此定義
+
+---
+
+## 三、架構與元件關係
 
 ### 入口層
 

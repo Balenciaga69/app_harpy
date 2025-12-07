@@ -1,6 +1,5 @@
 import type { IItemDefinition } from './item-definition'
-/** 裝備槽位類型 */
-export type EquipmentSlot = 'weapon' | 'helmet' | 'armor' | 'necklace' | 'boots'
+import type { EquipmentSlot } from '../equipment-slot'
 /** 裝備稀有度 */
 export type EquipmentRarity = 'common' | 'magic' | 'rare' | 'legendary'
 /**

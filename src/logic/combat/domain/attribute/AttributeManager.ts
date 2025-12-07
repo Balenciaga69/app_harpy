@@ -1,6 +1,6 @@
 import type { AttributeType, BaseAttributeValues } from './models/attribute-core.ts'
 import type { AttributeModifier } from './models/attribute-modifier.ts'
-import { AttributeLimits } from '../../infra/config/index.ts'
+import { AttributeLimits } from '@/domain/attribute'
 /**
  * AttributeManager
  *

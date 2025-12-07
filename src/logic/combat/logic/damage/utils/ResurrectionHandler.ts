@@ -1,6 +1,6 @@
 import type { CombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
-import { AttributeLimits } from '@/logic/combat/infra/config'
+import { AttributeLimits } from '@/domain/attribute'
 /**
  * 復活處理器
  *

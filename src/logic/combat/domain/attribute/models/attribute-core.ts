@@ -1,5 +1,9 @@
-import type { AttributeType } from './attribute-type'
-import { createDefaultAttributes, type BaseAttributeValues } from './base-attribute-values'
-export { createDefaultAttributes }
-export type { AttributeType }
-export type { BaseAttributeValues }
+/**
+ * Attribute Core Types
+ *
+ * 重新導出 domain/attribute 的核心類型定義。
+ * 保留此檔案以維持現有 import 路徑的相容性。
+ */
+export type { AttributeType } from '@/domain/attribute'
+export type { BaseAttributeValues } from '@/domain/attribute'
+export { createDefaultAttributes } from '@/domain/attribute'

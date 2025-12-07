@@ -5,14 +5,10 @@
  * 純資料層，不依賴 Combat Engine、Inventory 或任何框架。
  * 跨語言友好，可序列化為 JSON。
  */
+// === Equipment Slot ===
+export type { EquipmentSlot } from './equipment-slot'
 // === Definitions ===
-export type {
-  IItemDefinition,
-  IEquipmentDefinition,
-  IRelicDefinition,
-  EquipmentSlot,
-  EquipmentRarity,
-} from './definitions'
+export type { IItemDefinition, IEquipmentDefinition, IRelicDefinition, EquipmentRarity } from './definitions'
 // === Affixes ===
 export type { IAffixDefinition, AffixTier, IAffixInstance } from './affixes'
 export { AffixRoller } from './affixes'

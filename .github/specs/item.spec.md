@@ -1,277 +1,129 @@
 # Item 模組規格書
 
-## 一、目標功能與範圍
-
-### 核心目標
-
-提供裝備與遺物的核心定義層，支援詞綴系統，並透過視角投影模式讓不同模組只取用各自需要的資料。
+## 目標功能與範圍
 
 ### 會實現的功能
 
-- 物品定義介面（`IItemDefinition`、`IEquipmentDefinition`、`IRelicDefinition`）
-- 詞綴定義與實例介面（`IAffixDefinition`、`IAffixInstance`）
-- 詞綴生成器（`AffixRoller`）
-- 視角投影介面（`ICombatItemView`、`IInventoryItemView`、`IUIItemView`）
-- 視角投影工廠（`CombatItemFactory`、`EffectFactory`）
-- 定義註冊表（`ItemDefinitionRegistry`、`AffixDefinitionRegistry`）
-- 專屬錯誤類別（`ItemError`）
+- 定義物品基礎介面與裝備遺物擴充介面
+- 定義詞綴系統（定義與實例）
+- 提供詞綴生成器（支援可重現隨機數）
+- 定義裝備槽位與稀有度
+- 提供視角投影介面（戰鬥、庫存、UI）
+- 提供效果工廠（泛型設計）
+- 提供物品與詞綴定義註冊表
+- 提供專屬錯誤類別
 
 ### 不會實現的功能
 
-- 物品生成邏輯（由 `ItemGenerator` 模組負責）
-- 庫存管理（由 `Inventory` 模組負責）
-- 戰鬥效果實作（由 `Combat` 模組負責）
-- UI 渲染（由前端模組負責）
+- 物品生成邏輯（由 ItemGenerator 模組負責）
+- 庫存管理（由 Inventory 模組負責）
+- 戰鬥效果實作（由 Combat 模組負責）
+- UI 渲染（由 UI 模組負責）
+- 物品掉落計算（由 Loot 模組負責）
 
 ---
 
-## 二、架構與元件關係
+## 架構與元件關係
 
-### 模組位置
+### 模組定位
 
-`src/domain/item/`
+物品系統的共享定義層，提供純資料模板與轉換工具。
 
-### 目錄結構
+### 依賴方向
 
-```
-src/domain/item/
-├── index.ts                          # 模組總入口
-├── definitions/
-│   ├── index.ts
-│   ├── item-definition.ts            # IItemDefinition 基礎介面
-│   ├── equipment-definition.ts       # IEquipmentDefinition 裝備介面
-│   └── relic-definition.ts           # IRelicDefinition 遺物介面
-├── affixes/
-│   ├── index.ts
-│   ├── affix-definition.ts           # IAffixDefinition 詞綴定義
-│   ├── affix-instance.ts             # IAffixInstance 詞綴實例
-│   └── AffixRoller.ts                # 詞綴生成器
-├── projections/
-│   ├── index.ts
-│   ├── combat-item-view.ts           # ICombatItemView 戰鬥視角
-│   ├── inventory-item-view.ts        # IInventoryItemView 庫存視角
-│   └── ui-item-view.ts               # IUIItemView UI 視角
-├── factories/
-│   ├── index.ts
-│   ├── CombatItemFactory.ts          # 戰鬥物品工廠
-│   └── EffectFactory.ts              # 效果工廠（泛型設計）
-├── registries/
-│   ├── index.ts
-│   ├── ItemDefinitionRegistry.ts     # 物品定義註冊表
-│   └── AffixDefinitionRegistry.ts    # 詞綴定義註冊表
-└── errors/
-    ├── index.ts
-    └── item-error.ts                 # 專屬錯誤類別
-```
+- ItemGenerator 使用此模組生成物品實例
+- Combat Engine 使用戰鬥視角介面取得物品效果
+- Inventory 使用庫存視角介面管理物品
+- UI 使用 UI 視角介面渲染物品資訊
+
+### 檔案結構
+
+- definitions 目錄包含物品、裝備、遺物定義介面
+- affixes 目錄包含詞綴定義、實例、生成器
+- projections 目錄包含三種視角投影介面
+- factories 目錄包含物品工廠與效果工廠
+- registries 目錄包含物品與詞綴註冊表
+- errors 目錄包含錯誤處理類別
 
 ---
 
-## 三、核心介面定義
+## 核心定義
 
-### IItemDefinition（物品基礎定義）
+### 物品定義
 
-```typescript
-interface IItemDefinition {
-  readonly id: string
-  readonly effectTemplateIds: readonly string[]
-  readonly affixPoolIds: readonly string[]
-  readonly minAffixes: number
-  readonly maxAffixes: number
-}
-```
+包含唯一識別碼、效果模板 ID、詞綴池 ID、詞綴數量範圍。裝備定義擴充槽位與稀有度，遺物定義擴充堆疊資訊。
 
-### IEquipmentDefinition（裝備定義）
+### 詞綴定義
 
-```typescript
-interface IEquipmentDefinition extends IItemDefinition {
-  readonly slot: EquipmentSlot
-  readonly baseStats: Readonly<Record<string, number>>
-  readonly rarity: EquipmentRarity
-}
-```
+包含唯一識別碼、效果模板 ID、數值範圍、權重、分層標籤。詞綴實例包含定義 ID 與擲出數值。
 
-### IRelicDefinition（遺物定義）
+### 裝備槽位
 
-```typescript
-interface IRelicDefinition extends IItemDefinition {
-  readonly stackable: boolean
-  readonly maxStack: number
-}
-```
-
-### IAffixDefinition（詞綴定義）
-
-```typescript
-interface IAffixDefinition {
-  readonly id: string
-  readonly effectTemplateId: string
-  readonly minValue: number
-  readonly maxValue: number
-  readonly weight: number
-  readonly tier?: AffixTier // 可選，用於分層生成
-}
-```
-
-### IAffixInstance（詞綴實例）
-
-```typescript
-interface IAffixInstance {
-  readonly definitionId: string
-  readonly rolledValue: number
-}
-```
+定義六個槽位：武器、頭盔、胸甲、手套、腿甲、鞋子。
 
 ---
 
-## 四、視角投影介面
+## 視角投影系統
 
-### ICombatItemView（戰鬥視角）
+### 戰鬥視角
 
-僅包含 Combat Engine 需要的欄位：
+僅包含戰鬥引擎需要的欄位：物品 ID、效果模板 ID、詞綴實例。不包含 UI 資訊與庫存資訊。
 
-```typescript
-interface ICombatItemView {
-  readonly id: string
-  readonly effectTemplateIds: readonly string[]
-  readonly affixInstances: readonly IAffixInstance[]
-}
-```
+### 庫存視角
 
-### IInventoryItemView（庫存視角）
+僅包含庫存管理需要的欄位：物品 ID、定義 ID、詞綴實例、槽位、堆疊數量。不包含效果資訊與 UI 資訊。
 
-僅包含 Inventory 模組需要的欄位：
+### UI 視角
 
-```typescript
-interface IInventoryItemView {
-  readonly id: string
-  readonly definitionId: string
-  readonly affixInstances: readonly IAffixInstance[]
-  readonly slot?: EquipmentSlot
-  readonly stackCount?: number
-}
-```
-
-### IUIItemView（UI 視角）
-
-僅包含 UI 渲染需要的欄位：
-
-```typescript
-interface IUIItemView {
-  readonly id: string
-  readonly displayName: string
-  readonly description: string
-  readonly iconPath: string
-  readonly rarity: EquipmentRarity
-  readonly slot?: EquipmentSlot
-  readonly price: number
-  readonly affixDescriptions: readonly string[]
-}
-```
+僅包含 UI 渲染需要的欄位：物品 ID、顯示名稱、描述、圖示、稀有度、槽位、價格、詞綴描述。不包含效果資訊。
 
 ---
 
-## 五、核心類別
+## 核心類別
 
-### AffixRoller（詞綴生成器）
+### 詞綴生成器
 
-```typescript
-class AffixRoller {
-  constructor(rng: IRng, definitions: IAffixDefinition[])
-  roll(affixPoolIds: readonly string[], count: number): IAffixInstance[]
-  rollSingle(definitionId: string): IAffixInstance | null
-}
-```
+接受隨機數生成器與詞綴定義，提供權重隨機選取與擲骰功能。支援可重現隨機數，保證同種子同結果。
 
-**設計特點：**
+### 效果工廠
 
-- 接受 `IRng` 介面，支援可重現的隨機數
-- 使用權重加權隨機選取
-- 不重複選取（同一次 roll 內）
+泛型設計，支援註冊效果建構邏輯。可從詞綴實例或戰鬥視角物品批量建立效果。
 
-### EffectFactory（效果工廠）
+### 物品定義註冊表
 
-```typescript
-class EffectFactory<TEffect> {
-  register(templateId: string, builder: EffectBuilder<TEffect>): void
-  createFromAffix(templateId: string, affixInstance: IAffixInstance): TEffect | null
-  createFromCombatItem(itemView: ICombatItemView): TEffect[]
-}
-```
+註冊與查詢物品定義，防止重複註冊，提供批量註冊功能。
 
-**設計特點：**
+### 詞綴定義註冊表
 
-- 泛型設計，可適配不同的效果介面實作
-- 註冊機制，允許外部註冊效果建構邏輯
-- 支援從詞綴實例生成效果
-
-### ItemDefinitionRegistry / AffixDefinitionRegistry
-
-```typescript
-class ItemDefinitionRegistry {
-  register(definition: IItemDefinition): void
-  registerMany(definitions: IItemDefinition[]): void
-  get(id: string): IItemDefinition | undefined
-  getAll(): IItemDefinition[]
-  has(id: string): boolean
-  clear(): void
-}
-```
-
-**設計特點：**
-
-- 類似資料庫的靜態註冊表
-- 防止重複註冊
-- 使用 `ItemError` 處理錯誤
+註冊與查詢詞綴定義，防止重複註冊，支援按分層查詢。
 
 ---
 
-## 六、錯誤處理
+## 錯誤處理
 
-### ItemError 類別
-
-```typescript
-class ItemError extends Error {
-  readonly code: ItemErrorCode
-  readonly context?: Record<string, unknown>
-
-  static duplicateDefinition(type: string, id: string): ItemError
-  static definitionNotFound(type: string, id: string): ItemError
-  static invalidAffixPool(poolIds: string[]): ItemError
-  static invalidValueRange(min: number, max: number): ItemError
-  static effectBuilderNotFound(templateId: string): ItemError
-}
-```
-
-**錯誤類型：**
-
-- `DUPLICATE_DEFINITION`：重複定義
-- `DEFINITION_NOT_FOUND`：定義未找到
-- `INVALID_AFFIX_POOL`：無效詞綴池
-- `INVALID_VALUE_RANGE`：無效數值範圍
-- `EFFECT_BUILDER_NOT_FOUND`：效果建構器未找到
+使用專屬 ItemError 類別處理五種錯誤：重複定義、定義未找到、無效詞綴池、無效數值範圍、效果建構器未找到。
 
 ---
 
-## 七、資料流程
+## 對外暴露的主要功能
 
-### 裝備生成流程
+### 類型定義
 
-```
-1. ItemGenerator 選擇 IEquipmentDefinition
-2. AffixRoller 根據 affixPoolIds 生成 IAffixInstance[]
-3. 建立 InventoryItem（儲存 definitionId + affixInstances）
-4. Inventory 模組持有 InventoryItem
-```
+- IItemDefinition、IEquipmentDefinition、IRelicDefinition 物品定義
+- IAffixDefinition、IAffixInstance 詞綴定義與實例
+- ICombatItemView、IInventoryItemView、IUIItemView 視角投影
+- EquipmentSlot、EquipmentRarity 槽位與稀有度
 
-### 進入戰鬥流程
+### 核心類別
 
-```
-1. 從 Inventory 取得 InventoryItem
-2. CombatItemFactory 轉換為 ICombatItemView
-3. EffectFactory 根據詞綴實例生成 IEffect[]
-4. 建立 ICombatEquipment / ICombatRelic
-5. Combat Engine 接收並進行戰鬥計算
-```
+- AffixRoller 詞綴生成器
+- EffectFactory 效果工廠
+- ItemDefinitionRegistry、AffixDefinitionRegistry 註冊表
+- ItemError 錯誤類別
+
+### 資料流程
+
+物品生成器選擇定義，詞綴生成器擲出詞綴，建立庫存物品。進入戰鬥時，轉換為戰鬥視角，效果工廠建立效果，傳遞給戰鬥引擎。
 
 ### 顯示 UI 流程
 
