@@ -1,5 +1,5 @@
-import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat'
-import { ReplayError } from '../infra/replay-error'
+import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../../combat'
+import { ReplayError } from '../../infra/replay-error'
 /**
  * ReplayDataAdapter
  *

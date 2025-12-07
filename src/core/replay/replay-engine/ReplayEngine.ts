@@ -1,3 +1,4 @@
+import type { IReplayEngine } from '.'
 import type { CombatLogEntry, CombatResult, CombatSnapshot } from '../../combat'
 import type { IReplayEventBus, ITickScheduler } from '../infra'
 import { BrowserTickScheduler, ReplayEventBus } from '../infra'
@@ -9,9 +10,8 @@ import {
   type ReplayEventType,
   type ReplayState,
 } from '../models'
-import { PlaybackStateMachine } from './PlaybackStateMachine'
-import type { IReplayEngine } from './replay.engine'
-import { ReplayDataAdapter } from './ReplayDataAdapter'
+import { PlaybackStateMachine } from './services/PlaybackStateMachine'
+import { ReplayDataAdapter } from './services/ReplayDataAdapter'
 /**
  * ReplayEngine
  *
