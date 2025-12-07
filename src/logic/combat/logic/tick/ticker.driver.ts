@@ -44,7 +44,6 @@ export class TickerDriver {
     this.isRunning = false
     this.context.eventBus.emit('ticker:stopped', { tick: this.context.getCurrentTick() })
   }
-
   /** Check if combat reached max ticks (timeout) */
   public isTimeout(): boolean {
     return this.context.getCurrentTick() >= this.maxTicks

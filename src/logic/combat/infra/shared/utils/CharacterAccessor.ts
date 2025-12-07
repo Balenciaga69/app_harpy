@@ -1,7 +1,6 @@
 import type { ICombatContext } from '../../../context/combat-context'
 import type { ICharacter } from '../../../domain/character/models/character'
 import { Result, Failures, CombatError, type CombatFailure } from '../../errors'
-
 /**
  * CharacterAccessor
  *

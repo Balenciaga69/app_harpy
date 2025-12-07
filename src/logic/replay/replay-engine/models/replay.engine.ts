@@ -1,6 +1,5 @@
 import type { CombatLogEntry, CombatResult, CombatSnapshot } from '@/logic/combat'
 import type { ReplayConfig, ReplayEvent, ReplayEventType, ReplayState } from '../../models'
-
 /**
  * IReplayEngine
  *

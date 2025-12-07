@@ -83,7 +83,6 @@ export class CombatEngine {
     // Emit combat:end event after combat finishes
     this.emitCombatEnd()
   }
-
   private emitCombatEnd(): void {
     const { outcome, winner } = OutcomeAnalyzer.analyze(
       this.config.playerTeam,
