@@ -9,6 +9,7 @@
 
 - 新增 domain/item 模組，把裝備、遺物、詞綴相關邏輯獨立出來
 - 重構 logic/combat 模組，移除與裝備、遺物、詞綴領域相關的邏輯
+- 新增 domain/character,attribute 模組，把角色與屬性相關邏輯獨立出來
 
 ## _2025/12/06_
 
