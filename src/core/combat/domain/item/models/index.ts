@@ -1,6 +1,0 @@
-export type { IItem, ItemRarity } from './item'
-export { Equipment } from './equipment'
-export type { EquipmentConfig } from './equipment'
-export { Relic } from './relic'
-export type { RelicConfig } from './relic'
-export type { EquipmentSlot } from './equipment-slot'

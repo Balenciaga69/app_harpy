@@ -40,7 +40,8 @@ Provide project context and coding guidelines that AI should follow when generat
 - Class,Type,Interface use /\*_ * multi-line description *_/
 - Methods or function logic comments use // single-line description
 - I don't need any @param, @returns type comments, as these are redundant
-- I found that my colleague's computer does not support Chinese comments, so please use English comments throughout. However, my English level is not very good, so your English should not be too difficult, and should not exceed B2 level. I need to be able to read it and he needs to understand it.
+- I found that my colleague's computer does not support Chinese comments, so please
+- ZH_TW comments throughout.
 
 ### Typescript 檔案與資料夾與物件命名規範
 
@@ -63,6 +64,7 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
 - 我們做邏輯(非UI)的內容一律以未來邏輯內容能被 CSharp Python Go 等語言無痛轉移為優先考量
 - 再遷移時候不會煩惱依賴某套件、或者耦合某個框架
 - 我們使用了模組化架構來做專案結構
+- 專案理論上可以被拆成前端與後端與獨立微服務之間不該有耦合，(除非共享契約與邏輯)
 - 我們使用了 TS 套件包括:
 - 純 TS 套件
   - mitt
