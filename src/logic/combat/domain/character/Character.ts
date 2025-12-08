@@ -5,9 +5,6 @@ import { AttributeCalculator, AttributeManager, type AttributeModifier } from '.
 import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
 import { EffectManager } from '../effect/EffectManager.ts'
 import type { IEffect } from '../effect/models/effect.ts'
-import { EquipmentManager, RelicManager } from '../item/index.ts'
-import type { ICombatEquipment, ICombatRelic } from '../item/models/combat-item.ts'
-import type { EquipmentSlot } from '@/domain/item'
 import type { IUltimateAbility } from '../ultimate/index.ts'
 import { UltimateManager } from '../ultimate/UltimateManager.ts'
 import type { ICharacter } from './models/character.ts'
@@ -19,6 +16,7 @@ interface CharacterConfig {
   name: string
   baseAttributes: BaseAttributeValues
   team: ICharacter['team']
+  effects?: IEffect[] // 初始效果（來自裝備、遺物等）
   ultimate?: IUltimateAbility
 }
 
@@ -27,9 +25,10 @@ interface CharacterConfig {
  *
  * 代表戰鬥中的實體。使用管理器來組織職責：
  * - EffectManager：管理效果
- * - EquipmentManager：管理裝備槽
- * - RelicManager：管理可堆疊的遺物
  * - UltimateManager：管理終極技能
+ *
+ * 設計變更：
+ * - 裝備與遺物的效果在建立角色時直接注入
  *
  * 為簡化使用字串 ID 而非品牌類型。
  */
@@ -41,8 +40,6 @@ export class Character implements ICharacter {
   private readonly attributeManager: AttributeManager
   private readonly attributeCalculator: AttributeCalculator
   private readonly effectManager: EffectManager
-  private readonly equipmentManager: EquipmentManager
-  private readonly relicManager: RelicManager
   private readonly ultimateManager: UltimateManager
   private _pendingUltimate?: IUltimateAbility // 用於延遲初始化的終極技能
 
@@ -54,10 +51,16 @@ export class Character implements ICharacter {
     this.attributeManager = new AttributeManager(config.baseAttributes)
     this.attributeCalculator = new AttributeCalculator(this.attributeManager)
     // 初始化管理器
-    this.effectManager = new EffectManager(this)
-    this.equipmentManager = new EquipmentManager(this)
-    this.relicManager = new RelicManager(this)
+    this.effectManager = new EffectManager(this.id)
     this.ultimateManager = new UltimateManager()
+
+    // 注入初始效果（裝備、遺物等）
+    if (config.effects && context) {
+      for (const effect of config.effects) {
+        this.effectManager.addEffect(effect, context)
+      }
+    }
+
     // 若提供了終極技能且有 context，則註冊終極技能
     if (config.ultimate && context) {
       this.ultimateManager.set(config.ultimate, context)
@@ -128,46 +131,6 @@ export class Character implements ICharacter {
   /** 觸發所有效果的 onRevive 勾子 */
   triggerRevive(context: ICombatContext): void {
     this.effectManager.triggerRevive(context)
-  }
-
-  // === 裝備相關方法（委派給 EquipmentManager） ===
-  /** 裝備物品到指定槽位 */
-  equipItem(equipment: ICombatEquipment, context: ICombatContext): void {
-    this.equipmentManager.equip(equipment, context)
-  }
-  /** 從指定槽位卸下裝備 */
-  unequipItem(slot: EquipmentSlot, context: ICombatContext): void {
-    this.equipmentManager.unequip(slot, context)
-  }
-  /** 取得指定槽位的裝備 */
-  getEquipment(slot: EquipmentSlot): ICombatEquipment | undefined {
-    return this.equipmentManager.getEquipment(slot)
-  }
-  /** 取得所有已裝備的物品 */
-  getAllEquipment(): ICombatEquipment[] {
-    return this.equipmentManager.getAllEquipment()
-  }
-
-  // === 遺物相關方法（委派給 RelicManager） ===
-  /** 添加遺物（同名遺物會堆疊） */
-  addRelic(relic: ICombatRelic, context: ICombatContext): void {
-    this.relicManager.add(relic, context)
-  }
-  /** 移除遺物 */
-  removeRelic(relicName: string, context: ICombatContext): void {
-    this.relicManager.remove(relicName, context)
-  }
-  /** 根據名稱取得遺物 */
-  getRelic(relicName: string): ICombatRelic | undefined {
-    return this.relicManager.getRelic(relicName)
-  }
-  /** 取得所有遺物 */
-  getAllRelics(): ICombatRelic[] {
-    return this.relicManager.getAllRelics()
-  }
-  /** 取得遺物的堆疊數 */
-  getRelicStackCount(relicName: string): number {
-    return this.relicManager.getStackCount(relicName)
   }
 
   // === 終極技能相關方法（委派給 UltimateManager） ===

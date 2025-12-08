@@ -1,11 +1,21 @@
 # 摘要
 
+## _2025/12/08_
+
+- 從 combat 抽離屬性、效果、裝備等邏輯，遷移到 domain 模組
+- 重新定義 combat 就是一個 屬性、效果、大招交織的戰鬥運算引擎
+
+### v0.4.1(domain,combat):
+
+- 移除 combat 中定義 attribute, effect, item 等領域邏輯
+- 新增 這些 domain 內容的適配器與對應代碼
+
 ## _2025/12/07_
 
 - 盤點領域資料內容，現在開發其他模組發現 Combat Engine 裡面有很多重複的東西
 - 打算新建 domain/item 模組，專門處理裝備、遺物、詞綴等相關邏輯以便未來生成裝備／庫存／戰鬥使用
 
-### v0.4.1(item,combat):
+### v0.4.1(domain,combat):
 
 - 新增 domain/item 模組，把裝備、遺物、詞綴相關邏輯獨立出來
 - 重構 logic/combat 模組，移除與裝備、遺物、詞綴領域相關的邏輯

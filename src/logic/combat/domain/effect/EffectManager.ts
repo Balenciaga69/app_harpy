@@ -1,84 +1,89 @@
-import type { ICharacter } from '../character/models/character'
-import type { ICombatContext } from '@/logic/combat/context'
-import type { IEffect } from './models/effect'
 /**
- * EffectManager
+ * EffectManager (Combat 包裝層)
  *
- * Manages effect instances attached to a character.
- * Effects are owned by the character, but also registered to the global registry for tracking.
+ * @deprecated 此類別已移至 shared/effect-system
+ * Combat 模組應使用 CombatEffectServices 適配器
+ *
+ * 保留此檔案以維持向後相容性。
+ */
+
+import { EffectManager as SharedEffectManager } from '@/shared/effect-system'
+import type { IEffect } from '@/shared/effect-system'
+import type { ICombatContext } from '@/logic/combat/context'
+import { CombatEffectServices } from '../../adapters'
+import type { ICombatEffectHook } from '@/shared/effect-system'
+
+/**
+ * Combat 專屬的 EffectManager 包裝類別
+ *
+ * 保留原有的 API 介面，內部委派給共享的 EffectManager。
  */
 export class EffectManager {
-  private effects: Map<string, IEffect> = new Map()
-  private readonly character: ICharacter
-  constructor(character: ICharacter) {
-    this.character = character
+  private readonly sharedManager: SharedEffectManager
+  private readonly characterId: string
+
+  constructor(characterId: string) {
+    this.characterId = characterId
+    this.sharedManager = new SharedEffectManager(characterId)
   }
-  /** Add effect and register to global registry */
+
+  /** 添加效果並註冊到全局 registry */
   addEffect(effect: IEffect, context: ICombatContext): void {
-    if (this.effects.has(effect.id)) {
-      return // Avoid duplicate addition
-    }
-    this.effects.set(effect.id, effect)
+    const services = new CombatEffectServices(context)
+    this.sharedManager.addEffect(effect, services)
+
+    // 註冊到全局 registry（Combat 專屬）
     context.registry.registerEffect(effect)
-    effect.onApply?.(this.character.id, context)
   }
-  /** Remove effect and unregister from global registry */
+
+  /** 移除效果並從全局 registry 取消註冊 */
   removeEffect(effectId: string, context: ICombatContext): void {
-    const effect = this.effects.get(effectId)
-    if (!effect) return
-    effect.onRemove?.(this.character.id, context)
-    this.effects.delete(effectId)
+    const services = new CombatEffectServices(context)
+    this.sharedManager.removeEffect(effectId, services)
+
+    // 從全局 registry 移除（Combat 專屬）
     context.registry.unregisterEffect(effectId)
   }
-  /** Get effect */
+
+  /** 取得效果 */
   getEffect(effectId: string): IEffect | undefined {
-    return this.effects.get(effectId)
+    return this.sharedManager.getEffect(effectId)
   }
-  /** Check if has effect */
+
+  /** 檢查是否擁有效果 */
   hasEffect(effectId: string): boolean {
-    return this.effects.has(effectId)
+    return this.sharedManager.hasEffect(effectId)
   }
-  /** Get all effects */
+
+  /** 取得所有效果 */
   getAllEffects(): readonly IEffect[] {
-    return Array.from(this.effects.values())
+    return this.sharedManager.getAllEffects()
   }
-  /** Call all effects each Tick */
+
+  /** 每個 tick 呼叫所有效果 */
   onTick(context: ICombatContext): void {
-    this.effects.forEach((effect) => {
-      effect.onTick?.(this.character.id, context)
+    const services = new CombatEffectServices(context)
+    this.sharedManager.getAllEffects().forEach((effect) => {
+      const combatEffect = effect as ICombatEffectHook
+      combatEffect.onTick?.(this.characterId, services)
     })
   }
-  /**
-   * Cleanse effects that have cleanseOnRevive: true
-   * Used during resurrection to remove debuffs while keeping equipment effects
-   */
+
+  /** 清除復活時可清除的效果 */
   cleanseCanCleanseEffects(context: ICombatContext): void {
-    const effectsToRemove: string[] = []
-    this.effects.forEach((effect) => {
-      if (effect.cleanseOnRevive) {
-        effectsToRemove.push(effect.id)
-      }
-    })
-    effectsToRemove.forEach((effectId) => {
-      this.removeEffect(effectId, context)
-    })
+    const services = new CombatEffectServices(context)
+    this.sharedManager.cleanseOnRevive(services)
   }
-  /**
-   * Trigger onHpZero hook for all effects
-   * Called when character's HP reaches zero (before death/resurrection check)
-   */
+
+  /** 觸發 onHpZero 鉤子 */
   triggerHpZero(context: ICombatContext): void {
-    this.effects.forEach((effect) => {
-      effect.onHpZero?.(this.character.id, context)
-    })
+    const services = new CombatEffectServices(context)
+    this.sharedManager.triggerHpZero(services)
   }
-  /**
-   * Trigger onRevive hook for all effects
-   * Called after successful resurrection
-   */
+
+  /** 觸發 onRevive 鉤子 */
   triggerRevive(context: ICombatContext): void {
-    this.effects.forEach((effect) => {
-      effect.onRevive?.(this.character.id, context)
-    })
+    const services = new CombatEffectServices(context)
+    this.sharedManager.triggerRevive(services)
   }
 }

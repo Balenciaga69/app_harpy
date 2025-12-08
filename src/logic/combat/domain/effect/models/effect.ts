@@ -1,17 +1,13 @@
-import type { IEffectLifeHook } from './effect-life-hook'
-import type { ICharacterStateHook } from './character-state-hook'
 /**
- * 效果介面
+ * Effect 介面（相容層）
  *
- * 所有效果的基礎介面。效果可以透過實作戰鬥掛鉤來修改角色屬性或攔截戰鬥事件。
- * 每個效果必須有唯一的 ID 和名稱，用於識別和日誌記錄。
- *
- * 繼承 IEffectLifeHook 以提供生命週期管理（onApply/onRemove/onTick）。
- * 繼承 ICharacterStateHook 以回應角色狀態變化（onRevive/onHpZero）。
- * 需要修改傷害的效果還應實作 ICombatHook。
+ * @deprecated 請直接從 @/shared/effect-system import
+ * 此檔案僅作為向後相容，避免破壞現有代碼。
  */
-export interface IEffect extends IEffectLifeHook, ICharacterStateHook {
-  readonly id: string
-  readonly name: string
-  readonly cleanseOnRevive: boolean
-}
+
+// 重新導出共享 Effect 系統
+export type { IEffect } from '@/shared/effect-system'
+export type { IEffectLifeHook, ICharacterStateHook } from '@/shared/effect-system'
+
+// 戰鬥專屬 Hook（保留在 Combat 模組）
+export type { ICombatEffectHook } from '@/shared/effect-system'
