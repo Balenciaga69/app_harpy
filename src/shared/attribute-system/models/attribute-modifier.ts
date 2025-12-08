@@ -1,5 +1,4 @@
 import type { AttributeType } from '@/domain/attribute'
-
 /**
  * 屬性修飾器
  *
@@ -13,7 +12,6 @@ export interface AttributeModifier {
   readonly mode: 'add' | 'multiply'
   readonly source: string
 }
-
 /**
  * 修飾器執行優先級
  *
@@ -49,10 +47,8 @@ export const ModifierPriority = {
   HIGH: 900,
   HIGHEST: 1000,
 } as const
-
 /** 修飾器優先級類型 */
 export type ModifierPriorityType = (typeof ModifierPriority)[keyof typeof ModifierPriority]
-
 /** 擴展屬性修飾器（支援優先級） */
 export interface AttributeModifierEx extends AttributeModifier {
   readonly priority: ModifierPriorityType

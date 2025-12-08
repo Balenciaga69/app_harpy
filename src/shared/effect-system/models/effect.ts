@@ -1,5 +1,4 @@
 import type { IEffectLifeHook, ICharacterStateHook } from './effect-hooks'
-
 /**
  * 效果介面
  *
@@ -14,10 +13,8 @@ import type { IEffectLifeHook, ICharacterStateHook } from './effect-hooks'
 export interface IEffect extends IEffectLifeHook, ICharacterStateHook {
   /** 唯一識別碼 */
   readonly id: string
-
   /** 效果名稱 */
   readonly name: string
-
   /**
    * 復活時是否清除此效果
    * - true: 復活時清除（用於 Debuff）

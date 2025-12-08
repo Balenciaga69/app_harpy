@@ -7,7 +7,6 @@ export type {
   ModifierPriorityType,
 } from '@/shared/attribute-system'
 export { ModifierPriority } from '@/shared/attribute-system'
-
 // 重新導出 domain 基礎類型
 export { createDefaultAttributes } from '@/domain/attribute'
 export type { AttributeType, BaseAttributeValues } from '@/domain/attribute'

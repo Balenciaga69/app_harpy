@@ -1,5 +1,4 @@
 import type { AttributeType } from '@/domain/attribute'
-
 /**
  * 屬性計算器介面
  *

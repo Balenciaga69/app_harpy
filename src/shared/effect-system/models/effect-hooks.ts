@@ -1,5 +1,4 @@
 import type { IEffectServices, ICombatEffectServices } from './effect-services'
-
 /**
  * Effect 生命週期鉤子
  *
@@ -12,14 +11,12 @@ export interface IEffectLifeHook {
    * 用於初始化（例如：應用屬性修飾器）
    */
   onApply?(characterId: string, services: IEffectServices): void
-
   /**
    * 當效果從角色移除時觸發
    * 用於清理（例如：移除屬性修飾器）
    */
   onRemove?(characterId: string, services: IEffectServices): void
 }
-
 /**
  * 角色狀態鉤子
  *
@@ -32,7 +29,6 @@ export interface ICharacterStateHook {
    * 用於復活後觸發的效果（例如：復活後獲得增益）
    */
   onRevive?(characterId: string, services: IEffectServices): void
-
   /**
    * 當角色血量歸零時觸發（死亡檢查前）
    * 用於死亡觸發效果（例如：死亡時爆炸造成真實傷害）
@@ -40,7 +36,6 @@ export interface ICharacterStateHook {
    */
   onHpZero?(characterId: string, services: IEffectServices): void
 }
-
 /**
  * 戰鬥專屬鉤子
  *

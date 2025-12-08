@@ -8,7 +8,6 @@ import type { IEffect } from '../effect/models/effect.ts'
 import type { IUltimateAbility } from '../ultimate/index.ts'
 import { UltimateManager } from '../ultimate/UltimateManager.ts'
 import type { ICharacter } from './models/character.ts'
-
 /**
  * 角色初始化所需的設定參數
  */
@@ -19,7 +18,6 @@ interface CharacterConfig {
   effects?: IEffect[] // 初始效果（來自裝備、遺物等）
   ultimate?: IUltimateAbility
 }
-
 /**
  * 角色
  *
@@ -42,7 +40,6 @@ export class Character implements ICharacter {
   private readonly effectManager: EffectManager
   private readonly ultimateManager: UltimateManager
   private _pendingUltimate?: IUltimateAbility // 用於延遲初始化的終極技能
-
   constructor(config: CharacterConfig, context?: ICombatContext) {
     this.id = nanoid()
     this.team = config.team
@@ -53,14 +50,12 @@ export class Character implements ICharacter {
     // 初始化管理器
     this.effectManager = new EffectManager(this.id)
     this.ultimateManager = new UltimateManager()
-
     // 注入初始效果（裝備、遺物等）
     if (config.effects && context) {
       for (const effect of config.effects) {
         this.effectManager.addEffect(effect, context)
       }
     }
-
     // 若提供了終極技能且有 context，則註冊終極技能
     if (config.ultimate && context) {
       this.ultimateManager.set(config.ultimate, context)
@@ -69,7 +64,6 @@ export class Character implements ICharacter {
       this._pendingUltimate = config.ultimate
     }
   }
-
   // === 屬性相關方法 ===
   /** 取得最終屬性值（包含修飾計算） */
   getAttribute(type: AttributeType): number {
@@ -98,7 +92,6 @@ export class Character implements ICharacter {
     const clampedValue = Math.max(MIN_HP, Math.min(value, maxHp))
     this.setBaseAttribute('currentHp', clampedValue)
   }
-
   // === 效果相關方法（委派給 EffectManager） ===
   /** 新增效果 */
   addEffect(effect: IEffect, context: ICombatContext): void {
@@ -132,7 +125,6 @@ export class Character implements ICharacter {
   triggerRevive(context: ICombatContext): void {
     this.effectManager.triggerRevive(context)
   }
-
   // === 終極技能相關方法（委派給 UltimateManager） ===
   /** 取得終極技能（如有） */
   getUltimate(context: ICombatContext): IUltimateAbility | undefined {
@@ -147,7 +139,6 @@ export class Character implements ICharacter {
   setUltimate(ultimate: IUltimateAbility, context: ICombatContext): void {
     this.ultimateManager.set(ultimate, context)
   }
-
   // === 快照相關方法 ===
   /** 建立角色快照（用於重播或記錄） */
   createSnapshot(): CharacterSnapshot {
