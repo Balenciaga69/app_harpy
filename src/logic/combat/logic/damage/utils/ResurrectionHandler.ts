@@ -25,12 +25,9 @@ export class ResurrectionHandler {
     )
     // 擲骰判斷是否復活
     const roll = context.rng.next()
-    if (roll >= clampedChance) {
-      return false // 復活失敗
-    }
-    // 復活成功！
+    if (roll >= clampedChance) return false // 復活失敗
     this.performResurrection(character, context, tick)
-    return true
+    return true // 復活成功！
   }
   private static performResurrection(character: ICharacter, context: CombatContext, tick: number): void {
     // 取得復活後生命值百分比並限制在範圍內
@@ -44,7 +41,7 @@ export class ResurrectionHandler {
     const restoredHp = Math.floor(maxHp * clampedPercent)
     // 恢復生命值
     character.setCurrentHpClamped(restoredHp)
-    // 清除帶有 cleanseOnRevive: true 的效果（保留裝備效果）
+    // 清除帶有 cleanseOnRevive: true 的效果
     character.cleanseCanCleanseEffects(context)
     // 觸發剩餘效果的 onRevive 鉤子
     character.triggerRevive(context)

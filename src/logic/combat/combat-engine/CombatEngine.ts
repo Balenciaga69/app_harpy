@@ -37,7 +37,6 @@ export class CombatEngine {
       enableLogging: CombatSystem.DEFAULT_ENABLE_LOGGING,
       ...config,
     }
-    // Use provided registry or create default in-memory implementation
     const resourceRegistry = registry ?? new InMemoryResourceRegistry()
     const eventBus = new CombatEventBus()
     this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed)
@@ -61,10 +60,7 @@ export class CombatEngine {
       const resultBuilder = new ResultBuilder(data)
       return resultBuilder.build()
     } catch (error) {
-      // Convert any unexpected error to CombatError
-      if (error instanceof CombatError) {
-        throw error
-      }
+      if (error instanceof CombatError) throw error
       const message = error instanceof Error ? error.message : 'Unknown combat error'
       throw new CombatError(`Combat execution failed: ${message}`, CombatFailureCode.UNKNOWN)
     }
@@ -80,7 +76,6 @@ export class CombatEngine {
       PreMatchEffectApplicator.applyEffects(this.config.preMatchEffects, this.context)
     }
     this.ticker.start()
-    // Emit combat:end event after combat finishes
     this.emitCombatEnd()
   }
   private emitCombatEnd(): void {

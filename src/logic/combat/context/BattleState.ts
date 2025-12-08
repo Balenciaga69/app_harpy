@@ -3,9 +3,7 @@ import type { IBattleState } from './battle-state'
 /**
  * BattleState
  *
- * Manages mutable battle state: entity collection and tick counter.
- * This class is pure domain logic with no infrastructure dependencies.
- * Designed for potential future conversion to immutable state pattern.
+ * 管理可變戰鬥狀態：Entity + Ticker
  */
 export class BattleState implements IBattleState {
   private entities: Map<string, IEntity> = new Map()

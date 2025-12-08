@@ -2,10 +2,10 @@ import type { CombatContext } from '../../context'
 import { EffectProcessor } from '../utils/EffectProcessor'
 import type { ITickPhase } from './tick-phase'
 /**
- * Effect Tick Phase
+ * 效果 tick 階段
  *
- * Processes all active effects on entities during each tick.
- * This phase triggers effect callbacks (onTick) for all characters.
+ * 於每次 tick 期間處理實體上所有活躍效果。
+ * 此階段將觸發所有角色的效果回調函式 (onTick)。
  */
 export class EffectTickPhase implements ITickPhase {
   readonly name = 'EffectTick'
