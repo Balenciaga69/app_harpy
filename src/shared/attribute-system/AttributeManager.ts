@@ -1,50 +1,60 @@
-import type { AttributeType, BaseAttributeValues } from './models/attribute-core.ts'
-import type { AttributeModifier } from './models/attribute-modifier.ts'
+import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
+import type { AttributeModifier } from './models/attribute-modifier'
 import { AttributeLimits } from '@/domain/attribute'
+
 /**
- * AttributeManager
+ * 屬性管理器
  *
- * Manages base attribute values and attribute modifiers for a character.
- * Handles validation and provides methods to add, remove, and query modifiers by type.
+ * 管理角色的基礎屬性值與屬性修飾器。
+ * 處理驗證並提供方法來添加、移除和查詢各類型的修飾器。
+ *
+ * 此類別位於共享層，可被戰鬥內外使用。
  */
 export class AttributeManager {
   private baseValues: Map<AttributeType, number>
   private modifiers: Map<AttributeType, AttributeModifier[]>
+
   constructor(baseAttributes: BaseAttributeValues) {
     this.baseValues = new Map()
     this.modifiers = new Map()
-    // Initialize base attributes
+
+    // 初始化基礎屬性
     Object.entries(baseAttributes).forEach(([key, value]) => {
       this.baseValues.set(key as AttributeType, value)
     })
   }
-  /** Get base attribute value (without modifiers) */
+
+  /** 取得基礎屬性值（不含修飾器） */
   getBase(type: AttributeType): number {
     return this.baseValues.get(type) ?? 0
   }
-  /** Set base attribute value (with validation) */
+
+  /** 設定基礎屬性值（含驗證） */
   setBase(type: AttributeType, value: number): void {
     const validatedValue = this.validateAttribute(type, value)
     this.baseValues.set(type, validatedValue)
   }
-  /** Validate if attribute value is within legal range */
+
+  /** 驗證屬性值是否在合法範圍內 */
   private validateAttribute(type: AttributeType, value: number): number {
     const limit = AttributeLimits[type as keyof typeof AttributeLimits]
     if (!limit) {
-      // If no limit defined, return original value (backward compatibility)
+      // 若無限制定義，返回原值（向後兼容）
       return value
     }
-    // Clamp between min and max values (silent operation, clamping is expected behavior)
+    // 限制在最小值與最大值之間（靜默操作，限制是預期行為）
     return Math.min(limit.max, Math.max(limit.min, value))
   }
-  /** Add attribute modifier */
+
+  /** 添加屬性修飾器 */
   addModifier(modifier: AttributeModifier): void {
     if (!this.modifiers.has(modifier.type)) {
       this.modifiers.set(modifier.type, [])
     }
     this.modifiers.get(modifier.type)!.push(modifier)
   }
-  /** Remove attribute modifier */
+
+  /** 移除屬性修飾器 */
   removeModifier(modifierId: string): void {
     this.modifiers.forEach((list) => {
       const index = list.findIndex((m) => m.id === modifierId)
@@ -53,11 +63,13 @@ export class AttributeManager {
       }
     })
   }
-  /** Get all modifiers for specified attribute */
+
+  /** 取得指定屬性的所有修飾器 */
   getModifiers(type: AttributeType): AttributeModifier[] {
     return this.modifiers.get(type) ?? []
   }
-  /** Get all modifiers (for serialization etc.) */
+
+  /** 取得所有修飾器（用於序列化等） */
   getAllModifiers(): Map<AttributeType, AttributeModifier[]> {
     return new Map(this.modifiers)
   }

@@ -8,7 +8,7 @@ import type { ICombatItemView } from '../projections'
  * 純工廠類別，不依賴任何框架。
  */
 export class CombatItemFactory {
-  /** 將物品定義與詞綴實例轉換為戰鬥視角 */
+  /** 將物品定義與詞綴實例轉換為 ICombatItemView */
   create(definition: IItemDefinition, affixInstances: IAffixInstance[]): ICombatItemView {
     return {
       id: definition.id,

@@ -1,5 +1,5 @@
-import type { AttributeType } from '../../attribute/models/attribute-core.ts'
-import type { AttributeModifier } from '../../attribute/models/attribute-modifier.ts'
+import type { AttributeType } from '@/domain/attribute'
+import type { AttributeModifier } from '@/shared/attribute-system'
 /** Attribute provider interface */
 export interface IAttributeOwner {
   getAttribute(type: AttributeType): number
