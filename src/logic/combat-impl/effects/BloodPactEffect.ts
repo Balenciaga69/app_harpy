@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
 import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffectServices } from '@/shared/effect-system'
 import type { DamageEvent, ICombatHook } from '@/logic/combat/logic/damage'
 /**
  * BloodPactEffect
@@ -19,10 +20,10 @@ export class BloodPactEffect implements IEffect, ICombatHook {
     this.damageMultiplier = damageMultiplier
     this.remainingAttacks = attackCount
   }
-  onApply(_characterId: string, _context: ICombatContext): void {
+  onApply(_characterId: string, _services: IEffectServices): void {
     // Passive effect, no initialization needed
   }
-  onRemove(_characterId: string, _context: ICombatContext): void {
+  onRemove(_characterId: string, _services: IEffectServices): void {
     // No cleanup needed
   }
   /**

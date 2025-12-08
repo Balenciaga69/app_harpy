@@ -4,6 +4,7 @@ import type { ICombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
 import { EffectNames } from '@/logic/combat/infra/config'
 import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffectServices } from '@/shared/effect-system'
 /**
  * ChargedCriticalEffect
  *
@@ -16,10 +17,10 @@ export class ChargedCriticalEffect implements IEffect, ICombatHook {
   constructor() {
     this.id = `charged-crit-${nanoid(6)}`
   }
-  onApply(_characterId: string, _context: ICombatContext): void {
+  onApply(_characterId: string, _services: IEffectServices): void {
     // Passive effect, no initialization needed
   }
-  onRemove(_characterId: string, _context: ICombatContext): void {
+  onRemove(_characterId: string, _services: IEffectServices): void {
     // Passive effect, no cleanup needed
   }
   /**

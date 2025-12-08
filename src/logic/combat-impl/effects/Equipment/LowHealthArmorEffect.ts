@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
 import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffectServices } from '@/shared/effect-system'
 /**
  * LowHealthArmorEffect
  *
@@ -17,10 +18,10 @@ export class LowHealthArmorEffect implements IEffect, ICombatHook {
   constructor() {
     this.id = `low-hp-armor-${nanoid(6)}`
   }
-  onApply(_characterId: string, _context: ICombatContext): void {
+  onApply(_characterId: string, _services: IEffectServices): void {
     // Passive effect, no initialization needed
   }
-  onRemove(_characterId: string, _context: ICombatContext): void {
+  onRemove(_characterId: string, _services: IEffectServices): void {
     // Passive effect, no cleanup needed
   }
   /**

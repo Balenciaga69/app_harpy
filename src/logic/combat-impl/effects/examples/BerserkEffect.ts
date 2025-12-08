@@ -1,5 +1,6 @@
 import type { ICombatContext } from '@/logic/combat/context'
 import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffectServices, ICombatEffectServices, ICombatEffectHook } from '@/shared/effect-system'
 import { CharacterAccessor } from '@/logic/combat/infra/shared'
 import { nanoid } from 'nanoid'
 /**
@@ -13,7 +14,7 @@ import { nanoid } from 'nanoid'
  * - Uses internal flag to ensure single trigger per battle
  * - This is simple and efficient for 1v1 combat
  */
-export class BerserkEffect implements IEffect {
+export class BerserkEffect implements IEffect, ICombatEffectHook {
   readonly id: string
   readonly name: string = 'Berserk'
   readonly cleanseOnRevive: boolean = false // Persists through revival
@@ -30,37 +31,34 @@ export class BerserkEffect implements IEffect {
     this.healthThreshold = healthThreshold
     this.attackBonus = attackBonus
   }
-  onApply(_characterId: string, _context: ICombatContext): void {
+  onApply(_characterId: string, _services: IEffectServices): void {
     // Passive effect, waits for threshold trigger
   }
-  onRemove(characterId: string, context: ICombatContext): void {
+  onRemove(characterId: string, services: IEffectServices): void {
     // Clean up modifier if effect is removed
     if (this.modifierId) {
-      const chars = new CharacterAccessor(context)
-      const character = chars.get(characterId)
+      const character = services.getCharacter(characterId)
       character.removeAttributeModifier(this.modifierId)
       this.modifierId = null
     }
   }
-  onTick(characterId: string, context: ICombatContext): void {
+  onTick(characterId: string, services: ICombatEffectServices): void {
     // Already triggered this battle, skip
     if (this.hasTriggered) return
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
+    const character = services.getCharacter(characterId)
     // Check health percentage
     const currentHp = character.getAttribute('currentHp')
     const maxHp = character.getAttribute('maxHp')
     const healthPercent = currentHp / maxHp
     // Trigger when health drops below threshold
     if (healthPercent <= this.healthThreshold) {
-      this.trigger(characterId, context)
+      this.trigger(characterId, services)
     }
   }
-  private trigger(characterId: string, context: ICombatContext): void {
+  private trigger(characterId: string, services: ICombatEffectServices): void {
     // Mark as triggered (only once per battle)
     this.hasTriggered = true
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
+    const character = services.getCharacter(characterId)
     // Apply attack bonus modifier
     this.modifierId = `berserk-atk-${nanoid(4)}`
     character.addAttributeModifier({
@@ -71,17 +69,17 @@ export class BerserkEffect implements IEffect {
       source: this.name,
     })
     // Emit event for logging (optional)
-    context.eventBus.emit('effect:applied', {
+    services.emitEvent('effect:applied', {
       effectId: this.id,
       effectName: `${this.name} Triggered!`,
       targetId: characterId,
-      tick: context.getCurrentTick(),
+      tick: services.getCurrentTick(),
     })
   }
   /**
    * Called when character revives - can optionally reset trigger state
    */
-  onRevive(_characterId: string, _context: ICombatContext): void {
+  onRevive(_characterId: string, _services: IEffectServices): void {
     // Option 1: Reset trigger (can trigger again after revival)
     // this.hasTriggered = false
     // Option 2: Keep triggered state (only triggers once per battle total)
