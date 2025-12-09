@@ -1,220 +1,109 @@
-# Combat 模組規格書
+# Combat 模組規格說明
 
-> **最後更新**: 2025/12/07  
-> **版本**: v0.4.1
+## 簡介
 
-## 一、目標功能與範圍
+Combat 模組負責處理遊戲中的戰鬥邏輯，包括角色管理、效果應用、傷害計算、能量系統和戰鬥流程控制。模組採用 Tick-based 自動戰鬥系統，支持重播和統計分析。最後更新時間：2025/12/09。
 
-### 核心目標
+## 輸入與輸出
 
-模擬兩隊角色（含屬性、裝備、遺物、效果、大招）在可重現的隨機種子下進行戰鬥，直到一方全滅或超時，並輸出戰鬥日誌、快照與統計數據。
+### 輸入
 
-### 會實現的功能
+- 玩家和敵人角色團隊（包含屬性、效果和終極技能）
+- 戰鬥配置參數（最大 tick 數、快照間隔等）
+- 隨機種子（用於可重現的戰鬥結果）
+- 目標選擇策略（決定攻擊目標的邏輯）
 
-- Tick-based 自動戰鬥迴圈
-- 完整傷害計算流程（命中、暴擊、減傷、應用）
-- 效果系統（Buff/Debuff 生命週期管理）
-- 效果鉤子系統（生命週期鉤子 + 狀態鉤子）
-- 能量與冷卻系統
-- 大招觸發機制
-- 裝備與遺物效果統一注入（不區分部位）
-- 戰鬥日誌與快照輸出
-- 可重現隨機數（seedrandom）
-- 復活系統（死亡檢查 → 復活判定 → 血量恢復 → 選擇性清除效果）
-- 賽前變數注入（開局對雙方注入效果）
+### 輸出
 
-### 不會實現的功能
+- 戰鬥結果（勝利者、持續時間、生還者列表）
+- 戰鬥統計數據（傷害總量、擊殺數、暴擊次數等）
+- 重播日誌（事件序列，用於前端重播）
+- 快照數據（角色狀態時間序列）
 
-- 戰鬥 UI 渲染（由 Replay 模組負責）
-- 關卡流程管理（由 Run 模組負責）
-- 角色/裝備生成（由外部模組負責）
-- 存讀檔（由 PersistentStorage 模組負責）
-- 裝備部位限制邏輯（由外部模組負責）
-- 屬性類型定義（由 domain/attribute 負責）
-- 裝備槽位定義（由 domain/item 負責）
-- 角色模板定義（由 domain/character 負責）
+## 元件盤點
 
----
+### 核心引擎元件
 
-## 二、依賴的 Domain 模組（v0.4.1 新增）
+- CombatEngine：協調整個戰鬥生命週期，初始化系統並產生最終結果。負責錯誤處理和資源清理。
+- TickActionSystem：管理 tick 處理管道，包含多個階段的順序執行。支持階段的動態添加和移除。
+- TickerDriver：驅動 tick 循環，控制戰鬥時間進程。處理 tick 開始和結束事件。
 
-### domain/attribute
+### 戰鬥階段元件
 
-```typescript
-import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
-import { AttributeDefaults, AttributeLimits } from '@/domain/attribute'
-```
+- AttackExecutionPhase：處理攻擊冷卻管理和執行，包括普通攻擊和終極技能。檢查角色存活狀態和能量條件。
+- EffectTickPhase：於每個 tick 處理角色上的活躍效果。觸發效果的 onTick 回調函式。
+- EnergyRegenPhase：負責存活角色的自然能量再生。每 100 tick 自動增加能量。
 
-- 提供屬性類型定義
-- 提供預設值與限制常數
-- Combat Engine 的屬性計算器依賴此定義
+### 目標選擇元件
 
-### domain/item
+- FirstAliveSelector：選擇第一個存活敵人作為攻擊目標。簡單且預測性的選擇邏輯。
+- LowestHealthSelector：選擇血量最低的敵人作為攻擊目標。優先攻擊弱勢目標。
 
-```typescript
-import type { EquipmentSlot } from '@/domain/item'
-```
+### 工具元件
 
-- 提供裝備槽位類型定義
-- Combat Engine 的裝備管理器依賴此定義
+- AttackExecutor：處理攻擊邏輯，檢查能量並執行攻擊或終極技能。整合冷卻管理和目標選擇。
+- CooldownManager：管理角色的攻擊冷卻時間。使用隨機延遲避免同步攻擊。
+- DamageFactory：創建傷害事件，支持普通攻擊、終極技能和真實傷害。封裝事件創建邏輯。
+- EffectProcessor：處理所有角色的效果 tick。遍歷實體並觸發效果鉤子。
+- EnergyManager：處理能量累積和再生邏輯。支持多種能量來源（攻擊、再生、效果）。
 
----
+### 領域模型元件
 
-## 三、架構與元件關係
+- Character：代表戰鬥中的實體，管理屬性、效果和終極技能。支持快照創建和狀態查詢。
+- Effect：定義效果系統，包括生命週期鉤子和狀態變化。支持疊加和持續時間管理。
+- Ultimate：定義終極技能介面，支持不同類型的終極能力。使用策略模式實現多樣化。
 
-### 入口層
+### 傷害計算元件
 
-- `CombatEngine`：唯一對外介面，呼叫 `.start()` 執行戰鬥
-- 支援 `preMatchEffects` 賽前變數注入
+- DamageChain：協調傷害計算流程，包含多個步驟如命中檢查、暴擊、減傷等。支持流程提前終止和鉤子擴充。
+- DamageCalculator：執行具體的傷害數學計算。應用護甲和閃避公式。
+- ResurrectionHandler：處理角色死亡和復活邏輯。檢查復活概率並恢復血量。
+- BeforeDamageStep：傷害計算前的初始步驟，觸發鉤子進行預處理。
+- HitCheckStep：檢查命中率，決定攻擊是否命中或閃避。
+- CriticalStep：判斷是否暴擊，並應用暴擊倍率。
+- DamageModifyStep：允許效果修改傷害數值。
+- DefenseCalculationStep：計算防禦減傷，應用護甲公式。
+- BeforeApplyStep：傷害應用前的確認步驟，可阻止傷害。
+- ApplyDamageStep：最終應用傷害，處理血量變化、死亡檢查和復活。
+- AfterApplyStep：傷害應用後的清理步驟，觸發後續效果。
 
-### 時間層
+### 輔助工具元件
 
-- `TickerDriver`：while 迴圈驅動，每 tick 發送 `tick:start` → `tick:end`
+- CharacterAccessor：提供角色訪問的輔助工具，支持拋例外和 Result 模式的查詢。減少樣板程式碼。
+- CombatRandomGenerator：種子化的隨機數生成器，提供可重現的隨機數和概率檢查。
+- TypeGuardUtil：類型守衛工具，檢查物件是否為角色類型。
+- collectHooks：收集角色效果中的鉤子函式，支援傷害流程的擴充。
 
-### 上下文層
+### 事件和鉤子元件
 
-- `CombatContext`：基礎設施容器（EventBus、RNG、ResourceRegistry）
-- `BattleState`：領域狀態（角色集合、tick 計數器）
+- CombatHook：定義傷害計算過程中的擴充點，允許效果注入自訂邏輯。
+- DamageEvent：傷害事件數據模型，攜帶攻擊者和目標資訊，支援真實傷害和終極標記。
 
-### 階段系統
+### 基礎設施元件
 
-- `TickActionSystem`：每 tick 執行多個 Phase（可擴充）
-- `EffectTickPhase`：處理效果 onTick
-- `EnergyRegenPhase`：能量回復
-- `AttackExecutionPhase`：執行攻擊與傷害計算
+- CombatContext：提供戰鬥全域資源，包括事件總線、隨機數生成器和資源註冊表。分離基礎設施和狀態管理。
+- BattleState：管理可變戰鬥狀態，包括實體集合和 tick 計數器。處理實體的增刪和團隊查詢。
+- EventLogger：記錄戰鬥事件序列。支持事件過濾和序列化。
+- SnapshotCollector：收集角色狀態快照。按間隔生成快照用於重播。
+- CombatEventBus：處理戰鬥內事件發佈和訂閱。支持類型安全的事件處理。
 
-### 傷害管線
+### 結果分析元件
 
-- `DamageChain`：責任鏈模式，包含以下步驟：
-  1. `BeforeDamageStep` — 傷害起始，觸發 onBeforeDamage 鉤子
-  2. `HitCheckStep` — 命中檢定
-  3. `CriticalStep` — 暴擊判定
-  4. `DamageModifyStep` — 傷害修正
-  5. `DefenseCalculationStep` — 防禦計算
-  6. `BeforeApplyStep` — 應用前確認
-  7. `ApplyDamageStep` — 扣血、復活判定
-  8. `AfterApplyStep` — 傷害後處理
+- OutcomeAnalyzer：分析戰鬥結果，確定勝利者和勝負條件。檢查團隊存活狀態和 tick 限制。
+- StatisticsBuilder：構建戰鬥統計數據。從事件日誌計算各項指標。
+- SurvivorCollector：收集戰鬥結束後的生還者。過濾存活實體。
 
-- 提前終止：任一步驟回傳 `false` 則中斷管線
+## 模組依賴誰?或被誰依賴?
 
-### 復活系統
+### 依賴的模組
 
-- 處理類別：`ResurrectionHandler`（由 `ApplyDamageStep` 呼叫）
-- 復活率：3%～50%（由 `resurrectionChance` 屬性決定）
-- 復活血量：10%～100% maxHp（由 `resurrectionHpPercent` 屬性決定）
-- 復活後清除 `cleanseOnRevive: true` 的效果
-- 事件：`entity:resurrection` 復活成功
-
-### 賽前變數系統
-
-- 由 `CombatConfig.preMatchEffects` 傳入效果陣列
-- 戰鬥開始時（tick 0）對雙方角色注入效果
-
-### 輔助系統
-
-- `EventBus`：事件通訊中心
-- `ResourceRegistry`：跨角色資源管理
-- `EventLogger`：日誌記錄
-- `SnapshotCollector`：快照收集
-
----
-
-## 三、對外暴露的主要功能
-
-### CombatEngine API
-
-```typescript
-CombatEngine(config: CombatConfig)
-  .start(): CombatResult
-```
-
----
-
-## 四、設計原則摘要
-
-- Facade：CombatEngine 單一入口
-- Chain of Responsibility：DamageChain 傷害管線
-- Observer：EventBus 事件驅動
-- Seedable RNG：100% 可重現戰鬥
-
-### 元件用途概述
-
-#### CombatEngine
-
-- 作為戰鬥模組的入口，負責初始化戰鬥並執行主要邏輯。
-
-#### TickerDriver
-
-- 驅動戰鬥的時間進程，觸發每個 tick 的開始與結束事件。
-
-#### CombatContext
-
-- 提供戰鬥所需的基礎設施，包括事件總線（EventBus）、隨機數生成器（RNG）和資源管理。
-
-#### BattleState
-
-- 儲存戰鬥的當前狀態，例如角色集合和當前 tick 計數。
-
-#### TickActionSystem
-
-- 負責在每個 tick 中執行多個階段（Phase），例如效果處理、能量回復和攻擊執行。
-
-#### EffectTickPhase
-
-- 處理所有角色的效果（Buff/Debuff）在當前 tick 的影響。
-
-#### EnergyRegenPhase
-
-- 管理角色的能量回復邏輯。
-
-#### AttackExecutionPhase
-
-- 負責執行攻擊邏輯，包括目標選擇和傷害計算。
-
-#### DamageChain
-
-- 定義傷害計算的責任鏈，依序執行命中檢定、暴擊判定、防禦計算等步驟。
-
-#### ResurrectionHandler
-
-- 處理角色的復活邏輯，包括復活概率計算和效果清除。
-
-#### EventBus
-
-- 作為事件通訊中心，協調模組間的事件傳遞。
-
-#### ResourceRegistry
-
-- 管理戰鬥中共享的資源，例如效果或狀態的生命週期。
-
-#### EventLogger
-
-- 記錄戰鬥過程中的重要事件，生成日誌供後續分析。
-
-#### SnapshotCollector
-
-- 定期收集戰鬥快照，用於重播或狀態回溯。
-
-### Domain 元件描述
-
-#### Attribute 模組
-
-- 用途：管理角色的屬性，處理屬性計算與增減。
-
-#### Character 模組
-
-- 用途：定義角色的核心邏輯，包含屬性、裝備與效果的管理。
-
-#### Effect 模組
-
-- 用途：管理角色的效果（Buff/Debuff），處理效果的應用與移除。
-
-#### Item 模組
-
-- 用途：管理角色的裝備與遺物，處理穿戴、卸下與效果注入。
-
-#### Ultimate 模組
-
-- 用途：管理角色的大招，處理充能與釋放邏輯。
-
----
+- domain/item：物品定義和註冊表，用於角色裝備管理
+- logic/attribute-system：屬性管理和計算，提供角色屬性查詢
+- logic/effect-system：效果系統核心邏輯，處理效果應用和移除
+- logic/shared：共享工具和介面，如隨機數生成器和類型守衛
+
+### 被依賴的模組
+
+- UI 層：使用戰鬥結果進行顯示和重播，依賴統計數據和事件日誌
+- Run 模組：調用戰鬥引擎執行遭遇戰，提供角色團隊和配置
+- 更高層遊戲邏輯：依賴戰鬥統計進行遊戲進程和決策，如難度調整和獎勵計算

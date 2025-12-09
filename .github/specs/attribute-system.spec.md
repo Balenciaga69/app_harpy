@@ -1,127 +1,50 @@
-# Attribute System 模組規格書
+# Attribute-System 模組規格說明
 
-## 目標功能與範圍
+## 簡介
 
-### 會實現的功能
+Attribute-System 模組負責遊戲中的屬性管理和計算邏輯，包括基礎屬性儲存、修飾器應用和最終值計算。模組採用優先級排序和加法/乘法分離計算，支援動態屬性調整，確保屬性系統的準確性和靈活性。最後更新時間：2025/12/09。
 
-- 管理角色基礎屬性值
-- 管理屬性修飾器的添加與移除
-- 計算最終屬性值（基礎值 + 修飾器）
-- 支援修飾器優先級排序
-- 支援加法與乘法兩種修飾模式
-- 屬性值驗證與限制
-- 作為戰鬥內外共用的核心計算邏輯
+## 輸入與輸出
 
-### 不會實現的功能
+### 輸入
 
-- 屬性類型定義（由 domain/attribute 負責）
-- 戰鬥事件觸發（由 Combat Engine 負責）
-- Effect 系統（由 Effect 模組負責）
-- UI 顯示（由 UI 模組負責）
-- 存讀檔（由 PersistentStorage 模組負責）
+- 基礎屬性配置（BaseAttributeValues）：角色的初始屬性值
+- 屬性修飾器（AttributeModifier）：包含 ID、類型、數值、模式和來源的修飾器
+- 屬性類型查詢（AttributeType）：指定要計算的屬性類型
 
----
+### 輸出
 
-## 架構與元件關係
+- 最終屬性值（number）：應用所有修飾器後的計算結果
+- 基礎屬性值（number）：不含修飾器的原始值
+- 修飾器列表（AttributeModifier[]）：指定屬性的所有修飾器
 
-### 模組定位
+## 元件盤點
 
-位於後端純運算模組層（logic/attribute-system），提供純邏輯的屬性計算功能，無外部依賴，可被戰鬥內外使用。
+### 核心元件
 
-### 依賴方向
+- AttributeManager：屬性管理器，負責儲存基礎屬性值和修飾器，提供添加、移除和查詢功能。
+- AttributeCalculator：屬性計算器，實現最終屬性值的計算邏輯，支援優先級排序和加法/乘法分離。
 
-- 僅依賴 domain/attribute 的基礎類型定義
-- 被 Combat Engine 使用（戰鬥內計算）
-- 被 CharacterModifierSystem 使用（戰鬥外面板）
-- 被 UI 模組使用（顯示屬性資訊）
+### 模型元件
 
-### 檔案結構
+- AttributeModifier：屬性修飾器介面，定義修飾器的結構，包括 ID、類型、數值、模式和來源。
+- AttributeModifierEx：擴展修飾器介面，包含優先級資訊。
+- ModifierPriority：修飾器優先級常量，定義不同的執行順序等級。
+- ModifierPriorityType：優先級類型定義。
 
-- AttributeManager.ts 管理基礎值與修飾器集合
-- AttributeCalculator.ts 執行屬性計算邏輯
-- models/attribute-modifier.ts 定義修飾器介面與優先級
-- models/attribute-calculator.ts 定義計算器介面
-- index.ts 統一導出
+### 介面元件
 
----
+- IAttributeCalculator：屬性計算器介面，定義計算方法的契約。
 
-## 核心元件
+## 模組依賴誰?或被誰依賴?
 
-### AttributeManager
+### 依賴的模組
 
-管理角色的基礎屬性值與修飾器清單。提供添加、移除修飾器的方法，並確保屬性值在合法範圍內。
+- domain/attribute：屬性定義，依賴 AttributeType、BaseAttributeValues 和 AttributeLimits 進行屬性管理
 
-### AttributeCalculator
+### 被依賴的模組
 
-執行屬性計算邏輯。依優先級排序修飾器，分離加法與乘法修飾器，套用公式計算最終值。
-
-計算公式：（基礎值 + Σ加法修飾器） × Π（1 + 乘法修飾器）
-
-### AttributeModifier
-
-定義屬性修飾器的資料結構，包含類型、數值、模式（加法或乘法）、來源等資訊。
-
-### ModifierPriority
-
-定義修飾器的執行優先級，確保計算順序正確。包含五個等級：LOWEST、LOW、NORMAL、HIGH、HIGHEST。
-
----
-
-## 對外暴露的主要功能
-
-### 類別導出
-
-- AttributeManager 屬性管理器
-- AttributeCalculator 屬性計算器
-
-### 類型導出
-
-- IAttributeCalculator 計算器介面
-- AttributeModifier 修飾器介面
-- AttributeModifierEx 擴展修飾器介面（含優先級）
-- ModifierPriorityType 優先級類型
-
-### 常數導出
-
-- ModifierPriority 優先級定義
-
-### 重新導出
-
-- AttributeType、BaseAttributeValues 從 domain/attribute
-- createDefaultAttributes、AttributeDefaults、AttributeLimits 從 domain/attribute
-
----
-
-## 使用場景
-
-### 戰鬥內使用
-
-Combat Engine 建立 Character 時，使用 AttributeManager 管理屬性，使用 AttributeCalculator 計算即時屬性值。Effect 透過 addAttributeModifier 動態調整屬性。
-
-### 戰鬥外使用
-
-CharacterModifierSystem 使用相同的計算邏輯，從裝備與遺物的 Effect 中提取修飾器，計算角色面板屬性。確保戰鬥內外結果一致。
-
-### 單元測試
-
-可獨立測試 AttributeManager 與 AttributeCalculator，無需啟動完整戰鬥系統。
-
----
-
-## 設計原則
-
-### 單一職責
-
-AttributeManager 僅負責資料管理，AttributeCalculator 僅負責計算邏輯，職責清晰分離。
-
-### 無副作用
-
-所有方法皆為純函數或資料操作，無全局狀態依賴，易於測試與推理。
-
-### 跨語言可移植
-
-無框架耦合，純 TypeScript 邏輯，可直接轉譯為 C#、Python、Go 等語言。
-
-### 向後兼容
-
-保留 combat/domain/attribute 的導出路徑，既有代碼無需立即修改。
+- logic/combat：戰鬥系統，依賴屬性計算進行傷害、護甲和閃避計算
+- domain/character：角色定義，依賴屬性管理建立角色實例
+- UI 層：屬性顯示，依賴屬性值進行介面渲染
+- logic/item-generator：物品生成器，依賴屬性系統應用物品效果
