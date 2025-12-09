@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '@/logic/combat/domain/effect/models/stackable-effect'
+import { StackableEffect } from '@/logic/effect-system/models/stackable-effect'
 import type { ICombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
 import { CharacterAccessor } from '@/logic/combat/infra/shared'

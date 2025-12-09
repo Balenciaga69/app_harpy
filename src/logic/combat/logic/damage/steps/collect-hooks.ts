@@ -1,4 +1,4 @@
-import type { IEffect } from '@/logic/combat/domain/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import type { ICharacter } from '../../../domain/character/models/character'
 import type { ICombatHook } from '../models/combat-hook'
 /**

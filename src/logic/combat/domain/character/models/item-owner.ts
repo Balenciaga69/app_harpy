@@ -1,11 +1,25 @@
+import type { EquipmentSlot } from '@/logic/item/equipment-slot'
+
 /**
- * Item Owner 介面
+ * 物品持有者介面
  *
- * @deprecated 裝備與遺物管理已移除
- * Character 不再直接管理裝備與遺物，改為在建立時注入 Effects。
- *
- * 保留此檔案以維持向後相容性。
+ * 定義角色持有裝備與遺物的能力。
  */
 export interface IItemOwner {
-  // 空介面：所有裝備遺物管理方法已移除
+  /**
+   * 裝備物品到指定槽位
+   */
+  equip(slot: EquipmentSlot, itemId: string): void
+  /**
+   * 卸下指定槽位的裝備
+   */
+  unequip(slot: EquipmentSlot): void
+  /**
+   * 取得指定槽位的裝備
+   */
+  getEquipped(slot: EquipmentSlot): string | undefined
+  /**
+   * 取得所有已裝備的物品
+   */
+  getAllEquipped(): Record<EquipmentSlot, string | undefined>
 }

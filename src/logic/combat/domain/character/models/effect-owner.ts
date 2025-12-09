@@ -1,4 +1,4 @@
-import type { IEffect } from '../../effect/models/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import type { ICombatContext } from '../../../context/combat-context'
 /** Effect owner interface */
 export interface IEffectOwner {

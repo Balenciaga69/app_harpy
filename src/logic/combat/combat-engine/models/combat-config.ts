@@ -1,5 +1,5 @@
 import type { ICharacter } from '../../domain/character'
-import type { IEffect } from '../../domain/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 /**
  * CombatConfig
  *

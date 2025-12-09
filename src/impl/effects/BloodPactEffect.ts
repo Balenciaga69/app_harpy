@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
-import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import type { IEffectServices } from '@/logic/effect-system'
 import type { DamageEvent, ICombatHook } from '@/logic/combat/logic/damage'
 /**

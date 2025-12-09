@@ -1,4 +1,4 @@
-import type { IEffect } from '../../domain/effect/models/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import type { IUltimateAbility } from '../../domain/ultimate'
 import type { ICharacter } from '../../domain/character/models/character'
 import type { IResourceRegistry } from './resource-registry'

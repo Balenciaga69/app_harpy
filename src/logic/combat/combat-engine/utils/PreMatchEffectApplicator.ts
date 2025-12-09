@@ -1,6 +1,6 @@
 import type { CombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
-import type { IEffect } from '@/logic/combat/domain/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import { isCharacter } from '@/logic/combat/infra/shared'
 /**
  * PreMatchEffectApplicator

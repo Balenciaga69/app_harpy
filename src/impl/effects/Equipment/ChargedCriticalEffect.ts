@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/logic/combat/context'
 import type { ICharacter } from '@/logic/combat/domain/character'
 import { EffectNames } from '@/logic/combat/infra/config'
-import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import type { IEffectServices } from '@/logic/effect-system'
 /**
  * ChargedCriticalEffect

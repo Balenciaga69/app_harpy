@@ -1,5 +1,5 @@
 import type { ICombatContext } from '@/logic/combat/context'
-import { StackableEffect } from '@/logic/combat/domain/effect/models/stackable-effect'
+import { StackableEffect } from '@/logic/effect-system/models/stackable-effect'
 import { CharacterAccessor } from '@/logic/combat/infra/shared'
 import { nanoid } from 'nanoid'
 /**
@@ -19,6 +19,9 @@ export class PoisonEffect extends StackableEffect {
   }
   onApply(_characterId: string, context: ICombatContext): void {
     this.lastDecayTick = context.getCurrentTick()
+  }
+  onRemove(_characterId: string, _context: ICombatContext): void {
+    // Nothing to clean up
   }
   onTick(characterId: string, context: ICombatContext): void {
     const chars = new CharacterAccessor(context)

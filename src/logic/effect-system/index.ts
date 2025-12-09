@@ -11,6 +11,7 @@
  */
 // 核心類別
 export { EffectManager } from './EffectManager'
+export { StackableEffect } from './models/stackable-effect'
 // 介面定義
 export type { IEffect } from './models/effect'
 export type { IEffectLifeHook, ICharacterStateHook, ICombatEffectHook } from './models/effect-hooks'

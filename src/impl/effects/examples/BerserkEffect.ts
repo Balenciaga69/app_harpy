@@ -1,4 +1,4 @@
-import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
+import type { IEffect } from '@/logic/effect-system/models/effect'
 import type { ICombatEffectHook, ICombatEffectServices, IEffectServices } from '@/logic/effect-system'
 import { nanoid } from 'nanoid'
 /**
