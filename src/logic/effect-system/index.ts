@@ -9,10 +9,8 @@
  * - 無外部依賴（除了 domain/attribute 與 shared/attribute-system）
  * - 易於跨語言移植
  */
-
 // 核心類別
 export { EffectManager } from './EffectManager'
-
 // 介面定義
 export type { IEffect } from './models/effect'
 export type { IEffectLifeHook, ICharacterStateHook, ICombatEffectHook } from './models/effect-hooks'

@@ -1,5 +1,4 @@
 import type { ICharacterFacade } from './character-facade'
-
 /**
  * Effect 基礎服務介面
  *
@@ -12,7 +11,6 @@ export interface IEffectServices {
    */
   getCharacter(characterId: string): ICharacterFacade
 }
-
 /**
  * 戰鬥專屬 Effect 服務介面
  *
@@ -24,12 +22,10 @@ export interface ICombatEffectServices extends IEffectServices {
    * 發送事件（用於日誌記錄）
    */
   emitEvent(eventName: string, payload: unknown): void
-
   /**
    * 取得當前 tick（用於時間相關邏輯）
    */
   getCurrentTick(): number
-
   /**
    * 取得隨機數（用於機率計算）
    */

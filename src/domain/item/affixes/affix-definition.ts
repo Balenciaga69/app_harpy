@@ -1,5 +1,7 @@
 /** 詞綴階級（可選，用於分層生成權重或 UI 顯示） */
 export type AffixTier = 1 | 2 | 3 | 4 | 5
+/** 詞綴分類標籤 */
+export type AffixTag = 'attack' | 'defense' | 'mechanic' | 'legendary'
 /**
  * IAffixDefinition
  *
@@ -19,4 +21,6 @@ export interface IAffixDefinition {
   readonly weight: number
   /** 詞綴階級（可選），用於分層生成或 UI 顯示 */
   readonly tier?: AffixTier
+  /** 分類標籤，支援複合（如 ['attack', 'legendary']） */
+  readonly tags: readonly AffixTag[]
 }

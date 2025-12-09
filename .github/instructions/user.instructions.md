@@ -22,6 +22,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - 如果你要寫 markdown 請以中文為主。
 - 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
 - 一個檔案裡面應該只會包含一個類別或是一個主要功能的程式碼。(Type,Interface 也是如此) 當我搜尋檔案名可以很有效率的找到我想要的東西。
+- 當你 Create,Update,Delete 也要關注是否有連動的檔案或spec.md
 
 ### 如果這是 OOP
 

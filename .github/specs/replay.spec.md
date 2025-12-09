@@ -1,107 +1,52 @@
-# Replay 模組規格書
+# Replay 模組規格說明
 
-## 一、目標功能與範圍
+## 簡介
 
-### 核心目標
+Replay 模組負責處理戰鬥重播功能，包括載入戰鬥結果數據、控制播放進度、事件發佈和狀態管理。模組採用事件驅動架構，支持多種播放速度和循環播放。最後更新時間：2025/12/09。
 
-播放 CombatEngine 產生的戰鬥日誌與快照，提供 play/pause/seek/speed 控制，讓 UI 可訂閱事件實現戰鬥回放動畫。
+## 輸入與輸出
 
-### 會實現的功能
+### 輸入
 
-- 載入 CombatResult 資料
-- 播放控制（play / pause / stop）
-- 時間跳轉（seek to tick）
-- 倍速調整（0.5x ~ 3x）
-- 事件訂閱機制
-- 快照查詢（O(log n) 二分搜尋）
-- tick 範圍日誌查詢
+- 戰鬥結果數據（CombatResult，包含日誌、快照和統計）
+- 重播配置參數（播放速度、循環設定、tick 間隔等）
+- 用戶控制命令（播放、暫停、停止、跳轉）
 
-### 不會實現的功能
+### 輸出
 
-- 戰鬥運算邏輯（由 Combat 模組負責）
-- UI 渲染（由 React 元件負責）
-- 音效播放（由 UI 層負責）
-- 存讀檔（由 PersistentStorage 模組負責）
+- 重播事件流（載入完成、播放狀態變化、tick 更新等）
+- 當前播放狀態（位置、速度、是否播放中）
+- 快照數據（用於 UI 渲染角色狀態）
 
----
+## 元件盤點
 
-## 二、架構與元件關係
+### 核心引擎元件
 
-### 入口層
+- ReplayEngine：核心重播引擎，提供載入數據、播放控制和事件訂閱 API。整合數據適配器、狀態機和調度器。
+- PlaybackStateMachine：管理播放狀態轉換，包括載入、播放、暫停和停止狀態。處理速度調整和位置跳轉。
+- ReplayDataAdapter：適配戰鬥結果數據，提取事件日誌和快照序列。提供 tick 總數和數據查詢接口。
 
-- `ReplayEngine`：Facade，唯一對外介面，協調所有子系統
+### 基礎設施元件
 
-### 資料層
+- BrowserTickScheduler：基於瀏覽器 requestAnimationFrame 的 tick 調度器。處理實時播放調度。
+- TestTickScheduler：用於測試的 tick 調度器。支持手動觸發和同步執行。
+- ReplayEventBus：重播專用事件總線。處理載入、播放和 tick 事件發佈。
 
-- `ReplayDataAdapter`：載入並驗證 CombatResult，提供快照/日誌查詢
+### 模型元件
 
-### 狀態層
+- ReplayConfig：定義重播配置，包括播放速度、循環設定和 tick 間隔。
+- ReplayState：表示當前重播狀態，包括位置、速度和播放模式。
+- ReplayEvent：定義重播事件類型和載荷，支持狀態變化通知。
+- ReplayError：重播相關錯誤類別，處理載入失敗和播放異常。
 
-- `PlaybackStateMachine`：管理播放狀態（idle / playing / paused / ended）
+## 模組依賴誰?或被誰依賴?
 
-### 時間層
+### 依賴的模組
 
-- `ITickScheduler`：時間推進抽象
-- `BrowserTickScheduler`：使用 requestAnimationFrame
-- `TestTickScheduler`：測試用手動控制
+- logic/combat：戰鬥結果數據和快照，提供重播的原始數據
+- logic/shared：共享工具，如事件總線介面
 
-### 事件層
+### 被依賴的模組
 
-- `EventBus`：replay 事件通訊中心
-
----
-
-## 三、對外暴露的主要功能
-
-### ReplayEngine API
-
-```
-ReplayEngine(config?: Partial<ReplayConfig>)
-  .load(result: CombatResult): void
-  .play(): void
-  .pause(): void
-  .stop(): void
-  .seek(tick: number): void
-  .setSpeed(speed: number): void
-  .getState(): ReplayState
-  .getCurrentSnapshot(): CombatSnapshot | null
-  .on(event, handler): void
-  .off(event, handler): void
-  .dispose(): void
-```
-
-### ReplayConfig 輸入
-
-- `playbackSpeed: number` — 初始倍速（預設 1.0）
-- `autoPlay: boolean` — 載入後自動播放
-- `tickInterval: number` — 每 tick 間隔毫秒數
-
-### ReplayState 輸出
-
-- `status: 'idle' | 'playing' | 'paused' | 'ended'`
-- `currentTick: number`
-- `totalTicks: number`
-- `speed: number`
-- `isLoaded: boolean`
-
-### 事件類型
-
-- `replay:loaded` — 資料載入完成
-- `replay:started` — 從頭開始播放
-- `replay:resumed` — 暫停後繼續
-- `replay:paused` — 暫停
-- `replay:stopped` — 停止並重置
-- `replay:seeked` — 跳轉完成
-- `replay:tick` — 每 tick 更新（含 snapshot）
-- `replay:ended` — 播放結束
-- `replay:speedChanged` — 倍速變更
-
----
-
-## 四、設計原則摘要
-
-- **極簡**：只保留核心播放功能
-- **事件驅動**：UI 透過訂閱事件更新
-- **UI 無關**：不依賴任何 UI 框架
-- **可測試**：TestTickScheduler 支援單元測試
-- **低耦合**：透過 Adapter 隔離 Combat 依賴
+- UI 層：使用重播引擎進行戰鬥重播顯示，訂閱事件更新界面
+- 測試模組：使用 TestTickScheduler 進行單元測試和集成測試

@@ -12,4 +12,6 @@ export interface IClassDefinition {
   readonly name: string
   /** 職業屬性修正（相對於基礎屬性的調整） */
   readonly attributeModifiers: Partial<Record<AttributeType, number>>
+  /** 職業專屬裝備池 ID 列表 */
+  readonly equipmentPoolIds: readonly string[]
 }
