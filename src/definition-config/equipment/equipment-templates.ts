@@ -2,7 +2,6 @@
  * 裝備定義範例（戰士專用）
  */
 import type { IEquipmentDefinition } from '@/domain/item'
-
 /* 武器 */
 export const IRON_SWORD: IEquipmentDefinition = {
   id: 'iron_sword',
@@ -14,7 +13,6 @@ export const IRON_SWORD: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'common',
 }
-
 export const STEEL_SWORD: IEquipmentDefinition = {
   id: 'steel_sword',
   effectTemplateIds: [],
@@ -25,7 +23,6 @@ export const STEEL_SWORD: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'rare',
 }
-
 /* 頭盔 */
 export const IRON_HELMET: IEquipmentDefinition = {
   id: 'iron_helmet',
@@ -37,7 +34,6 @@ export const IRON_HELMET: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'common',
 }
-
 export const STEEL_HELMET: IEquipmentDefinition = {
   id: 'steel_helmet',
   effectTemplateIds: [],
@@ -48,7 +44,6 @@ export const STEEL_HELMET: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'rare',
 }
-
 /* 傳說頭盔：宙斯頭 */
 export const ZEUS_HELM: IEquipmentDefinition = {
   id: 'zeus_helm',
@@ -60,7 +55,6 @@ export const ZEUS_HELM: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'legendary',
 }
-
 /* 盔甲 */
 export const IRON_ARMOR: IEquipmentDefinition = {
   id: 'iron_armor',
@@ -72,7 +66,6 @@ export const IRON_ARMOR: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'common',
 }
-
 export const STEEL_ARMOR: IEquipmentDefinition = {
   id: 'steel_armor',
   effectTemplateIds: [],
@@ -83,7 +76,6 @@ export const STEEL_ARMOR: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'rare',
 }
-
 /* 鞋子（可 Roll 任意類型） */
 export const LEATHER_BOOTS: IEquipmentDefinition = {
   id: 'leather_boots',
@@ -95,7 +87,6 @@ export const LEATHER_BOOTS: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'magic',
 }
-
 /* 手套（可 Roll 任意類型） */
 export const WARRIOR_GLOVES: IEquipmentDefinition = {
   id: 'warrior_gloves',
@@ -107,7 +98,6 @@ export const WARRIOR_GLOVES: IEquipmentDefinition = {
   baseStats: {},
   rarity: 'magic',
 }
-
 /* 統一導出 */
 export const WARRIOR_EQUIPMENTS = [
   IRON_SWORD,

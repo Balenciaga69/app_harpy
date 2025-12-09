@@ -6,7 +6,6 @@
  */
 import type { IAffixDefinition } from '@/domain/item'
 import type { EquipmentSlot } from '@/domain/item'
-
 export interface IAffixFilter {
   /**
    * 過濾詞綴

@@ -9,7 +9,6 @@
  */
 import type { IAffixDefinition, EquipmentSlot } from '@/domain/item'
 import type { IAffixFilter } from './affix-filter'
-
 export class SlotBasedFilter implements IAffixFilter {
   /**
    * 過濾詞綴

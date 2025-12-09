@@ -1,6 +1,5 @@
 import type { AttributeType } from '@/domain/attribute'
 import type { AttributeModifier } from '@/logic/attribute-system'
-
 /**
  * 角色屬性操作最小介面
  *
@@ -9,17 +8,14 @@ import type { AttributeModifier } from '@/logic/attribute-system'
  */
 export interface ICharacterFacade {
   readonly id: string
-
   /**
    * 取得屬性值（已計算修飾器）
    */
   getAttribute(type: AttributeType): number
-
   /**
    * 添加屬性修飾器
    */
   addAttributeModifier(modifier: AttributeModifier): void
-
   /**
    * 移除屬性修飾器
    */

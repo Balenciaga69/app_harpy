@@ -9,6 +9,7 @@
 export type { EquipmentSlot } from './equipment-slot'
 // === Definitions ===
 export type { IItemDefinition, IEquipmentDefinition, IRelicDefinition, EquipmentRarity } from './definitions'
+export type { IEquipmentInstance, IRelicInstance } from './definitions/item-instance'
 // === Affixes ===
 export type { IAffixDefinition, AffixTier, IAffixInstance } from './affixes'
 export { AffixRoller } from './affixes'

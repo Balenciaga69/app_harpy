@@ -2,7 +2,6 @@
  * 戰士職業定義範例
  */
 import type { IClassDefinition } from '@/domain/character'
-
 export const WARRIOR_CLASS: IClassDefinition = {
   id: 'warrior',
   name: '戰士',
