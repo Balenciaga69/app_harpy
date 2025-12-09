@@ -1,5 +1,5 @@
-import type { ICombatEffectServices } from '@/shared/effect-system'
-import type { ICharacterFacade } from '@/shared/effect-system'
+import type { ICombatEffectServices } from '@/logic/effect-system'
+import type { ICharacterFacade } from '@/logic/effect-system'
 import type { ICombatContext } from '../context'
 import type { ICharacter } from '../domain/character/models/character'
 /**

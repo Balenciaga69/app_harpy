@@ -26,11 +26,11 @@
 
 ### 模組定位
 
-位於共享層（shared/effect-system），提供純邏輯的效果管理功能，透過服務介面解耦，可被戰鬥內外使用。
+位於後端純運算模組層（logic/effect-system），提供純邏輯的效果管理功能，透過服務介面解耦，可被戰鬥內外使用。
 
 ### 依賴方向
 
-- 僅依賴 domain/attribute 與 shared/attribute-system
+- 僅依賴 domain/attribute 與 logic/attribute-system
 - 不依賴 Combat 模組的任何具體實現
 - 被 Combat Engine 使用（戰鬥內）
 - 被 CharacterModifierSystem 使用（戰鬥外面板）

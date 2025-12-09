@@ -6,11 +6,11 @@
  *
  * 保留此檔案以維持向後相容性。
  */
-import { EffectManager as SharedEffectManager } from '@/shared/effect-system'
-import type { IEffect } from '@/shared/effect-system'
+import { EffectManager as SharedEffectManager } from '@/logic/effect-system'
+import type { IEffect } from '@/logic/effect-system'
 import type { ICombatContext } from '@/logic/combat/context'
 import { CombatEffectServices } from '../../adapters'
-import type { ICombatEffectHook } from '@/shared/effect-system'
+import type { ICombatEffectHook } from '@/logic/effect-system'
 /**
  * Combat 專屬的 EffectManager 包裝類別
  *

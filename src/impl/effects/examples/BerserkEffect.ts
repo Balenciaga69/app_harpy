@@ -1,7 +1,5 @@
-import type { ICombatContext } from '@/logic/combat/context'
 import type { IEffect } from '@/logic/combat/domain/effect/models/effect'
-import type { IEffectServices, ICombatEffectServices, ICombatEffectHook } from '@/shared/effect-system'
-import { CharacterAccessor } from '@/logic/combat/infra/shared'
+import type { ICombatEffectHook, ICombatEffectServices, IEffectServices } from '@/logic/effect-system'
 import { nanoid } from 'nanoid'
 /**
  * BerserkEffect

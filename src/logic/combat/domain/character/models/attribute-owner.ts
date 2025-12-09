@@ -1,5 +1,5 @@
 import type { AttributeType } from '@/domain/attribute'
-import type { AttributeModifier } from '@/shared/attribute-system'
+import type { AttributeModifier } from '@/logic/attribute-system'
 /** Attribute provider interface */
 export interface IAttributeOwner {
   getAttribute(type: AttributeType): number
