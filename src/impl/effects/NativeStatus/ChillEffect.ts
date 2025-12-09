@@ -1,8 +1,6 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/logic/effect-system/models/stackable-effect'
-import type { ICombatContext } from '@/logic/combat/context'
-import type { ICharacter } from '@/logic/combat/domain/character'
-import { CharacterAccessor } from '@/logic/combat/infra/shared'
+import type { ICharacterFacade, ICombatEffectServices } from '@/logic/effect-system'
 /**
  * Chill effect
  * - Extends enemy attack/spell cooldown time
@@ -20,15 +18,13 @@ export class ChillEffect extends StackableEffect {
     super(`chill-${nanoid(6)}`, 'Chill', 16)
     this.setStacks(initialStacks)
   }
-  onApply(characterId: string, context: ICombatContext): void {
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
-    this.lastDecayTick = context.getCurrentTick()
+  onApply(characterId: string, services: ICombatEffectServices): void {
+    const character = services.getCharacter(characterId)
+    this.lastDecayTick = services.getCurrentTick()
     this.updateCooldownModifiers(character)
   }
-  onRemove(characterId: string, context: ICombatContext): void {
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
+  onRemove(characterId: string, services: ICombatEffectServices): void {
+    const character = services.getCharacter(characterId)
     if (this.attackModifierId) {
       character.removeAttributeModifier(this.attackModifierId)
       this.attackModifierId = null
@@ -38,10 +34,9 @@ export class ChillEffect extends StackableEffect {
       this.spellModifierId = null
     }
   }
-  onTick(characterId: string, context: ICombatContext): void {
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
-    const currentTick = context.getCurrentTick()
+  onTick(characterId: string, services: ICombatEffectServices): void {
+    const character = services.getCharacter(characterId)
+    const currentTick = services.getCurrentTick()
     const ticksPassed = currentTick - this.lastDecayTick
     // Assume 100 ticks = 1 second
     const secondsPassed = ticksPassed / 100
@@ -50,16 +45,14 @@ export class ChillEffect extends StackableEffect {
       const decayAmount = Math.max(1, Math.floor(this.stacks * this.decayRate))
       this.removeStacks(decayAmount)
       this.lastDecayTick = currentTick
-      // If stacks reach zero, remove effect
-      if (this.stacks === 0) {
-        character.removeEffect(this.id, context)
-        return
+      // If stacks reach zero, effect will be removed externally
+      if (this.stacks > 0) {
+        this.updateCooldownModifiers(character)
       }
-      this.updateCooldownModifiers(character)
     }
   }
   /** Update cooldown modifiers (increase cooldown time) */
-  private updateCooldownModifiers(character: ICharacter): void {
+  private updateCooldownModifiers(character: ICharacterFacade): void {
     // Remove old modifiers
     if (this.attackModifierId) {
       character.removeAttributeModifier(this.attackModifierId)

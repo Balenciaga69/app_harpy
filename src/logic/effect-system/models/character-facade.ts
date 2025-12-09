@@ -20,4 +20,12 @@ export interface ICharacterFacade {
    * 移除屬性修飾器
    */
   removeAttributeModifier(modifierId: string): void
+  /**
+   * 設定當前生命值（夾在合法範圍內）
+   */
+  setCurrentHpClamped(value: number): void
+  /**
+   * 是否死亡
+   */
+  isDead: boolean
 }

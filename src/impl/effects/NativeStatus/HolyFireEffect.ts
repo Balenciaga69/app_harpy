@@ -1,8 +1,6 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/logic/effect-system/models/stackable-effect'
-import type { ICombatContext } from '@/logic/combat/context'
-import type { ICharacter } from '@/logic/combat/domain/character'
-import { CharacterAccessor } from '@/logic/combat/infra/shared'
+import type { ICharacterFacade, ICombatEffectServices } from '@/logic/effect-system'
 /**
  * Holy fire effect
  * - Increases armor value per stack
@@ -16,28 +14,25 @@ export class ExampleHolyFireEffect extends StackableEffect {
     super(`holy-fire-${nanoid(6)}`, 'Holy Fire', 50)
     this.setStacks(initialStacks)
   }
-  onApply(characterId: string, context: ICombatContext): void {
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
+  onApply(characterId: string, services: ICombatEffectServices): void {
+    const character = services.getCharacter(characterId)
     this.updateArmorModifier(character)
-    this.checkThresholdEffects(character, context)
+    this.checkThresholdEffects(character, services)
   }
-  onRemove(characterId: string, context: ICombatContext): void {
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
+  onRemove(characterId: string, services: ICombatEffectServices): void {
+    const character = services.getCharacter(characterId)
     if (this.modifierId) {
       character.removeAttributeModifier(this.modifierId)
       this.modifierId = null
     }
   }
-  onTick(characterId: string, context: ICombatContext): void {
-    const chars = new CharacterAccessor(context)
-    const character = chars.get(characterId)
+  onTick(characterId: string, services: ICombatEffectServices): void {
+    const character = services.getCharacter(characterId)
     // Holy fire does not decay over time, only removed under specific conditions
-    this.checkThresholdEffects(character, context)
+    this.checkThresholdEffects(character, services)
   }
   /** Update armor modifier */
-  private updateArmorModifier(character: ICharacter): void {
+  private updateArmorModifier(character: ICharacterFacade): void {
     // Remove old modifier
     if (this.modifierId) {
       character.removeAttributeModifier(this.modifierId)
@@ -53,7 +48,7 @@ export class ExampleHolyFireEffect extends StackableEffect {
     })
   }
   /** Check stack threshold effects */
-  private checkThresholdEffects(character: ICharacter, context: ICombatContext): void {
+  private checkThresholdEffects(character: ICharacterFacade, services: ICombatEffectServices): void {
     const thresholds = [10, 20, 30, 40, 50]
     const currentThreshold = thresholds.find((t) => this.stacks >= t) ?? 0
     // Different effects can be triggered based on different thresholds
@@ -61,11 +56,11 @@ export class ExampleHolyFireEffect extends StackableEffect {
     // For now, emit heal event when threshold reached
     if (currentThreshold > 0) {
       const healAmount = currentThreshold // Heal based on threshold tier
-      context.eventBus.emit('entity:heal', {
+      services.emitEvent('entity:heal', {
         targetId: character.id,
         amount: healAmount,
         healType: 'effect',
-        tick: context.getCurrentTick(),
+        tick: services.getCurrentTick(),
       })
     }
   }

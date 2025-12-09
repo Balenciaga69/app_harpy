@@ -1,13 +1,13 @@
-import type { ICombatContext } from '@/logic/combat/context/index.ts'
+import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
 import type { CharacterSnapshot } from '@/logic/combat/infra/shared/index.ts'
+import { EffectManager, type IEffect } from '@/logic/effect-system/index.ts'
 import { nanoid } from 'nanoid'
 import { AttributeCalculator, AttributeManager, type AttributeModifier } from '../attribute/index.ts'
-import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
-import { EffectManager } from '../effect/EffectManager.ts'
-import type { IEffect } from '../effect/models/effect.ts'
 import type { IUltimateAbility } from '../ultimate/index.ts'
 import { UltimateManager } from '../ultimate/UltimateManager.ts'
 import type { ICharacter } from './models/character.ts'
+import type { ICombatContext } from '../../context/combat-context.ts'
+import { CombatEffectServices } from '../../adapters/CombatEffectServices.ts'
 /**
  * 角色初始化所需的設定參數
  */
@@ -52,8 +52,9 @@ export class Character implements ICharacter {
     this.ultimateManager = new UltimateManager()
     // 注入初始效果（裝備、遺物等）
     if (config.effects && context) {
+      const services = new CombatEffectServices(context)
       for (const effect of config.effects) {
-        this.effectManager.addEffect(effect, context)
+        this.effectManager.addEffect(effect, services)
       }
     }
     // 若提供了終極技能且有 context，則註冊終極技能
@@ -95,11 +96,13 @@ export class Character implements ICharacter {
   // === 效果相關方法（委派給 EffectManager） ===
   /** 新增效果 */
   addEffect(effect: IEffect, context: ICombatContext): void {
-    this.effectManager.addEffect(effect, context)
+    const services = new CombatEffectServices(context)
+    this.effectManager.addEffect(effect, services)
   }
   /** 移除效果 */
   removeEffect(effectId: string, context: ICombatContext): void {
-    this.effectManager.removeEffect(effectId, context)
+    const services = new CombatEffectServices(context)
+    this.effectManager.removeEffect(effectId, services)
   }
   /** 檢查是否擁有指定效果 */
   hasEffect(effectId: string): boolean {
@@ -115,15 +118,18 @@ export class Character implements ICharacter {
   }
   /** 淨化具有 cleanseOnRevive: true 的效果（用於復活） */
   cleanseCanCleanseEffects(context: ICombatContext): void {
-    this.effectManager.cleanseCanCleanseEffects(context)
+    const services = new CombatEffectServices(context)
+    this.effectManager.cleanseOnRevive(services)
   }
   /** 觸發所有效果的 onHpZero 勾子 */
   triggerHpZero(context: ICombatContext): void {
-    this.effectManager.triggerHpZero(context)
+    const services = new CombatEffectServices(context)
+    this.effectManager.triggerHpZero(services)
   }
   /** 觸發所有效果的 onRevive 勾子 */
   triggerRevive(context: ICombatContext): void {
-    this.effectManager.triggerRevive(context)
+    const services = new CombatEffectServices(context)
+    this.effectManager.triggerRevive(services)
   }
   // === 終極技能相關方法（委派給 UltimateManager） ===
   /** 取得終極技能（如有） */

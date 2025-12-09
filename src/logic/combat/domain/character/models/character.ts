@@ -1,7 +1,6 @@
 import { type CharacterSnapshot, type IEntity } from '@/logic/combat/infra/shared'
 import type { IAttributeOwner } from './attribute-owner'
 import type { IEffectOwner } from './effect-owner'
-import type { IItemOwner } from './item-owner'
 import type { IUltimateOwner } from './ultimate-owner'
 /**
  * 角色介面：定義角色公開的方法
@@ -13,6 +12,6 @@ import type { IUltimateOwner } from './ultimate-owner'
  * - 介面隔離原則：每個子介面只負責單一職責，避免實作不必要的方法
  * - 依賴反轉原則：高層模組依賴此介面，而非具體實作
  */
-export interface ICharacter extends IEntity, IAttributeOwner, IEffectOwner, IItemOwner, IUltimateOwner {
+export interface ICharacter extends IEntity, IAttributeOwner, IEffectOwner, IUltimateOwner {
   createSnapshot(): CharacterSnapshot
 }

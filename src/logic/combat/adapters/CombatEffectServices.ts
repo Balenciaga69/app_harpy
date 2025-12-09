@@ -24,6 +24,13 @@ export class CombatEffectServices implements ICombatEffectServices {
       getAttribute: (type) => char.getAttribute(type),
       addAttributeModifier: (modifier) => char.addAttributeModifier(modifier),
       removeAttributeModifier: (id) => char.removeAttributeModifier(id),
+      setCurrentHpClamped: (value) => char.setCurrentHpClamped(value),
+      get isDead() {
+        return char.isDead
+      },
+      set isDead(value: boolean) {
+        char.isDead = value
+      },
     }
   }
   emitEvent(
