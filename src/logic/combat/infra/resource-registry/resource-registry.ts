@@ -12,8 +12,6 @@
  * Design: Uses 'unknown' type to avoid circular dependencies with domain models.
  * The actual implementation will handle type safety internally.
  *
- * Note: Equipment/Relic 已改為由 EquipmentManager/RelicManager 直接管理，
- * 不再需要透過 ResourceRegistry 追蹤。
  */
 export interface IResourceRegistry {
   // === Character Catalog ===

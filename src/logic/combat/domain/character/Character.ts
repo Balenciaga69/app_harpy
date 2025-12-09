@@ -1,36 +1,34 @@
 import type { ICombatContext } from '@/logic/combat/context/index.ts'
 import type { CharacterSnapshot } from '@/logic/combat/infra/shared/index.ts'
 import { nanoid } from 'nanoid'
-import { AttributeCalculator, AttributeManager } from '../attribute/index.ts'
-import type { AttributeType, BaseAttributeValues } from '../attribute/models/attribute-core.ts'
-import type { AttributeModifier } from '../attribute/models/attribute-modifier.ts'
+import { AttributeCalculator, AttributeManager, type AttributeModifier } from '../attribute/index.ts'
+import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
 import { EffectManager } from '../effect/EffectManager.ts'
 import type { IEffect } from '../effect/models/effect.ts'
-import { EquipmentManager, RelicManager } from '../item/index.ts'
-import type { ICombatEquipment, ICombatRelic } from '../item/models/combat-item.ts'
-import type { EquipmentSlot } from '@/domain/item'
 import type { IUltimateAbility } from '../ultimate/index.ts'
 import { UltimateManager } from '../ultimate/UltimateManager.ts'
 import type { ICharacter } from './models/character.ts'
 /**
- * Configuration parameters required for character initialization
+ * 角色初始化所需的設定參數
  */
 interface CharacterConfig {
   name: string
   baseAttributes: BaseAttributeValues
   team: ICharacter['team']
+  effects?: IEffect[] // 初始效果（來自裝備、遺物等）
   ultimate?: IUltimateAbility
 }
 /**
- * Character
+ * 角色
  *
- * Represents an entity in combat. Uses managers to organize responsibilities:
- * - EffectManager: manages effects
- * - EquipmentManager: manages equipment slots
- * - RelicManager: manages stackable relics
- * - UltimateManager: manages ultimate ability
+ * 代表戰鬥中的實體。使用管理器來組織職責：
+ * - EffectManager：管理效果
+ * - UltimateManager：管理終極技能
  *
- * Uses string ID instead of branded types for simplicity.
+ * 設計變更：
+ * - 裝備與遺物的效果在建立角色時直接注入
+ *
+ * 為簡化使用字串 ID 而非品牌類型。
  */
 export class Character implements ICharacter {
   readonly id: string
@@ -40,145 +38,109 @@ export class Character implements ICharacter {
   private readonly attributeManager: AttributeManager
   private readonly attributeCalculator: AttributeCalculator
   private readonly effectManager: EffectManager
-  private readonly equipmentManager: EquipmentManager
-  private readonly relicManager: RelicManager
   private readonly ultimateManager: UltimateManager
-  private _pendingUltimate?: IUltimateAbility
+  private _pendingUltimate?: IUltimateAbility // 用於延遲初始化的終極技能
   constructor(config: CharacterConfig, context?: ICombatContext) {
     this.id = nanoid()
     this.team = config.team
     this.name = config.name
-    // Initialize attribute system
+    // 初始化屬性系統
     this.attributeManager = new AttributeManager(config.baseAttributes)
     this.attributeCalculator = new AttributeCalculator(this.attributeManager)
-    // Initialize managers
-    this.effectManager = new EffectManager(this)
-    this.equipmentManager = new EquipmentManager(this)
-    this.relicManager = new RelicManager(this)
+    // 初始化管理器
+    this.effectManager = new EffectManager(this.id)
     this.ultimateManager = new UltimateManager()
-    // Register ultimate if provided (only if context is available)
+    // 注入初始效果（裝備、遺物等）
+    if (config.effects && context) {
+      for (const effect of config.effects) {
+        this.effectManager.addEffect(effect, context)
+      }
+    }
+    // 若提供了終極技能且有 context，則註冊終極技能
     if (config.ultimate && context) {
       this.ultimateManager.set(config.ultimate, context)
     } else if (config.ultimate) {
-      // Store for later initialization if context not available
+      // 若沒有 context，則暫存以待稍後初始化
       this._pendingUltimate = config.ultimate
     }
   }
-  // === Attribute-related methods ===
-  /** Get final attribute value (including modifier calculation) */
+  // === 屬性相關方法 ===
+  /** 取得最終屬性值（包含修飾計算） */
   getAttribute(type: AttributeType): number {
     return this.attributeCalculator.calculateAttribute(type)
   }
-  /** Get base attribute value (without modifiers) */
+  /** 取得基礎屬性值（不含修飾） */
   getBaseAttribute(type: AttributeType): number {
     return this.attributeManager.getBase(type)
   }
-  /** Set base attribute value */
+  /** 設定基礎屬性值 */
   setBaseAttribute(type: AttributeType, value: number): void {
     this.attributeManager.setBase(type, value)
   }
-  /** Add attribute modifier */
+  /** 新增屬性修飾器 */
   addAttributeModifier(modifier: AttributeModifier): void {
     this.attributeManager.addModifier(modifier)
   }
-  /** Remove attribute modifier */
+  /** 移除屬性修飾器 */
   removeAttributeModifier(modifierId: string): void {
     this.attributeManager.removeModifier(modifierId)
   }
-  /** Set current HP and limit within legal range (used when taking damage/healing) */
+  /** 設定當前生命值並限制在合法範圍內（用於受傷/治療時） */
   setCurrentHpClamped(value: number): void {
     const MIN_HP = 0 as const
     const maxHp = this.getAttribute('maxHp')
     const clampedValue = Math.max(MIN_HP, Math.min(value, maxHp))
     this.setBaseAttribute('currentHp', clampedValue)
   }
-  // === Effect-related methods (delegated to EffectManager) ===
-  /** Add effect */
+  // === 效果相關方法（委派給 EffectManager） ===
+  /** 新增效果 */
   addEffect(effect: IEffect, context: ICombatContext): void {
     this.effectManager.addEffect(effect, context)
   }
-  /** Remove effect */
+  /** 移除效果 */
   removeEffect(effectId: string, context: ICombatContext): void {
     this.effectManager.removeEffect(effectId, context)
   }
-  /** Check if has specified effect */
+  /** 檢查是否擁有指定效果 */
   hasEffect(effectId: string): boolean {
     return this.effectManager.hasEffect(effectId)
   }
-  /** Get specified effect */
+  /** 取得指定效果 */
   getEffect(effectId: string): IEffect | undefined {
     return this.effectManager.getEffect(effectId)
   }
-  /** Get all effects */
+  /** 取得所有效果 */
   getAllEffects(): readonly IEffect[] {
     return this.effectManager.getAllEffects()
   }
-  /** Cleanse effects with cleanseOnRevive: true (used for resurrection) */
+  /** 淨化具有 cleanseOnRevive: true 的效果（用於復活） */
   cleanseCanCleanseEffects(context: ICombatContext): void {
     this.effectManager.cleanseCanCleanseEffects(context)
   }
-  /** Trigger onHpZero hook for all effects */
+  /** 觸發所有效果的 onHpZero 勾子 */
   triggerHpZero(context: ICombatContext): void {
     this.effectManager.triggerHpZero(context)
   }
-  /** Trigger onRevive hook for all effects */
+  /** 觸發所有效果的 onRevive 勾子 */
   triggerRevive(context: ICombatContext): void {
     this.effectManager.triggerRevive(context)
   }
-  // === Equipment-related methods (delegated to EquipmentManager) ===
-  /** 裝備物品到指定槽位 */
-  equipItem(equipment: ICombatEquipment, context: ICombatContext): void {
-    this.equipmentManager.equip(equipment, context)
-  }
-  /** 從指定槽位卸下裝備 */
-  unequipItem(slot: EquipmentSlot, context: ICombatContext): void {
-    this.equipmentManager.unequip(slot, context)
-  }
-  /** 取得指定槽位的裝備 */
-  getEquipment(slot: EquipmentSlot): ICombatEquipment | undefined {
-    return this.equipmentManager.getEquipment(slot)
-  }
-  /** 取得所有已裝備的物品 */
-  getAllEquipment(): ICombatEquipment[] {
-    return this.equipmentManager.getAllEquipment()
-  }
-  // === Relic-related methods (delegated to RelicManager) ===
-  /** 添加遺物（同名遺物會堆疊） */
-  addRelic(relic: ICombatRelic, context: ICombatContext): void {
-    this.relicManager.add(relic, context)
-  }
-  /** 移除遺物 */
-  removeRelic(relicName: string, context: ICombatContext): void {
-    this.relicManager.remove(relicName, context)
-  }
-  /** 根據名稱取得遺物 */
-  getRelic(relicName: string): ICombatRelic | undefined {
-    return this.relicManager.getRelic(relicName)
-  }
-  /** 取得所有遺物 */
-  getAllRelics(): ICombatRelic[] {
-    return this.relicManager.getAllRelics()
-  }
-  /** 取得遺物的堆疊數 */
-  getRelicStackCount(relicName: string): number {
-    return this.relicManager.getStackCount(relicName)
-  }
-  // === Ultimate-related methods (delegated to UltimateManager) ===
-  /** Get ultimate (if any) */
+  // === 終極技能相關方法（委派給 UltimateManager） ===
+  /** 取得終極技能（如有） */
   getUltimate(context: ICombatContext): IUltimateAbility | undefined {
-    // Initialize pending ultimate if exists
+    // 如有暫存的終極技能則初始化
     if (this._pendingUltimate) {
       this.ultimateManager.set(this._pendingUltimate, context)
       this._pendingUltimate = undefined
     }
     return this.ultimateManager.get(context)
   }
-  /** Set ultimate */
+  /** 設定終極技能 */
   setUltimate(ultimate: IUltimateAbility, context: ICombatContext): void {
     this.ultimateManager.set(ultimate, context)
   }
-  // === Snapshot-related methods ===
-  /** Create character snapshot (for replay, log recording) */
+  // === 快照相關方法 ===
+  /** 建立角色快照（用於重播或記錄） */
   createSnapshot(): CharacterSnapshot {
     return {
       id: this.id,

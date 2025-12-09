@@ -1,5 +1,5 @@
 import { type CharacterSnapshot, type IEntity } from '@/logic/combat/infra/shared'
-import type { IAttributeOwner } from '../../attribute'
+import type { IAttributeOwner } from './attribute-owner'
 import type { IEffectOwner } from './effect-owner'
 import type { IItemOwner } from './item-owner'
 import type { IUltimateOwner } from './ultimate-owner'

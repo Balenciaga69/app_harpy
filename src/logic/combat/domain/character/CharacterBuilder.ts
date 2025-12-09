@@ -1,6 +1,6 @@
 import type { ICombatContext } from '@/logic/combat/context'
-import type { BaseAttributeValues } from '../attribute/models/base-attribute-values'
-import { createDefaultAttributes } from '../attribute/models/base-attribute-values'
+import type { BaseAttributeValues } from '@/domain/attribute'
+import { createDefaultAttributes } from '@/domain/attribute'
 import type { IUltimateAbility } from '../ultimate'
 import { Character } from './Character'
 import type { ICharacter } from './models/character'

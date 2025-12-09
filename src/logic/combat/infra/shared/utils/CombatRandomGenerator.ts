@@ -2,7 +2,7 @@ import seedrandom from 'seedrandom'
 /**
  * CombatRandomGenerator
  *
- * Seeded random number generator for combat. Provides reproducible random, integer/float ranges, probability checks, and seed access.
+ * 種子化的戰鬥隨機數生成器。提供可重現的隨機數、整數/浮點範圍、概率檢查和種子訪問。
  */
 export class CombatRandomGenerator {
   private rng: seedrandom.PRNG
@@ -11,23 +11,23 @@ export class CombatRandomGenerator {
     this.seed = String(seed)
     this.rng = seedrandom(this.seed)
   }
-  /** Generate random number in [0, 1) range (similar to Math.random()) */
+  /** 產生 [0, 1) 範圍內的隨機數（類似於 Math.random()） */
   next(): number {
     return this.rng()
   }
-  /** Generate random integer in [min, max) range */
+  /** 產生 [min, max) 範圍內的隨機整數 */
   nextInt(min: number, max: number): number {
     return Math.floor(this.next() * (max - min) + min)
   }
-  /** Generate random float in [min, max] range */
+  /** 產生 [min, max) 範圍內的隨機浮點數 */
   nextFloat(min: number, max: number): number {
     return this.next() * (max - min) + min
   }
-  /** Return true with specified probability */
+  /** 返回指定概率為真的結果 */
   chance(probability: number): boolean {
     return this.next() < probability
   }
-  /** Get current seed (for saving/replaying) */
+  /** 取得當前種子（用於保存/重播） */
   getSeed(): string {
     return this.seed
   }

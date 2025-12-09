@@ -6,7 +6,6 @@ import type { IResourceRegistry } from './resource-registry'
  * In-Memory Resource Registry
  *
  * Simple Map-based implementation for single-player combat.
- * Note: Equipment/Relic 已改為由 EquipmentManager/RelicManager 直接管理。
  */
 export class InMemoryResourceRegistry implements IResourceRegistry {
   private characters = new Map<string, ICharacter>()

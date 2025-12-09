@@ -4,10 +4,10 @@ import { isCharacter } from '../../infra/shared'
 import { EnergyManager } from '../utils/EnergyManager'
 import type { ITickPhase } from './tick-phase'
 /**
- * Energy Regeneration Phase
+ * 能量再生階段
  *
- * Handles natural energy regeneration for all alive characters.
- * Energy regenerates at fixed intervals based on character attributes.
+ * 負責所有存活角色的自然(被動)能量再生。
+ * 能量將依據角色屬性，以固定間隔進行再生。
  */
 export class EnergyRegenPhase implements ITickPhase {
   readonly name = 'EnergyRegen'

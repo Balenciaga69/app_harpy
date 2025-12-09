@@ -7,15 +7,15 @@ import type { ICombatContext } from './combat-context'
 import type { ICharacter } from '../domain/character/models/character'
 import { BattleState } from './BattleState'
 /**
- * CombatContext
+ * 戰鬥上下文 (CombatContext)
  *
- * Global resource container for combat infrastructure.
- * Composes BattleState for entity/tick management, separating concerns:
- * - CombatContext: infrastructure (eventBus, rng, registry)
- * - BattleState: domain state (entities, tick)
+ * 戰鬥基礎設施的全域資源容器。
+ * 組合了 BattleState 用於實體/時間步管理，分離關注點：
+ * - CombatContext: 基礎設施 (事件總線、隨機數生成器、資源註冊表)
+ * - BattleState: 領域狀態 (實體、時間步)
  *
- * Delegates entity/tick operations to BattleState while handling
- * registry synchronization for character lookups.
+ * 將實體/時間步操作委派給 BattleState，同時處理
+ * 用於角色查找的註冊表同步。
  */
 export class CombatContext implements ICombatContext {
   public readonly eventBus: ICombatEventBus

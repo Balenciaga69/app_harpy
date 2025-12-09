@@ -1,9 +1,9 @@
 import type { CombatContext } from '../../context'
 /**
- * Tick Phase Interface
+ *  tick 階段介面
  *
- * Represents a single phase in the tick processing pipeline.
- * Each phase handles a specific responsibility (effects, energy, attacks, etc.)
+ * 代表 tick 處理管道中的單一階段。
+ * 每個階段負責處理特定任務（特效、能量、攻擊等）。
  */
 export interface ITickPhase {
   /** Phase identifier for debugging and replacement */

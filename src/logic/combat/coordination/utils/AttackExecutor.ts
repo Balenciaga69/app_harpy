@@ -7,9 +7,9 @@ import { EnergyManager } from './EnergyManager'
 import { DamageFactory } from './DamageFactory'
 import type { ITargetSelector } from '../target-select-strategies/target-selector'
 /**
- * AttackExecutor
+ * 攻擊執行器
  *
- * Handles attack logic, including checking if a character selecting targets, and executing normal attacks or ultimates.
+ * 負責處理攻擊邏輯，包含檢查角色是否選擇目標，並執行普通攻擊或終極技。
  */
 export class AttackExecutor {
   private context: CombatContext
@@ -24,6 +24,7 @@ export class AttackExecutor {
     this.damageFactory = new DamageFactory()
     this.energyManager = energyManager
   }
+  /** 執行攻擊邏輯 */
   performAttack(character: ICharacter, currentTick: number): void {
     const enemyTeam = character.team === 'player' ? 'enemy' : 'player'
     const enemies = this.context.getEntitiesByTeam(enemyTeam)
@@ -32,15 +33,19 @@ export class AttackExecutor {
     }) as ICharacter[]
     const target = this.targetSelector.selectTarget(character, aliveEnemies)
     if (!target) return
-    const currentEnergy = character.getAttribute('currentEnergy') ?? 0
-    const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
-    const canUseUltimate = currentEnergy >= maxEnergy
-    if (canUseUltimate) {
+    if (this.canUseUltimate(character)) {
       this.performUltimate(character, target, currentTick)
     } else {
       this.performNormalAttack(character, target, currentTick)
     }
   }
+  /** 判斷是否能施放大招 */
+  private canUseUltimate(character: ICharacter): boolean {
+    const currentEnergy = character.getAttribute('currentEnergy') ?? 0
+    const maxEnergy = character.getAttribute('maxEnergy') ?? UltimateEnergy.COST
+    return currentEnergy >= maxEnergy
+  }
+  /** 執行普通攻擊邏輯 */
   private performNormalAttack(character: ICharacter, target: ICharacter, currentTick: number): void {
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
@@ -57,6 +62,7 @@ export class AttackExecutor {
       }
     }
   }
+  /** 執行終極技能邏輯 */
   private performUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
     character.setBaseAttribute('currentEnergy', 0)
     const ultimate = character.getUltimate(this.context)
@@ -66,6 +72,7 @@ export class AttackExecutor {
     }
     ultimate.execute(character.id, this.context)
   }
+  /** 執行預設終極技能行為 */
   private performDefaultUltimate(character: ICharacter, target: ICharacter, currentTick: number): void {
     this.context.eventBus.emit('entity:attack', {
       sourceId: character.id,
