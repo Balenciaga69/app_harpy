@@ -1,7 +1,7 @@
 import type { IEquipmentInstance } from '@/domain/item'
 import type { AttributeModifier } from '@/logic/attribute-system'
-import { AFFIX_MAPPING_LOOKUP } from './affix-registry'
-import { createModifierFromAffix } from './affix-attribute-mapping' /**
+import { AFFIX_MAPPING_LOOKUP } from '../registries/affix-registry'
+import { createModifierFromAffix } from '../attribute-mappings/affix-attribute-mapping' /**
  * 裝備屬性處理器
  *
  * 將裝備實例的詞綴轉換為屬性修飾器。

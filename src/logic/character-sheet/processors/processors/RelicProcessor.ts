@@ -1,7 +1,7 @@
 import type { IRelicInstance } from '@/domain/item'
 import type { AttributeModifier } from '@/logic/attribute-system'
 import type { BaseAttributeValues } from '@/domain/attribute'
-import { RELIC_MAPPING_LOOKUP } from './relic-registry' /**
+import { RELIC_MAPPING_LOOKUP } from '../registries/relic-registry' /**
  * 遺物屬性處理器
  *
  * 將遺物實例轉換為屬性修飾器。

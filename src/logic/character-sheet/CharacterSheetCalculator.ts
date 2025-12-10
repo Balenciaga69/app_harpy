@@ -2,8 +2,8 @@ import type { AttributeType } from '@/domain/attribute'
 import { AttributeManager, AttributeCalculator } from '@/logic/attribute-system'
 import type { ICharacterSheet } from './models/character-sheet'
 import type { ICharacterSheetInput } from './models/sheet-input'
-import { EquipmentProcessor } from './processors/EquipmentProcessor'
-import { RelicProcessor } from './processors/RelicProcessor' /**
+import { EquipmentProcessor } from './processors/processors/EquipmentProcessor'
+import { RelicProcessor } from './processors/processors/RelicProcessor' /**
  * 角色屬性面板計算器
  *
  * 負責計算角色的最終屬性面板（靜態數據，用於 UI 展示）。

@@ -1,4 +1,4 @@
-import type { IRelicAttributeMapping } from './relic-attribute-mapping'
+import type { IRelicAttributeMapping } from '../attribute-mappings/relic-attribute-mapping'
 import { nanoid } from 'nanoid' /**
  * 遺物屬性映射註冊表
  *

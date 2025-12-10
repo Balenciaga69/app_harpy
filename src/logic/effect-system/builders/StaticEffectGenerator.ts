@@ -1,53 +1,7 @@
 import type { AttributeType } from '@/domain/attribute'
 import type { IEffect } from '../models/effect'
-import type { IEffectServices } from '../models/effect-services'
-import type { AttributeModifier } from '@/logic/attribute-system'
 import { InvalidStaticEffectError } from '../errors'
-import { nanoid } from 'nanoid'
-/**
- * 靜態屬性效果
- *
- * 輕量級效果實作，僅提供屬性加成，不註冊任何鉤子。
- * 用於 effect_static_* 類型的效果模板。
- */
-class StaticAttributeEffect implements IEffect {
-  readonly id: string
-  readonly name: string
-  readonly cleanseOnRevive: boolean = false
-  private attributeType: AttributeType
-  private value: number
-  private modifierId: string
-  constructor(attributeType: AttributeType, value: number, displayName: string) {
-    this.id = `static-${attributeType}-${nanoid(6)}`
-    this.modifierId = `modifier-${this.id}`
-    this.name = displayName
-    this.attributeType = attributeType
-    this.value = value
-  }
-  onApply(characterId: string, services: IEffectServices): void {
-    const character = services.getCharacter(characterId)
-    const modifier: AttributeModifier = {
-      id: this.modifierId,
-      type: this.attributeType,
-      value: this.value,
-      mode: 'add',
-      source: this.name,
-    }
-    character.addAttributeModifier(modifier)
-  }
-  onRemove(characterId: string, services: IEffectServices): void {
-    const character = services.getCharacter(characterId)
-    character.removeAttributeModifier(this.modifierId)
-  }
-  /** 取得屬性類型 */
-  getAttributeType(): AttributeType {
-    return this.attributeType
-  }
-  /** 取得數值 */
-  getValue(): number {
-    return this.value
-  }
-}
+import { StaticAttributeEffect } from '../models/static-attribute-effect'
 /**
  * 靜態效果生成器
  *
