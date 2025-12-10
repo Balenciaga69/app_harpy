@@ -40,6 +40,7 @@ export class EquipmentGenerator {
     // 1. 取得裝備定義
     const definition = this.itemRegistry.get(definitionId) as IEquipmentDefinition | undefined
     if (!definition) {
+      //TODO: 用 item generator 專屬的 error
       throw new Error(`Equipment definition not found: ${definitionId}`)
     }
     // 2. 初始化隨機數生成器

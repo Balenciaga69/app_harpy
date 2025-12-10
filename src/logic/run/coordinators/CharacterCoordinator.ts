@@ -17,6 +17,7 @@ export class CharacterCoordinator {
   getCharacter(_context: RunContext): unknown {
     // TODO: 調用 CharacterManager.getCharacter(context.characterId)
     if (!_context.characterId) {
+      //TODO: 用 Run 專屬的 error
       throw new Error('尚未選擇角色')
     }
     return null // placeholder

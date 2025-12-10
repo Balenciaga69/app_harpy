@@ -27,7 +27,7 @@ export const AttributeDefaults = {
   criticalChance: 0.05, // 5%
   criticalMultiplier: 1.5, // 150%
   // === Resurrection related ===
-  resurrectionChance: 0, // 預設 0%（無復活）
+  resurrectionChance: 0.05, // 預設 5%
   resurrectionHpPercent: 0.1, // 復活後恢復 10% HP
 } as const
 /** 屬性上下限（用於驗證） */

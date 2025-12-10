@@ -28,6 +28,7 @@ export class RelicGenerator {
   generateRelic(definitionId: string): IRelicInstance {
     const definition = this.itemRegistry.get(definitionId) as IRelicDefinition | undefined
     if (!definition) {
+      //TODO: 用 item generator 專屬的 error
       throw new Error(`Relic definition not found: ${definitionId}`)
     }
     return {

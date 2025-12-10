@@ -10,7 +10,6 @@ export const IRON_SWORD: IEquipmentDefinition = {
   minAffixes: 1,
   maxAffixes: 2,
   slot: 'weapon',
-  baseStats: {},
   rarity: 'common',
 }
 export const STEEL_SWORD: IEquipmentDefinition = {
@@ -20,7 +19,6 @@ export const STEEL_SWORD: IEquipmentDefinition = {
   minAffixes: 2,
   maxAffixes: 3,
   slot: 'weapon',
-  baseStats: {},
   rarity: 'rare',
 }
 /* 頭盔 */
@@ -31,7 +29,6 @@ export const IRON_HELMET: IEquipmentDefinition = {
   minAffixes: 1,
   maxAffixes: 2,
   slot: 'helmet',
-  baseStats: {},
   rarity: 'common',
 }
 export const STEEL_HELMET: IEquipmentDefinition = {
@@ -41,7 +38,6 @@ export const STEEL_HELMET: IEquipmentDefinition = {
   minAffixes: 2,
   maxAffixes: 3,
   slot: 'helmet',
-  baseStats: {},
   rarity: 'rare',
 }
 /* 傳說頭盔：宙斯頭 */
@@ -52,7 +48,6 @@ export const ZEUS_HELM: IEquipmentDefinition = {
   minAffixes: 2,
   maxAffixes: 2,
   slot: 'helmet',
-  baseStats: {},
   rarity: 'legendary',
 }
 /* 盔甲 */
@@ -63,7 +58,6 @@ export const IRON_ARMOR: IEquipmentDefinition = {
   minAffixes: 1,
   maxAffixes: 2,
   slot: 'armor',
-  baseStats: {},
   rarity: 'common',
 }
 export const STEEL_ARMOR: IEquipmentDefinition = {
@@ -73,7 +67,6 @@ export const STEEL_ARMOR: IEquipmentDefinition = {
   minAffixes: 2,
   maxAffixes: 4,
   slot: 'armor',
-  baseStats: {},
   rarity: 'rare',
 }
 /* 鞋子（可 Roll 任意類型） */
@@ -84,7 +77,6 @@ export const LEATHER_BOOTS: IEquipmentDefinition = {
   minAffixes: 1,
   maxAffixes: 3,
   slot: 'boots',
-  baseStats: {},
   rarity: 'magic',
 }
 /* 手套（可 Roll 任意類型） */
@@ -95,7 +87,6 @@ export const WARRIOR_GLOVES: IEquipmentDefinition = {
   minAffixes: 2,
   maxAffixes: 3,
   slot: 'gloves',
-  baseStats: {},
   rarity: 'magic',
 }
 /* 統一導出 */
