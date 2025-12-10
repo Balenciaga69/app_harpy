@@ -12,8 +12,6 @@ export type { IItemDefinition, IEquipmentDefinition, IRelicDefinition, Equipment
 export type { IEquipmentInstance, IRelicInstance } from './definitions/item-instance'
 // === Affixes ===
 export type { IAffixDefinition, AffixTier, IAffixInstance } from './affixes'
-export { AffixRoller } from './affixes'
-export type { IRng } from './affixes/AffixRoller'
 // === Projections ===
 export type { ICombatItemView, IInventoryItemView, IUIItemView } from './projections'
 // === Factories ===

@@ -7,7 +7,8 @@
 import seedrandom from 'seedrandom'
 import { nanoid } from 'nanoid'
 import type { IEquipmentDefinition, IEquipmentInstance, IAffixDefinition, IAffixInstance } from '@/domain/item'
-import { AffixRoller, ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/domain/item'
+import { AffixRoller } from '../AffixRoller'
+import { ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/domain/item'
 import type { IAffixFilter } from '../strategies'
 import { SlotBasedFilter } from '../strategies'
 /**

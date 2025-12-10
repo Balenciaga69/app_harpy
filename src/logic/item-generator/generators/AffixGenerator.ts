@@ -5,7 +5,7 @@
  * 使用策略模式應用過濾邏輯。
  */
 import type { IAffixDefinition } from '@/domain/item'
-import { AffixRoller } from '@/domain/item'
+import { AffixRoller } from '../AffixRoller'
 import type { IAffixFilter } from '../strategies'
 /**
  * AffixGenerator 配置

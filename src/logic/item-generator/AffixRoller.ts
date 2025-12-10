@@ -1,5 +1,5 @@
-import type { IAffixDefinition } from './affix-definition'
-import type { IAffixInstance } from './affix-instance'
+import type { IAffixDefinition } from '@/domain/item'
+import type { IAffixInstance } from '@/domain/item'
 /** 隨機數產生器介面，跨語言友好 */
 export interface IRng {
   /** 產生 0~1 之間的隨機數 */

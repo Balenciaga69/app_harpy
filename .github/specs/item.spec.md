@@ -67,10 +67,6 @@ Item Module 是整個遊戲中「物品系統」的基礎設施，提供：
 - ItemDefinitionRegistry：物品定義註冊表，提供物品定義的註冊和查詢。
 - AffixDefinitionRegistry：詞綴定義註冊表，提供詞綴定義的註冊和查詢。
 
-### 工具元件
-
-- AffixRoller：詞綴滾動器，負責根據定義生成隨機詞綴實例。
-
 ### 效果相關元件
 
 - IEffectTemplateInfo：效果模板資訊介面，包含模板 ID 和對應詞綴實例，提供給 Logic 層建構具體效果。
