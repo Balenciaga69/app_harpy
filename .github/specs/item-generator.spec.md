@@ -51,4 +51,3 @@ Item-Generator 模組負責生成遊戲中的物品實例，包括裝備和遺�
 - logic/run：遊戲運行模組，依賴物品生成器創建敵人裝備
 - logic/shop：商店模組，依賴物品生成器提供商品
 - UI 層：物品顯示，依賴生成的物品實例進行介面渲染</content>
-  <parameter name="filePath">g:\Coding\app_harpy\.github\specs\item-generator.spec.md
