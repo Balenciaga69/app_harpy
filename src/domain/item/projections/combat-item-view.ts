@@ -8,8 +8,8 @@ import type { IAffixInstance } from '../affixes'
 export interface ICombatItemView {
   /** 物品唯一識別碼 */
   readonly id: string
-  /** 對應的效果模板 ID 列表 */
-  readonly effectTemplateIds: readonly string[]
   /** 已生成的詞綴實例列表 */
   readonly affixInstances: readonly IAffixInstance[]
+  /** 堆疊數量（僅遺物有效） */
+  readonly stackCount?: number
 }

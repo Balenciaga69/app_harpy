@@ -7,9 +7,7 @@
 export interface IItemDefinition {
   /** 唯一識別碼 */
   readonly id: string
-  /** 對應的效果模板 ID 列表，用於生成戰鬥效果 */
-  readonly effectTemplateIds: readonly string[]
-  /** 可用詞綴池 ID 列表，用於隨機生成詞綴 */
+  /** 可用詞綴池 ID 列表,用於隨機生成詞綴 */
   readonly affixPoolIds: readonly string[]
   /** 最小詞綴數量 */
   readonly minAffixes: number

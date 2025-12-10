@@ -12,7 +12,6 @@ export class CombatItemFactory {
   create(definition: IItemDefinition, affixInstances: IAffixInstance[]): ICombatItemView {
     return {
       id: definition.id,
-      effectTemplateIds: [...definition.effectTemplateIds],
       affixInstances: [...affixInstances],
     }
   }

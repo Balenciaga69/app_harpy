@@ -1,37 +1,52 @@
 import type { IAffixInstance } from '../affixes'
 import type { ICombatItemView } from '../projections'
-/** 效果建構函數類型 */
-export type EffectBuilder<TEffect> = (affixInstance: IAffixInstance) => TEffect
+import type { AffixDefinitionRegistry } from '../registries'
+/**
+ * EffectTemplateInfo
+ *
+ * 效果模板資訊，包含模板 ID 與對應的詞綴實例。
+ * Domain 層提供此資訊給 Logic 層建構具體效果。
+ */
+export interface IEffectTemplateInfo {
+  /** 效果模板 ID */
+  readonly templateId: string
+  /** 產生此效果的詞綴實例 */
+  readonly affixInstance: IAffixInstance
+}
 /**
  * EffectFactory
  *
- * 將效果模板 ID 與詞綴實例轉換為具體的效果實例。
- * 使用註冊機制，允許外部註冊效果建構邏輯。
- * 泛型設計，可適配不同的效果介面實作。
+ * 負責從物品的詞綴實例提取效果模板資訊。
+ * 不負責實際建構效果實例，避免 domain 層依賴 logic 層。
+ * 提供純資料轉換功能。
  */
-export class EffectFactory<TEffect> {
-  private readonly builders = new Map<string, EffectBuilder<TEffect>>()
-  /** 註冊效果建構器 */
-  register(templateId: string, builder: EffectBuilder<TEffect>): void {
-    this.builders.set(templateId, builder)
+export class EffectFactory {
+  private affixRegistry: AffixDefinitionRegistry
+  constructor(affixRegistry: AffixDefinitionRegistry) {
+    this.affixRegistry = affixRegistry
   }
-  /** 根據詞綴實例生成效果（需已註冊對應的效果模板） */
-  createFromAffix(templateId: string, affixInstance: IAffixInstance): TEffect | null {
-    const builder = this.builders.get(templateId)
-    if (!builder) return null
-    return builder(affixInstance)
-  }
-  /** 從戰鬥物品視角生成所有效果 */
-  createFromCombatItem(itemView: ICombatItemView): TEffect[] {
-    const effects: TEffect[] = []
-    for (const affixInstance of itemView.affixInstances) {
-      const effect = this.createFromAffix(affixInstance.definitionId, affixInstance)
-      if (effect) effects.push(effect)
+  /**
+   * 從單個詞綴實例提取效果模板資訊
+   */
+  createFromAffix(affixInstance: IAffixInstance): IEffectTemplateInfo | null {
+    const affixDef = this.affixRegistry.get(affixInstance.definitionId)
+    if (!affixDef) return null
+    return {
+      templateId: affixDef.effectTemplateId,
+      affixInstance: affixInstance,
     }
-    return effects
   }
-  /** 檢查是否已註冊指定的效果模板 */
-  hasBuilder(templateId: string): boolean {
-    return this.builders.has(templateId)
+  /**
+   * 從戰鬥物品視角提取所有效果模板資訊
+   */
+  createFromCombatItem(itemView: ICombatItemView): IEffectTemplateInfo[] {
+    const effectInfos: IEffectTemplateInfo[] = []
+    for (const affixInstance of itemView.affixInstances) {
+      const effectInfo = this.createFromAffix(affixInstance)
+      if (effectInfo) {
+        effectInfos.push(effectInfo)
+      }
+    }
+    return effectInfos
   }
 }
