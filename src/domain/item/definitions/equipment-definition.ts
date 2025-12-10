@@ -1,7 +1,7 @@
 import type { EquipmentSlot } from '../equipment-slot'
 import type { IItemDefinition } from './item-definition'
 /** 裝備稀有度 */
-export type EquipmentRarity = 'common' | 'magic' | 'rare' | 'legendary'
+export type ItemRarity = 'common' | 'magic' | 'rare' | 'legendary'
 /**
  * IEquipmentDefinition
  *
@@ -10,5 +10,5 @@ export type EquipmentRarity = 'common' | 'magic' | 'rare' | 'legendary'
  */
 export interface IEquipmentDefinition extends IItemDefinition {
   readonly slot: EquipmentSlot
-  readonly rarity: EquipmentRarity
+  readonly rarity: ItemRarity
 }
