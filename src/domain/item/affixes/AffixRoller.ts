@@ -39,11 +39,10 @@ export class AffixRoller {
   }
   /** 從 affix pool 中依權重隨機選取指定數量的 affix。 */
   private selectFromPool(pool: IAffixDefinition[], count: number): IAffixDefinition[] {
-    const totalWeight = pool.reduce((sum, def) => sum + def.weight, 0)
     const selected: IAffixDefinition[] = []
     const remaining = [...pool]
     for (let i = 0; i < count && remaining.length > 0; i++) {
-      const pick = this.weightedPick(remaining, totalWeight)
+      const pick = this.weightedPick(remaining)
       if (pick) {
         selected.push(pick)
         const idx = remaining.indexOf(pick)
@@ -52,8 +51,8 @@ export class AffixRoller {
     }
     return selected
   }
-  /** 根據權重隨機選取一個定義。 */
-  private weightedPick(pool: IAffixDefinition[], _totalWeight: number): IAffixDefinition | null {
+  /** 根據權重隨機選取一個 AffixDefinition。 */
+  private weightedPick(pool: IAffixDefinition[]): IAffixDefinition | null {
     const currentTotal = pool.reduce((sum, def) => sum + def.weight, 0)
     if (currentTotal <= 0) return null
     let roll = this.rng.next() * currentTotal
@@ -66,7 +65,7 @@ export class AffixRoller {
   /** 根據詞綴定義隨機生成一個詞綴實例 */
   private createInstance(def: IAffixDefinition): IAffixInstance {
     const range = def.maxValue - def.minValue
-    const rolledValue = def.minValue + this.rng.next() * range
+    const rolledValue = range === 0 ? def.minValue : def.minValue + this.rng.next() * range
     return {
       definitionId: def.id,
       rolledValue: Math.round(rolledValue * 100) / 100,

@@ -16,6 +16,7 @@ export class CombatEffectServices implements ICombatEffectServices {
   getCharacter(characterId: string): ICharacterFacade {
     const char = this.context.registry.getCharacter(characterId) as ICharacter
     if (!char) {
+      //TODO: 用 combat 專屬的error
       throw new Error(`[CombatEffectServices] Character ${characterId} not found`)
     }
     // 返回符合 ICharacterFacade 的最小介面

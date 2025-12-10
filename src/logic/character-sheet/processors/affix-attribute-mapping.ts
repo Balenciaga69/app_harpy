@@ -1,4 +1,5 @@
 import type { AttributeType } from '@/domain/attribute'
+import type { IAffixDefinition } from '@/domain/item'
 import type { AttributeModifier } from '@/logic/attribute-system' /**
  * 詞綴屬性映射配置
  *
@@ -6,8 +7,7 @@ import type { AttributeModifier } from '@/logic/attribute-system' /**
  * 用於靜態計算（非戰鬥內動態效果）。
  */
 export interface IAffixAttributeMapping {
-  /** 詞綴定義 ID（來自 IAffixDefinition.id） */
-  readonly affixId: string
+  readonly affixId: IAffixDefinition['id']
   /** 影響的屬性類型 */
   readonly attributeType: AttributeType
   /** 修飾器模式（加法或乘法） */
