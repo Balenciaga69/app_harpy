@@ -5,6 +5,10 @@
 - 重新思考 Item 與 Affix 與 Effect 的關係
 - 打算砍掉重寫 Item 模組，且不管依賴。(趁還在開發草圖階段)
 
+### v0.4.2(item,effect-system):
+
+- 重構 Item 模組與 Effect-System 模組
+
 ## _2025/12/10_
 
 ### v0.4.2(shop):

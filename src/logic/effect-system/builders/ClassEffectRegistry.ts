@@ -35,19 +35,12 @@ export class ClassEffectRegistry {
   }
   /**
    * 註冊 Class 效果
-   *
-   * @param classId 效果 Class ID (e.g., 'effect_class_blood_pact')
-   * @param constructor 效果建構函式
    */
   register(classId: string, constructor: EffectConstructor): void {
     this.registry.set(classId, constructor)
   }
   /**
    * 取得 Class 效果建構函式
-   *
-   * @param classId 效果 Class ID
-   * @returns 效果建構函式
-   * @throws ClassNotRegisteredError 當 Class 未註冊時
    */
   getConstructor(classId: string): EffectConstructor {
     const constructor = this.registry.get(classId)
