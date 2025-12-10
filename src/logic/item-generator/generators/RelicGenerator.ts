@@ -34,7 +34,9 @@ export class RelicGenerator {
     return {
       id: nanoid(),
       definitionId: definition.id,
+      rarity: definition.rarity,
       stackCount: 1, // 預設堆疊 1
+      affixes: [], // 遺物通常沒有隨機詞綴
     }
   }
 }

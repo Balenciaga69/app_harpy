@@ -18,7 +18,7 @@ export type { IRng } from './affixes/AffixRoller'
 export type { ICombatItemView, IInventoryItemView, IUIItemView } from './projections'
 // === Factories ===
 export { CombatItemFactory, EffectFactory } from './factories'
-export type { EffectBuilder } from './factories'
+export type { IEffectTemplateInfo } from './factories'
 // === Registries ===
 export { ItemDefinitionRegistry, AffixDefinitionRegistry } from './registries'
 // === Errors ===

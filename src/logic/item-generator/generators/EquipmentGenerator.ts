@@ -6,7 +6,7 @@
  */
 import seedrandom from 'seedrandom'
 import { nanoid } from 'nanoid'
-import type { IEquipmentDefinition, IEquipmentInstance, IAffixDefinition } from '@/domain/item'
+import type { IEquipmentDefinition, IEquipmentInstance, IAffixDefinition, IAffixInstance } from '@/domain/item'
 import { AffixRoller, ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/domain/item'
 import type { IAffixFilter } from '../strategies'
 import { SlotBasedFilter } from '../strategies'
@@ -56,6 +56,7 @@ export class EquipmentGenerator {
     return {
       id: nanoid(),
       definitionId: definition.id,
+      slot: definition.slot,
       rarity: definition.rarity,
       affixes,
     }
@@ -98,9 +99,9 @@ export class EquipmentGenerator {
     availableAffixes: IAffixDefinition[],
     count: number,
     rng: { next: () => number }
-  ): Array<{ affixId: string; value: number }> {
+  ): IAffixInstance[] {
     if (availableAffixes.length === 0) return []
-    const result: Array<{ affixId: string; value: number }> = []
+    const result: IAffixInstance[] = []
     const used = new Set<string>()
     // 使用 AffixRoller 擲骰
     const roller = new AffixRoller(rng, availableAffixes)
@@ -115,8 +116,8 @@ export class EquipmentGenerator {
       )
       if (instances.length === 0) break
       const instance = instances[0]
-      // IAffixInstance 使用的欄位為 definitionId / rolledValue
-      result.push({ affixId: instance.definitionId, value: instance.rolledValue })
+      // 正確使用 IAffixInstance 的欄位
+      result.push({ definitionId: instance.definitionId, rolledValue: instance.rolledValue })
       used.add(instance.definitionId)
     }
     return result

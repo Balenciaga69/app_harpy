@@ -12,6 +12,18 @@
 // 核心類別
 export { EffectManager } from './EffectManager'
 export { StackableEffect } from './models/stackable-effect'
+// 效果建構器
+export { EffectBuilder, StaticEffectGenerator, ClassEffectRegistry } from './builders'
+export type { EffectConstructor } from './builders'
+// 配置與註冊
+export { registerDefaultClassEffects } from './config'
+// 錯誤類別
+export {
+  EffectBuilderError,
+  UnknownEffectTemplateError,
+  InvalidStaticEffectError,
+  ClassNotRegisteredError,
+} from './errors'
 // 介面定義
 export type { IEffect } from './models/effect'
 export type { IEffectLifeHook, ICharacterStateHook, ICombatEffectHook } from './models/effect-hooks'

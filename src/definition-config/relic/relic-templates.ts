@@ -8,10 +8,10 @@ import type { IRelicDefinition } from '@/domain/item'
  */
 export const TITANS_HEART: IRelicDefinition = {
   id: 'titans_heart',
-  effectTemplateIds: ['effect_titans_heart_hp_to_armor'], // 特殊效果：HP 轉護甲
   affixPoolIds: [], // Relic 無隨機詞綴
   minAffixes: 0,
   maxAffixes: 0,
   stackable: true, // 可疊加
   maxStack: 99, // 最大 99 個
+  rarity: 'legendary', // 傳說級遺物
 }

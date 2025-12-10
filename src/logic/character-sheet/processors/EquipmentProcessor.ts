@@ -17,12 +17,12 @@ export class EquipmentProcessor {
   process(equipment: IEquipmentInstance): AttributeModifier[] {
     const modifiers: AttributeModifier[] = []
     for (const affix of equipment.affixes) {
-      const mapping = AFFIX_MAPPING_LOOKUP.get(affix.affixId)
+      const mapping = AFFIX_MAPPING_LOOKUP.get(affix.definitionId)
       // 若詞綴未在映射表中註冊，則跳過（可能是純效果型詞綴）
       if (!mapping) {
         continue
       }
-      const modifier = createModifierFromAffix(affix.affixId, affix.value, mapping)
+      const modifier = createModifierFromAffix(affix.definitionId, affix.rolledValue, mapping)
       modifiers.push(modifier)
     }
     return modifiers

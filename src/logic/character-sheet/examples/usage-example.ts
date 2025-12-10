@@ -29,19 +29,21 @@ export function exampleCalculateWarriorSheet() {
     {
       id: 'equipment-001',
       definitionId: 'basic_sword',
+      slot: 'weapon',
       rarity: 'magic',
       affixes: [
-        { affixId: 'affix_attack_damage', value: 25 }, // +25 攻擊力
-        { affixId: 'affix_critical_chance', value: 0.08 }, // +8% 暴擊率
+        { definitionId: 'affix_attack_damage', rolledValue: 25 }, // +25 攻擊力
+        { definitionId: 'affix_critical_chance', rolledValue: 0.08 }, // +8% 暴擊率
       ],
     },
     {
       id: 'equipment-002',
       definitionId: 'leather_armor',
+      slot: 'armor',
       rarity: 'rare',
       affixes: [
-        { affixId: 'affix_max_hp', value: 100 }, // +100 血量
-        { affixId: 'affix_armor', value: 15 }, // +15 護甲
+        { definitionId: 'affix_max_hp', rolledValue: 100 }, // +100 血量
+        { definitionId: 'affix_armor', rolledValue: 15 }, // +15 護甲
       ],
     },
   ] // 3. 準備遺物實例（範例：泰坦之心，將 HP 轉換為護甲）
@@ -49,7 +51,9 @@ export function exampleCalculateWarriorSheet() {
     {
       id: 'relic-001',
       definitionId: 'titans_heart',
+      rarity: 'legendary',
       stackCount: 2, // 堆疊 2 個
+      affixes: [], // 遺物通常沒有隨機詞綴
     },
   ] // 4. 創建計算器並執行計算
   const calculator = new CharacterSheetCalculator()
@@ -64,5 +68,6 @@ export function exampleCalculateWarriorSheet() {
   console.log('最終血量:', sheet.attributes.maxHp) // 500 + 100 = 600
   console.log('最終護甲:', sheet.attributes.armor) // 20 + 15 + (600/10)*2*2 = 20 + 15 + 240 = 275
   console.log('裝備修飾器數量:', sheet.equipmentModifierCount) // 4
-  console.log('遺物修飾器數量:', sheet.relicModifierCount) // 1  return sheet
+  console.log('遺物修飾器數量:', sheet.relicModifierCount) // 1
+  return sheet
 }

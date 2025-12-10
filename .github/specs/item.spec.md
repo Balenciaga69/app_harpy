@@ -74,6 +74,7 @@ Item Module 是整個遊戲中「物品系統」的基礎設施，提供：
 ### 效果相關元件
 
 - IEffectTemplateInfo：效果模板資訊介面，包含模板 ID 和對應詞綴實例，提供給 Logic 層建構具體效果。
+- effectTemplateId 命名慣例：effect*static*_（靜態屬性效果）與 effect*class*_（複雜 Class 實作效果）。
 
 ### 概念元件
 
@@ -134,9 +135,16 @@ Item Module 是整個遊戲中「物品系統」的基礎設施，提供：
 - 低耦合：Combat Engine 只接收 IEffect[]，不知 Item 的存在
 - 可移植性：資料結構 JSON 友好，便於跨語言實作
 
+### Effect 分類與處理
+
+effectTemplateId 採用命名慣例區分效果複雜度：
+
+- **effect*static*\***：靜態屬性效果，僅在 onApply/onRemove 時修改屬性，由 Logic 層自動生成輕量級實例
+- **effect*class*\***：複雜條件效果，需要狀態追蹤或事件監聽，由 Logic 層實例化對應的 Class 實作
+
 ### 資料流程
 
-物品實例 (IEquipmentInstance/IRelicInstance) → 詞綴實例 (IAffixInstance[]) → 詞綴定義 (IAffixDefinition.effectTemplateId) → 效果模板資訊 (IEffectTemplateInfo) → 具體效果 (IEffect)
+物品實例 (IEquipmentInstance/IRelicInstance) → 詞綴實例 (IAffixInstance[]) → 詞綴定義 (IAffixDefinition.effectTemplateId) → 效果模板資訊 (IEffectTemplateInfo) → **效果建構器 (EffectBuilder)** → 具體效果 (IEffect)
 
 #### 從物品轉換成效果的詳細流程圖(僅說明)
 
@@ -148,6 +156,9 @@ Item Module 是整個遊戲中「物品系統」的基礎設施，提供：
 詞綴定義 (IAffixDefinition.effectTemplateId)
     ↓ 由 EffectFactory 封裝為
 效果模板資訊 (IEffectTemplateInfo)
-    ↓ 由 Logic 層使用
+    ↓ 由 Logic 層 EffectBuilder 處理
+effect_static_* → 自動生成輕量級實例
+effect_class_* → 實例化對應 Class
+    ↓ 輸出
 具體效果 (IEffect)
 ```
