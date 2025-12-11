@@ -22,7 +22,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - 開發前的計畫: \*.plan.md
 - 與使用者交互討論的文件: \*.discussion.md
 
-## 一份好的 spec.md 如何製造?
+## 一份好的 spec.md 如何生成或修改
 
 - 你扮演資深架構師的角色
 - 簡短乾淨每個段落都能在 15 秒內閱讀完畢
@@ -32,3 +32,6 @@ Provide project context and coding guidelines that AI should follow when generat
   - 輸入與輸出: 說明模組的主要輸入與輸出
   - 元件盤點: 對每個我提供的檔案提取出元件簡潔的介紹功能(按照元件而非檔案)
   - 模組依賴誰?或被誰依賴?: 說明模組的依賴關係
+- 有一個很特別的段落叫做 開發者的碎碎念:
+  - 這個段落的內容並非由你生成，而是我手動寫在上面的
+  - 當你更新時，你要保留這個段落的內容不變(頂多修改排版)
