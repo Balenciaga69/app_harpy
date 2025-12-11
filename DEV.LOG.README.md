@@ -2,16 +2,15 @@
 
 ## _2025/12/11_
 
-- 重新思考 Item 與 Affix 與 Effect 的關係
-
-### v0.4.2(item,effect-system):
-
-- 重構 Item 模組與 Effect-System 模組
+- 將 Typescript 專案建立 monorepo 結構
+- 研究更強硬性的單向依賴結構
 
 ## _2025/12/10_
 
-### v0.4.2(shop):
+### v0.4.2(shop,item,effect-system):
 
+- 重新思考 Item 與 Affix 與 Effect 的關係
+- 重構 Item 模組與 Effect-System 模組
 - 建立商店模組
 
 ## _2025/12/09_
