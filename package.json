@@ -17,7 +17,6 @@
     "preview": "pnpm --filter @app_harpy/frontend preview",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\""
   },
-  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
@@ -26,12 +25,13 @@
     "autoprefixer": "^10.4.22",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-boundaries": "^5.3.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.24",
-    "eslint-plugin-boundaries": "^5.3.1",
     "globals": "^16.5.0",
     "madge": "^8.0.0",
     "postcss": "^8.5.3",

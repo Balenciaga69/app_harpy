@@ -2,12 +2,13 @@
 
 ## _2025/12/11_
 
-- 將 Typescript 專案建立 monorepo 結構
-- 研究更強硬性的單向依賴結構
+### v0.4.2
+
+- 添加 DDD 邊界限制 eslint 與 monorepo 結構
 
 ## _2025/12/10_
 
-### v0.4.2(shop,item,effect-system):
+### v0.4.2:
 
 - 重新思考 Item 與 Affix 與 Effect 的關係
 - 重構 Item 模組與 Effect-System 模組
@@ -15,7 +16,7 @@
 
 ## _2025/12/09_
 
-### v0.4.2(item-generator,definition-config):
+### v0.4.2:
 
 - 建立第一個職業戰士角色範例與對應的裝備池
 - 建立裝備生成系統
@@ -25,17 +26,17 @@
 - 從 combat 抽離屬性、效果、裝備等邏輯，遷移到 domain 模組
 - 重新定義 combat 就是一個 屬性、效果、大招交織的戰鬥運算引擎
 
-### v0.4.1(domain,combat):
+### v0.4.1:
 
 - 移除 combat 中定義 attribute, effect, item 等領域邏輯
-- 新增 這些 domain 內容的適配器與對應代碼
+- 新增domain 內容的適配器與對應代碼
 
 ## _2025/12/07_
 
 - 盤點領域資料內容，現在開發其他模組發現 Combat Engine 裡面有很多重複的東西
 - 打算新建 domain/item 模組，專門處理裝備、遺物、詞綴等相關邏輯以便未來生成裝備／庫存／戰鬥使用
 
-### v0.4.1(domain,combat):
+### v0.4.1:
 
 - 新增 domain/item 模組，把裝備、遺物、詞綴相關邏輯獨立出來
 - 重構 logic/combat 模組，移除與裝備、遺物、詞綴領域相關的邏輯

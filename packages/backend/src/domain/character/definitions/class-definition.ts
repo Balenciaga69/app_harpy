@@ -1,3 +1,5 @@
+import { CombatContext } from '@/app'
+import { CombatEventBus } from '@/app/combat/infra/event-bus'
 import type { AttributeType } from '@/domain/attribute'
 /**
  * IClassDefinition
@@ -15,3 +17,4 @@ export interface IClassDefinition {
   /** 職業專屬裝備池 ID 列表 */
   readonly equipmentPoolIds: readonly string[]
 }
+const x = new CombatEventBus()
