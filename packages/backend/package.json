@@ -13,8 +13,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
+    "chance": "^1.1.13",
     "mitt": "^3.0.1",
-    "chance": "^1.1.13"
+    "nanoid": "^5.1.6"
   },
   "devDependencies": {
     "typescript": "^5.9.3"

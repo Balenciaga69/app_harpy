@@ -147,7 +147,7 @@
 
 ### 後端純運算模組(不共享 EventBus)
 
-- [幾乎完工]CombatEngine（瞬間運算戰鬥 + 返回戰鬥日誌）
+- CombatEngine（瞬間運算戰鬥 + 返回戰鬥日誌）
 - CharacterModifierSystem 根據基礎屬性、裝備、遺物、Buff，計算出角色最終屬性面板。
 - DifficultyScaler 根據 Run 進度（關卡層數）或其他因子，計算當前難度係數。
 - ItemGenerator 根據難度係數與職業，獨立生成裝備和遺物（帶有隨機屬性）。
@@ -166,4 +166,4 @@
 
 ### 前端模組
 
-- [幾乎完工]Replay: 戰鬥重播模組 (含時間條控制)
+- Replay: 戰鬥重播模組 (含時間條控制)

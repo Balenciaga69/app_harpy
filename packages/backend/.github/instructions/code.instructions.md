@@ -65,6 +65,7 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
 - 我們做邏輯(非UI)的內容一律以未來邏輯內容能被 CSharp Python Go 等語言無痛轉移為優先考量
 - 再遷移時候不會煩惱依賴某套件、或者耦合某個框架
 - 我們使用了模組化架構來做專案結構
+- 這個專案導入了 嚴格的邊界限制 與 DDD 思想 (app,domain,api,infra)，違反將無法編譯
 - 專案理論上可以被拆成前端與後端與獨立微服務之間不該有耦合，(除非共享契約與邏輯)
 - 我們使用了 TS 套件包括:
 - 純 TS 套件
