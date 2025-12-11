@@ -1,13 +1,13 @@
 import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
-import type { CharacterSnapshot } from '@/logic/combat/infra/shared/index.ts'
-import { EffectManager, type IEffect } from '@/logic/effect-system/index.ts'
+import type { CharacterSnapshot } from '@/logic/combat/infra/shared/index'
+import { EffectManager, type IEffect } from '@/logic/effect-system/index'
 import { nanoid } from 'nanoid'
-import { AttributeCalculator, AttributeManager, type AttributeModifier } from '../attribute/index.ts'
-import type { IUltimateAbility } from '../ultimate/index.ts'
-import { UltimateManager } from '../ultimate/UltimateManager.ts'
-import type { ICharacter } from './models/character.ts'
-import type { ICombatContext } from '../../context/combat-context.ts'
-import { CombatEffectServices } from '../../adapters/CombatEffectServices.ts'
+import { AttributeCalculator, AttributeManager, type AttributeModifier } from '../attribute/index'
+import type { IUltimateAbility } from '../ultimate/index'
+import { UltimateManager } from '../ultimate/UltimateManager'
+import type { ICharacter } from './models/character'
+import type { ICombatContext } from '../../context/combat-context'
+import { CombatEffectServices } from '../../adapters/CombatEffectServices'
 /**
  * 角色初始化所需的設定參數
  */
