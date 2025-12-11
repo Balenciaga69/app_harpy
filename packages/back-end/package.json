@@ -1,0 +1,20 @@
+{
+  "name": "@app-harpy/back-end",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "jest"
+  },
+  "dependencies": {
+    "mitt": "^3.0.1",
+    "chance": "^1.1.13"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
