@@ -1,5 +1,5 @@
 {
-  "name": "@app-harpy/back-end",
+  "name": "@app-harpy/backend",
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
