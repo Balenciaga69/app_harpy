@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
 import type { CombatEventMap } from './models/combat-event-map'
 import type { IEventBus } from '@/app/shared/event-bus'
