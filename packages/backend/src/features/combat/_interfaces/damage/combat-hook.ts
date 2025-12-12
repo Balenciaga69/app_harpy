@@ -7,6 +7,7 @@ import type { DamageEvent } from './damage-event'
  * Allow characters, equipment, effects, etc. to inject custom logic
  */
 export interface ICombatHook {
+  // 應改名為 IDamageStep
   beforeDamageCalculation?(event: DamageEvent, context: ICombatContext): DamageEvent
   onHitCheck?(event: DamageEvent, context: ICombatContext): DamageEvent
   onCritCheck?(event: DamageEvent, context: ICombatContext): DamageEvent

@@ -1,14 +1,15 @@
 import type { ICombatContext } from '@/features/combat/context'
-import type { DamageEvent } from './models/damage-event'
-import { AfterApplyStep } from '../damage-steps/AfterApplyStep'
-import { ApplyDamageStep } from '../damage-steps/ApplyDamageStep'
-import { BeforeApplyStep } from '../damage-steps/BeforeApplyStep'
-import { BeforeDamageStep } from '../damage-steps/BeforeDamageStep'
-import { CriticalStep } from '../damage-steps/CriticalStep'
-import { DamageModifyStep } from '../damage-steps/DamageModifyStep'
-import type { IDamageStep } from '../damage-steps/DamageStep.interface'
-import { DefenseCalculationStep } from '../damage-steps/DefenseCalculationStep'
-import { HitCheckStep } from '../damage-steps/HitCheckStep'
+import { AfterApplyStep } from '../../_domain/damage/step/AfterApplyStep'
+import { ApplyDamageStep } from '../../_domain/damage/step/ApplyDamageStep'
+import { BeforeApplyStep } from '../../_domain/damage/step/BeforeApplyStep'
+import { BeforeDamageStep } from '../../_domain/damage/step/BeforeDamageStep'
+import { CriticalStep } from '../../_domain/damage/step/CriticalStep'
+import { DamageModifyStep } from '../../_domain/damage/step/DamageModifyStep'
+import { DefenseCalculationStep } from '../../_domain/damage/step/DefenseCalculationStep'
+import { HitCheckStep } from '../../_domain/damage/step/HitCheckStep'
+import { DamageEvent } from '../../_interfaces/damage/damage-event'
+import { ICombatHook } from '../../_interfaces/damage/combat-hook'
+
 /**
  * DamageChain
  *
@@ -16,7 +17,7 @@ import { HitCheckStep } from '../damage-steps/HitCheckStep'
  * 支援流程提前終止與透過掛鉤擴充。
  */
 export class DamageChain {
-  private steps: IDamageStep[]
+  private steps: ICombatHook[]
   private context: ICombatContext
   constructor(context: ICombatContext) {
     this.context = context
