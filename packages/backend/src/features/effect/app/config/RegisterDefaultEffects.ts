@@ -15,7 +15,7 @@ import { PoisonEffect } from '@/impl/effects/NativeStatus/PoisonEffect'
  *
  * 使用範例：
  * ```ts
- * import { registerDefaultClassEffects } from '@/logic/effect-system/config'
+ * import { registerDefaultClassEffects } from '@/logic/effect/config'
  * registerDefaultClassEffects()
  * ```
  */

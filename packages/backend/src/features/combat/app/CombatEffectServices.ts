@@ -1,6 +1,6 @@
-// TODO: 依賴外部模組 @/features/effect-system
-import type { ICombatEffectServices } from '@/features/effect-system'
-import type { ICharacterFacade } from '@/features/effect-system'
+// TODO: 依賴外部模組 @/features/effect
+import type { ICombatEffectServices } from '@/features/effect'
+import type { ICharacterFacade } from '@/features/effect'
 import { ICombatContext } from '../interfaces/context/ICombatContext'
 import { ICharacter } from '../interfaces/character/ICharacter'
 /**

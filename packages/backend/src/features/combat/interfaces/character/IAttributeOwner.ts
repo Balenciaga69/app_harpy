@@ -1,7 +1,5 @@
-// TODO: 依賴外部模組 @/domain/attribute
-import type { AttributeType } from '@/domain/attribute'
-// TODO: 依賴外部模組 @/features/attribute-system
-import type { AttributeModifier } from '@/features/attribute-system'
+// TODO: 依賴外部模組 attribute
+import type { AttributeType, AttributeModifier } from '../../../attribute'
 /** Attribute provider interface */
 export interface IAttributeOwner {
   getAttribute(type: AttributeType): number

@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '@/features/effect-system/interfaces/IStackableEffect'
-import type { ICharacterFacade, ICombatEffectServices } from '@/features/effect-system'
+import { StackableEffect } from '@/features/effect/interfaces/IStackableEffect'
+import type { ICharacterFacade, ICombatEffectServices } from '@/features/effect'
 /**
  * Holy fire effect
  * - Increases armor value per stack

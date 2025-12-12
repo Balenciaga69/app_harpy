@@ -1,5 +1,5 @@
-// TODO: 依賴外部模組 item，未來需抽象化
-import type { IEffectTemplateInfo } from '@/domain/item/factories/EffectFactory'
+// TODO: 依賴外部模組 item
+import type { IEffectTemplateInfo } from '../../../item/app/factories/EffectFactory'
 import type { IEffect } from '../../interfaces/IEffect'
 import { StaticEffectGenerator } from './StaticEffectGenerator'
 import { ClassEffectRegistry } from './ClassEffectRegistry'

@@ -1,8 +1,15 @@
-import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
-import { ITargetSelector } from '@/features/combat/interfaces/target-select-strategies/ITargetSelector'
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
+import type { ITargetSelector } from '../../../interfaces/target-select-strategies/ITargetSelector'
+import type { ICharacter } from '../../../interfaces/character/ICharacter'
+// TODO: 違反依賴規則 - app 不應互相引用
 import { DamageChain } from '../../damage/DamageChain'
+import { createDefaultDamageSteps } from '../../damage/DefaultDamageSteps'
 import { DamageFactory } from './DamageFactory'
 import { EnergyManager } from './EnergyManager'
+// TODO: 違反依賴規則 - app 不應互相引用
+import { isCharacter } from '../../shared/utils/TypeGuardUtil'
+import { UltimateEnergy } from '../../../domain/config/CombatConstants'
+import { UltimateDefaults } from '../../../domain/config/UltimateConstants'
 /**
  * 攻擊執行器
  *
@@ -16,7 +23,9 @@ export class AttackExecutor {
   private energyManager: EnergyManager // TODO: 判斷是否需要用介面
   constructor(context: ICombatContext, targetSelector: ITargetSelector, energyManager: EnergyManager) {
     this.context = context
-    this.damageChain = new DamageChain(context)
+    // TODO: DamageChain 的 steps 應該透過依賴注入或工廠模式提供
+    const damageSteps = createDefaultDamageSteps()
+    this.damageChain = new DamageChain(context, damageSteps)
     this.targetSelector = targetSelector
     this.damageFactory = new DamageFactory()
     this.energyManager = energyManager

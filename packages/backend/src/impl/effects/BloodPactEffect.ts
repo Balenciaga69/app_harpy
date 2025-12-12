@@ -1,8 +1,9 @@
-import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
-import { DamageEvent } from '@/features/combat/interfaces/damage/DamageEvent'
-import { ICombatHook } from '@/features/combat/interfaces/damage/ICombatHook'
-import type { IEffectServices } from '@/features/effect-system'
-import type { IEffect } from '@/features/effect-system/interfaces/IEffect'
+// TODO: 依賴外部模組 combat
+import type { ICombatContext, ICharacter } from '@/features/combat'
+import { DamageEvent } from '@/features/combat'
+import type { ICombatHook } from '@/features/combat'
+// TODO: 依賴外部模組 effect
+import type { IEffectServices, IEffect } from '@/features/effect'
 import { nanoid } from 'nanoid'
 /**
  * BloodPactEffect

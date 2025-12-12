@@ -1,10 +1,9 @@
-import type { DamageEvent, ICombatHook } from '@/features/combat/damage'
+// TODO: 依賴外部模組 combat
+import type { DamageEvent, ICombatHook, ICombatContext, ICharacter } from '@/features/combat'
+import { EffectNames } from '@/features/combat'
 import { nanoid } from 'nanoid'
-import type { ICombatContext } from '@/features/combat/context'
-import type { ICharacter } from '@/features/combat/character'
-import { EffectNames } from '@/features/combat/config'
-import type { IEffect } from '@/features/effect-system/interfaces/IEffect'
-import type { IEffectServices } from '@/features/effect-system'
+// TODO: 依賴外部模組 effect
+import type { IEffect, IEffectServices } from '@/features/effect'
 /**
  * ChargedCriticalEffect
  *

@@ -1,5 +1,5 @@
-import type { IEffect } from '@/features/effect-system/interfaces/IEffect'
-import type { ICombatEffectHook, ICombatEffectServices, IEffectServices } from '@/features/effect-system'
+import type { IEffect } from '@/features/effect/interfaces/IEffect'
+import type { ICombatEffectHook, ICombatEffectServices, IEffectServices } from '@/features/effect'
 import { nanoid } from 'nanoid'
 /**
  * BerserkEffect

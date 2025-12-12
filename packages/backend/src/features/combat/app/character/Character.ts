@@ -1,11 +1,12 @@
-// TODO: 依賴外部模組 @/domain/attribute
-import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
+// TODO: 依賴外部模組 attribute
+import type { AttributeType, BaseAttributeValues, AttributeModifier } from '../../../attribute'
 import type { CharacterSnapshot } from '../../interfaces/shared/CharacterSnapshot'
-// TODO: 依賴外部模組 @/features/effect-system
-import { EffectManager, type IEffect } from '@/features/effect-system/index'
+// TODO: 依賴外部模組 effect
+import { EffectManager, type IEffect } from '../../../effect'
 import { nanoid } from 'nanoid'
-// TODO: 依賴外部模組 @/features/attribute-system
-import { AttributeCalculator, AttributeManager, type AttributeModifier } from '@/features/attribute-system'
+// TODO: 依賴外部模組 attribute (實作類別 - 違反依賴規則，應該透過介面注入)
+import { AttributeCalculator } from '../../../attribute/app/AttributeCalculator'
+import { AttributeManager } from '../../../attribute/app/AttributeManager'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { UltimateManager } from '../ultimate/UltimateManager'
 import type { ICharacter } from '../../interfaces/character/ICharacter'

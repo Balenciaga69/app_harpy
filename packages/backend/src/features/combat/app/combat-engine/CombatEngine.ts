@@ -1,8 +1,24 @@
-import { CombatConfig } from '../..'
-import { CombatTiming } from '../../domain/config/CombatConstants'
+import type { CombatConfig } from '../../interfaces/combat-engine/CombatConfig'
+import type { CombatResult } from '../../interfaces/combat-engine/CombatResult'
+import type { CombatResultData } from '../../interfaces/combat-engine/CombatResultData'
+import { CombatTiming, CombatSystem } from '../../domain/config/CombatConstants'
+import { CombatError } from '../../interfaces/errors/CombatError'
+import { CombatFailureCode } from '../../interfaces/errors/CombatFailure'
+// TODO: 違反依賴規則 - app 不應直接依賴 infra，應該透過 interfaces
 import { EventBus as CombatEventBus } from '../../infra/event-bus/EventBus'
+// TODO: 違反依賴規則 - app 不應直接依賴 infra，應該透過 interfaces
 import { InMemoryResourceRegistry } from '../../infra/resource-registry/InMemoryResourceRegistry'
 import type { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'
+// TODO: 違反依賴規則 - app 層不應互相引用，應該透過依賴注入或移至同一層
+import { CombatContext } from '../context/CombatContext'
+import { TickerDriver } from '../tick/TickerDriver'
+import { TickActionSystem } from '../coordination/TickActionSystem'
+// TODO: 違反依賴規則 - app 不應直接依賴 infra
+import { EventLogger } from '../../infra/logger/EventLogger'
+// TODO: 違反依賴規則 - app 層不應互相引用
+import { SnapshotCollector } from '../snapshot/SnapshotCollector'
+import { ResultBuilder } from '../combat-builders/ResultBuilder'
+import { OutcomeAnalyzer } from '../combat-builders/utils/OutcomeAnalyzer'
 import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 /**
  * 戰鬥引擎

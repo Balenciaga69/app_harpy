@@ -5,12 +5,12 @@ import {
   ShopCoordinator,
   StorageCoordinator,
 } from './coordinators'
-import { RunNotInitializedError } from './errors'
+import { RunNotInitializedError } from '../domain/errors/RunError'
 import { RunFinalizer, RunInitializer } from './lifecycle'
-import type { RunContext } from './models'
-import { advanceProgress } from './models/run-progress'
-import { RunState } from './models/run-state'
-import type { RunStateType } from './models/run-state'
+import type { RunContext } from '../interfaces/models/run-context'
+import { advanceProgress } from '../interfaces/models/run-progress'
+import { RunState } from '../interfaces/models/run-state'
+import type { RunStateType } from '../interfaces/models/run-state'
 import { RunStateMachine } from './state-machine/RunStateMachine'
 import {
   CharacterSelectionState,

@@ -1,9 +1,9 @@
-import { RunState } from '../models/run-state'
+import { RunState } from '../../interfaces/models/run-state'
 import { RunStateType } from '../../interfaces/models/run-state'
 import { RunContext } from '../../interfaces/models/run-context'
 import type { IRunStateMachine } from './IRunStateMachine'
 import type { IRunStateHandler } from './IRunStateHandler'
-import { InvalidStateTransitionError } from '../errors'
+import { InvalidStateTransitionError } from '../../domain/errors/RunError'
 /**
  * Run 狀態機實作
  * 使用 State Pattern 管理狀態轉換

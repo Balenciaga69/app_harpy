@@ -1,12 +1,14 @@
 import { nanoid } from 'nanoid'
-import type { ICombatContext } from '@/features/combat/context'
-import type { ICharacter } from '@/features/combat/character'
-import { CharacterAccessor } from '@/features/combat/shared'
-import { DamageChain } from '@/features/combat/damage'
-import type { IUltimateAbility } from '@/features/combat/ultimate/ultimate-ability'
-import { UltimateDefaults } from '@/features/combat/config'
-import { FirstAliveSelector } from '@/features/combat/coordination'
-import { DamageFactory } from '@/features/combat/coordination/utils/DamageFactory'
+// TODO: 依賴外部模組 combat
+import type { ICombatContext, ICharacter, IUltimateAbility } from '@/features/combat'
+import {
+  CharacterAccessor,
+  DamageChain,
+  createDefaultDamageSteps,
+  UltimateDefaults,
+  FirstAliveSelector,
+  DamageFactory,
+} from '@/features/combat'
 /**
  * Basic damage ultimate - concrete implementation
  *
@@ -53,7 +55,7 @@ export class SimpleDamageUltimate implements IUltimateAbility {
     // 4. Create damage event and execute
     const damageFactory = new DamageFactory()
     const damageEvent = damageFactory.createUltimateEvent(caster, target, ultimateDamage, context.getCurrentTick())
-    const damageChain = new DamageChain(context)
+    const damageChain = new DamageChain(context, createDefaultDamageSteps())
     damageChain.execute(damageEvent)
   }
 }

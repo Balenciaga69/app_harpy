@@ -1,11 +1,15 @@
 import { FirstAliveSelector } from '../../domain/target-select-strategies/FirstAliveSelector'
-import { ICombatContext } from '../../interfaces/context/ICombatContext'
-import { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
-import { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
+import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
+// TODO: 違反依賴規則 - app 不應互相引用
 import { AttackExecutor } from './utils/AttackExecutor'
 import { CooldownManager } from './utils/CooldownManager'
 import { EffectProcessor } from './utils/EffectProcessor'
 import { EnergyManager } from './utils/EnergyManager'
+import { EffectTickPhase } from '../../domain/tick-phases/EffectTickPhase'
+import { EnergyRegenPhase } from '../../domain/tick-phases/EnergyRegenPhase'
+import { AttackExecutionPhase } from '../../domain/tick-phases/AttackExecutionPhase'
 /**
  * Tick Action System
  *

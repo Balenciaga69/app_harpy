@@ -48,5 +48,5 @@ export interface ICombatEffectHook {
    * 每個戰鬥 tick 觸發一次
    * 用於周期性效果（例如：中毒傷害、層數衰減）
    */
-  onTick?(characterId: string, services: ICombatEffectServices): void
+  onTick?(characterId: string, services: IEffectServices): void
 }
