@@ -1,5 +1,5 @@
 import type { CombatContext } from '@/features/combat/context'
-import type { ICharacter } from '@/features/combat/domain/character'
+import type { ICharacter } from '@/features/combat/character'
 import type { IEffect } from '@/features/effect-system/models/effect'
 import { isCharacter } from '@/features/combat/shared'
 /**

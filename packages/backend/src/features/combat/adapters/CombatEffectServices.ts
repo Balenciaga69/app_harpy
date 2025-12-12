@@ -1,7 +1,7 @@
 import type { ICombatEffectServices } from '@/features/effect-system'
 import type { ICharacterFacade } from '@/features/effect-system'
 import type { ICombatContext } from '../context'
-import type { ICharacter } from '../domain/character/models/character'
+import type { ICharacter } from '../character/models/character'
 /**
  * 戰鬥效果服務適配器
  *

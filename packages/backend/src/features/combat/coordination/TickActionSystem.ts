@@ -1,6 +1,6 @@
 import type { CombatContext } from '../context'
-import { FirstAliveSelector } from './target-select-strategies/FirstAliveSelector'
-import type { ITargetSelector } from './target-select-strategies/target-selector'
+import { FirstAliveSelector } from '../target-select-strategies/FirstAliveSelector'
+import type { ITargetSelector } from '../target-select-strategies/target-selector'
 import type { ITickPhase } from './phases/tick-phase'
 import { EffectTickPhase } from './phases/EffectTickPhase'
 import { EnergyRegenPhase } from './phases/EnergyRegenPhase'

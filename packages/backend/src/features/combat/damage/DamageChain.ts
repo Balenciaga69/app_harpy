@@ -1,14 +1,14 @@
 import type { ICombatContext } from '@/features/combat/context'
 import type { DamageEvent } from './models/damage-event'
-import { AfterApplyStep } from './steps/AfterApplyStep'
-import { ApplyDamageStep } from './steps/ApplyDamageStep'
-import { BeforeApplyStep } from './steps/BeforeApplyStep'
-import { BeforeDamageStep } from './steps/BeforeDamageStep'
-import { CriticalStep } from './steps/CriticalStep'
-import { DamageModifyStep } from './steps/DamageModifyStep'
-import type { IDamageStep } from './steps/DamageStep.interface'
-import { DefenseCalculationStep } from './steps/DefenseCalculationStep'
-import { HitCheckStep } from './steps/HitCheckStep'
+import { AfterApplyStep } from '../damage-steps/AfterApplyStep'
+import { ApplyDamageStep } from '../damage-steps/ApplyDamageStep'
+import { BeforeApplyStep } from '../damage-steps/BeforeApplyStep'
+import { BeforeDamageStep } from '../damage-steps/BeforeDamageStep'
+import { CriticalStep } from '../damage-steps/CriticalStep'
+import { DamageModifyStep } from '../damage-steps/DamageModifyStep'
+import type { IDamageStep } from '../damage-steps/DamageStep.interface'
+import { DefenseCalculationStep } from '../damage-steps/DefenseCalculationStep'
+import { HitCheckStep } from '../damage-steps/HitCheckStep'
 /**
  * DamageChain
  *

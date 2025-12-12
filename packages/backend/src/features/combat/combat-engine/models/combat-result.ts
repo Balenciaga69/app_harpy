@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../domain/character'
+import type { ICharacter } from '../../character'
 import type { CombatLogEntry } from '../../logger'
 import type { CombatOutcome } from './combat-outcome'
 import type { CombatSnapshot } from './combat-snapshot'

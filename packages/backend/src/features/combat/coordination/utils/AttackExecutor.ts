@@ -1,11 +1,11 @@
 import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../domain/character'
+import type { ICharacter } from '../../character'
 import { UltimateDefaults, UltimateEnergy } from '../../config'
 import { isCharacter } from '../../shared'
 import { DamageChain } from '../../damage'
 import { EnergyManager } from './EnergyManager'
 import { DamageFactory } from './DamageFactory'
-import type { ITargetSelector } from '../target-select-strategies/target-selector'
+import type { ITargetSelector } from '../../target-select-strategies/target-selector'
 /**
  * 攻擊執行器
  *

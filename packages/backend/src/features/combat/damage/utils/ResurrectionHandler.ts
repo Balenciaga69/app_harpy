@@ -1,5 +1,5 @@
 import type { CombatContext } from '@/features/combat/context'
-import type { ICharacter } from '@/features/combat/domain/character'
+import type { ICharacter } from '@/features/combat/character'
 import { AttributeLimits } from '@/domain/attribute'
 /**
  * 復活處理器

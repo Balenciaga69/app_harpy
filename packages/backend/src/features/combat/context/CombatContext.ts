@@ -4,7 +4,7 @@ import type { IEntity } from '../shared/interfaces/entity.interface'
 import { isCharacter } from '../shared/utils/TypeGuardUtil'
 import type { IResourceRegistry } from '../resource-registry/resource-registry'
 import type { ICombatContext } from './combat-context'
-import type { ICharacter } from '../domain/character/models/character'
+import type { ICharacter } from '../character/models/character'
 import { BattleState } from './BattleState'
 /**
  * 戰鬥上下文 (CombatContext)

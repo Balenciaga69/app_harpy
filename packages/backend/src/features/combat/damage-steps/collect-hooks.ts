@@ -1,6 +1,6 @@
 import type { IEffect } from '@/features/effect-system/models/effect'
-import type { ICharacter } from '../../domain/character/models/character'
-import type { ICombatHook } from '../models/combat-hook'
+import type { ICharacter } from '../character/models/character'
+import type { ICombatHook } from '../damage/models/combat-hook'
 /**
  * 取得所有 hook 的方法名稱
  */

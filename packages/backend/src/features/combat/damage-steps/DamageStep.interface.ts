@@ -1,5 +1,5 @@
 import type { ICombatContext } from '@/features/combat/context'
-import type { DamageEvent } from '../models/damage-event'
+import type { DamageEvent } from '../damage/models/damage-event'
 /**
  * DamageStep interface
  *

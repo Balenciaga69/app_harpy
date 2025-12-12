@@ -6,8 +6,8 @@ import { AttributeCalculator, AttributeManager, type AttributeModifier } from '.
 import type { IUltimateAbility } from '../ultimate/index'
 import { UltimateManager } from '../ultimate/UltimateManager'
 import type { ICharacter } from './models/character'
-import type { ICombatContext } from '../../context/combat-context'
-import { CombatEffectServices } from '../../adapters/CombatEffectServices'
+import type { ICombatContext } from '../context/combat-context'
+import { CombatEffectServices } from '../adapters/CombatEffectServices'
 /**
  * 角色初始化所需的設定參數
  */

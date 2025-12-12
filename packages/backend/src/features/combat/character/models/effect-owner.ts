@@ -1,5 +1,5 @@
 import type { IEffect } from '@/features/effect-system/models/effect'
-import type { ICombatContext } from '../../../context/combat-context'
+import type { ICombatContext } from '../../context/combat-context'
 /** Effect owner interface */
 export interface IEffectOwner {
   // CRUD

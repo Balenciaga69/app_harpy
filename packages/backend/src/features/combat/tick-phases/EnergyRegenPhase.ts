@@ -1,5 +1,5 @@
 import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../domain/character'
+import type { ICharacter } from '../../character'
 import { isCharacter } from '../../shared'
 import { EnergyManager } from '../utils/EnergyManager'
 import type { ITickPhase } from './tick-phase'

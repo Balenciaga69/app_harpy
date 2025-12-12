@@ -1,6 +1,6 @@
 import type { IEffect } from '@/features/effect-system/models/effect'
-import type { IUltimateAbility } from '../domain/ultimate'
-import type { ICharacter } from '../domain/character/models/character'
+import type { IUltimateAbility } from '../ultimate'
+import type { ICharacter } from '../character/models/character'
 import type { IResourceRegistry } from './resource-registry'
 /**
  * In-Memory Resource Registry

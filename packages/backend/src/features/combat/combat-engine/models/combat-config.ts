@@ -1,4 +1,4 @@
-import type { ICharacter } from '../../domain/character'
+import type { ICharacter } from '../../character'
 import type { IEffect } from '@/features/effect-system/models/effect'
 /**
  * CombatConfig
