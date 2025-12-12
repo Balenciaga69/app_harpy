@@ -1,4 +1,4 @@
-import type { CombatContext } from '@/app/combat'
+import type { CombatContext } from '@/features/combat'
 import type { DamageEvent } from '../models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
 import { ResurrectionHandler } from '../utils/ResurrectionHandler'

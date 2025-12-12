@@ -1,6 +1,6 @@
 import type { AttributeType } from '@/domain/attribute'
 import type { IAffixDefinition } from '@/domain/item'
-import type { AttributeModifier } from '@/app/attribute-system' /**
+import type { AttributeModifier } from '@/features/attribute-system' /**
  * 詞綴屬性映射配置
  *
  * 定義詞綴如何轉換為屬性修飾器。

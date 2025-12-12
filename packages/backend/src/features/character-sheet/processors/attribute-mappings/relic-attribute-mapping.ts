@@ -1,4 +1,4 @@
-import type { AttributeModifier } from '@/app/attribute-system'
+import type { AttributeModifier } from '@/features/attribute-system'
 import type { BaseAttributeValues } from '@/domain/attribute' /**
  * 遺物屬性計算函數
  *

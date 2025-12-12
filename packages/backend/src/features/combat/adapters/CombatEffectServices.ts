@@ -1,5 +1,5 @@
-import type { ICombatEffectServices } from '@/app/effect-system'
-import type { ICharacterFacade } from '@/app/effect-system'
+import type { ICombatEffectServices } from '@/features/effect-system'
+import type { ICharacterFacade } from '@/features/effect-system'
 import type { ICombatContext } from '../context'
 import type { ICharacter } from '../domain/character/models/character'
 /**

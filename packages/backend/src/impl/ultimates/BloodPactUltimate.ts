@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import type { ICombatContext } from '@/app/combat/context'
-import { CharacterAccessor } from '@/app/combat/shared'
-import type { IUltimateAbility } from '@/app/combat/domain/ultimate/ultimate-ability'
+import type { ICombatContext } from '@/features/combat/context'
+import { CharacterAccessor } from '@/features/combat/shared'
+import type { IUltimateAbility } from '@/features/combat/domain/ultimate/ultimate-ability'
 import { BloodPactEffect } from '../effects/BloodPactEffect'
 /**
  * Blood Pact Ultimate

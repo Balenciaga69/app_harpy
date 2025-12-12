@@ -1,4 +1,4 @@
-import type { ICombatContext } from '@/app/combat/context'
+import type { ICombatContext } from '@/features/combat/context'
 import type { DamageEvent } from './models/damage-event'
 import { AfterApplyStep } from './steps/AfterApplyStep'
 import { ApplyDamageStep } from './steps/ApplyDamageStep'

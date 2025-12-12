@@ -1,6 +1,6 @@
 import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
-import type { CharacterSnapshot } from '@/app/combat/shared/index'
-import { EffectManager, type IEffect } from '@/app/effect-system/index'
+import type { CharacterSnapshot } from '@/features/combat/shared/index'
+import { EffectManager, type IEffect } from '@/features/effect-system/index'
 import { nanoid } from 'nanoid'
 import { AttributeCalculator, AttributeManager, type AttributeModifier } from '../attribute/index'
 import type { IUltimateAbility } from '../ultimate/index'

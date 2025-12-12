@@ -7,7 +7,7 @@
 import { nanoid } from 'nanoid'
 import type { Emitter } from 'mitt'
 import type { IEquipmentInstance, IRelicInstance } from '@/domain/item'
-import { ItemGenerator } from '@/app/item-generator'
+import { ItemGenerator } from '@/features/item-generator'
 import type { IShopConfig, IShopItem, IPurchaseResult, ISellResult, IRefreshResult } from './models'
 import { PricingEngine } from './pricing'
 import { InsufficientFundsError, ItemNotFoundError, InvalidItemError } from './errors'

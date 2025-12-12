@@ -1,5 +1,5 @@
 import type { IRelicInstance } from '@/domain/item'
-import type { AttributeModifier } from '@/app/attribute-system'
+import type { AttributeModifier } from '@/features/attribute-system'
 import type { BaseAttributeValues } from '@/domain/attribute'
 import { RELIC_MAPPING_LOOKUP } from '../registries/relic-registry'
 /**

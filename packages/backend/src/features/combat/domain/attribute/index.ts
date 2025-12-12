@@ -1,12 +1,12 @@
 // 重新導出共享屬性系統（向後兼容）
-export { AttributeManager, AttributeCalculator } from '@/app/attribute-system'
+export { AttributeManager, AttributeCalculator } from '@/features/attribute-system'
 export type {
   IAttributeCalculator,
   AttributeModifier,
   AttributeModifierEx,
   ModifierPriorityType,
-} from '@/app/attribute-system'
-export { ModifierPriority } from '@/app/attribute-system'
+} from '@/features/attribute-system'
+export { ModifierPriority } from '@/features/attribute-system'
 // 重新導出 domain 基礎類型
 export { createDefaultAttributes } from '@/domain/attribute'
 export type { AttributeType, BaseAttributeValues } from '@/domain/attribute'

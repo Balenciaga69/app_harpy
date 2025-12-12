@@ -1,7 +1,7 @@
 import type { AttributeType } from '@/domain/attribute'
 import type { IEffect } from './effect'
 import type { IEffectServices } from './effect-services'
-import type { AttributeModifier } from '@/app/attribute-system'
+import type { AttributeModifier } from '@/features/attribute-system'
 import { nanoid } from 'nanoid'
 /**
  * 靜態屬性效果

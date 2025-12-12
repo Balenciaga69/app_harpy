@@ -1,7 +1,7 @@
-import type { CombatContext } from '@/app/combat/context'
-import type { ICharacter } from '@/app/combat/domain/character'
-import type { IEffect } from '@/app/effect-system/models/effect'
-import { isCharacter } from '@/app/combat/shared'
+import type { CombatContext } from '@/features/combat/context'
+import type { ICharacter } from '@/features/combat/domain/character'
+import type { IEffect } from '@/features/effect-system/models/effect'
+import { isCharacter } from '@/features/combat/shared'
 /**
  * PreMatchEffectApplicator
  *

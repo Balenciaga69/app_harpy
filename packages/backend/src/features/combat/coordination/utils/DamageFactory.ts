@@ -1,5 +1,5 @@
-import type { ICharacter } from '@/app/combat/domain/character'
-import type { DamageEvent } from '@/app/combat/damage'
+import type { ICharacter } from '@/features/combat/domain/character'
+import type { DamageEvent } from '@/features/combat/damage'
 /**
  * DamageFactory
  *

@@ -1,5 +1,5 @@
-import type { ICombatEffectServices } from '@/app/effect-system'
-import { StackableEffect } from '@/app/effect-system/models/stackable-effect'
+import type { ICombatEffectServices } from '@/features/effect-system'
+import { StackableEffect } from '@/features/effect-system/models/stackable-effect'
 import { nanoid } from 'nanoid'
 /**
  * Poison effect

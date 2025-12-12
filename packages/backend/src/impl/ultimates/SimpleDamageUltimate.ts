@@ -1,12 +1,12 @@
 import { nanoid } from 'nanoid'
-import type { ICombatContext } from '@/app/combat/context'
-import type { ICharacter } from '@/app/combat/domain/character'
-import { CharacterAccessor } from '@/app/combat/shared'
-import { DamageChain } from '@/app/combat/damage'
-import type { IUltimateAbility } from '@/app/combat/domain/ultimate/ultimate-ability'
-import { UltimateDefaults } from '@/app/combat/config'
-import { FirstAliveSelector } from '@/app/combat/coordination'
-import { DamageFactory } from '@/app/combat/coordination/utils/DamageFactory'
+import type { ICombatContext } from '@/features/combat/context'
+import type { ICharacter } from '@/features/combat/domain/character'
+import { CharacterAccessor } from '@/features/combat/shared'
+import { DamageChain } from '@/features/combat/damage'
+import type { IUltimateAbility } from '@/features/combat/domain/ultimate/ultimate-ability'
+import { UltimateDefaults } from '@/features/combat/config'
+import { FirstAliveSelector } from '@/features/combat/coordination'
+import { DamageFactory } from '@/features/combat/coordination/utils/DamageFactory'
 /**
  * Basic damage ultimate - concrete implementation
  *

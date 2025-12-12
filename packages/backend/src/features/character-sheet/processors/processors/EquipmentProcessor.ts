@@ -1,5 +1,5 @@
 import type { IEquipmentInstance } from '@/domain/item'
-import type { AttributeModifier } from '@/app/attribute-system'
+import type { AttributeModifier } from '@/features/attribute-system'
 import { AFFIX_MAPPING_LOOKUP } from '../registries/affix-registry'
 import { createModifierFromAffix } from '../attribute-mappings/affix-attribute-mapping' /**
  * 裝備屬性處理器

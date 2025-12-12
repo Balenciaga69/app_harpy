@@ -1,5 +1,5 @@
 import type { AttributeType } from '@/domain/attribute'
-import { AttributeManager, AttributeCalculator } from '@/app/attribute-system'
+import { AttributeManager, AttributeCalculator } from '@/features/attribute-system'
 import type { ICharacterSheet } from './models/character-sheet'
 import type { ICharacterSheetInput } from './models/sheet-input'
 import { EquipmentProcessor } from './processors/processors/EquipmentProcessor'

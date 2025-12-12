@@ -1,4 +1,4 @@
-import type { ICombatContext } from '@/app/combat/context'
+import type { ICombatContext } from '@/features/combat/context'
 import type { DamageEvent } from './damage-event'
 /**
  * Combat Hook interface - behavior contract

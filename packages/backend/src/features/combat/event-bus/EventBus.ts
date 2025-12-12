@@ -1,6 +1,6 @@
 import mitt from 'mitt'
 import type { CombatEventMap } from './models/combat-event-map'
-import type { IEventBus } from '@/app/shared/event-bus'
+import type { IEventBus } from '@/features/shared/event-bus'
 export interface ICombatEventBus extends IEventBus<CombatEventMap> {
   onAll(handler: (type: keyof CombatEventMap, payload: any) => void): void
 }

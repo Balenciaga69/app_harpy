@@ -5,7 +5,7 @@
 - 列出資料夾下所有檔案（絕對路徑）：
 
   ```powershell
-  Get-ChildItem -Recurse -File "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\backend\src_old\app\combat" | Select-Object -ExpandProperty FullName
+  Get-ChildItem -Recurse -File "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\backend\src\features\combat" | Select-Object -ExpandProperty FullName
   ```
 
 - 列出資料夾下所有檔案（相對路徑）：

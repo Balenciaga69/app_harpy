@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '@/app/effect-system/models/stackable-effect'
-import type { ICharacterFacade, ICombatEffectServices } from '@/app/effect-system'
+import { StackableEffect } from '@/features/effect-system/models/stackable-effect'
+import type { ICharacterFacade, ICombatEffectServices } from '@/features/effect-system'
 /**
  * Chill effect
  * - Extends enemy attack/spell cooldown time
