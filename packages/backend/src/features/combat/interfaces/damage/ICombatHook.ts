@@ -1,8 +1,8 @@
 import type { ICombatContext } from '@/features/combat/context'
-import type { DamageEvent } from './damage-event'
+import type { DamageEvent } from './DamageEvent'
 
 export interface ICombatHook {
-  // 應改名為 IDamageStep
+  // ?�改?�為 IDamageStep
   beforeDamageCalculation?(event: DamageEvent, context: ICombatContext): DamageEvent
   onHitCheck?(event: DamageEvent, context: ICombatContext): DamageEvent
   onCritCheck?(event: DamageEvent, context: ICombatContext): DamageEvent
@@ -11,3 +11,4 @@ export interface ICombatHook {
   beforeDamageApply?(event: DamageEvent, context: ICombatContext): DamageEvent
   afterDamageApply?(event: DamageEvent, context: ICombatContext): void
 }
+

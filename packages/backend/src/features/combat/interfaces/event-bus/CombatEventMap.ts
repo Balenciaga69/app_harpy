@@ -20,7 +20,7 @@ import type {
   UltimateUsedPayload,
   EnergyGainedPayload,
   TickSnapshotPayload,
-} from './EventPayload'
+} from './CombatStartPayload'
 export type CombatEventMap = {
   // === Combat related events ===
   'combat:start': CombatStartPayload
@@ -51,3 +51,4 @@ export type CombatEventMap = {
   // === Snapshot related events ===
   'tick:snapshot': TickSnapshotPayload
 }
+

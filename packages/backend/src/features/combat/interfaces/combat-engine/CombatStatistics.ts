@@ -1,4 +1,4 @@
-import type { CharacterStats } from './character-stats'
+import type { CharacterStats } from './CharacterStats'
 /**
  * CombatStatistics
  *
@@ -23,3 +23,4 @@ export interface CombatStatistics {
   /** Combat duration in ticks */
   duration: number
 }
+

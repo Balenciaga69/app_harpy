@@ -1,8 +1,8 @@
 import type { ICharacter } from '../../character'
 import type { CombatLogEntry } from '../../logger'
-import type { CombatOutcome } from './combat-outcome'
-import type { CombatSnapshot } from './combat-snapshot'
-import type { CombatStatistics } from './combat-statistics'
+import type { CombatOutcome } from './CombatOutcome'
+import type { CombatSnapshot } from './CombatSnapshot'
+import type { CombatStatistics } from './CombatStatistics'
 /**
  * CombatResult
  *
@@ -25,3 +25,4 @@ export interface CombatResult {
   // Aggregated statistics about the combat (damage done, kills, etc.)
   statistics: CombatStatistics
 }
+
