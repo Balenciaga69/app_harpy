@@ -1,1 +1,1 @@
-export { DifficultyScaler } from './DifficultyScaler'
+export { DifficultyScaler } from './domain/DifficultyScaler'
