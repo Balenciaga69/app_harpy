@@ -9,15 +9,19 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "check": "tsc --noEmit -p tsconfig.json",
+    "check:folders": "node ./scripts/check-folder-size.cjs --root src --limit 10",
+    "check:folders:verbose": "node ./scripts/check-folder-size.cjs --root src --limit 10 --verbose",
     "test": "jest",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
     "chance": "^1.1.13",
     "mitt": "^3.0.1",
-    "nanoid": "^5.1.6"
+    "nanoid": "^5.1.6",
+    "seedrandom": "^3.0.5"
   },
   "devDependencies": {
+    "@types/seedrandom": "^3.0.8",
     "typescript": "^5.9.3"
   }
 }
