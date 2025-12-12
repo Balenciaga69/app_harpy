@@ -1,5 +1,5 @@
-import { ClassNotRegisteredError } from '../errors'
-import type { EffectConstructor } from '../models/effect-constructor'
+import { ClassNotRegisteredError } from '../../domain/errors/EffectBuilderError'
+import type { EffectConstructor } from '../../interfaces/IEffectConstructor'
 /**
  * Class 效果註冊表
  *

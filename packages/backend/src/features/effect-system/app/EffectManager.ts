@@ -1,5 +1,5 @@
-import type { IEffect } from './models/effect'
-import type { IEffectServices } from './models/effect-services'
+import type { IEffect } from '../interfaces/IEffect'
+import type { IEffectServices } from '../interfaces/IEffectServices'
 /**
  * 效果管理器
  *

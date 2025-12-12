@@ -1,8 +1,9 @@
+// TODO: 依賴外部模組 item，未來需抽象化
 import type { IEffectTemplateInfo } from '@/domain/item/factories/EffectFactory'
-import type { IEffect } from '../models/effect'
+import type { IEffect } from '../../interfaces/IEffect'
 import { StaticEffectGenerator } from './StaticEffectGenerator'
 import { ClassEffectRegistry } from './ClassEffectRegistry'
-import { UnknownEffectTemplateError } from '../errors'
+import { UnknownEffectTemplateError } from '../../domain/errors/EffectBuilderError'
 /**
  * EffectBuilder
  *

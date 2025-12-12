@@ -6,50 +6,24 @@
  */
 import { nanoid } from 'nanoid'
 import type { Emitter } from 'mitt'
-import type { IEquipmentInstance, IRelicInstance } from '@/domain/item'
+// TODO: 依賴外部模組 ItemGenerator，應改為 interface
 import { ItemGenerator } from '@/features/item-generator'
-import type { IShopConfig, IShopItem, IPurchaseResult, ISellResult, IRefreshResult } from './models'
-import { PricingEngine } from './pricing'
-import { InsufficientFundsError, ItemNotFoundError, InvalidItemError } from './errors'
-/**
- * 商店事件類型
- */
-export type ShopEvents = {
-  ShopRefreshed: { items: IShopItem[]; difficulty: number; chapter: number }
-  ItemPurchased: { item: IEquipmentInstance | IRelicInstance; price: number }
-  ItemSold: { itemId: string; price: number }
-}
-/**
- * 庫存介面（用於依賴注入）
- */
-export interface IInventoryAdapter {
-  getPlayerGold(): number
-  updatePlayerGold(amount: number): void
-  addItemToInventory(item: IEquipmentInstance | IRelicInstance): void
-  removeItemFromInventory(itemId: string): void
-  hasItem(itemId: string): boolean
-}
-/**
- * 難度適配器介面
- */
-export interface IDifficultyAdapter {
-  getCurrentDifficulty(): number
-}
-/**
- * ShopManager 配置
- */
-export interface IShopManagerConfig {
-  /** 商店配置 */
-  shopConfig: IShopConfig
-  /** 事件總線 */
-  eventBus: Emitter<ShopEvents>
-  /** 庫存適配器 */
-  inventory: IInventoryAdapter
-  /** 難度適配器 */
-  difficultyAdapter: IDifficultyAdapter
-  /** 物品生成器（可選，預設創建新實例） */
-  itemGenerator?: ItemGenerator
-}
+// TODO: 依賴內部實作 PricingEngine，應通過 factory 或 DI
+import { PricingEngine } from '../domain/pricing/PricingEngine'
+import type {
+  ShopEvents,
+  IInventoryAdapter,
+  IDifficultyAdapter,
+  IShopManagerConfig,
+  IItemGenerator,
+  IPricingEngine,
+  IShopConfig,
+  IShopItem,
+  IPurchaseResult,
+  ISellResult,
+  IRefreshResult,
+} from '../interfaces/IShopModels'
+import { InsufficientFundsError, ItemNotFoundError, InvalidItemError } from '../domain/errors/ShopError'
 /**
  * 商店管理器
  */
@@ -58,8 +32,8 @@ export class ShopManager {
   private readonly eventBus: Emitter<ShopEvents>
   private readonly inventory: IInventoryAdapter
   private readonly difficultyAdapter: IDifficultyAdapter
-  private readonly itemGenerator: ItemGenerator
-  private readonly pricingEngine: PricingEngine
+  private readonly itemGenerator: IItemGenerator
+  private readonly pricingEngine: IPricingEngine
   private currentItems: IShopItem[] = []
   private currentChapter: number = 1
   constructor(config: IShopManagerConfig) {

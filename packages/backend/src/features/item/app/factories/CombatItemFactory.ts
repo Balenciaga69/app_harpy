@@ -1,6 +1,6 @@
-import type { IItemDefinition } from '../definitions'
-import type { IAffixInstance } from '../affixes'
-import type { ICombatItemView } from '../projections'
+import type { IItemDefinition } from '../../interfaces/definitions/item-definition'
+import type { IAffixInstance } from '../../interfaces/definitions/IAffixInstance'
+import type { ICombatItemView } from '../../interfaces/projections/ICombatItemView'
 /**
  * CombatItemFactory
  *

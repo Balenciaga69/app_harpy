@@ -7,10 +7,14 @@
 import { EquipmentGenerator } from './generators/EquipmentGenerator'
 import { RelicGenerator } from './generators/RelicGenerator'
 // import { AffixGenerator } from './generators/AffixGenerator'
-import type { IEquipmentInstance, IRelicInstance } from '@/domain/item'
-import type { IAffixFilter } from './strategies'
-import { SlotBasedFilter } from './strategies'
-import { ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/domain/item'
+// TODO: 依賴外部模組 item，未來需抽象化
+import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
+import type { IAffixFilter } from '../interfaces/strategies/IAffixFilter'
+import { SlotBasedFilter } from './strategies/SlotBasedFilter'
+// TODO: 依賴外部模組 item，未來需抽象化
+import { ItemDefinitionRegistry } from '@/features/item/domain/registries/ItemDefinitionRegistry'
+// TODO: 依賴外部模組 item，未來需抽象化
+import { AffixDefinitionRegistry } from '@/features/item/domain/registries/AffixDefinitionRegistry'
 /**
  * ItemGenerator 配置
  */

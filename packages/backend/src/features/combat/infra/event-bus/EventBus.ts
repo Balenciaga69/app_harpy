@@ -1,7 +1,6 @@
 import mitt from 'mitt'
 import type { CombatEventMap } from '../../interfaces/event-bus/CombatEventMap'
 import type { ICombatEventBus } from '../../interfaces/event-bus/ICombatEventBus'
-
 export class EventBus implements ICombatEventBus {
   private emitter = mitt<CombatEventMap>()
   public on<K extends keyof CombatEventMap>(event: K, handler: (payload: CombatEventMap[K]) => void): void {

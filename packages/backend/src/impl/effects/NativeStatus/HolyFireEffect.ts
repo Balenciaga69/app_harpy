@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { StackableEffect } from '@/features/effect-system/models/stackable-effect'
+import { StackableEffect } from '@/features/effect-system/interfaces/IStackableEffect'
 import type { ICharacterFacade, ICombatEffectServices } from '@/features/effect-system'
 /**
  * Holy fire effect

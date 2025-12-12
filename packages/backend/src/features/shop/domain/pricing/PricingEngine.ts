@@ -4,9 +4,8 @@
  * 商店定價計算引擎。
  * 根據物品稀有度、難度係數與章節層數計算買賣價格。
  */
-import type { EquipmentRarity } from '@/domain/item'
-import type { IShopConfig } from '../models'
-import { PricingError } from '../errors'
+import type { EquipmentRarity, IShopConfig, IPricingEngine } from '../../interfaces/IShopModels'
+import { PricingError } from '../errors/ShopError'
 /**
  * 稀有度基礎價格對照表
  */
@@ -32,7 +31,7 @@ export interface IPricingEngineConfig {
 /**
  * 定價引擎
  */
-export class PricingEngine {
+export class PricingEngine implements IPricingEngine {
   private readonly basePriceMultiplier: number
   private readonly difficultyPriceMultiplier: number
   private readonly chapterInflationMultiplier: number

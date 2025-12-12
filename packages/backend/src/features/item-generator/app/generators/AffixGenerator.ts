@@ -4,9 +4,10 @@
  * 負責生成詞綴實例的類別。
  * 使用策略模式應用過濾邏輯。
  */
-import type { IAffixDefinition } from '@/domain/item'
-import { AffixRoller } from '../AffixRoller'
-import type { IAffixFilter } from '../strategies'
+// TODO: 依賴外部模組 item，未來需抽象化
+import type { IAffixDefinition } from '@/features/item/interfaces/definitions/IAffixDefinition'
+import { AffixRoller } from '../../domain/AffixRoller'
+import type { IAffixFilter } from '../../interfaces/strategies/IAffixFilter'
 /**
  * AffixGenerator 配置
  */

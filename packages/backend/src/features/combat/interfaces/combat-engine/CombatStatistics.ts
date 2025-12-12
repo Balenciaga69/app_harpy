@@ -23,4 +23,3 @@ export interface CombatStatistics {
   /** Combat duration in ticks */
   duration: number
 }
-

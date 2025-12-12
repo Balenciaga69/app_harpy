@@ -1,6 +1,5 @@
 import { IBattleState } from '../../interfaces/context/IBattleState'
 import { IEntity } from '../../interfaces/shared/IEntity'
-
 /**
  * BattleState
  *

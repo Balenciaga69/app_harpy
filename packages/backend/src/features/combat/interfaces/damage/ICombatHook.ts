@@ -1,6 +1,5 @@
 import type { ICombatContext } from '../context/ICombatContext'
 import type { DamageEvent } from './DamageEvent'
-
 export interface ICombatHook {
   // ?�改?�為 IDamageStep
   beforeDamageCalculation?(event: DamageEvent, context: ICombatContext): DamageEvent

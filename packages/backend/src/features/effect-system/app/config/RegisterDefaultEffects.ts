@@ -1,4 +1,5 @@
-import { ClassEffectRegistry } from '../builders'
+import { ClassEffectRegistry } from '../builders/ClassEffectRegistry'
+// TODO: 依賴外部模組 impl/effects，未來需抽象化
 import { BloodPactEffect } from '@/impl/effects/BloodPactEffect'
 import { ChargedCriticalEffect } from '@/impl/effects/Equipment/ChargedCriticalEffect'
 import { LowHealthArmorEffect } from '@/impl/effects/Equipment/LowHealthArmorEffect'

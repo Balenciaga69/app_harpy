@@ -1,6 +1,5 @@
 import { CombatTiming } from '../../domain/config/CombatConstants'
 import { ICombatContext } from '../../interfaces/context/ICombatContext'
-
 const MAX_TICKS = CombatTiming.MAX_TICKS
 export class TickerDriver {
   private context: ICombatContext

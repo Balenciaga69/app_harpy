@@ -1,5 +1,4 @@
 import { ICombatContext } from '../context/ICombatContext'
-
 export interface IUltimateAbility {
   /** Ultimate unique identifier */
   readonly id: string

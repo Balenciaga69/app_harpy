@@ -1,6 +1,5 @@
 import type { IEventBus } from '../../shared/event-bus/IEventBus'
 import type { ReplayEvent, ReplayEventType } from './ReplayEvent'
-
 /**
  * Replay Event Bus Interface
  *

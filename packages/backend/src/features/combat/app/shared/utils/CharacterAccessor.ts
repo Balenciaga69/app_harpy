@@ -3,7 +3,6 @@ import { ICombatContext } from '@/features/combat/interfaces/context/ICombatCont
 import { CombatError } from '@/features/combat/interfaces/errors/CombatError'
 import { CombatFailure, Failures } from '@/features/combat/interfaces/errors/CombatFailure'
 import { Result } from '@/features/combat/interfaces/errors/Result'
-
 /**
  * CharacterAccessor
  *

@@ -1,5 +1,5 @@
-import type { IAffixDefinition } from '../affixes'
-import { ItemError } from '../errors'
+import type { IAffixDefinition } from '../../interfaces/definitions/IAffixDefinition'
+import { ItemError } from '../errors/ItemError'
 /**
  * AffixDefinitionRegistry
  *

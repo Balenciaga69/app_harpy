@@ -1,4 +1,4 @@
-import type { ICharacterFacade } from './character-facade'
+import type { ICharacterFacade } from './ICharacterFacade'
 /**
  * Effect 基礎服務介面
  *

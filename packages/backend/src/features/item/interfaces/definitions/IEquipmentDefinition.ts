@@ -1,4 +1,4 @@
-import type { EquipmentSlot } from '../equipment-slot'
+import type { EquipmentSlot } from './EquipmentSlot'
 import type { IItemDefinition } from './item-definition'
 /** 裝備稀有度 */
 export type ItemRarity = 'common' | 'magic' | 'rare' | 'legendary'
@@ -11,4 +11,10 @@ export type ItemRarity = 'common' | 'magic' | 'rare' | 'legendary'
 export interface IEquipmentDefinition extends IItemDefinition {
   readonly slot: EquipmentSlot
   readonly rarity: ItemRarity
+  /** 最小詞綴數量 */
+  readonly minAffixes: number
+  /** 最大詞綴數量 */
+  readonly maxAffixes: number
+  /** 可用的詞綴池 ID 列表 */
+  readonly affixPoolIds: readonly string[]
 }

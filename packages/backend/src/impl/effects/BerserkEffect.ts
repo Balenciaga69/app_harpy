@@ -1,4 +1,4 @@
-import type { IEffect } from '@/features/effect-system/models/effect'
+import type { IEffect } from '@/features/effect-system/interfaces/IEffect'
 import type { ICombatEffectHook, ICombatEffectServices, IEffectServices } from '@/features/effect-system'
 import { nanoid } from 'nanoid'
 /**

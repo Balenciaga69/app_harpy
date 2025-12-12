@@ -6,11 +6,18 @@
  */
 import seedrandom from 'seedrandom'
 import { nanoid } from 'nanoid'
-import type { IEquipmentDefinition, IEquipmentInstance, IAffixDefinition, IAffixInstance } from '@/domain/item'
-import { AffixRoller } from '../AffixRoller'
-import { ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/domain/item'
-import type { IAffixFilter } from '../strategies'
-import { SlotBasedFilter } from '../strategies'
+// TODO: 依賴外部模組 item，未來需抽象化
+import type {
+  IEquipmentDefinition,
+  IEquipmentInstance,
+  IAffixDefinition,
+  IAffixInstance,
+} from '@/features/item/interfaces/definitions'
+import { AffixRoller } from '../../domain/AffixRoller'
+// TODO: 依賴外部模組 item，未來需抽象化
+import { ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/features/item/domain/registries'
+import type { IAffixFilter } from '../../interfaces/strategies/IAffixFilter'
+import { SlotBasedFilter } from '../strategies/SlotBasedFilter'
 /**
  * EquipmentGenerator 配置
  */

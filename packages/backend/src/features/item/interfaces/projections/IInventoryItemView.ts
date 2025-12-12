@@ -1,5 +1,5 @@
-import type { IAffixInstance } from '../affixes'
-import type { EquipmentSlot } from '../equipment-slot'
+import type { IAffixInstance } from '../definitions/IAffixInstance'
+import type { EquipmentSlot } from '../definitions/EquipmentSlot'
 /**
  * IInventoryItemView
  *

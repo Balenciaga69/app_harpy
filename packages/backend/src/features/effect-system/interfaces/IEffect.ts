@@ -1,4 +1,4 @@
-import type { IEffectLifeHook, ICharacterStateHook } from './effect-hooks'
+import type { IEffectLifeHook, ICharacterStateHook } from './IEffectHooks'
 /**
  * 效果介面
  *

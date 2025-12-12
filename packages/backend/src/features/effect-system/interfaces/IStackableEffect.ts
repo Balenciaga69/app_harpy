@@ -1,5 +1,5 @@
-import type { IEffect } from './effect'
-import type { IEffectServices, ICombatEffectServices } from './effect-services'
+import type { IEffect } from './IEffect'
+import type { IEffectServices, ICombatEffectServices } from './IEffectServices'
 /**
  * 可疊加效果基類
  *

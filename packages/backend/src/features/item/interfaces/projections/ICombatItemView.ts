@@ -1,4 +1,4 @@
-import type { IAffixInstance } from '../affixes'
+import type { IAffixInstance } from '../definitions/IAffixInstance'
 /**
  * ICombatItemView
  *

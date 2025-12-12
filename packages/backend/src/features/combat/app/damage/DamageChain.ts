@@ -1,7 +1,6 @@
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import { DamageEvent } from '../../interfaces/damage/DamageEvent'
 import { IDamageStep } from '../../interfaces/damage/IDamageStep'
-
 /**
  * DamageChain
  *

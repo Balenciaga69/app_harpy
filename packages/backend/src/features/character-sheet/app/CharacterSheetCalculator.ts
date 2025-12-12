@@ -1,25 +1,44 @@
-import type { AttributeType } from '@/domain/attribute'
-import { AttributeManager, AttributeCalculator } from '@/features/attribute-system'
-import type { ICharacterSheet } from './models/ICharacterSheet'
-import type { ICharacterSheetInput } from './models/ICharacterSheetInput'
-import { EquipmentProcessor } from './processors/processors/EquipmentProcessor'
-import { RelicProcessor } from './processors/processors/RelicProcessor' /**
- * 角色屬性面板計算器
- *
- * 負責計算角色的最終屬性面板（靜態數據，用於 UI 展示）。
- * 整合裝備與遺物的屬性增益，使用與戰鬥系統相同的計算邏輯。
- *
- * 設計原則：
- * - 純函數：無副作用，可重複計算
- * - 複用：使用 AttributeManager 和 AttributeCalculator
- * - 低耦合：僅依賴 domain 和 attribute-system
- */
+import type { AttributeType } from '@/features/attribute/interfaces/AttributeType'
+import type { IAttributeManager } from '@/features/attribute/interfaces/IAttributeManager'
+import type { IAttributeCalculator } from '@/features/attribute/interfaces/IAttributeCalculator'
+import type { ICharacterSheet } from '../interfaces/ICharacterSheet'
+import type { ICharacterSheetInput } from '../interfaces/ICharacterSheetInput'
+import type { IEquipmentProcessor } from '../interfaces/IEquipmentProcessor'
+import type { IRelicProcessor } from '../interfaces/IRelicProcessor'
+
+const ATTRIBUTE_TYPES: readonly AttributeType[] = [
+  'maxHp',
+  'currentHp',
+  'maxEnergy',
+  'currentEnergy',
+  'energyRegen',
+  'energyGainOnAttack',
+  'armor',
+  'evasion',
+  'attackDamage',
+  'attackCooldown',
+  'criticalChance',
+  'criticalMultiplier',
+  'accuracy',
+  'resurrectionChance',
+  'resurrectionHpPercent',
+] as const
 export class CharacterSheetCalculator {
-  private readonly equipmentProcessor: EquipmentProcessor
-  private readonly relicProcessor: RelicProcessor
-  constructor() {
-    this.equipmentProcessor = new EquipmentProcessor()
-    this.relicProcessor = new RelicProcessor()
+  private readonly equipmentProcessor: IEquipmentProcessor
+  private readonly relicProcessor: IRelicProcessor
+  private readonly createAttributeManager: (baseAttributes: any) => IAttributeManager
+  private readonly createAttributeCalculator: (manager: IAttributeManager) => IAttributeCalculator
+
+  constructor(
+    equipmentProcessor: IEquipmentProcessor,
+    relicProcessor: IRelicProcessor,
+    createAttributeManager: (baseAttributes: any) => IAttributeManager,
+    createAttributeCalculator: (manager: IAttributeManager) => IAttributeCalculator
+  ) {
+    this.equipmentProcessor = equipmentProcessor
+    this.relicProcessor = relicProcessor
+    this.createAttributeManager = createAttributeManager
+    this.createAttributeCalculator = createAttributeCalculator
   }
   /**
    * 計算角色屬性面板
@@ -29,8 +48,8 @@ export class CharacterSheetCalculator {
    */
   calculate(input: ICharacterSheetInput): ICharacterSheet {
     // 初始化屬性管理器（使用基礎屬性）
-    const attributeManager = new AttributeManager(input.baseAttributes)
-    const attributeCalculator = new AttributeCalculator(attributeManager)
+    const attributeManager = this.createAttributeManager(input.baseAttributes)
+    const attributeCalculator = this.createAttributeCalculator(attributeManager)
     // 處理裝備：提取屬性修飾器並添加到管理器
     const equipmentModifiers = this.equipmentProcessor.processAll(input.equipments)
     for (const modifier of equipmentModifiers) {
@@ -54,26 +73,9 @@ export class CharacterSheetCalculator {
   /**
    * 計算所有屬性的最終值
    */
-  private calculateAllAttributes(calculator: AttributeCalculator): Record<AttributeType, number> {
-    const attributeTypes: AttributeType[] = [
-      'maxHp',
-      'currentHp',
-      'maxEnergy',
-      'currentEnergy',
-      'energyRegen',
-      'energyGainOnAttack',
-      'armor',
-      'evasion',
-      'attackDamage',
-      'attackCooldown',
-      'criticalChance',
-      'criticalMultiplier',
-      'accuracy',
-      'resurrectionChance',
-      'resurrectionHpPercent',
-    ]
+  private calculateAllAttributes(calculator: IAttributeCalculator): Record<AttributeType, number> {
     const result = {} as Record<AttributeType, number>
-    for (const type of attributeTypes) {
+    for (const type of ATTRIBUTE_TYPES) {
       result[type] = calculator.calculateAttribute(type)
     }
     return result
@@ -81,26 +83,9 @@ export class CharacterSheetCalculator {
   /**
    * 提取基礎屬性值（不含修飾器）
    */
-  private extractBaseAttributes(manager: AttributeManager): Record<AttributeType, number> {
-    const attributeTypes: AttributeType[] = [
-      'maxHp',
-      'currentHp',
-      'maxEnergy',
-      'currentEnergy',
-      'energyRegen',
-      'energyGainOnAttack',
-      'armor',
-      'evasion',
-      'attackDamage',
-      'attackCooldown',
-      'criticalChance',
-      'criticalMultiplier',
-      'accuracy',
-      'resurrectionChance',
-      'resurrectionHpPercent',
-    ]
+  private extractBaseAttributes(manager: IAttributeManager): Record<AttributeType, number> {
     const result = {} as Record<AttributeType, number>
-    for (const type of attributeTypes) {
+    for (const type of ATTRIBUTE_TYPES) {
       result[type] = manager.getBase(type)
     }
     return result

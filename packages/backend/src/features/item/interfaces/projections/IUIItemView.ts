@@ -1,5 +1,5 @@
-import type { EquipmentRarity } from '../definitions'
-import type { EquipmentSlot } from '../equipment-slot'
+import type { ItemRarity as EquipmentRarity } from '../definitions/IEquipmentDefinition'
+import type { EquipmentSlot } from '../definitions/EquipmentSlot'
 /**
  * IUIItemView
  *

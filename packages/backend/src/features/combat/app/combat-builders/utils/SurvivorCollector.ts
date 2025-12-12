@@ -1,5 +1,4 @@
 import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-
 /**
  * SurvivorCollector
  *

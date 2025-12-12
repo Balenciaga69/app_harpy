@@ -3,7 +3,6 @@ import type { CombatContext } from '../../context/CombatContext'
 import type { IEffect } from '@/features/effect-system/models/effect'
 import { isCharacter } from '../../shared/utils/TypeGuardUtil'
 import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-
 /**
  * PreMatchEffectApplicator
  *

@@ -5,8 +5,10 @@
  * 根據定義 ID 生成遺物實例。
  */
 import { nanoid } from 'nanoid'
-import type { IRelicDefinition, IRelicInstance } from '@/domain/item'
-import { ItemDefinitionRegistry } from '@/domain/item'
+// TODO: 依賴外部模組 item，未來需抽象化
+import type { IRelicDefinition, IRelicInstance } from '@/features/item/interfaces/definitions'
+// TODO: 依賴外部模組 item，未來需抽象化
+import { ItemDefinitionRegistry } from '@/features/item/domain/registries/ItemDefinitionRegistry'
 /**
  * RelicGenerator 配置
  */

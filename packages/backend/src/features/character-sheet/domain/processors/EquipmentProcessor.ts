@@ -1,8 +1,10 @@
 import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
 import { IEquipmentInstance } from '@/features/item/interfaces/definitions/IItemInstance'
 import { createModifierFromAffix } from '../../interfaces/IAffixAttributeMapping'
-import { AFFIX_MAPPING_LOOKUP } from '../../app/registries/AffixRegistry'
-export class EquipmentProcessor {
+import { AFFIX_MAPPING_LOOKUP } from '../registries/AffixRegistry'
+import type { IEquipmentProcessor } from '../../interfaces/IEquipmentProcessor'
+
+export class EquipmentProcessor implements IEquipmentProcessor {
   process(equipment: IEquipmentInstance): AttributeModifier[] {
     const modifiers: AttributeModifier[] = []
     for (const affix of equipment.affixes) {

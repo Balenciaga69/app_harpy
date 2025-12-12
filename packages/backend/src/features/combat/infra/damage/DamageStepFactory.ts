@@ -7,7 +7,6 @@ import { CriticalStep } from '../../domain/damage/step/CriticalStep'
 import { DamageModifyStep } from '../../domain/damage/step/DamageModifyStep'
 import { DefenseCalculationStep } from '../../domain/damage/step/DefenseCalculationStep'
 import { HitCheckStep } from '../../domain/damage/step/HitCheckStep'
-
 /**
  * DamageStepFactory
  *

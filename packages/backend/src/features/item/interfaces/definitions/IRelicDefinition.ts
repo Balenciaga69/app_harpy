@@ -1,4 +1,4 @@
-import type { ItemRarity } from './equipment-definition'
+import type { ItemRarity } from './IEquipmentDefinition'
 import type { IItemDefinition } from './item-definition'
 /**
  * IRelicDefinition

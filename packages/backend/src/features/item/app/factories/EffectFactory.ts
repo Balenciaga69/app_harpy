@@ -1,6 +1,6 @@
-import type { IAffixInstance } from '../affixes'
-import type { ICombatItemView } from '../projections'
-import type { AffixDefinitionRegistry } from '../registries'
+import type { IAffixInstance } from '../../interfaces/definitions/IAffixInstance'
+import type { ICombatItemView } from '../../interfaces/projections/ICombatItemView'
+import type { AffixDefinitionRegistry } from '../../domain/registries/AffixDefinitionRegistry'
 /**
  * EffectTemplateInfo
  *

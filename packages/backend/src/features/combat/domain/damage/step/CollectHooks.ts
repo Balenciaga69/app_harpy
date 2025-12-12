@@ -1,6 +1,5 @@
 import type { ICharacter } from '../../../interfaces/character/ICharacter'
 import type { ICombatHook } from '../../../interfaces/damage/ICombatHook'
-
 /**
  * collectHooks
  *
@@ -9,8 +8,6 @@ import type { ICombatHook } from '../../../interfaces/damage/ICombatHook'
  */
 export function collectHooks(source: ICharacter, target: ICharacter): ICombatHook[] {
   const hooks: ICombatHook[] = []
-
   // TODO: 實現從 source 和 target 從所有 IEffect 裡面撈 各種Hook方法 只要 not null 就 push 進 hooks 陣列
-
   return hooks
 }

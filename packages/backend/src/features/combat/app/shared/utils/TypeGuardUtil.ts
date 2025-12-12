@@ -1,5 +1,4 @@
 import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-
 /**
  * Check if object is ICharacter type
  */

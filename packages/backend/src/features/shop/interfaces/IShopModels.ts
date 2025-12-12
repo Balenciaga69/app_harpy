@@ -4,7 +4,9 @@
  * 商店模組的核心資料結構定義。
  * 跨語言友好，可序列化為 JSON。
  */
-import type { IEquipmentInstance, IRelicInstance } from '@/domain/item'
+import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
+import type { ItemRarity } from '@/features/item/interfaces/definitions/IEquipmentDefinition'
+import type { Emitter } from 'mitt'
 /**
  * 商店商品
  */
@@ -70,3 +72,60 @@ export interface IRefreshResult {
   /** 刷新時的章節層數 */
   chapter: number
 }
+/**
+ * 商店事件類型
+ */
+export type ShopEvents = {
+  ShopRefreshed: { items: IShopItem[]; difficulty: number; chapter: number }
+  ItemPurchased: { item: IEquipmentInstance | IRelicInstance; price: number }
+  ItemSold: { itemId: string; price: number }
+}
+/**
+ * 庫存介面（用於依賴注入）
+ */
+export interface IInventoryAdapter {
+  getPlayerGold(): number
+  updatePlayerGold(amount: number): void
+  addItemToInventory(item: IEquipmentInstance | IRelicInstance): void
+  removeItemFromInventory(itemId: string): void
+  hasItem(itemId: string): boolean
+}
+/**
+ * 難度適配器介面
+ */
+export interface IDifficultyAdapter {
+  getCurrentDifficulty(): number
+}
+/**
+ * 物品生成器介面
+ */
+export interface IItemGenerator {
+  generateEquipment(definitionId: string, difficulty: number, seed: string): IEquipmentInstance
+  generateRelic(definitionId: string): IRelicInstance
+}
+/**
+ * 定價引擎介面
+ */
+export interface IPricingEngine {
+  calculateBuyPrice(rarity: EquipmentRarity, difficulty: number, chapter: number): number
+  calculateSellPrice(rarity: EquipmentRarity, difficulty: number, chapter: number): number
+}
+/**
+ * ShopManager 配置
+ */
+export interface IShopManagerConfig {
+  /** 商店配置 */
+  shopConfig: IShopConfig
+  /** 事件總線 */
+  eventBus: Emitter<ShopEvents>
+  /** 庫存適配器 */
+  inventory: IInventoryAdapter
+  /** 難度適配器 */
+  difficultyAdapter: IDifficultyAdapter
+  /** 物品生成器（可選，預設創建新實例） */
+  itemGenerator?: IItemGenerator
+}
+/**
+ * 裝備稀有度類型（來自 item 模組）
+ */
+export type EquipmentRarity = ItemRarity

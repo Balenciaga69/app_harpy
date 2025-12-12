@@ -7,8 +7,11 @@
  * - 頭盔/盔甲：排除 'attack' tag
  * - 其他槽位：不過濾
  */
-import type { IAffixDefinition, EquipmentSlot } from '@/domain/item'
-import type { IAffixFilter } from './affix-filter'
+// TODO: 依賴外部模組 item，未來需抽象化
+import type { IAffixDefinition } from '@/features/item/interfaces/definitions/IAffixDefinition'
+// TODO: 依賴外部模組 item，未來需抽象化
+import type { EquipmentSlot } from '@/features/item/interfaces/definitions/EquipmentSlot'
+import type { IAffixFilter } from '../../interfaces/strategies/IAffixFilter'
 export class SlotBasedFilter implements IAffixFilter {
   /**
    * 過濾詞綴
