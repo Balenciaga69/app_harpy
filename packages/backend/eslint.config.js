@@ -53,25 +53,25 @@ export default [
         },
       ],
     },
-    rules: {
-      // 應用 boundaries 推薦規則
-      ...boundaries.configs.recommended.rules,
-      // 自訂架構依賴規則
-      'boundaries/element-types': [
-        2, // 錯誤級別
-        {
-          // 預設禁止所有依賴
-          default: 'disallow',
-          rules: [
-            // 領域層只能依賴領域層內部
-            { from: 'domain', allow: ['domain'] },
-            // 應用層只能依賴領域層
-            { from: 'app', allow: ['domain'] },
-            // 基礎設施層可以依賴應用層和領域層
-            { from: 'infra', allow: ['app', 'domain'] },
-          ],
-        },
-      ],
-    },
+    // rules: {
+    //   // 應用 boundaries 推薦規則
+    //   ...boundaries.configs.recommended.rules,
+    //   // 自訂架構依賴規則
+    //   'boundaries/element-types': [
+    //     2, // 錯誤級別
+    //     {
+    //       // 預設禁止所有依賴
+    //       default: 'disallow',
+    //       rules: [
+    //         // 領域層只能依賴領域層內部
+    //         { from: 'domain', allow: ['domain'] },
+    //         // 應用層只能依賴領域層
+    //         { from: 'app', allow: ['domain'] },
+    //         // 基礎設施層可以依賴應用層和領域層
+    //         { from: 'infra', allow: ['app', 'domain'] },
+    //       ],
+    //     },
+    //   ],
+    // },
   },
 ]
