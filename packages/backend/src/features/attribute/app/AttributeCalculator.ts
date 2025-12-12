@@ -1,6 +1,10 @@
 import type { IAttributeManager } from '../interfaces/IAttributeManager'
 import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
-import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from '../interfaces/AttributeModifier'
+import {
+  type IAttributeModifier as AttributeModifier,
+  type IAttributeModifierEx as AttributeModifierEx,
+  ModifierPriority,
+} from '../interfaces/AttributeModifier'
 import { AttributeType } from '../interfaces/AttributeType'
 /**
  * 屬性計算器

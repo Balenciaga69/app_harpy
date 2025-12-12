@@ -47,13 +47,13 @@ Provide project context and coding guidelines that AI should follow when generat
 ### Typescript 檔案與資料夾與物件命名規範
 
 File names:
+\*\*\* Almost time, FileName = InternalName
 React Components: PascalCase (e.g., UserProfile.tsx)
 Class, Abstract Class: PascalCase (e.g., UserProfile.ts)
 Utility, Helper, Common: PascalCase (e.g., DataFetch.ts)
 Interface, Type, Enum: PascalCase (e.g., IUserProfile,CharacterInformation.ts)
 
 InternalNaming:
-Almost time, FileName = InternalName
 Class: PascalCase (e.g., UserProfile)
 Interface: I + PascalCase (e.g., IUserProfile)
 Type Alias: PascalCase (e.g., UserID)

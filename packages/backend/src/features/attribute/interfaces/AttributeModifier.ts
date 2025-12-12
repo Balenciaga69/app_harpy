@@ -6,7 +6,7 @@ import { AttributeType } from './AttributeType'
  * 用於動態調整角色屬性的值。
  * 支援加法（add）和乘法（multiply）兩種模式。
  */
-export interface AttributeModifier {
+export interface IAttributeModifier {
   readonly id: string
   readonly type: AttributeType
   readonly value: number
@@ -51,6 +51,6 @@ export const ModifierPriority = {
 /** 修飾器優先級類型 */
 export type ModifierPriorityType = (typeof ModifierPriority)[keyof typeof ModifierPriority]
 /** 擴展屬性修飾器（支援優先級） */
-export interface AttributeModifierEx extends AttributeModifier {
+export interface IAttributeModifierEx extends IAttributeModifier {
   readonly priority: ModifierPriorityType
 }
