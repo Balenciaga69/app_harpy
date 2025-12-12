@@ -1,7 +1,7 @@
 import type { CombatContext } from '@/features/combat'
-import type { DamageEvent } from '../damage/models/damage-event'
 import type { IDamageStep } from './DamageStep.interface'
-import { ResurrectionHandler } from '../damage/utils/ResurrectionHandler'
+import { DamageEvent } from '../models/damage-event'
+import { ResurrectionHandler } from '../utils/ResurrectionHandler'
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.
  * Includes HP zero check, effect triggers, and resurrection check.
