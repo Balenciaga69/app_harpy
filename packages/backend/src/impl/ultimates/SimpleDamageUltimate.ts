@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/app/combat/context'
 import type { ICharacter } from '@/app/combat/domain/character'
-import { CharacterAccessor } from '@/app/combat/infra/shared'
-import { DamageChain } from '@/app/combat/logic/damage'
+import { CharacterAccessor } from '@/app/combat/shared'
+import { DamageChain } from '@/app/combat/damage'
 import type { IUltimateAbility } from '@/app/combat/domain/ultimate/ultimate-ability'
-import { UltimateDefaults } from '@/app/combat/infra/config'
+import { UltimateDefaults } from '@/app/combat/config'
 import { FirstAliveSelector } from '@/app/combat/coordination'
 import { DamageFactory } from '@/app/combat/coordination/utils/DamageFactory'
 /**

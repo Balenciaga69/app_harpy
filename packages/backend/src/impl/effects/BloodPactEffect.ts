@@ -3,7 +3,7 @@ import type { ICombatContext } from '@/app/combat/context'
 import type { ICharacter } from '@/app/combat/domain/character'
 import type { IEffect } from '@/app/effect-system/models/effect'
 import type { IEffectServices } from '@/app/effect-system'
-import type { DamageEvent, ICombatHook } from '@/app/combat/logic/damage'
+import type { DamageEvent, ICombatHook } from '@/app/combat/damage'
 /**
  * BloodPactEffect
  *

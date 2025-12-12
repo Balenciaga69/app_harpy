@@ -1,7 +1,7 @@
 import type { CombatContext } from '@/app/combat/context'
 import type { ICharacter } from '@/app/combat/domain/character'
 import type { IEffect } from '@/app/effect-system/models/effect'
-import { isCharacter } from '@/app/combat/infra/shared'
+import { isCharacter } from '@/app/combat/shared'
 /**
  * PreMatchEffectApplicator
  *

@@ -1,4 +1,4 @@
-import type { IEntity } from '../infra/shared/interfaces/entity.interface'
+import type { IEntity } from '../shared/interfaces/entity.interface'
 /**
  * IBattleState
  *

@@ -1,14 +1,9 @@
-import type { CombatSnapshot } from '../../combat-engine/models'
+import type { CombatSnapshot } from '../combat-engine/models'
 import type { CombatContext } from '@/app/combat'
-import type { ICharacter } from '../../domain/character'
-import { isCharacter } from '../../infra/shared'
-import { CombatTiming } from '../../infra/config'
-/**
- * SnapshotCollector
- *
- * Collects combat snapshots at configured intervals by listening to tick events. Stores entity states
- * for replay and analysis. Provides query and cleanup methods.
- */
+import type { ICharacter } from '../domain/character'
+import { isCharacter } from '../shared'
+import { CombatTiming } from '../config'
+
 export class SnapshotCollector {
   private snapshots: CombatSnapshot[] = []
   private interval: number

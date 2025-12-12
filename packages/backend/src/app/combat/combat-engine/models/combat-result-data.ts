@@ -5,7 +5,7 @@
  */
 import type { CombatContext } from '../../context'
 import type { CombatConfig } from './combat-config'
-import type { CombatLogEntry } from '../../logic/logger'
+import type { CombatLogEntry } from '../../logger'
 import type { CombatSnapshot } from './combat-snapshot'
 export interface CombatResultData {
   context: CombatContext

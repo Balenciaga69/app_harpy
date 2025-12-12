@@ -1,6 +1,6 @@
 import type { CombatContext } from '../../context'
 import type { ICharacter } from '../../domain/character'
-import { isCharacter } from '../../infra/shared'
+import { isCharacter } from '../../shared'
 import type { ITargetSelector } from '../target-select-strategies/target-selector'
 import { AttackExecutor } from '../utils/AttackExecutor'
 import { CooldownManager } from '../utils/CooldownManager'

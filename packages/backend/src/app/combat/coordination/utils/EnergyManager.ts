@@ -1,6 +1,6 @@
 import type { CombatContext } from '../../context'
 import type { ICharacter } from '../../domain/character'
-import { EnergySystem, UltimateEnergy } from '../../infra/config'
+import { EnergySystem, UltimateEnergy } from '../../config'
 /**
  * EnergyManager
  *

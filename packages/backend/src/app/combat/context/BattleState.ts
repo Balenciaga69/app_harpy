@@ -1,4 +1,4 @@
-import type { IEntity } from '../infra/shared'
+import type { IEntity } from '../shared'
 import type { IBattleState } from './battle-state'
 /**
  * BattleState

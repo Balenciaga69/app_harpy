@@ -3,7 +3,7 @@ export { CombatEngine } from './combat-engine/CombatEngine'
 // === Models (Public API) ===
 export type { CombatResult, CombatSnapshot, CombatConfig } from './combat-engine/models'
 // === Logger (Public API for Replay) ===
-export type { CombatLogEntry } from './logic/logger'
+export type { CombatLogEntry } from './logger'
 // === Context (For advanced usage) ===
 export { CombatContext } from './context/CombatContext'
 export type { ICombatContext } from './context/combat-context'

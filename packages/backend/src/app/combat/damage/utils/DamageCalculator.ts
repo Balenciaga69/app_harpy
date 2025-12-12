@@ -1,4 +1,4 @@
-import { ArmorFormula, EvasionFormula, CriticalFormula } from '@/app/combat/infra/config'
+import { ArmorFormula, EvasionFormula, CriticalFormula } from '@/app/combat/config'
 export function calculateArmorReduction(armor: number): number {
   return ArmorFormula.calculate(armor)
 }

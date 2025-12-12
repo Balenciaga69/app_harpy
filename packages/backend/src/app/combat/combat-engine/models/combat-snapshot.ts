@@ -1,4 +1,4 @@
-import type { CharacterSnapshot } from '../../infra/shared'
+import type { CharacterSnapshot } from '../../shared'
 /**
  * CombatSnapshot
  *

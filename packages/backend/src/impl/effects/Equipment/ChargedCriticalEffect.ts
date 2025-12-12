@@ -1,8 +1,8 @@
-import type { DamageEvent, ICombatHook } from '@/app/combat/logic/damage'
+import type { DamageEvent, ICombatHook } from '@/app/combat/damage'
 import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/app/combat/context'
 import type { ICharacter } from '@/app/combat/domain/character'
-import { EffectNames } from '@/app/combat/infra/config'
+import { EffectNames } from '@/app/combat/config'
 import type { IEffect } from '@/app/effect-system/models/effect'
 import type { IEffectServices } from '@/app/effect-system'
 /**

@@ -1,5 +1,5 @@
 import type { IEffect } from '@/app/effect-system/models/effect'
-import type { ICharacter } from '../../../domain/character/models/character'
+import type { ICharacter } from '../../domain/character/models/character'
 import type { ICombatHook } from '../models/combat-hook'
 /**
  * 取得所有 hook 的方法名稱

@@ -1,5 +1,5 @@
-import type { CombatContext } from '../../context'
-import { CombatTiming } from '../../infra/config'
+import type { CombatContext } from '../context'
+import { CombatTiming } from '../config'
 /**
  * TickerDriver
  *

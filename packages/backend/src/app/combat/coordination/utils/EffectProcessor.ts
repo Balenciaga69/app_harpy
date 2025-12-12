@@ -1,5 +1,5 @@
 import type { CombatContext } from '../../context'
-import { isCharacter } from '../../infra/shared'
+import { isCharacter } from '../../shared'
 import type { ICombatEffectHook } from '@/app/effect-system'
 import { CombatEffectServices } from '../../adapters/CombatEffectServices'
 /**

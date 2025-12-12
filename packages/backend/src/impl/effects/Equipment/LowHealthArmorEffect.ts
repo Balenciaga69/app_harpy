@@ -1,4 +1,4 @@
-import type { DamageEvent, ICombatHook } from '@/app/combat/logic/damage'
+import type { DamageEvent, ICombatHook } from '@/app/combat/damage'
 import { nanoid } from 'nanoid'
 import type { ICombatContext } from '@/app/combat/context'
 import type { ICharacter } from '@/app/combat/domain/character'

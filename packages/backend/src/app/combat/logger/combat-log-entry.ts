@@ -1,4 +1,4 @@
-import type { CombatEventMap } from '../../infra/event-bus'
+import type { CombatEventMap } from '../event-bus'
 export interface CombatLogEntry {
   tick: number
   eventType: keyof CombatEventMap
