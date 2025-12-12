@@ -11,6 +11,7 @@
  * 此模式避免在戰鬥迴圈中丟出例外，
  * 讓錯誤處理變得明確且可組合。
  */
+// TODO: 這可能要搬到更外層，而非這一個 combat feature 內
 export class Result<T, F> {
   private readonly _value?: T
   private readonly _failure?: F

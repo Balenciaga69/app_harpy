@@ -1,11 +1,6 @@
 import type { ICombatContext } from '@/features/combat/context'
 import type { DamageEvent } from './damage-event'
-/**
- * Combat Hook interface - behavior contract
- *
- * Define various extensible points in damage calculation process
- * Allow characters, equipment, effects, etc. to inject custom logic
- */
+
 export interface ICombatHook {
   // 應改名為 IDamageStep
   beforeDamageCalculation?(event: DamageEvent, context: ICombatContext): DamageEvent

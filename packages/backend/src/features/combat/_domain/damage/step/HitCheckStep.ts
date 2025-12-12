@@ -1,7 +1,7 @@
 import type { ICombatContext } from '@/features/combat/context'
 import type { DamageEvent } from '../../../_interfaces/damage/damage-event'
-import { calculateHitChance } from '../../DamageCalculator'
 import type { IDamageStep } from '../../../_interfaces/damage/damage-step'
+import { calculateHitChance } from '../DamageCalculator'
 import { collectHooks } from './collect-hooks'
 /**
  * Hit check stage

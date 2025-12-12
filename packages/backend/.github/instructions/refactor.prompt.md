@@ -33,6 +33,14 @@
 [_domain/damage] src\features\combat\damage\utils\DamageCalculator.ts
 [_domain/damage] src\features\combat\damage\utils\ResurrectionHandler.ts
 
+[]src\features\combat\ultimate\ultimate-ability.ts
+[]src\features\combat\ultimate\UltimateManager.ts
+[]src\features\combat\errors\combat-error.ts
+[]src\features\combat\errors\combat-failure.ts
+[]src\features\combat\errors\result.ts
+[]src\features\combat\event-bus\EventBus.ts
+[]src\features\combat\event-bus\models\combat-event-map.ts
+[]src\features\combat\event-bus\models\event-payload.ts
 ===請忽視以下檔案，尚未遷移至此===
 src\features\combat\CombatEffectServices.ts
 (內部有大量違反依賴問題) src\features\combat\character\Character.ts
@@ -73,12 +81,6 @@ src\features\combat\coordination\utils\DamageFactory.ts
 src\features\combat\coordination\utils\EffectProcessor.ts
 src\features\combat\coordination\utils\EnergyManager.ts
 
-src\features\combat\errors\combat-error.ts
-src\features\combat\errors\combat-failure.ts
-src\features\combat\errors\result.ts
-src\features\combat\event-bus\EventBus.ts
-src\features\combat\event-bus\models\combat-event-map.ts
-src\features\combat\event-bus\models\event-payload.ts
 src\features\combat\logger\combat-log-entry.ts
 src\features\combat\logger\EventLogger.ts
 src\features\combat\resource-registry\InMemoryResourceRegistry.ts
@@ -97,5 +99,3 @@ src\features\combat\tick-phases\AttackExecutionPhase.ts
 src\features\combat\tick-phases\EffectTickPhase.ts
 src\features\combat\tick-phases\EnergyRegenPhase.ts
 src\features\combat\tick-phases\tick-phase.ts
-src\features\combat\ultimate\ultimate-ability.ts
-src\features\combat\ultimate\UltimateManager.ts

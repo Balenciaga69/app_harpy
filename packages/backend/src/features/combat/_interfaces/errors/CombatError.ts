@@ -1,5 +1,5 @@
-import type { CombatFailure, FailureCode } from './combat-failure'
-import { CombatFailureCode } from './combat-failure'
+import type { CombatFailure, FailureCode } from './CombatFailure'
+import { CombatFailureCode } from './CombatFailure'
 /**
  * CombatError
  *
