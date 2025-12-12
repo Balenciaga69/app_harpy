@@ -1,4 +1,4 @@
-import type { RunContext } from '../models/run-context'
+import { RunContext } from '../../interfaces/models/run-context'
 /**
  * 商店協調器
  * 封裝與 Shop 模組的互動邏輯

@@ -21,7 +21,7 @@ export interface BaseAttributeValues {
   criticalMultiplier: number // 倍率 (1.5 = 150%)
   // === Resurrection related ===
   resurrectionChance: number // 0.03-0.50 範圍 (3%-50%)
-  resurrectionHpPercent: number // 0.10-1.00 範圍 (10%-100%)
+  resurrectionHpPercent: number
 }
 
 export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>): BaseAttributeValues {

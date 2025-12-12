@@ -1,9 +1,9 @@
-import { nanoid } from 'nanoid'
-import type { ICombatContext } from '@/features/combat/context'
-import type { ICharacter } from '@/features/combat/character'
-import type { IEffect } from '@/features/effect-system/interfaces/IEffect'
+import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
+import { DamageEvent } from '@/features/combat/interfaces/damage/DamageEvent'
+import { ICombatHook } from '@/features/combat/interfaces/damage/ICombatHook'
 import type { IEffectServices } from '@/features/effect-system'
-import type { DamageEvent, ICombatHook } from '@/features/combat/damage'
+import type { IEffect } from '@/features/effect-system/interfaces/IEffect'
+import { nanoid } from 'nanoid'
 /**
  * BloodPactEffect
  *

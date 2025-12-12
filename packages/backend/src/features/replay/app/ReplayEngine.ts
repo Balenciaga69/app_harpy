@@ -1,4 +1,3 @@
-import type { CombatLogEntry, CombatResult, CombatSnapshot } from '../../combat' // TODO: 依賴外部模組 combat
 import type { IReplayEventBus } from '../interfaces/IReplayEventBus'
 import type { ITickScheduler } from '../interfaces/tick-scheduler'
 import { BrowserTickScheduler } from '../infra/BrowserTickScheduler'
@@ -9,6 +8,9 @@ import { type ReplayEvent, type ReplayEventType } from '../interfaces/ReplayEven
 import type { IReplayEngine } from '../interfaces/IReplayEngine'
 import { PlaybackStateMachine } from '../domain/PlaybackStateMachine'
 import { ReplayDataAdapter } from '../domain/ReplayDataAdapter'
+import { CombatResult } from '@/features/combat/interfaces/combat-engine/CombatResult'
+import { CombatLogEntry } from '@/features/combat/interfaces/logger/CombatLogEntry'
+import { CombatSnapshot } from '@/features/combat/interfaces/combat-engine/CombatSnapshot'
 /**
  * ReplayEngine
  *

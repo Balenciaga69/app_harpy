@@ -1,6 +1,6 @@
+import { RunState } from '@/features/run/interfaces/models/run-state'
 import type { IRunStateHandler } from '../IRunStateHandler'
-import type { RunContext } from '../../models/run-context'
-import { RunState } from '../../models/run-state'
+import { RunContext } from '@/features/run/interfaces/models/run-context'
 /**
  * 事件觸發狀態處理器
  */

@@ -1,7 +1,5 @@
-/**
- * Relic 定義範例（戰士專用）
- */
-import type { IRelicDefinition } from '@/domain/item'
+import { IRelicDefinition } from '@/features/item/interfaces/definitions/IRelicDefinition'
+
 /**
  * 泰坦之心 Relic
  * 效果：每 10 HP +2 護甲（可疊加）

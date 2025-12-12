@@ -1,6 +1,6 @@
 import type { IRunStateHandler } from '../IRunStateHandler'
-import type { RunContext } from '../../models/run-context'
-import { RunState } from '../../models/run-state'
+import { RunContext } from '@/features/run/interfaces/models/run-context'
+import { RunState } from '@/features/run/interfaces/models/run-state'
 /**
  * 角色選擇狀態處理器
  */

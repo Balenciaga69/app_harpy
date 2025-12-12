@@ -1,4 +1,4 @@
-import type { RunContext } from '../models/run-context'
+import { RunContext } from '../../interfaces/models/run-context'
 /**
  * 狀態處理器介面
  * 每個狀態實作自己的進入/退出邏輯

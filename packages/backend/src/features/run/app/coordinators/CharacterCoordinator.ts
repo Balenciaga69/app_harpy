@@ -1,4 +1,4 @@
-import type { RunContext } from '../models/run-context'
+import { RunContext } from '../../interfaces/models/run-context'
 /**
  * 角色協調器
  * 封裝與 CharacterManager 的互動邏輯

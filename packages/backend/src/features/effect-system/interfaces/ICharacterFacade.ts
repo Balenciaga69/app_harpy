@@ -1,5 +1,6 @@
-import type { AttributeType } from '@/domain/attribute'
-import type { AttributeModifier } from '@/features/attribute-system'
+import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
+import { AttributeType } from '@/features/attribute/interfaces/AttributeType'
+
 /**
  * 角色屬性操作最小介面
  *

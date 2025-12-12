@@ -1,4 +1,4 @@
-import type { IItemDefinition } from '../../interfaces/definitions/item-definition'
+import type { IItemDefinition } from '../../interfaces/definitions/IItemDefinition'
 import type { IAffixInstance } from '../../interfaces/definitions/IAffixInstance'
 import type { ICombatItemView } from '../../interfaces/projections/ICombatItemView'
 /**

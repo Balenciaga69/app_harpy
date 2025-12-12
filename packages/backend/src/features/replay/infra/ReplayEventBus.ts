@@ -1,7 +1,6 @@
 import mitt, { type Emitter } from 'mitt'
-import type { IEventBus } from '../../shared/event-bus/IEventBus'
-import type { ReplayEvent, ReplayEventType } from '../interfaces/ReplayEvent'
 import type { IReplayEventBus } from '../interfaces/IReplayEventBus'
+import type { ReplayEvent, ReplayEventType } from '../interfaces/ReplayEvent'
 /**
  * ReplayEventBus
  *

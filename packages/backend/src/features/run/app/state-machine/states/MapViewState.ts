@@ -1,6 +1,6 @@
 import type { IRunStateHandler } from '../IRunStateHandler'
-import type { RunContext } from '../../models/run-context'
-import { RunState } from '../../models/run-state'
+import { RunContext } from '@/features/run/interfaces/models/run-context'
+import { RunState } from '@/features/run/interfaces/models/run-state'
 /**
  * 地圖瀏覽狀態處理器
  */

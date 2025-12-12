@@ -1,7 +1,5 @@
-/**
- * 詞綴定義範例（攻擊、防禦、機制、傳說）
- */
-import type { IAffixDefinition } from '@/domain/item'
+import { IAffixDefinition } from '@/features/item/interfaces/definitions/IAffixDefinition'
+
 /* 攻擊類詞綴 */
 export const AFFIX_ATTACK_DAMAGE: IAffixDefinition = {
   id: 'affix_attack_damage',

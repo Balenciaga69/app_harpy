@@ -69,7 +69,7 @@ export default [
           default: 'disallow',
           rules: [
             // 領域層只能依賴領域層內部
-            { from: 'domain', allow: ['domain'] },
+            { from: 'domain', allow: ['domain', 'interfaces'] },
             // 介面層只能依賴介面層內部
             { from: 'interfaces', allow: ['interfaces'] },
             // 應用層可以依賴介面層和領域層

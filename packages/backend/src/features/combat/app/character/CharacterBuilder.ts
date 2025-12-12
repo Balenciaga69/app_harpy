@@ -1,10 +1,8 @@
+import { BaseAttributeValues, createDefaultAttributes } from '@/features/attribute/domain/AttributeValues'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
-// TODO: 依賴外部模組 @/domain/attribute
-import type { BaseAttributeValues } from '@/domain/attribute'
-import { createDefaultAttributes } from '@/domain/attribute'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { Character } from './Character'
-import type { ICharacter } from '../../interfaces/character/ICharacter'
 /**
  * CharacterBuilder
  *

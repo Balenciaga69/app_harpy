@@ -1,4 +1,5 @@
-import type { IEffect } from './effect'
+import { IEffect } from './IEffect'
+
 /**
  * 效果建構函式類型
  *

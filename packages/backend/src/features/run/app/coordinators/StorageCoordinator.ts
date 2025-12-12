@@ -1,4 +1,5 @@
-import type { RunContext } from '../models/run-context'
+import { RunContext } from '../../interfaces/models/run-context'
+
 /**
  * 存檔協調器
  * 封裝與 PersistentStorage 的互動邏輯

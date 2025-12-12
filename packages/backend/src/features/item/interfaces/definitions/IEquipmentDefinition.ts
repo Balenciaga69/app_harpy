@@ -1,5 +1,5 @@
 import type { EquipmentSlot } from './EquipmentSlot'
-import type { IItemDefinition } from './item-definition'
+import { IItemDefinition } from './IItemDefinition'
 /** 裝備稀有度 */
 export type ItemRarity = 'common' | 'magic' | 'rare' | 'legendary'
 /**

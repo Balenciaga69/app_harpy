@@ -1,4 +1,5 @@
-import type { ITickScheduler, TickCallback } from './tick-scheduler'
+import { ITickScheduler, TickCallback } from '../interfaces/tick-scheduler'
+
 /**
  * BrowserTickScheduler
  *

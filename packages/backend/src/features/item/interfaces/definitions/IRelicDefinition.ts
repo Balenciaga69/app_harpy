@@ -1,5 +1,5 @@
 import type { ItemRarity } from './IEquipmentDefinition'
-import type { IItemDefinition } from './item-definition'
+import { IItemDefinition } from './IItemDefinition'
 /**
  * IRelicDefinition
  *
@@ -10,4 +10,7 @@ export interface IRelicDefinition extends IItemDefinition {
   readonly stackable: boolean
   readonly maxStack: number
   readonly rarity: ItemRarity
+  readonly minAffixes: number
+  readonly maxAffixes: number
+  readonly affixPoolIds: readonly string[]
 }

@@ -1,4 +1,5 @@
-import type { IEffectServices, ICombatEffectServices } from './effect-services'
+import { IEffectServices } from './IEffectServices'
+
 /**
  * Effect 生命週期鉤子
  *

@@ -1,4 +1,4 @@
-import type { IItemDefinition } from '../../interfaces/definitions/item-definition'
+import { IItemDefinition } from '../../interfaces/definitions/IItemDefinition'
 import { ItemError } from '../errors/ItemError'
 /**
  * ItemDefinitionRegistry

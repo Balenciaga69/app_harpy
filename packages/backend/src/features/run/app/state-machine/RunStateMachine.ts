@@ -1,6 +1,6 @@
 import { RunState } from '../models/run-state'
-import type { RunStateType } from '../models/run-state'
-import type { RunContext } from '../models/run-context'
+import { RunStateType } from '../../interfaces/models/run-state'
+import { RunContext } from '../../interfaces/models/run-context'
 import type { IRunStateMachine } from './IRunStateMachine'
 import type { IRunStateHandler } from './IRunStateHandler'
 import { InvalidStateTransitionError } from '../errors'

@@ -1,4 +1,4 @@
-import type { RunContext } from '../models/run-context'
+import { RunContext } from '../../interfaces/models/run-context'
 /**
  * Run 結束處理器
  * 負責處理 Run 結束時的清理與結算

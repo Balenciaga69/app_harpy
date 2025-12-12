@@ -1,5 +1,5 @@
-import type { RunStateType } from '../models/run-state'
-import type { RunContext } from '../models/run-context'
+import { RunContext } from '../../interfaces/models/run-context'
+import { RunStateType } from '../../interfaces/models/run-state'
 /**
  * Run 狀態機介面
  */

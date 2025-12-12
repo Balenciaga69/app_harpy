@@ -1,13 +1,7 @@
-import type { AttributeModifier } from '@/features/attribute-system'
-import type { BaseAttributeValues } from '@/domain/attribute' /**
- * 遺物屬性計算函數
- *
- * 根據角色基礎屬性和遺物堆疊數量，計算遺物提供的屬性修飾器。
- */
-export type RelicAttributeCalculator = (
-  baseAttributes: BaseAttributeValues,
-  stackCount: number
-) => AttributeModifier[] /**
+import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
+import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
+export type RelicAttributeCalculator = (baseAttributes: BaseAttributeValues, stackCount: number) => AttributeModifier[]
+/**
  * 遺物屬性映射配置
  *
  * 定義遺物如何轉換為屬性修飾器。
