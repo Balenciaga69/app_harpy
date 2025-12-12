@@ -5,12 +5,7 @@ import { isCharacter } from '../../app/shared/utils/TypeGuardUtil'
 import type { AttackExecutor } from '../../app/coordination/utils/AttackExecutor'
 import type { CooldownManager } from '../../app/coordination/utils/CooldownManager'
 import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
-/**
- * Attack Execution Phase
- *
- * Handles attack cooldown management and execution for all alive characters.
- * Checks if characters can attack, selects targets, and performs attacks or ultimates.
- */
+
 export class AttackExecutionPhase implements ITickPhase {
   readonly name = 'AttackExecution'
   private attackExecutor: AttackExecutor

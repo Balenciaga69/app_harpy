@@ -1,17 +1,14 @@
-import type { CombatLogEntry, CombatResult, CombatSnapshot } from '../../combat'
-import type { IReplayEventBus, ITickScheduler } from '../infra'
-import { BrowserTickScheduler, ReplayEventBus } from '../infra'
-import {
-  DEFAULT_REPLAY_CONFIG,
-  createInitialReplayState,
-  type ReplayConfig,
-  type ReplayEvent,
-  type ReplayEventType,
-  type ReplayState,
-} from '../models'
-import type { IReplayEngine } from './replay.engine'
-import { PlaybackStateMachine } from './PlaybackStateMachine'
-import { ReplayDataAdapter } from './ReplayDataAdapter'
+import type { CombatLogEntry, CombatResult, CombatSnapshot } from '../../combat' // TODO: 依賴外部模組 combat
+import type { IReplayEventBus } from '../interfaces/IReplayEventBus'
+import type { ITickScheduler } from '../interfaces/tick-scheduler'
+import { BrowserTickScheduler } from '../infra/BrowserTickScheduler'
+import { ReplayEventBus } from '../infra/ReplayEventBus'
+import { DEFAULT_REPLAY_CONFIG, type ReplayConfig } from '../interfaces/ReplayConfig'
+import { createInitialReplayState, type ReplayState } from '../interfaces/ReplayState'
+import { type ReplayEvent, type ReplayEventType } from '../interfaces/ReplayEvent'
+import type { IReplayEngine } from '../interfaces/IReplayEngine'
+import { PlaybackStateMachine } from '../domain/PlaybackStateMachine'
+import { ReplayDataAdapter } from '../domain/ReplayDataAdapter'
 /**
  * ReplayEngine
  *
@@ -31,11 +28,11 @@ export class ReplayEngine implements IReplayEngine {
   private tickScheduler: ITickScheduler
   private config: ReplayConfig
   private lastFrameTime: number = 0
-  constructor(config?: Partial<ReplayConfig>, tickScheduler?: ITickScheduler) {
+  constructor(config?: Partial<ReplayConfig>, tickScheduler?: ITickScheduler, eventBus?: IReplayEventBus) {
     this.config = { ...DEFAULT_REPLAY_CONFIG, ...config }
     this.dataAdapter = new ReplayDataAdapter()
     this.stateMachine = new PlaybackStateMachine(createInitialReplayState())
-    this.eventEmitter = new ReplayEventBus()
+    this.eventEmitter = eventBus ?? new ReplayEventBus()
     this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
     // Set initial speed from config (clamped to 0.5-3x)
     this.stateMachine.setSpeed(this.clampSpeed(this.config.playbackSpeed))
@@ -48,7 +45,7 @@ export class ReplayEngine implements IReplayEngine {
     // Update state machine
     this.stateMachine.markLoaded(this.dataAdapter.getTotalTicks())
     // Emit loaded event
-    this.eventEmitter.emit('replay:loaded', 0, { totalTicks: this.dataAdapter.getTotalTicks() })
+    this.eventEmitter.emitWithTick('replay:loaded', 0, { totalTicks: this.dataAdapter.getTotalTicks() })
     // Auto-play if configured
     if (this.config.autoPlay) {
       this.play()
@@ -70,7 +67,7 @@ export class ReplayEngine implements IReplayEngine {
     this.stateMachine.play()
     // Emit appropriate event
     const eventType = wasEnded || currentTick === 0 ? 'replay:started' : 'replay:resumed'
-    this.eventEmitter.emit(eventType, this.stateMachine.getCurrentTick(), {
+    this.eventEmitter.emitWithTick(eventType, this.stateMachine.getCurrentTick(), {
       fromTick: this.stateMachine.getCurrentTick(),
     })
     // Start time progression
@@ -87,7 +84,7 @@ export class ReplayEngine implements IReplayEngine {
     // Stop time progression
     this.tickScheduler.cancel()
     // Emit event
-    this.eventEmitter.emit('replay:paused', this.stateMachine.getCurrentTick(), {
+    this.eventEmitter.emitWithTick('replay:paused', this.stateMachine.getCurrentTick(), {
       atTick: this.stateMachine.getCurrentTick(),
     })
   }
@@ -99,7 +96,7 @@ export class ReplayEngine implements IReplayEngine {
     this.tickScheduler.cancel()
     this.lastFrameTime = 0
     // Emit event
-    this.eventEmitter.emit('replay:stopped', 0, {})
+    this.eventEmitter.emitWithTick('replay:stopped', 0, {})
   }
   /** Seek to specific tick */
   public seek(tick: number): void {
@@ -111,7 +108,7 @@ export class ReplayEngine implements IReplayEngine {
     // Reset time base so next tick calculation starts fresh
     this.lastFrameTime = 0
     // Emit events
-    this.eventEmitter.emit('replay:seeked', this.stateMachine.getCurrentTick(), {
+    this.eventEmitter.emitWithTick('replay:seeked', this.stateMachine.getCurrentTick(), {
       fromTick,
       toTick: this.stateMachine.getCurrentTick(),
     })
@@ -129,7 +126,7 @@ export class ReplayEngine implements IReplayEngine {
     // Delegate speed change to state machine
     this.stateMachine.setSpeed(clampedSpeed)
     // Emit event
-    this.eventEmitter.emit('replay:speedChanged', this.stateMachine.getCurrentTick(), {
+    this.eventEmitter.emitWithTick('replay:speedChanged', this.stateMachine.getCurrentTick(), {
       oldSpeed,
       newSpeed: clampedSpeed,
     })
@@ -197,14 +194,14 @@ export class ReplayEngine implements IReplayEngine {
   }
   /** Emit tick event with current state */
   private emitTickEvent(): void {
-    this.eventEmitter.emit('replay:tick', this.stateMachine.getCurrentTick(), {
+    this.eventEmitter.emitWithTick('replay:tick', this.stateMachine.getCurrentTick(), {
       currentTick: this.stateMachine.getCurrentTick(),
       deltaTime: this.config.msPerTick / this.stateMachine.getState().speed,
     })
   }
   /** Handle playback end (loop or stop) */
   private handlePlaybackEnd(): void {
-    this.eventEmitter.emit('replay:ended', this.stateMachine.getCurrentTick(), {
+    this.eventEmitter.emitWithTick('replay:ended', this.stateMachine.getCurrentTick(), {
       totalTicks: this.dataAdapter.getTotalTicks(),
     })
     if (this.config.loop) {

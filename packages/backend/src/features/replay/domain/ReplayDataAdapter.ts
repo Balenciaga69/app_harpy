@@ -1,5 +1,5 @@
-import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat'
-import { ReplayError } from '../replay-error'
+import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat' // TODO: 依賴外部模組 combat
+import { ReplayError } from './ReplayError'
 /**
  * ReplayDataAdapter
  *

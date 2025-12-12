@@ -1,5 +1,7 @@
-import type { CombatLogEntry, CombatResult, CombatSnapshot } from '@/features/combat'
-import type { ReplayConfig, ReplayEvent, ReplayEventType, ReplayState } from '../../models'
+import type { CombatLogEntry, CombatResult, CombatSnapshot } from '../../combat' // TODO: 依賴外部模組 combat
+import type { ReplayConfig } from './ReplayConfig'
+import type { ReplayEvent, ReplayEventType } from './ReplayEvent'
+import type { ReplayState } from './ReplayState'
 /**
  * IReplayEngine
  *
