@@ -1,2 +1,3 @@
-export type { ICharacterSheet } from './character-sheet'
-export type { ICharacterSheetInput } from './sheet-input'
+export type { ICharacterSheet } from './ICharacterSheet'
+export type { ICharacterSheetInput } from './ICharacterSheetInput'
+

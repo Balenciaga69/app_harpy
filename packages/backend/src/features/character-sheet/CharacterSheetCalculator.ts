@@ -1,7 +1,7 @@
 import type { AttributeType } from '@/domain/attribute'
 import { AttributeManager, AttributeCalculator } from '@/features/attribute-system'
-import type { ICharacterSheet } from './models/character-sheet'
-import type { ICharacterSheetInput } from './models/sheet-input'
+import type { ICharacterSheet } from './models/ICharacterSheet'
+import type { ICharacterSheetInput } from './models/ICharacterSheetInput'
 import { EquipmentProcessor } from './processors/processors/EquipmentProcessor'
 import { RelicProcessor } from './processors/processors/RelicProcessor' /**
  * 角色屬性面板計算器
