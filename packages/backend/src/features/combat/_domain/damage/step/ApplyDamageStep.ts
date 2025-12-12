@@ -1,13 +1,13 @@
-import type { CombatContext } from '@/features/combat'
-import type { IDamageStep } from './DamageStep.interface'
-import { DamageEvent } from '../models/damage-event'
-import { ResurrectionHandler } from '../utils/ResurrectionHandler'
+import type { ICombatContext } from '@/features/combat/context'
+import type { IDamageStep } from '../../../_interfaces/damage/damage-step'
+import { DamageEvent } from '../../../_interfaces/damage/damage-event'
+import { ResurrectionHandler } from '../../ResurrectionHandler'
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.
  * Includes HP zero check, effect triggers, and resurrection check.
  */
 export class ApplyDamageStep implements IDamageStep {
-  execute(event: DamageEvent, context: CombatContext): boolean {
+  execute(event: DamageEvent, context: ICombatContext): boolean {
     event.finalDamage = Math.max(0, event.amount)
     const currentHp = event.target.getAttribute('currentHp')
     const newHp = Math.max(0, currentHp - event.finalDamage)

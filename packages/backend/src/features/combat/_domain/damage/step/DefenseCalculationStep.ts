@@ -1,15 +1,15 @@
-import type { CombatContext } from '@/features/combat'
-import type { DamageEvent } from '../damage/models/damage-event'
-import type { IDamageStep } from './DamageStep.interface'
+import type { ICombatContext } from '@/features/combat/context'
+import type { DamageEvent } from '../../../_interfaces/damage/damage-event'
+import type { IDamageStep } from '../../../_interfaces/damage/damage-step'
 import { collectHooks } from './collect-hooks'
-import { calculateArmorReduction } from '../damage/utils/DamageCalculator'
+import { calculateArmorReduction } from '../../DamageCalculator'
 /**
  * DefenseCalculationStep
  *
  * Calculates damage reduction based on target's armor. Handles true damage bypass and applies reduction formula.
  */
 export class DefenseCalculationStep implements IDamageStep {
-  execute(event: DamageEvent, context: CombatContext): boolean {
+  execute(event: DamageEvent, context: ICombatContext): boolean {
     const hooks = collectHooks(event.source, event.target)
     // Execute hooks
     for (const hook of hooks) {
