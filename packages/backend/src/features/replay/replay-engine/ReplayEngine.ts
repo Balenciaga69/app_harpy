@@ -9,9 +9,9 @@ import {
   type ReplayEventType,
   type ReplayState,
 } from '../models'
-import type { IReplayEngine } from './models/replay.engine'
-import { PlaybackStateMachine } from './services/PlaybackStateMachine'
-import { ReplayDataAdapter } from './services/ReplayDataAdapter'
+import type { IReplayEngine } from './replay.engine'
+import { PlaybackStateMachine } from './PlaybackStateMachine'
+import { ReplayDataAdapter } from './ReplayDataAdapter'
 /**
  * ReplayEngine
  *

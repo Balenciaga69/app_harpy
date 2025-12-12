@@ -1,7 +1,7 @@
 import type { AttributeManager } from './AttributeManager'
-import type { IAttributeCalculator } from './models/attribute-calculator'
-import type { AttributeType } from '@/domain/attribute'
-import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from './models/attribute-modifier'
+import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
+import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from '../interfaces/AttributeModifier'
+import { AttributeType } from '../interfaces/AttributeType'
 /**
  * 屬性計算器
  *

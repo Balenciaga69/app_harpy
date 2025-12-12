@@ -1,4 +1,4 @@
-import { AttributeDefaults } from '.'
+import { AttributeDefaults } from './AttributeConstants'
 
 export interface BaseAttributeValues {
   // === Health related ===

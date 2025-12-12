@@ -1,6 +1,7 @@
-import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
-import type { AttributeModifier } from './models/attribute-modifier'
-import { AttributeLimits } from '@/domain/attribute'
+import { AttributeLimits } from '../domain/AttributeConstants'
+import { BaseAttributeValues } from '../domain/AttributeValues'
+import type { AttributeModifier } from '../interfaces/AttributeModifier'
+import { AttributeType } from '../interfaces/AttributeType'
 /**
  * 屬性管理器
  *
