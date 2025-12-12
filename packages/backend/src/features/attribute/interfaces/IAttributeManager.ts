@@ -1,5 +1,5 @@
 import { AttributeType } from './AttributeType'
-import type { AttributeModifier } from './AttributeModifier'
+import type { AttributeModifier as AttributeModifier } from './AttributeModifier'
 
 /**
  * 屬性管理器介面

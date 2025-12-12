@@ -8,10 +8,10 @@ export { type BaseAttributeValues, createDefaultAttributes } from './domain/Attr
 
 // interfaces
 export {
-  type IAttributeModifier as AttributeModifier,
+  type AttributeModifier,
   ModifierPriority,
   type ModifierPriorityType,
-  type IAttributeModifierEx as AttributeModifierEx,
+  type AttributeModifierEx,
 } from './interfaces/AttributeModifier'
 export { type AttributeType } from './interfaces/AttributeType'
 export { type IAttributeCalculator } from './interfaces/IAttributeCalculator'

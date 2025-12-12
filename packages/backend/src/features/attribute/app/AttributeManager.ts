@@ -1,6 +1,6 @@
 import { AttributeLimits } from '../domain/AttributeConstants'
 import { BaseAttributeValues } from '../domain/AttributeValues'
-import type { AttributeModifier } from '../interfaces/AttributeModifier'
+import type { AttributeModifier as AttributeModifier } from '../interfaces/AttributeModifier'
 import { AttributeType } from '../interfaces/AttributeType'
 import type { IAttributeManager } from '../interfaces/IAttributeManager'
 /**

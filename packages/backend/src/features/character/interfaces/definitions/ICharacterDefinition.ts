@@ -1,4 +1,5 @@
-import type { BaseAttributeValues } from '@/domain/attribute'
+import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
+
 /**
  * ICharacterDefinition
  *

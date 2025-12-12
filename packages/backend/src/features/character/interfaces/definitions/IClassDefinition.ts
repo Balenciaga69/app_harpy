@@ -1,4 +1,5 @@
-import type { AttributeType } from '@/domain/attribute'
+import { AttributeType } from '@/features/attribute'
+
 /**
  * IClassDefinition
  *

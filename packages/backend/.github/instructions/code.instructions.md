@@ -55,8 +55,8 @@ Interface, Type, Enum: PascalCase (e.g., IUserProfile,CharacterInformation.ts)
 
 InternalNaming:
 Class: PascalCase (e.g., UserProfile)
-Interface: I + PascalCase (e.g., IUserProfile)
-Type Alias: PascalCase (e.g., UserID)
+Class's Interface: I + PascalCase (e.g., IUserProfile)
+Data Interface or Type Alias: PascalCase (e.g., UserID)
 Enum: PascalCase (e.g., UserRole)
 Constants: UPPER_SNAKE_CASE (e.g., MAX_RETRY_COUNT)
 Utility, Helper, Common Functions: camelCase (e.g., fetchData)
