@@ -1,12 +1,12 @@
 import type { IDamageStep } from '../_interfaces/damage/damage-step'
-import { AfterApplyStep } from '../../_domain/damage/step/AfterApplyStep'
-import { ApplyDamageStep } from '../../_domain/damage/step/ApplyDamageStep'
-import { BeforeApplyStep } from '../../_domain/damage/step/BeforeApplyStep'
-import { BeforeDamageStep } from '../../_domain/damage/step/BeforeDamageStep'
-import { CriticalStep } from '../../_domain/damage/step/CriticalStep'
-import { DamageModifyStep } from '../../_domain/damage/step/DamageModifyStep'
-import { DefenseCalculationStep } from '../../_domain/damage/step/DefenseCalculationStep'
-import { HitCheckStep } from '../../_domain/damage/step/HitCheckStep'
+import { AfterApplyStep } from '../../domain/damage/step/AfterApplyStep'
+import { ApplyDamageStep } from '../../domain/damage/step/ApplyDamageStep'
+import { BeforeApplyStep } from '../../domain/damage/step/BeforeApplyStep'
+import { BeforeDamageStep } from '../../domain/damage/step/BeforeDamageStep'
+import { CriticalStep } from '../../domain/damage/step/CriticalStep'
+import { DamageModifyStep } from '../../domain/damage/step/DamageModifyStep'
+import { DefenseCalculationStep } from '../../domain/damage/step/DefenseCalculationStep'
+import { HitCheckStep } from '../../domain/damage/step/HitCheckStep'
 
 /**
  * DamageStepFactory

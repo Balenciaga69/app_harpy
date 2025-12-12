@@ -1,5 +1,5 @@
 import type { ICharacter } from '@/features/combat/character/models/character'
-import type { ICombatHook } from '../../../_interfaces/damage/combat-hook'
+import type { ICombatHook } from '../../../interfaces/damage/combat-hook'
 
 /**
  * collectHooks

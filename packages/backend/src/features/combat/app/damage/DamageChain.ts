@@ -1,6 +1,6 @@
 import type { ICombatContext } from '@/features/combat/context'
-import { DamageEvent } from '../../_interfaces/damage/damage-event'
-import { IDamageStep } from '../../_interfaces/damage/damage-step'
+import { DamageEvent } from '../../interfaces/damage/damage-event'
+import { IDamageStep } from '../../interfaces/damage/damage-step'
 
 /**
  * DamageChain

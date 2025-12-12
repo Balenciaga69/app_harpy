@@ -1,6 +1,6 @@
 import type { ICombatContext } from '@/features/combat/context'
-import type { IDamageStep } from '../../../_interfaces/damage/damage-step'
-import { DamageEvent } from '../../../_interfaces/damage/damage-event'
+import type { IDamageStep } from '../../../interfaces/damage/damage-step'
+import { DamageEvent } from '../../../interfaces/damage/damage-event'
 import { ResurrectionHandler } from '../../ResurrectionHandler'
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.
