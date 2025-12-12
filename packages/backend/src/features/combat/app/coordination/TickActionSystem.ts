@@ -1,10 +1,14 @@
 import type { CombatContext } from '../context'
-import { FirstAliveSelector } from '../target-select-strategies/FirstAliveSelector'
+import { FirstAliveSelector } from '../../domain/target-select-strategies/FirstAliveSelector'
 import type { ITargetSelector } from '../target-select-strategies/target-selector'
 import type { ITickPhase } from './phases/tick-phase'
 import { EffectTickPhase } from './phases/EffectTickPhase'
 import { EnergyRegenPhase } from './phases/EnergyRegenPhase'
 import { AttackExecutionPhase } from './phases/AttackExecutionPhase'
+import { EffectProcessor } from './utils/EffectProcessor'
+import { EnergyManager } from './utils/EnergyManager'
+import { AttackExecutor } from './utils/AttackExecutor'
+import { CooldownManager } from './utils/CooldownManager'
 /**
  * Tick Action System
  *
@@ -19,11 +23,16 @@ export class TickActionSystem {
   constructor(context: CombatContext, targetSelector?: ITargetSelector) {
     this.context = context
     const selector = targetSelector ?? new FirstAliveSelector()
-    // Assemble default execution pipeline
+    // Create utility instances
+    const effectProcessor = new EffectProcessor(context)
+    const energyManager = new EnergyManager(context)
+    const attackExecutor = new AttackExecutor(context, selector, energyManager)
+    const cooldownManager = new CooldownManager()
+    // Assemble default execution pipeline with injected dependencies
     this.phases = [
-      new EffectTickPhase(context),
-      new EnergyRegenPhase(context),
-      new AttackExecutionPhase(context, selector),
+      new EffectTickPhase(effectProcessor),
+      new EnergyRegenPhase(energyManager),
+      new AttackExecutionPhase(attackExecutor, cooldownManager),
     ]
     this.tickHandler = () => this.processTick()
     this.context.eventBus.on('tick:start', this.tickHandler)

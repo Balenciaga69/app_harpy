@@ -1,5 +1,6 @@
-import type { CombatContext } from '@/features/combat/context'
-import type { ICharacter } from '@/features/combat/character'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
+// TODO: 依賴外部模組 @/domain/attribute
 import { AttributeLimits } from '@/domain/attribute'
 /**
  * 復活處理器

@@ -1,4 +1,4 @@
-import type { ICombatContext } from '@/features/combat/context'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { IUltimateAbility } from './ultimate-ability'
 import { IUltimateManager } from './IIUltimateManager'
 /**

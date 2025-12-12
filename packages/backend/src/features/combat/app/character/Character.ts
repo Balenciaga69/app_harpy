@@ -1,12 +1,15 @@
+// TODO: 依賴外部模組 @/domain/attribute
 import type { AttributeType, BaseAttributeValues } from '@/domain/attribute'
-import type { CharacterSnapshot } from '@/features/combat/shared/index'
+import type { CharacterSnapshot } from '../../interfaces/shared/CharacterSnapshot'
+// TODO: 依賴外部模組 @/features/effect-system
 import { EffectManager, type IEffect } from '@/features/effect-system/index'
 import { nanoid } from 'nanoid'
-import { AttributeCalculator, AttributeManager, type AttributeModifier } from '../attribute/index'
-import type { IUltimateAbility } from '../ultimate/index'
+// TODO: 依賴外部模組 @/features/attribute-system
+import { AttributeCalculator, AttributeManager, type AttributeModifier } from '@/features/attribute-system'
+import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { UltimateManager } from '../ultimate/UltimateManager'
-import type { ICharacter } from './models/character'
-import type { ICombatContext } from '../context/combat-context'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import { CombatEffectServices } from '../CombatEffectServices'
 /**
  * 角色初始化所需的設定參數

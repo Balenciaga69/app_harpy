@@ -1,7 +1,7 @@
-import type { ICombatContext } from '@/features/combat/context'
-import type { IDamageStep } from '../../../interfaces/damage/damage-step'
-import { DamageEvent } from '../../../interfaces/damage/damage-event'
-import { ResurrectionHandler } from '../../ResurrectionHandler'
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
+import type { IDamageStep } from '../../../interfaces/damage/IDamageStep'
+import type { DamageEvent } from '../../../interfaces/damage/DamageEvent'
+import { ResurrectionHandler } from '../ResurrectionHandler'
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.
  * Includes HP zero check, effect triggers, and resurrection check.

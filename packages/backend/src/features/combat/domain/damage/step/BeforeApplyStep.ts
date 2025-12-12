@@ -1,6 +1,6 @@
-import type { ICombatContext } from '@/features/combat/context'
-import type { DamageEvent } from '../../../interfaces/damage/damage-event'
-import type { IDamageStep } from '../../../interfaces/damage/damage-step'
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
+import type { DamageEvent } from '../../../interfaces/damage/DamageEvent'
+import type { IDamageStep } from '../../../interfaces/damage/IDamageStep'
 import { collectHooks } from './collect-hooks'
 /**
  * BeforeApplyStep: Final confirmation step before damage application.

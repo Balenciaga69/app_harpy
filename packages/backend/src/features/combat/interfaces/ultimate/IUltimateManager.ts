@@ -1,5 +1,5 @@
-import { IUltimateAbility } from '../../ultimate'
-import { ICombatContext } from '../../context'
+import type { IUltimateAbility } from './IUltimateAbility'
+import type { ICombatContext } from '../context/ICombatContext'
 
 export interface IUltimateManager {
   set(ultimate: IUltimateAbility, context: ICombatContext): void

@@ -1,5 +1,5 @@
-import type { ICharacter } from '@/features/combat/character'
-import type { ITargetSelector } from './target-selector'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
+import type { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
 /**
  * LowestHealthSelector
  *

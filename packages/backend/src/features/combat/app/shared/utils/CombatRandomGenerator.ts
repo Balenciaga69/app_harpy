@@ -1,10 +1,11 @@
 import seedrandom from 'seedrandom'
+import type { ICombatRandomGenerator } from '../../../interfaces/shared/ICombatRandomGenerator'
 /**
  * CombatRandomGenerator
  *
  * 種子化的戰鬥隨機數生成器。提供可重現的隨機數、整數/浮點範圍、概率檢查和種子訪問。
  */
-export class CombatRandomGenerator {
+export class CombatRandomGenerator implements ICombatRandomGenerator {
   private rng: seedrandom.PRNG
   private readonly seed: string
   constructor(seed: string | number = Date.now()) {

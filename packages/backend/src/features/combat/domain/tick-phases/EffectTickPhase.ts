@@ -1,6 +1,7 @@
-import type { CombatContext } from '../../context'
-import { EffectProcessor } from '../utils/EffectProcessor'
-import type { ITickPhase } from './tick-phase'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+// TODO: EffectProcessor 應該透過 interface 注入
+import type { EffectProcessor } from '../../app/coordination/utils/EffectProcessor'
+import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
 /**
  * 效果 tick 階段
  *
@@ -10,8 +11,8 @@ import type { ITickPhase } from './tick-phase'
 export class EffectTickPhase implements ITickPhase {
   readonly name = 'EffectTick'
   private processor: EffectProcessor
-  constructor(context: CombatContext) {
-    this.processor = new EffectProcessor(context)
+  constructor(processor: EffectProcessor) {
+    this.processor = processor
   }
   execute(): void {
     this.processor.processEffects()

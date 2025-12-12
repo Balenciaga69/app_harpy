@@ -1,5 +1,6 @@
-import type { CombatContext } from '@/features/combat/context'
+import type { CombatContext } from '../../context/CombatContext'
 import type { ICharacter } from '@/features/combat/character'
+// TODO: 依賴外部模組 @/features/effect-system
 import type { IEffect } from '@/features/effect-system/models/effect'
 import { isCharacter } from '@/features/combat/shared'
 /**

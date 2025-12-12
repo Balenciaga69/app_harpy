@@ -1,4 +1,4 @@
-import type { ICharacter } from '@/features/combat/character'
+import type { ICharacter } from '../character/ICharacter'
 /**
  * Target selector strategy interface
  */

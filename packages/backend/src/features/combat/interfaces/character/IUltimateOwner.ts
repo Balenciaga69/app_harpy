@@ -1,5 +1,5 @@
-import type { IUltimateAbility } from '../../ultimate'
-import type { ICombatContext } from '../../context/combat-context'
+import type { IUltimateAbility } from '../ultimate/IUltimateAbility'
+import type { ICombatContext } from '../context/ICombatContext'
 
 export interface IUltimateOwner {
   /** Get ultimate (if any) */

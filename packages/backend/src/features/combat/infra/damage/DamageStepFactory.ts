@@ -1,4 +1,4 @@
-import type { IDamageStep } from '../_interfaces/damage/damage-step'
+import type { IDamageStep } from '../../interfaces/damage/IDamageStep'
 import { AfterApplyStep } from '../../domain/damage/step/AfterApplyStep'
 import { ApplyDamageStep } from '../../domain/damage/step/ApplyDamageStep'
 import { BeforeApplyStep } from '../../domain/damage/step/BeforeApplyStep'

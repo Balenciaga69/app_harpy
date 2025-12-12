@@ -1,5 +1,6 @@
 import type { CombatContext } from '../../context'
 import { isCharacter } from '../../shared'
+// TODO: 依賴外部模組 @/features/effect-system
 import type { ICombatEffectHook } from '@/features/effect-system'
 import { CombatEffectServices } from '../../CombatEffectServices'
 /**

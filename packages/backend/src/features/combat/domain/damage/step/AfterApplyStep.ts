@@ -1,4 +1,4 @@
-import type { ICombatContext } from '@/features/combat/context'
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
 import type { DamageEvent } from '../../../interfaces/damage/damage-event'
 import type { IDamageStep } from '../../../interfaces/damage/damage-step'
 import { collectHooks } from './collect-hooks'

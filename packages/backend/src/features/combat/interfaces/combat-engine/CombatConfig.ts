@@ -1,4 +1,5 @@
-import type { ICharacter } from '../../character'
+import type { ICharacter } from '../character/ICharacter'
+// TODO: 依賴外部模組 @/features/effect-system
 import type { IEffect } from '@/features/effect-system/models/effect'
 /**
  * CombatConfig

@@ -1,5 +1,5 @@
-import type { ICombatEventBus } from '../event-bus'
-import type { CombatLogEntry } from './combat-log-entry'
+import type { ICombatEventBus } from '../../interfaces/event-bus/ICombatEventBus'
+import type { CombatLogEntry } from '../../interfaces/logger/CombatLogEntry'
 /**
  * EventLogger
  *

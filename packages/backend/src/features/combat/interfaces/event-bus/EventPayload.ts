@@ -1,4 +1,4 @@
-import type { CharacterSnapshot } from '../../shared/models'
+import type { CharacterSnapshot } from '../shared/CharacterSnapshot'
 /**
  * Combat start event
  */

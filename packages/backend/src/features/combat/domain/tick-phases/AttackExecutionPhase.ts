@@ -1,11 +1,10 @@
-import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../character'
-import { isCharacter } from '../../shared'
-import type { ITargetSelector } from '../../target-select-strategies/target-selector'
-import { AttackExecutor } from '../utils/AttackExecutor'
-import { CooldownManager } from '../utils/CooldownManager'
-import { EnergyManager } from '../utils/EnergyManager'
-import type { ITickPhase } from './tick-phase'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
+import { isCharacter } from '../../app/shared/utils/TypeGuardUtil'
+// TODO: 這些 util 類別應該透過 interface 注入，而非直接引用實作
+import type { AttackExecutor } from '../../app/coordination/utils/AttackExecutor'
+import type { CooldownManager } from '../../app/coordination/utils/CooldownManager'
+import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
 /**
  * Attack Execution Phase
  *
@@ -16,12 +15,11 @@ export class AttackExecutionPhase implements ITickPhase {
   readonly name = 'AttackExecution'
   private attackExecutor: AttackExecutor
   private cooldownManager: CooldownManager
-  constructor(context: CombatContext, targetSelector: ITargetSelector) {
-    const energyManager = new EnergyManager(context)
-    this.attackExecutor = new AttackExecutor(context, targetSelector, energyManager)
-    this.cooldownManager = new CooldownManager()
+  constructor(attackExecutor: AttackExecutor, cooldownManager: CooldownManager) {
+    this.attackExecutor = attackExecutor
+    this.cooldownManager = cooldownManager
   }
-  execute(context: CombatContext, tick: number): void {
+  execute(context: ICombatContext, tick: number): void {
     context.getAllEntities().forEach((entity) => {
       if (!isCharacter(entity)) return
       const character = entity as ICharacter

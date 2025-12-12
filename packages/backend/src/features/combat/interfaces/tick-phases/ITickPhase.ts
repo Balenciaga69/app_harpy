@@ -1,4 +1,4 @@
-import type { CombatContext } from '../../context'
+import type { ICombatContext } from '../context/ICombatContext'
 /**
  *  tick 階段介面
  *
@@ -9,7 +9,7 @@ export interface ITickPhase {
   /** Phase identifier for debugging and replacement */
   readonly name: string
   /** Execute this phase's logic for the current tick */
-  execute(context: CombatContext, tick: number): void
+  execute(context: ICombatContext, tick: number): void
   /** Optional cleanup when phase is removed or system disposed */
   dispose?(): void
 }

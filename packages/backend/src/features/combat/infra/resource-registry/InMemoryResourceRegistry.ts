@@ -1,7 +1,8 @@
+// TODO: 依賴外部模組 @/features/effect-system
 import type { IEffect } from '@/features/effect-system/models/effect'
-import type { IUltimateAbility } from '../ultimate'
-import type { ICharacter } from '../character/models/character'
-import type { IResourceRegistry } from './resource-registry'
+import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
+import type { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'
 /**
  * In-Memory Resource Registry
  *

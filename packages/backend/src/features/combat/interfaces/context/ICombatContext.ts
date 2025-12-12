@@ -1,7 +1,7 @@
-import type { ICombatEventBus } from '../event-bus'
-import type { CombatRandomGenerator } from '../shared/utils/CombatRandomGenerator'
-import type { IEntity } from '../shared/interfaces/entity.interface'
-import type { IResourceRegistry } from '../resource-registry/resource-registry'
+import type { ICombatEventBus } from '../event-bus/ICombatEventBus'
+import type { ICombatRandomGenerator } from '../shared/ICombatRandomGenerator'
+import type { IEntity } from '../shared/IEntity'
+import type { IResourceRegistry } from '../resource-registry/IResourceRegistry'
 /**
  * ICombatContext
  *
@@ -10,7 +10,7 @@ import type { IResourceRegistry } from '../resource-registry/resource-registry'
  */
 export interface ICombatContext {
   readonly eventBus: ICombatEventBus
-  readonly rng: CombatRandomGenerator
+  readonly rng: ICombatRandomGenerator
   readonly registry: IResourceRegistry
   // Entity management
   getEntity(id: string): IEntity | undefined
