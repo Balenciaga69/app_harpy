@@ -53,6 +53,7 @@ Utility, Helper, Common: PascalCase (e.g., DataFetch.ts)
 Interface, Type, Enum: PascalCase (e.g., IUserProfile,CharacterInformation.ts)
 
 InternalNaming:
+Almost time, FileName = InternalName
 Class: PascalCase (e.g., UserProfile)
 Interface: I + PascalCase (e.g., IUserProfile)
 Type Alias: PascalCase (e.g., UserID)

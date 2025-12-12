@@ -2,6 +2,7 @@ import { AttributeLimits } from '../domain/AttributeConstants'
 import { BaseAttributeValues } from '../domain/AttributeValues'
 import type { AttributeModifier } from '../interfaces/AttributeModifier'
 import { AttributeType } from '../interfaces/AttributeType'
+import type { IAttributeManager } from '../interfaces/IAttributeManager'
 /**
  * 屬性管理器
  *
@@ -10,7 +11,7 @@ import { AttributeType } from '../interfaces/AttributeType'
  *
  * 此類別位於共享層，可被戰鬥內外使用。
  */
-export class AttributeManager {
+export class AttributeManager implements IAttributeManager {
   private baseValues: Map<AttributeType, number>
   private modifiers: Map<AttributeType, AttributeModifier[]>
   constructor(baseAttributes: BaseAttributeValues) {

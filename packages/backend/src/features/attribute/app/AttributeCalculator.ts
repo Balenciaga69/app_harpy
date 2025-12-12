@@ -1,4 +1,4 @@
-import type { AttributeManager } from './AttributeManager'
+import type { IAttributeManager } from '../interfaces/IAttributeManager'
 import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from '../interfaces/AttributeModifier'
 import { AttributeType } from '../interfaces/AttributeType'
@@ -13,9 +13,9 @@ import { AttributeType } from '../interfaces/AttributeType'
  * 此類別位於共享層，可被戰鬥內外使用。
  */
 export class AttributeCalculator implements IAttributeCalculator {
-  private manager: AttributeManager
+  private manager: IAttributeManager
   /** 初始化屬性計算器，注入屬性管理器 */
-  constructor(manager: AttributeManager) {
+  constructor(manager: IAttributeManager) {
     this.manager = manager
   }
   /** 計算指定屬性類型的最終值（從 manager 取得資料） */
