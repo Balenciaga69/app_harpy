@@ -61,6 +61,17 @@
   [搬運到???填寫此處]src\features\combat\coordination\utils\DamageFactory.ts
   [搬運到???填寫此處]src\features\combat\coordination\utils\EffectProcessor.ts
   [搬運到???填寫此處]src\features\combat\coordination\utils\EnergyManager.ts
+  src\features\combat\snapshot\SnapshotCollector.ts
+  src\features\combat\tick\ticker.driver.ts
+  src\features\combat\tick-phases\AttackExecutionPhase.ts
+  src\features\combat\tick-phases\EffectTickPhase.ts
+  src\features\combat\tick-phases\EnergyRegenPhase.ts
+  src\features\combat\tick-phases\tick-phase.ts
+  src\features\combat\shared\interfaces\entity.interface.ts
+  src\features\combat\shared\models\snapshot.model.ts
+  src\features\combat\shared\utils\CharacterAccessor.ts
+  src\features\combat\shared\utils\CombatRandomGenerator.ts
+  src\features\combat\shared\utils\TypeGuardUtil.ts
   ===請忽視以上檔案，已經搬運成功===
   ===請忽視以下檔案，尚未遷移至此===
   src\features\combat\CombatEffectServices.ts
@@ -70,27 +81,3 @@
   src\features\combat\character\models\character.ts
   src\features\combat\character\models\effect-owner.ts
   src\features\combat\character\models\ultimate-owner.ts
-  src\features\combat\combat-builders\ResultBuilder.ts
-  src\features\combat\combat-builders\utils\OutcomeAnalyzer.ts
-  src\features\combat\combat-builders\utils\StatisticsBuilder.ts
-  src\features\combat\combat-builders\utils\SurvivorCollector.ts
-  src\features\combat\combat-engine\CombatEngine.ts
-  src\features\combat\combat-engine\models\character-stats.ts
-  src\features\combat\combat-engine\models\combat-config.ts
-  src\features\combat\combat-engine\models\combat-outcome.ts
-  src\features\combat\combat-engine\models\combat-result-data.ts
-  src\features\combat\combat-engine\models\combat-result.ts
-  src\features\combat\combat-engine\models\combat-snapshot.ts
-  src\features\combat\combat-engine\models\combat-statistics.ts
-  src\features\combat\combat-engine\utils\PreMatchEffectApplicator.ts
-  src\features\combat\shared\interfaces\entity.interface.ts
-  src\features\combat\shared\models\snapshot.model.ts
-  src\features\combat\shared\utils\CharacterAccessor.ts
-  src\features\combat\shared\utils\CombatRandomGenerator.ts
-  src\features\combat\shared\utils\TypeGuardUtil.ts
-  src\features\combat\snapshot\SnapshotCollector.ts
-  src\features\combat\tick\ticker.driver.ts
-  src\features\combat\tick-phases\AttackExecutionPhase.ts
-  src\features\combat\tick-phases\EffectTickPhase.ts
-  src\features\combat\tick-phases\EnergyRegenPhase.ts
-  src\features\combat\tick-phases\tick-phase.ts
