@@ -1,6 +1,9 @@
-import type { ICombatContext } from '../../context/combat-context'
-import type { ICharacter } from '../../character/models/character'
-import { Result, Failures, CombatError, type CombatFailure } from '../../errors'
+import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
+import { CombatError } from '@/features/combat/interfaces/errors/CombatError'
+import { CombatFailure, Failures } from '@/features/combat/interfaces/errors/CombatFailure'
+import { Result } from '@/features/combat/interfaces/errors/Result'
+
 /**
  * CharacterAccessor
  *

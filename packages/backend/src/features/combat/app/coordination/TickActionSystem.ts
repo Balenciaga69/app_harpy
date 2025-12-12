@@ -1,14 +1,11 @@
-import type { CombatContext } from '../context'
 import { FirstAliveSelector } from '../../domain/target-select-strategies/FirstAliveSelector'
-import type { ITargetSelector } from '../target-select-strategies/target-selector'
-import type { ITickPhase } from './phases/tick-phase'
-import { EffectTickPhase } from './phases/EffectTickPhase'
-import { EnergyRegenPhase } from './phases/EnergyRegenPhase'
-import { AttackExecutionPhase } from './phases/AttackExecutionPhase'
-import { EffectProcessor } from './utils/EffectProcessor'
-import { EnergyManager } from './utils/EnergyManager'
+import { ICombatContext } from '../../interfaces/context/ICombatContext'
+import { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
+import { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
 import { AttackExecutor } from './utils/AttackExecutor'
 import { CooldownManager } from './utils/CooldownManager'
+import { EffectProcessor } from './utils/EffectProcessor'
+import { EnergyManager } from './utils/EnergyManager'
 /**
  * Tick Action System
  *
@@ -17,17 +14,17 @@ import { CooldownManager } from './utils/CooldownManager'
  * Phases can be added, replaced, or removed for extensibility.
  */
 export class TickActionSystem {
-  private context: CombatContext
+  private context: ICombatContext
   private phases: ITickPhase[] = []
   private tickHandler: () => void
-  constructor(context: CombatContext, targetSelector?: ITargetSelector) {
+  constructor(context: ICombatContext, targetSelector?: ITargetSelector) {
     this.context = context
     const selector = targetSelector ?? new FirstAliveSelector()
     // Create utility instances
-    const effectProcessor = new EffectProcessor(context)
-    const energyManager = new EnergyManager(context)
-    const attackExecutor = new AttackExecutor(context, selector, energyManager)
-    const cooldownManager = new CooldownManager()
+    const effectProcessor = new EffectProcessor(context) // TODO: 考慮用工廠或依賴注入
+    const energyManager = new EnergyManager(context) // TODO: 考慮用工廠或依賴注入
+    const attackExecutor = new AttackExecutor(context, selector, energyManager) // TODO: 考慮用工廠或依賴注入
+    const cooldownManager = new CooldownManager() // TODO: 考慮用工廠或依賴注入
     // Assemble default execution pipeline with injected dependencies
     this.phases = [
       new EffectTickPhase(effectProcessor),

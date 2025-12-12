@@ -1,12 +1,5 @@
-import type { ICombatContext } from '@/features/combat/context'
-/**
- * Ultimate interface - behavior contract
- *
- * Design concept:
- * - Ultimate is not necessarily damage skill, can be support, summon, heal, etc.
- * - Uses strategy pattern, each character can have different ultimate implementation
- * - Energy is already cleared when ultimate executes, can focus on skill logic
- */
+import { ICombatContext } from '../context/ICombatContext'
+
 export interface IUltimateAbility {
   /** Ultimate unique identifier */
   readonly id: string

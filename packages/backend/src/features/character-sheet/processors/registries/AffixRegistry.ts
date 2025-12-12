@@ -1,4 +1,6 @@
-import type { IAffixAttributeMapping } from '../attribute-mappings/IAffixAttributeMapping' /**
+import { IAffixAttributeMapping } from '../attribute-mappings/AffixAttributeMapping'
+
+/**
  * 詞綴屬性映射註冊表
  *
  * 定義每個詞綴如何影響角色屬性。

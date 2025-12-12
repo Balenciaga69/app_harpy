@@ -1,12 +1,7 @@
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
-import type { IUltimateAbility } from './ultimate-ability'
-import { IUltimateManager } from './IIUltimateManager'
-/**
- * UltimateManager
- *
- * Manages ultimate ability for a character.
- * Handles ultimate registration and retrieval.
- */
+import { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
+import { IUltimateManager } from '../../interfaces/ultimate/IUltimateManager'
+
 export class UltimateManager implements IUltimateManager {
   private ultimateId: string | null = null
 

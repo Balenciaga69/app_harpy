@@ -1,7 +1,8 @@
-import type { CombatResult, CombatResultData } from '../models'
 import { OutcomeAnalyzer } from './utils/OutcomeAnalyzer'
 import { SurvivorCollector } from './utils/SurvivorCollector'
 import { StatisticsBuilder } from './utils/StatisticsBuilder'
+import { CombatResultData } from '../../interfaces/combat-engine/CombatResultData'
+import { CombatResult } from '../../interfaces/combat-engine/CombatResult'
 /**
  * ResultBuilder
  *

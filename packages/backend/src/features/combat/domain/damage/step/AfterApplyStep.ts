@@ -1,6 +1,6 @@
+import type { IDamageStep } from '../../../interfaces/damage/IDamageStep'
+import type { DamageEvent } from '../../../interfaces/damage/DamageEvent'
 import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
-import type { DamageEvent } from '../../../interfaces/damage/damage-event'
-import type { IDamageStep } from '../../../interfaces/damage/damage-step'
 import { collectHooks } from './collect-hooks'
 /**
  * AfterApplyStep: Post-damage application step for cleanup and effects.

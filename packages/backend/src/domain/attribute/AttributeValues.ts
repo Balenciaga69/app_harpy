@@ -1,38 +1,29 @@
-/**
- * BaseAttributeValues
- *
- * ?��?屬性數?��?置�??��?
- * ?�於定義角色?�敵人�??��?屬性�?
- */
+import { AttributeDefaults } from '.'
+
 export interface BaseAttributeValues {
   // === Health related ===
   maxHp: number
-  currentHp: number // ?��??��??�常等於 maxHp
+  currentHp: number // 通常等於 maxHp
   // === Energy related ===
   maxEnergy: number
   currentEnergy: number
-  energyRegen: number // �?100 tick ?�復??
-  energyGainOnAttack: number // ?��??�中?��???
+  energyRegen: number // 每100 tick 恢復量
+  energyGainOnAttack: number // 攻擊命中獲得量
   // === Attack related ===
   attackDamage: number
-  attackCooldown: number // ?��?：tick (100 tick = 1 sec)
+  attackCooldown: number // 單位：tick (100 tick = 1 sec)
   // === Defense related ===
   armor: number
   evasion: number
   accuracy: number
   // === Critical related ===
-  criticalChance: number // 0-1 範�? (0.05 = 5%)
-  criticalMultiplier: number // ?��? (1.5 = 150%)
+  criticalChance: number // 0-1 範圍 (0.05 = 5%)
+  criticalMultiplier: number // 倍率 (1.5 = 150%)
   // === Resurrection related ===
-  resurrectionChance: number // 0.03-0.50 範�? (3%-50%)
-  resurrectionHpPercent: number // 0.10-1.00 範�? (10%-100%)
+  resurrectionChance: number // 0.03-0.50 範圍 (3%-50%)
+  resurrectionHpPercent: number // 0.10-1.00 範圍 (10%-100%)
 }
-/**
- * 建�??�設屬性�?
- *
- * @param overrides - ?�選?�屬?��??��?
- * @returns 完整?�基礎屬?��?�?
- */
+
 export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>): BaseAttributeValues {
   return {
     maxHp: AttributeDefaults.maxHp,
@@ -50,6 +41,6 @@ export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>
     criticalMultiplier: AttributeDefaults.criticalMultiplier,
     resurrectionChance: AttributeDefaults.resurrectionChance,
     resurrectionHpPercent: AttributeDefaults.resurrectionHpPercent,
-    ...overrides, // ?�許覆�??��?屬�?
+    ...overrides, // 允許覆蓋預設屬性
   }
 }

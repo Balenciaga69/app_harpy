@@ -1,5 +1,7 @@
-import type { ICharacter } from '../../../character'
-import type { CombatStatistics, CharacterStats } from '../../models'
+import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import { CharacterStats } from '@/features/combat/interfaces/combat-engine/CharacterStats'
+import { CombatStatistics } from '@/features/combat/interfaces/combat-engine/CombatStatistics'
+
 /**
  * StatisticsBuilder
  *

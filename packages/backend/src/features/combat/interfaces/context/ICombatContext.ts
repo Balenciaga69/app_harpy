@@ -1,5 +1,5 @@
-import type { ICombatEventBus } from '../event-bus/ICombatEventBus'
-import type { ICombatRandomGenerator } from '../shared/ICombatRandomGenerator'
+import { ICombatEventBus } from '../event-bus/ICombatEventBus'
+import { ICombatRandomGenerator } from '../shared/ICombatRandomGenerator'
 import type { IEntity } from '../shared/IEntity'
 import type { IResourceRegistry } from '../resource-registry/IResourceRegistry'
 /**

@@ -26,7 +26,7 @@ export class CriticalStep implements IDamageStep {
     }
     return true
   }
-  private emitCriticalEvent(context: CombatContext, event: DamageEvent, critMultiplier: number): void {
+  private emitCriticalEvent(context: ICombatContext, event: DamageEvent, critMultiplier: number): void {
     context.eventBus.emit('entity:critical', {
       sourceId: event.source.id,
       targetId: event.target.id,

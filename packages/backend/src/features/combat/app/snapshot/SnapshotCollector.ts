@@ -1,14 +1,14 @@
-import type { CombatSnapshot } from '../combat-engine/models'
-import type { CombatContext } from '@/features/combat'
-import type { ICharacter } from '../character'
-import { isCharacter } from '../shared'
-import { CombatTiming } from '../config'
+import { CombatTiming } from '../../domain/config/CombatConstants'
+import { ICharacter } from '../../interfaces/character/ICharacter'
+import { CombatSnapshot } from '../../interfaces/combat-engine/CombatSnapshot'
+import { ICombatContext } from '../../interfaces/context/ICombatContext'
+import { isCharacter } from '../shared/utils/TypeGuardUtil'
 
 export class SnapshotCollector {
   private snapshots: CombatSnapshot[] = []
   private interval: number
-  private context: CombatContext
-  constructor(context: CombatContext, interval: number = CombatTiming.DEFAULT_SNAPSHOT_INTERVAL) {
+  private context: ICombatContext
+  constructor(context: ICombatContext, interval: number = CombatTiming.DEFAULT_SNAPSHOT_INTERVAL) {
     this.context = context
     this.interval = interval
     this.registerEventListeners()

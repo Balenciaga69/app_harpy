@@ -1,5 +1,6 @@
-import type { ICharacter } from '../../../character'
-import type { CombatOutcome } from '../../models'
+import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import { CombatOutcome } from '@/features/combat/interfaces/combat-engine/CombatOutcome'
+
 /**
  * OutcomeAnalyzer
  *

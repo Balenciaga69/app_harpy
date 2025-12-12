@@ -1,10 +1,10 @@
-import type { ICombatEventBus } from '../event-bus'
+import { ICharacter } from '../../interfaces/character/ICharacter'
+import { ICombatContext } from '../../interfaces/context/ICombatContext'
+import { ICombatEventBus } from '../../interfaces/event-bus/ICombatEventBus'
+import { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'
+import { IEntity } from '../../interfaces/shared/IEntity'
 import { CombatRandomGenerator } from '../shared/utils/CombatRandomGenerator'
-import type { IEntity } from '../shared/interfaces/entity.interface'
 import { isCharacter } from '../shared/utils/TypeGuardUtil'
-import type { IResourceRegistry } from '../resource-registry/resource-registry'
-import type { ICombatContext } from './combat-context'
-import type { ICharacter } from '../character/models/character'
 import { BattleState } from './BattleState'
 /**
  * 戰鬥上下文 (CombatContext)

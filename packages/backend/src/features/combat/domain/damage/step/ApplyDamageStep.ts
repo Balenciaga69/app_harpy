@@ -1,6 +1,6 @@
 import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
-import type { IDamageStep } from '../../../interfaces/damage/IDamageStep'
 import type { DamageEvent } from '../../../interfaces/damage/DamageEvent'
+import type { IDamageStep } from '../../../interfaces/damage/IDamageStep'
 import { ResurrectionHandler } from '../ResurrectionHandler'
 /**
  * ApplyDamageStep: Final step that applies calculated damage to target.
@@ -24,10 +24,10 @@ export class ApplyDamageStep implements IDamageStep {
     }
     return true
   }
-  private tryResurrection(event: DamageEvent, context: CombatContext): boolean {
+  private tryResurrection(event: DamageEvent, context: ICombatContext): boolean {
     return ResurrectionHandler.attemptResurrection(event.target, context, event.tick)
   }
-  private emitDamageEvent(event: DamageEvent, context: CombatContext) {
+  private emitDamageEvent(event: DamageEvent, context: ICombatContext) {
     context.eventBus.emit('entity:damage', {
       sourceId: event.source.id,
       targetId: event.target.id,
@@ -38,14 +38,14 @@ export class ApplyDamageStep implements IDamageStep {
       tick: event.tick,
     })
   }
-  private emitHpZeroEvent(event: DamageEvent, context: CombatContext) {
+  private emitHpZeroEvent(event: DamageEvent, context: ICombatContext) {
     context.eventBus.emit('entity:hp-zero', {
       targetId: event.target.id,
       attackerId: event.source.id,
       tick: event.tick,
     })
   }
-  private emitDeathEvent(event: DamageEvent, context: CombatContext) {
+  private emitDeathEvent(event: DamageEvent, context: ICombatContext) {
     context.eventBus.emit('entity:death', {
       targetId: event.target.id,
       killerId: event.source.id,

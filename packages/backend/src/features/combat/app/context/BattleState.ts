@@ -1,5 +1,6 @@
-import type { IEntity } from '../shared'
-import type { IBattleState } from './battle-state'
+import { IBattleState } from '../../interfaces/context/IBattleState'
+import { IEntity } from '../../interfaces/shared/IEntity'
+
 /**
  * BattleState
  *

@@ -1,16 +1,8 @@
-import { CombatContext } from '../context'
-import { TickActionSystem } from '../coordination'
-import { CombatSystem, CombatTiming } from '../config'
-import { CombatError, CombatFailureCode } from '../errors'
+import { CombatConfig } from '../..'
+import { CombatTiming } from '../../domain/config/CombatConstants'
 import { EventBus as CombatEventBus } from '../../infra/event-bus/EventBus'
 import { InMemoryResourceRegistry } from '../../infra/resource-registry/InMemoryResourceRegistry'
 import type { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'
-import { EventLogger } from '../logger'
-import { SnapshotCollector } from '../snapshot'
-import { TickerDriver } from '../tick'
-import { ResultBuilder } from './builders'
-import { OutcomeAnalyzer } from './builders/utils/OutcomeAnalyzer'
-import type { CombatConfig, CombatResult, CombatResultData } from './models'
 import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 /**
  * 戰鬥引擎
@@ -24,11 +16,11 @@ import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
  * - 捕捉任何未預期錯誤並包裝成 CombatError
  */
 export class CombatEngine {
-  private context: CombatContext
-  private ticker!: TickerDriver
-  private tickActionSystem!: TickActionSystem
-  private eventLogger!: EventLogger
-  private snapshotCollector!: SnapshotCollector
+  private context: CombatContext //TODO: 判斷是否需要 介面
+  private ticker!: TickerDriver //TODO: 判斷是否需要 介面
+  private tickActionSystem!: TickActionSystem //TODO: 判斷是否需要 介面
+  private eventLogger!: EventLogger //TODO: 判斷是否需要 介面
+  private snapshotCollector!: SnapshotCollector //TODO: 判斷是否需要 介面
   private config: CombatConfig
   constructor(config: CombatConfig, registry?: IResourceRegistry) {
     this.config = {
@@ -39,7 +31,7 @@ export class CombatEngine {
     }
     const resourceRegistry = registry ?? new InMemoryResourceRegistry()
     const eventBus = new CombatEventBus()
-    this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed)
+    this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed) //TODO: 判斷是否需要 介面
     this.initializeSystems()
     this.ticker.setStopCondition(() => this.checkBattleEnd())
     this.setupCharacters()

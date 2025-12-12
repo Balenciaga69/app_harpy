@@ -1,4 +1,5 @@
-import type { ICharacter } from '../../../character'
+import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+
 /**
  * SurvivorCollector
  *

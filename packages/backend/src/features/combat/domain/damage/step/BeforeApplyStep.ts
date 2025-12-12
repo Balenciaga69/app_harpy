@@ -20,7 +20,7 @@ export class BeforeApplyStep implements IDamageStep {
     }
     return true // Continue processing
   }
-  private emitPrevented(context: CombatContext, event: DamageEvent): void {
+  private emitPrevented(context: ICombatContext, event: DamageEvent): void {
     context.eventBus.emit('combat:prevented', {
       sourceId: event.source.id,
       targetId: event.target.id,

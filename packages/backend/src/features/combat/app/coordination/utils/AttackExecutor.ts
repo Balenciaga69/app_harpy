@@ -1,23 +1,21 @@
-import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../character'
-import { UltimateDefaults, UltimateEnergy } from '../../config'
-import { isCharacter } from '../../shared'
-import { DamageChain } from '../../damage'
-import { EnergyManager } from './EnergyManager'
+import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
+import { ITargetSelector } from '@/features/combat/interfaces/target-select-strategies/ITargetSelector'
+import { DamageChain } from '../../damage/DamageChain'
 import { DamageFactory } from './DamageFactory'
-import type { ITargetSelector } from '../../target-select-strategies/target-selector'
+import { EnergyManager } from './EnergyManager'
+
 /**
  * 攻擊執行器
  *
  * 負責處理攻擊邏輯，包含檢查角色是否選擇目標，並執行普通攻擊或終極技。
  */
 export class AttackExecutor {
-  private context: CombatContext
-  private damageChain: DamageChain
+  private context: ICombatContext // TODO: 判斷是否需要用介面
+  private damageChain: DamageChain // TODO: 判斷是否需要用介面
   private targetSelector: ITargetSelector
-  private damageFactory: DamageFactory
-  private energyManager: EnergyManager
-  constructor(context: CombatContext, targetSelector: ITargetSelector, energyManager: EnergyManager) {
+  private damageFactory: DamageFactory // TODO: 判斷是否需要用介面
+  private energyManager: EnergyManager // TODO: 判斷是否需要用介面
+  constructor(context: ICombatContext, targetSelector: ITargetSelector, energyManager: EnergyManager) {
     this.context = context
     this.damageChain = new DamageChain(context)
     this.targetSelector = targetSelector

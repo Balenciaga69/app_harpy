@@ -33,7 +33,7 @@ export class EventLogger {
       this.currentTick = payload.tick
     })
     // 2. Record all events
-    this.eventBus.onAll((type, payload) => {
+    this.eventBus.onAll?.((type, payload) => {
       const entry: CombatLogEntry = {
         tick: this.currentTick,
         eventType: type,

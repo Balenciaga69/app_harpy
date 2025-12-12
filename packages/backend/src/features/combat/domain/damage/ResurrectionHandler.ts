@@ -1,4 +1,4 @@
-import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import { ICombatContext } from '../..'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 // TODO: 依賴外部模組 @/domain/attribute
 import { AttributeLimits } from '@/domain/attribute'
@@ -13,7 +13,7 @@ export class ResurrectionHandler {
    * 嘗試讓角色復活
    * @returns 復活成功回傳 true，否則角色死亡回傳 false
    */
-  static attemptResurrection(character: ICharacter, context: CombatContext, tick: number): boolean {
+  static attemptResurrection(character: ICharacter, context: ICombatContext, tick: number): boolean {
     const resurrectionChance = character.getAttribute('resurrectionChance')
     // 若復活機率為 0 或低於最小值則無法復活
     if (resurrectionChance < AttributeLimits.resurrectionChance.min) {
@@ -30,7 +30,7 @@ export class ResurrectionHandler {
     this.performResurrection(character, context, tick)
     return true // 復活成功！
   }
-  private static performResurrection(character: ICharacter, context: CombatContext, tick: number): void {
+  private static performResurrection(character: ICharacter, context: ICombatContext, tick: number): void {
     // 取得復活後生命值百分比並限制在範圍內
     const resurrectionHpPercent = character.getAttribute('resurrectionHpPercent')
     const clampedPercent = Math.min(

@@ -1,14 +1,15 @@
-import type { CombatContext } from '../../context'
-import type { ICharacter } from '../../character'
-import { EnergySystem, UltimateEnergy } from '../../config'
+import { EnergySystem, UltimateEnergy } from '@/features/combat/domain/config/CombatConstants'
+import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
+
 /**
  * EnergyManager
  *
  * Handles energy regeneration and accumulation for characters.
  */
 export class EnergyManager {
-  private context: CombatContext
-  constructor(context: CombatContext) {
+  private context: ICombatContext
+  constructor(context: ICombatContext) {
     this.context = context
   }
   /** Accumulate energy for a character */

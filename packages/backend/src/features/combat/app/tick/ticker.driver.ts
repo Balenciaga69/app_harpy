@@ -1,18 +1,13 @@
-import type { CombatContext } from '../context'
-import { CombatTiming } from '../config'
-/**
- * TickerDriver
- *
- * Drives the combat tick loop, emitting tick events and checking end conditions. Supports max tick limit and
- * configurable stop logic.
- */
+import { CombatTiming } from '../../domain/config/CombatConstants'
+import { ICombatContext } from '../../interfaces/context/ICombatContext'
+
 const MAX_TICKS = CombatTiming.MAX_TICKS
 export class TickerDriver {
-  private context: CombatContext
+  private context: ICombatContext
   private readonly maxTicks: number
   private isRunning: boolean = false
   private stopCondition: () => boolean = () => false
-  constructor(context: CombatContext, maxTicks: number = MAX_TICKS) {
+  constructor(context: ICombatContext, maxTicks: number = MAX_TICKS) {
     this.context = context
     this.maxTicks = maxTicks
   }

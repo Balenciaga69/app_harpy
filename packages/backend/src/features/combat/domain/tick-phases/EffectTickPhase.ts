@@ -1,4 +1,3 @@
-import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 // TODO: EffectProcessor 應該透過 interface 注入
 import type { EffectProcessor } from '../../app/coordination/utils/EffectProcessor'
 import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
