@@ -1,11 +1,3 @@
-/**
- * Attribute system limits and default values
- *
- * 設計理念：
- * - 集中管理所有屬性的預設值與限制
- * - 提供明確的數值範圍，避免不合理的屬性值
- * - 便於遊戲平衡設計調整
- */
 /** 屬性預設值 */
 export const AttributeDefaults = {
   // === Health related ===

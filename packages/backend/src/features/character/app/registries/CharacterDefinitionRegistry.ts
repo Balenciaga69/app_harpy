@@ -1,12 +1,8 @@
-import type { ICharacterDefinition } from '../definitions'
-import { CharacterError } from '../errors'
-/**
- * CharacterDefinitionRegistry
- *
- * 角色定義的靜態註冊表，儲存所有 ICharacterDefinition 資料。
- * 類似資料庫，提供查詢與管理功能。
- */
-export class CharacterDefinitionRegistry {
+import { CharacterError } from '../../domain/CharacterError'
+import { ICharacterDefinition } from '../../interfaces/definitions/ICharacterDefinition'
+import { ICharacterDefinitionRegistry } from '../../interfaces/registries/ICharacterDefinitionRegistry'
+
+export class CharacterDefinitionRegistry implements ICharacterDefinitionRegistry {
   private readonly definitions = new Map<string, ICharacterDefinition>()
   /** 註冊角色定義 */
   register(definition: ICharacterDefinition): void {

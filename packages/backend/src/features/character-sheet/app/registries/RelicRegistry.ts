@@ -1,11 +1,11 @@
 import { nanoid } from 'nanoid'
+import { IRelicAttributeMapping } from '../../interfaces/IRelicAttributeMapping'
 /**
  * 遺物屬性映射註冊表
  *
  * 定義每個遺物如何影響角色屬性。
  * 支援基於其他屬性的動態計算。
  */
-import { IRelicAttributeMapping } from '../attribute-mappings/RelicAttributeMapping'
 export const RELIC_ATTRIBUTE_MAPPINGS: readonly IRelicAttributeMapping[] = [
   // 泰坦之心：每 10 HP +2 護甲（可疊加）
   {

@@ -1,19 +1,8 @@
-import type { IEquipmentInstance } from '@/domain/item'
-import type { AttributeModifier } from '@/features/attribute-system'
-import { AFFIX_MAPPING_LOOKUP } from '../registries/affix-registry'
-import { createModifierFromAffix } from '../attribute-mappings/AffixAttributeMapping' /**
- * 裝備屬性處理器
- *
- * 將裝備實例的詞綴轉換為屬性修飾器。
- * 此處理器不涉及戰鬥內的動態效果，僅處理靜態屬性增益。
- */
+import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
+import { IEquipmentInstance } from '@/features/item/interfaces/definitions/IItemInstance'
+import { createModifierFromAffix } from '../../interfaces/IAffixAttributeMapping'
+import { AFFIX_MAPPING_LOOKUP } from '../../app/registries/AffixRegistry'
 export class EquipmentProcessor {
-  /**
-   * 從裝備實例提取屬性修飾器
-   *
-   * @param equipment - 裝備實例
-   * @returns 屬性修飾器列表（如詞綴未在註冊表中則跳過）
-   */
   process(equipment: IEquipmentInstance): AttributeModifier[] {
     const modifiers: AttributeModifier[] = []
     for (const affix of equipment.affixes) {
@@ -27,9 +16,7 @@ export class EquipmentProcessor {
     }
     return modifiers
   }
-  /**
-   * 批次處理多個裝備實例
-   */
+
   processAll(equipments: readonly IEquipmentInstance[]): AttributeModifier[] {
     return equipments.flatMap((equipment) => this.process(equipment))
   }

@@ -1,7 +1,3 @@
-// app
-export { AttributeCalculator } from './app/AttributeCalculator'
-export { AttributeManager } from './app/AttributeManager'
-
 // domain
 export { AttributeDefaults, AttributeLimits, type AttributeLimitKey } from './domain/AttributeConstants'
 export { type BaseAttributeValues, createDefaultAttributes } from './domain/AttributeValues'

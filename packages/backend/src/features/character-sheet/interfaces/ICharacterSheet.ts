@@ -1,9 +1,5 @@
-import type { AttributeType } from '@/domain/attribute' /**
- * 角色屬性面板快照
- *
- * 代表計算後的靜態屬性數據，用於 UI 展示。
- * 不包含動態戰鬥狀態（如當前血量、Buff 等）。
- */
+import { AttributeType } from '@/features/attribute'
+
 export interface ICharacterSheet {
   /** 所有屬性的最終值（基礎值 + 裝備 + 遺物） */
   readonly attributes: Record<AttributeType, number>

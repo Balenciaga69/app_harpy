@@ -1,13 +1,8 @@
-import type { IRelicInstance } from '@/domain/item'
-import type { AttributeModifier } from '@/features/attribute-system'
-import type { BaseAttributeValues } from '@/domain/attribute'
-import { RELIC_MAPPING_LOOKUP } from '../registries/relic-registry'
-/**
- * 遺物屬性處理器
- *
- * 將遺物實例轉換為屬性修飾器。
- * 支援基於角色基礎屬性的動態計算（如 HP 轉護甲）。
- */
+import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
+import { IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
+import { RELIC_MAPPING_LOOKUP } from '../../app/registries/RelicRegistry'
+import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
+
 export class RelicProcessor {
   /**
    * 從遺物實例提取屬性修飾器

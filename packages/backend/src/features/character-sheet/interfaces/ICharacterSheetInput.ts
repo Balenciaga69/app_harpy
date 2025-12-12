@@ -1,9 +1,6 @@
-import type { BaseAttributeValues } from '@/domain/attribute'
-import type { IEquipmentInstance, IRelicInstance } from '@/domain/item' /**
- * 角色屬性面板計算器的輸入
- *
- * 包含計算最終屬性所需的所有靜態數據。
- */
+import { BaseAttributeValues } from '@/features/attribute'
+import { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
+
 export interface ICharacterSheetInput {
   /** 角色的基礎屬性值 */
   readonly baseAttributes: BaseAttributeValues
