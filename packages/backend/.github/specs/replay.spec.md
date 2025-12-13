@@ -29,4 +29,5 @@ Replay 模組負責重播戰鬥結果，提供播放控制功能如播放、暫�
 
 ## 模組依賴誰?或被誰依賴?
 
-Replay 模組依賴 combat 模組的 CombatResult、CombatSnapshot 和 CombatLogEntry 等資料結構，以及 shared 模組的事件匯流排介面。Replay 模組被 UI 層或測試模組依賴，用於展示重播介面或驗證重播邏輯。
+Replay 模組依賴 combat 模組的 CombatResult、CombatSnapshot 和 CombatLogEntry 等資料結構，以及 shared 模組的事件匯流排介面。
+Replay 模組被 UI 層或測試模組依賴，用於展示重播介面或驗證重播邏輯。

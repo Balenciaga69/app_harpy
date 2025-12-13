@@ -27,4 +27,5 @@ Item-Generator 模組負責動態生成物品實例，包括裝備和遺物。�
 
 ## 模組依賴誰?或被誰依賴?
 
-Item-Generator 模組依賴 item 模組的定義和註冊表，以及 definition-config 模組的模板。Item-Generator 模組被 shop 模組依賴，用於生成商店物品，以及其他需要動態物品生成的模組。
+Item-Generator 模組依賴 item 模組的定義和註冊表，以及 definition-config 模組的模板。
+Item-Generator 模組被 shop 模組依賴，用於生成商店物品，以及其他需要動態物品生成的模組。

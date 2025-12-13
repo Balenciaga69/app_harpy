@@ -25,4 +25,5 @@ Character 模組負責角色和職業的定義管理，包括角色屬性模板�
 
 ## 模組依賴誰?或被誰依賴?
 
-Character 模組依賴 definition-config 模組的模板定義。Character 模組被 combat 模組依賴，用於角色實例化和屬性初始化。
+Character 模組依賴 definition-config 模組的模板定義。
+Character 模組被 combat 模組依賴，用於角色實例化和屬性初始化。

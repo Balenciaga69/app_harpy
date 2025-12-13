@@ -25,4 +25,5 @@ Character-Sheet 模組負責計算角色的完整屬性表，整合基礎屬性�
 
 ## 模組依賴誰?或被誰依賴?
 
-Character-Sheet 模組依賴 attribute 模組的屬性管理器和計算器，item 模組的裝備和遺物實例，以及 definition-config 模組的詞綴和遺物定義。Character-Sheet 模組被 combat 模組依賴，用於戰鬥屬性計算，以及 UI 模組依賴，用於角色屬性顯示。
+Character-Sheet 模組依賴 attribute 模組的屬性管理器和計算器，item 模組的裝備和遺物實例，以及 definition-config 模組的詞綴和遺物定義。
+Character-Sheet 模組被 combat 模組依賴，用於戰鬥屬性計算，以及 UI 模組依賴，用於角色屬性顯示。

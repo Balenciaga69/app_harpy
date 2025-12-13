@@ -28,4 +28,5 @@ Shop 模組負責商店系統，包括物品刷新、購買、出售和動態定
 
 ## 模組依賴誰?或被誰依賴?
 
-Shop 模組依賴 item-generator 模組的物品生成，inventory 模組的管理，以及 difficulty-scaler 模組的難度資訊。Shop 模組被 UI 模組依賴，用於顯示商店介面，以及 gameplay 模組依賴，用於遊戲進程中的商店互動。
+Shop 模組依賴 item-generator 模組的物品生成，inventory 模組的管理，以及 difficulty-scaler 模組的難度資訊。
+Shop 模組被 UI 模組依賴，用於顯示商店介面，以及 gameplay 模組依賴，用於遊戲進程中的商店互動。

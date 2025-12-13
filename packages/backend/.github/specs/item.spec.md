@@ -28,4 +28,5 @@ Item 模組負責管理物品系統，包括裝備、遺物和詞綴的定義、
 
 ## 模組依賴誰?或被誰依賴?
 
-Item 模組依賴 definition-config 模組的物品和詞綴模板。Item 模組被 character-sheet 模組依賴，用於裝備和遺物處理，以及 effect 模組依賴，用於效果生成。
+Item 模組依賴 definition-config 模組的物品和詞綴模板。
+Item 模組被 character-sheet 模組依賴，用於裝備和遺物處理，以及 effect 模組依賴，用於效果生成。

@@ -29,4 +29,5 @@ Attribute 模組負責管理角色的屬性系統，包括基礎屬性值、修�
 
 ## 模組依賴誰?或被誰依賴?
 
-Attribute 模組依賴 definition-config 模組的屬性模板和類型定義。Attribute 模組被 character-sheet 模組依賴，用於計算角色屬性，以及 combat 模組依賴，用於戰鬥屬性應用。
+Attribute 模組依賴 definition-config 模組的屬性模板和類型定義。
+Attribute 模組被 character-sheet 模組依賴，用於計算角色屬性，以及 combat 模組依賴，用於戰鬥屬性應用。
