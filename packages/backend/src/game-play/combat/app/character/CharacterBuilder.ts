@@ -1,14 +1,15 @@
-import { BaseAttributeValues, createDefaultAttributes } from '@/features/attribute/domain/AttributeValues'
+import { createDefaultAttributes } from '@/features/attribute/domain/AttributeValues'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { Character } from './Character'
+import { IBaseAttributeValues } from '@/features/attribute/interfaces/IBaseAttributeValues'
 export class CharacterBuilder {
   private name: string = 'Unnamed'
   private team: ICharacter['team'] = 'player'
   private ultimate?: IUltimateAbility
-  private attributeOverrides: Partial<BaseAttributeValues> = {}
-  private templateAttributes?: BaseAttributeValues
+  private attributeOverrides: Partial<IBaseAttributeValues> = {}
+  private templateAttributes?: IBaseAttributeValues
   /** Set character name */
   withName(name: string): this {
     this.name = name
@@ -25,7 +26,7 @@ export class CharacterBuilder {
     return this
   }
   /** Use a preset attribute template as base */
-  fromTemplate(template: BaseAttributeValues): this {
+  fromTemplate(template: IBaseAttributeValues): this {
     this.templateAttributes = template
     return this
   }
@@ -97,7 +98,7 @@ export class CharacterBuilder {
     return this
   }
   /** Set multiple attributes at once */
-  withAttributes(attributes: Partial<BaseAttributeValues>): this {
+  withAttributes(attributes: Partial<IBaseAttributeValues>): this {
     this.attributeOverrides = { ...this.attributeOverrides, ...attributes }
     return this
   }

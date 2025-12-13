@@ -1,16 +1,2 @@
-export type AttributeType =
-  | 'maxHp'
-  | 'currentHp'
-  | 'maxEnergy'
-  | 'currentEnergy'
-  | 'energyRegen'
-  | 'energyGainOnAttack'
-  | 'armor'
-  | 'evasion'
-  | 'attackDamage'
-  | 'attackCooldown'
-  | 'criticalChance'
-  | 'criticalMultiplier'
-  | 'accuracy'
-  | 'resurrectionChance'
-  | 'resurrectionHpPercent'
+import { IBaseAttributeValues } from './IBaseAttributeValues'
+export type AttributeType = keyof IBaseAttributeValues

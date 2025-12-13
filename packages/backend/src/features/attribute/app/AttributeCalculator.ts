@@ -2,16 +2,7 @@ import type { IAttributeManager } from '../interfaces/IAttributeManager'
 import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from '../interfaces/AttributeModifier'
 import { AttributeType } from '../interfaces/AttributeType'
-/**
- * 屬性計算器
- *
- * 從基礎值和修飾器計算最終屬性值。
- * 依優先級排序修飾器，先套用加法修飾器，再套用乘法修飾器。
- *
- * 計算公式：(基礎值 + Σ加法修飾器) × Π(1 + 乘法修飾器)
- *
- * 此類別位於共享層，可被戰鬥內外使用。
- */
+
 export class AttributeCalculator implements IAttributeCalculator {
   private manager: IAttributeManager
   /** 初始化屬性計算器，注入屬性管理器 */
@@ -26,6 +17,7 @@ export class AttributeCalculator implements IAttributeCalculator {
   }
   /** 計算指定屬性的最終值 */
   calculate(baseValue: number, modifiers: AttributeModifier[]): number {
+    // 先排序再加法後乘法
     const sortedModifiers = this.sortModifiersByPriority(modifiers)
     const additiveModifiers = this.filterModifiersByMode(sortedModifiers, 'add')
     const multiplyModifiers = this.filterModifiersByMode(sortedModifiers, 'multiply')
