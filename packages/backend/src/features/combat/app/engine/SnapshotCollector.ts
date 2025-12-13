@@ -2,7 +2,7 @@ import { CombatTiming } from '../../domain/config/CombatConstants'
 import { ICharacter } from '../../interfaces/character/ICharacter'
 import { CombatSnapshot } from '../../interfaces/combat-engine/CombatSnapshot'
 import { ICombatContext } from '../../interfaces/context/ICombatContext'
-import { isCharacter } from '../shared/utils/TypeGuardUtil'
+import { isCharacter } from '../../domain/TypeGuardUtil'
 export class SnapshotCollector {
   private snapshots: CombatSnapshot[] = []
   private interval: number

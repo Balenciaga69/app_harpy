@@ -1,6 +1,5 @@
-// TODO: EffectProcessor 應該透過 interface 注入
-import type { EffectProcessor } from '../../app/coordination/utils/EffectProcessor'
-import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
+import type { EffectProcessor } from '../utils/EffectProcessor'
+import type { ITickPhase } from '../../../interfaces/tick-phases/ITickPhase'
 /**
  * 效果 tick 階段
  *

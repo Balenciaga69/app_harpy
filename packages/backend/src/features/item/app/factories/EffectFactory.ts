@@ -1,18 +1,7 @@
 import type { IAffixInstance } from '../../interfaces/definitions/IAffixInstance'
 import type { ICombatItemView } from '../../interfaces/projections/ICombatItemView'
+import type { IEffectTemplateInfo } from '../../interfaces/factories/IEffectTemplateInfo'
 import type { AffixDefinitionRegistry } from '../../domain/registries/AffixDefinitionRegistry'
-/**
- * EffectTemplateInfo
- *
- * 效果模板資訊，包含模板 ID 與對應的詞綴實例。
- * Domain 層提供此資訊給 Logic 層建構具體效果。
- */
-export interface IEffectTemplateInfo {
-  /** 效果模板 ID */
-  readonly templateId: string
-  /** 產生此效果的詞綴實例 */
-  readonly affixInstance: IAffixInstance
-}
 /**
  * EffectFactory
  *

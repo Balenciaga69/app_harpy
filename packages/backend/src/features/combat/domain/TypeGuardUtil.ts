@@ -1,4 +1,4 @@
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import type { ICharacter } from '../interfaces/character/ICharacter'
 /**
  * Check if object is ICharacter type
  */

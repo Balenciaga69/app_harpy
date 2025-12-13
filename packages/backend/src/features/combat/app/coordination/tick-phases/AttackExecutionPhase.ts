@@ -1,10 +1,9 @@
-import type { ICombatContext } from '../../interfaces/context/ICombatContext'
-import type { ICharacter } from '../../interfaces/character/ICharacter'
-import { isCharacter } from '../../app/shared/utils/TypeGuardUtil'
-// TODO: 這些 util 類別應該透過 interface 注入，而非直接引用實作
-import type { AttackExecutor } from '../../app/coordination/utils/AttackExecutor'
-import type { CooldownManager } from '../../app/coordination/utils/CooldownManager'
-import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
+import type { ICharacter } from '../../../interfaces/character/ICharacter'
+import { isCharacter } from '../../../domain/TypeGuardUtil'
+import type { AttackExecutor } from '../AttackExecutor'
+import type { CooldownManager } from '../utils/CooldownManager'
+import type { ITickPhase } from '../../../interfaces/tick-phases/ITickPhase'
 export class AttackExecutionPhase implements ITickPhase {
   readonly name = 'AttackExecution'
   private attackExecutor: AttackExecutor

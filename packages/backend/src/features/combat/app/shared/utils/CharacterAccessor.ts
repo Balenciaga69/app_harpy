@@ -1,8 +1,9 @@
 import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
 import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
-import { CombatError } from '@/features/combat/interfaces/errors/CombatError'
-import { CombatFailure, Failures } from '@/features/combat/interfaces/errors/CombatFailure'
-import { Result } from '@/features/combat/interfaces/errors/Result'
+import { CombatError } from '@/features/combat/domain/errors/CombatError'
+import type { CombatFailure } from '@/features/combat/interfaces/errors/CombatFailure'
+import { Failures } from '@/features/combat/domain/errors/FailureFactory'
+import { Result } from '@/features/combat/domain/errors/Result'
 /**
  * CharacterAccessor
  *

@@ -1,15 +1,13 @@
-import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
-import type { ITargetSelector } from '../../../interfaces/target-select-strategies/ITargetSelector'
-import type { ICharacter } from '../../../interfaces/character/ICharacter'
-// TODO: 違反依賴規則 - app 不應互相引用
-import { DamageChain } from '../../damage/DamageChain'
-import { createDefaultDamageSteps } from '../../damage/DefaultDamageSteps'
-import { DamageFactory } from './DamageFactory'
-import { EnergyManager } from './EnergyManager'
-// TODO: 違反依賴規則 - app 不應互相引用
-import { isCharacter } from '../../shared/utils/TypeGuardUtil'
-import { UltimateEnergy } from '../../../domain/config/CombatConstants'
-import { UltimateDefaults } from '../../../domain/config/UltimateConstants'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
+import { DamageChain } from './DamageChain'
+import { createDefaultDamageSteps } from './DefaultDamageSteps'
+import { DamageFactory } from './utils/DamageFactory'
+import { EnergyManager } from './utils/EnergyManager'
+import { isCharacter } from '../../domain/TypeGuardUtil'
+import { UltimateEnergy } from '../../domain/config/CombatConstants'
+import { UltimateDefaults } from '../../domain/config/UltimateConstants'
 /**
  * 攻擊執行器
  *

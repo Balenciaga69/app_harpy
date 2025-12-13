@@ -3,8 +3,8 @@ import { ICombatContext } from '../../interfaces/context/ICombatContext'
 import { ICombatEventBus } from '../../interfaces/event-bus/ICombatEventBus'
 import { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'
 import { IEntity } from '../../interfaces/shared/IEntity'
-import { CombatRandomGenerator } from '../shared/utils/CombatRandomGenerator'
-import { isCharacter } from '../shared/utils/TypeGuardUtil'
+import { CombatRandomGenerator } from '../../domain/CombatRandomGenerator'
+import { isCharacter } from '../../domain/TypeGuardUtil'
 import { BattleState } from './BattleState'
 /**
  * 戰鬥上下文 (CombatContext)

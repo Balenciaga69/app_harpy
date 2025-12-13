@@ -17,7 +17,7 @@ import { AffixRoller } from '../../domain/AffixRoller'
 // TODO: 依賴外部模組 item，未來需抽象化
 import { ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/features/item/domain/registries'
 import type { IAffixFilter } from '../../interfaces/strategies/IAffixFilter'
-import { SlotBasedFilter } from '../strategies/SlotBasedFilter'
+import { SlotBasedFilter } from './SlotBasedFilter'
 /**
  * EquipmentGenerator 配置
  */

@@ -2,14 +2,14 @@ import { FirstAliveSelector } from '../../domain/target-select-strategies/FirstA
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
 import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
-// TODO: 違反依賴規則 - app 不應互相引用
-import { AttackExecutor } from './utils/AttackExecutor'
+import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
+import { AttackExecutor } from './AttackExecutor'
 import { CooldownManager } from './utils/CooldownManager'
 import { EffectProcessor } from './utils/EffectProcessor'
 import { EnergyManager } from './utils/EnergyManager'
-import { EffectTickPhase } from '../../domain/tick-phases/EffectTickPhase'
-import { EnergyRegenPhase } from '../../domain/tick-phases/EnergyRegenPhase'
-import { AttackExecutionPhase } from '../../domain/tick-phases/AttackExecutionPhase'
+import { EffectTickPhase } from './tick-phases/EffectTickPhase'
+import { EnergyRegenPhase } from './tick-phases/EnergyRegenPhase'
+import { AttackExecutionPhase } from './tick-phases/AttackExecutionPhase'
 /**
  * Tick Action System
  *
@@ -17,7 +17,7 @@ import { AttackExecutionPhase } from '../../domain/tick-phases/AttackExecutionPh
  * Each phase handles a specific responsibility (effects, energy, attacks).
  * Phases can be added, replaced, or removed for extensibility.
  */
-export class TickActionSystem {
+export class TickActionSystem implements ITickActionSystem {
   private context: ICombatContext
   private phases: ITickPhase[] = []
   private tickHandler: () => void
@@ -39,7 +39,7 @@ export class TickActionSystem {
     this.context.eventBus.on('tick:start', this.tickHandler)
   }
   /** Process all phases sequentially for the current tick */
-  private processTick(): void {
+  public processTick(): void {
     const tick = this.context.getCurrentTick()
     for (const phase of this.phases) {
       phase.execute(this.context, tick)

@@ -1,12 +1,13 @@
 import type { ICombatEventBus } from '../../interfaces/event-bus/ICombatEventBus'
 import type { CombatLogEntry } from '../../interfaces/logger/CombatLogEntry'
+import type { IEventLogger } from '../../interfaces/logger/IEventLogger'
 /**
  * EventLogger
  *
  * Records combat events from EventBus, tracks tick context, and provides log query methods. Supports filtering
  * by tick range and extracting common fields from event payloads.
  */
-export class EventLogger {
+export class EventLogger implements IEventLogger {
   private logs: CombatLogEntry[] = []
   private eventBus: ICombatEventBus
   private currentTick: number = 0

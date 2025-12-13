@@ -10,7 +10,7 @@ import { RelicGenerator } from './generators/RelicGenerator'
 // TODO: 依賴外部模組 item，未來需抽象化
 import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
 import type { IAffixFilter } from '../interfaces/strategies/IAffixFilter'
-import { SlotBasedFilter } from './strategies/SlotBasedFilter'
+import { SlotBasedFilter } from './generators/SlotBasedFilter'
 // TODO: 依賴外部模組 item，未來需抽象化
 import { ItemDefinitionRegistry } from '@/features/item/domain/registries/ItemDefinitionRegistry'
 // TODO: 依賴外部模組 item，未來需抽象化

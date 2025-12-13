@@ -7,14 +7,15 @@ import type { IEventLogger } from '../../interfaces/logger/IEventLogger'
 import { CombatTiming, CombatSystem } from '../../domain/config/CombatConstants'
 import { CombatError } from '../../domain/errors/CombatError'
 import { CombatFailureCode } from '../../interfaces/errors/CombatFailure'
+import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
 import { CombatInfrastructureFactory } from '../../infra/CombatInfrastructureFactory'
+import { CoordinationFactory } from '../../infra/CoordinationFactory'
 import { CombatContext } from './CombatContext'
 import { TickerDriver } from './TickerDriver'
-import { TickActionSystem } from '../coordination/TickActionSystem'
 import { SnapshotCollector } from './SnapshotCollector'
-import { ResultBuilder } from '../combat-builders/ResultBuilder'
-import { OutcomeAnalyzer } from '../combat-builders/utils/OutcomeAnalyzer'
-import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
+import { ResultBuilder } from './ResultBuilder'
+import { OutcomeAnalyzer } from './OutcomeAnalyzer'
+import { PreMatchEffectApplicator } from './PreMatchEffectApplicator'
 /**
  * 戰鬥引擎
  *
@@ -29,7 +30,7 @@ import { PreMatchEffectApplicator } from './utils/PreMatchEffectApplicator'
 export class CombatEngine {
   private context!: ICombatContext
   private ticker!: TickerDriver
-  private tickActionSystem!: TickActionSystem
+  private tickActionSystem!: ITickActionSystem
   private eventLogger!: IEventLogger
   private snapshotCollector!: SnapshotCollector
   private config: CombatConfig
@@ -69,7 +70,7 @@ export class CombatEngine {
     }
   }
   private initializeSystems(): void {
-    this.tickActionSystem = new TickActionSystem(this.context)
+    this.tickActionSystem = CoordinationFactory.createTickActionSystem(this.context)
     this.eventLogger = CombatInfrastructureFactory.createEventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }

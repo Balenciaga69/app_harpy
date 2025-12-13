@@ -1,5 +1,5 @@
 import seedrandom from 'seedrandom'
-import type { ICombatRandomGenerator } from '../../../interfaces/shared/ICombatRandomGenerator'
+import type { ICombatRandomGenerator } from '../interfaces/shared/ICombatRandomGenerator'
 /**
  * CombatRandomGenerator
  *

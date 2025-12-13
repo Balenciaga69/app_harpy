@@ -1,9 +1,8 @@
-import type { ICombatContext } from '../../interfaces/context/ICombatContext'
-import type { ICharacter } from '../../interfaces/character/ICharacter'
-import { isCharacter } from '../../app/shared/utils/TypeGuardUtil'
-// TODO: EnergyManager 應該透過 interface 注入
-import type { EnergyManager } from '../../app/coordination/utils/EnergyManager'
-import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
+import type { ICharacter } from '../../../interfaces/character/ICharacter'
+import { isCharacter } from '../../../domain/TypeGuardUtil'
+import type { EnergyManager } from '../utils/EnergyManager'
+import type { ITickPhase } from '../../../interfaces/tick-phases/ITickPhase'
 /**
  * 能量再生階段
  *

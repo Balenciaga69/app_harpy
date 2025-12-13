@@ -1,8 +1,8 @@
-import type { CombatContext } from '../../context/CombatContext'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ICharacter } from '../../interfaces/character/ICharacter'
 // TODO: 依賴外部模組 effect
-import type { IEffect } from '../../../../effect'
-import { isCharacter } from '../../shared/utils/TypeGuardUtil'
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import type { IEffect } from '../../../effect'
+import { isCharacter } from '../../domain/TypeGuardUtil'
 /**
  * PreMatchEffectApplicator
  *
@@ -13,7 +13,7 @@ export class PreMatchEffectApplicator {
   /**
    * Apply pre-match effects to all characters in context
    */
-  static applyEffects(effects: IEffect[], context: CombatContext): void {
+  static applyEffects(effects: IEffect[], context: ICombatContext): void {
     if (!effects || effects.length === 0) return
     const entities = context.getAllEntities()
     entities.forEach((entity) => {

@@ -1,5 +1,5 @@
-// TODO: 依賴外部模組 item
-import type { IEffectTemplateInfo } from '../../../item/app/factories/EffectFactory'
+// TODO: 依賴外部模組 item (現已使用介面)
+import type { IEffectTemplateInfo } from '../../../item/interfaces/factories/IEffectTemplateInfo'
 import type { IEffect } from '../../interfaces/IEffect'
 import { StaticEffectGenerator } from './StaticEffectGenerator'
 import { ClassEffectRegistry } from './ClassEffectRegistry'

@@ -1,6 +1,6 @@
-import { OutcomeAnalyzer } from './utils/OutcomeAnalyzer'
-import { SurvivorCollector } from './utils/SurvivorCollector'
-import { StatisticsBuilder } from './utils/StatisticsBuilder'
+import { OutcomeAnalyzer } from './OutcomeAnalyzer'
+import { SurvivorCollector } from './SurvivorCollector'
+import { StatisticsBuilder } from './StatisticsBuilder'
 import { CombatResultData } from '../../interfaces/combat-engine/CombatResultData'
 import { CombatResult } from '../../interfaces/combat-engine/CombatResult'
 /**
