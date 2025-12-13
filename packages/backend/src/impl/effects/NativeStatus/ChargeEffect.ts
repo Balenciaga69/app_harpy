@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
 import { StackableEffect } from '@/features/effect/interfaces/IStackableEffect'
 import type { ICharacterFacade, ICombatEffectServices } from '@/features/effect'
-import { ChargeEffectConfig, EffectNames } from '@/features/combat/domain/config/EffectConstants'
-import { TickConfig } from '@/features/combat/domain/config/FormulaConstants'
+import { ChargeEffectConfig, EffectNames } from '@/game-play/combat/domain/config/EffectConstants'
+import { TickConfig } from '@/game-play/combat/domain/config/FormulaConstants'
 /**
  * Charge effect
  * - Increases attack/spell frequency (reduces cooldown time)

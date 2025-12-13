@@ -1,5 +1,4 @@
 import { AttributeType } from './AttributeType'
-
 /**
  * 屬性修飾器
  *

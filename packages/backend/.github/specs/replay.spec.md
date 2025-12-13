@@ -1,52 +1,35 @@
-# Replay 模組規格說明
+# Replay 模組
 
 ## 簡介
 
-Replay 模組負責處理戰鬥重播功能，包括載入戰鬥結果數據、控制播放進度、事件發佈和狀態管理。模組採用事件驅動架構，支持多種播放速度和循環播放。最後更新時間：2025/12/09。
+- 負責重播戰鬥結果，提供播放控制功能（如播放、暫停、停止、快進等）。
+- 通過事件系統通知狀態變化，確保模組間的互動一致性。
+- 最後更新時間 ：2025-12-13。
 
 ## 輸入與輸出
 
-### 輸入
+### 主要輸入
 
-- 戰鬥結果數據（CombatResult，包含日誌、快照和統計）
-- 重播配置參數（播放速度、循環設定、tick 間隔等）
-- 用戶控制命令（播放、暫停、停止、跳轉）
+- CombatResult ：包含戰鬥快照和日誌資料，用於載入重播內容。
 
-### 輸出
+### 主要輸出
 
-- 重播事件流（載入完成、播放狀態變化、tick 更新等）
-- 當前播放狀態（位置、速度、是否播放中）
-- 快照數據（用於 UI 渲染角色狀態）
+- ReplayEvent ：事件通知，包括載入、播放、暫停等狀態變化。
+- CombatSnapshot ：特定tick的戰鬥狀態快照。
+- CombatLogEntry[] ：指定範圍或tick的戰鬥日誌條目。
+- ReplayState ：唯讀的重播狀態資訊。
 
 ## 元件盤點
 
-### 核心引擎元件
-
-- ReplayEngine：核心重播引擎，提供載入數據、播放控制和事件訂閱 API。整合數據適配器、狀態機和調度器。
-- PlaybackStateMachine：管理播放狀態轉換，包括載入、播放、暫停和停止狀態。處理速度調整和位置跳轉。
-- ReplayDataAdapter：適配戰鬥結果數據，提取事件日誌和快照序列。提供 tick 總數和數據查詢接口。
-
-### 基礎設施元件
-
-- BrowserTickScheduler：基於瀏覽器 requestAnimationFrame 的 tick 調度器。處理實時播放調度。
-- TestTickScheduler：用於測試的 tick 調度器。支持手動觸發和同步執行。
-- ReplayEventBus：重播專用事件總線。處理載入、播放和 tick 事件發佈。
-
-### 模型元件
-
-- ReplayConfig：定義重播配置，包括播放速度、循環設定和 tick 間隔。
-- ReplayState：表示當前重播狀態，包括位置、速度和播放模式。
-- ReplayEvent：定義重播事件類型和載荷，支持狀態變化通知。
-- ReplayError：重播相關錯誤類別，處理載入失敗和播放異常。
+- ReplayEngine ：核心引擎，整合所有元件，處理用戶操作和事件發射。
+- PlaybackStateMachine ：狀態機，管理播放狀態轉換和tick進度。
+- ReplayDataAdapter ：資料適配器，載入和查詢快照及日誌資料。
+- ReplayError ：自訂錯誤類，提供結構化錯誤處理。
+- TickScheduler ：tick調度器，負責定時觸發tick更新（瀏覽器環境使用BrowserTickScheduler，測試環境使用TestTickScheduler）。
+- ReplayEventBus ：事件匯流排，實現事件發射和監聽機制。
+- 介面層 ：定義ReplayConfig、ReplayState、ReplayEvent等契約，確保元件間一致性。
 
 ## 模組依賴誰?或被誰依賴?
 
-### 依賴的模組
-
-- logic/combat：戰鬥結果數據和快照，提供重播的原始數據
-- logic/shared：共享工具，如事件總線介面
-
-### 被依賴的模組
-
-- UI 層：使用重播引擎進行戰鬥重播顯示，訂閱事件更新界面
-- 測試模組：使用 TestTickScheduler 進行單元測試和集成測試
+Replay 模組依賴 combat 模組的 CombatResult、CombatSnapshot 和 CombatLogEntry 等資料結構，以及 shared 模組的事件匯流排介面。
+Replay 模組被 UI 層或測試模組依賴，用於展示重播介面或驗證重播邏輯。

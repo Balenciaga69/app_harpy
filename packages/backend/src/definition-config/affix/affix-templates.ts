@@ -1,5 +1,4 @@
 import { IAffixDefinition } from '@/features/item/interfaces/definitions/IAffixDefinition'
-
 /* 攻擊類詞綴 */
 export const AFFIX_ATTACK_DAMAGE: IAffixDefinition = {
   id: 'affix_attack_damage',

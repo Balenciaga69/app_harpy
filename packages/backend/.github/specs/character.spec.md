@@ -1,49 +1,32 @@
-# Character 模組規格說明
+# Character 模組
 
 ## 簡介
 
-Character 模組負責定義和管理遊戲中的角色和職業系統，包括角色定義、職業定義、註冊表管理和錯誤處理。模組提供統一的角色資料結構和查詢機制，支援角色實例的建立和驗證。最後更新時間：2025/12/09。
+- 負責角色和職業的定義管理。
+- 包括角色屬性模板和職業修飾器的註冊與查詢。
+- 支援角色按職業分類和屬性驗證。
+- 最後更新時間：2025-12-13。
 
 ## 輸入與輸出
 
-### 輸入
+### 主要輸入
 
-- 角色定義數據（ICharacterDefinition）：包含角色 ID、名稱、職業和基礎屬性
-- 職業定義數據（IClassDefinition）：包含職業 ID、名稱、屬性修正和裝備池
-- 查詢參數（ID 或職業 ID）：用於從註冊表查詢定義
+- ICharacterDefinition：角色定義，包含基本屬性和職業ID。
+- IClassDefinition：職業定義，包含屬性修飾器和裝備池。
 
-### 輸出
+### 主要輸出
 
-- 角色定義實例（ICharacterDefinition）：查詢到的角色定義數據
-- 職業定義實例（IClassDefinition）：查詢到的職業定義數據
-- 角色集合（ICharacterDefinition[]）：按職業篩選或全部角色列表
-- 錯誤資訊（CharacterError）：註冊或查詢失敗時的錯誤訊息
+- 註冊結果：成功註冊的定義。
+- 查詢結果：根據ID或職業查詢的角色定義列表。
 
 ## 元件盤點
 
-### 定義元件
-
-- ICharacterDefinition：角色核心定義介面，描述角色的基本資訊和屬性配置。
-- IClassDefinition：職業核心定義介面，定義職業的特性和屬性修正。
-
-### 錯誤處理元件
-
-- CharacterError：角色領域的專屬錯誤類別，提供註冊重複、定義不存在等錯誤訊息。
-
-### 註冊表元件
-
-- CharacterDefinitionRegistry：角色定義的靜態註冊表，提供註冊、查詢和管理角色定義的功能。
-- ClassDefinitionRegistry：職業定義的靜態註冊表，提供註冊、查詢和管理職業定義的功能。
+- CharacterDefinitionRegistry：角色定義註冊表，管理角色的註冊、查詢和按職業分類。
+- ClassDefinitionRegistry：職業定義註冊表，管理職業的註冊和查詢。
+- CharacterError：角色相關錯誤類，提供結構化錯誤處理。
+- 介面層：定義ICharacterDefinition、IClassDefinition等契約，確保元件間一致性。
 
 ## 模組依賴誰?或被誰依賴?
 
-### 依賴的模組
-
-- domain/attribute：屬性系統，依賴 BaseAttributeValues 和 AttributeType 進行角色屬性定義
-
-### 被依賴的模組
-
-- logic/combat：戰鬥系統，依賴角色定義建立戰鬥實例
-- logic/attribute-system：屬性管理系統，依賴角色定義進行屬性計算
-- UI 層：角色選擇和顯示，依賴角色和職業定義進行介面渲染
-- Run 模組：遊戲運行邏輯，依賴角色定義初始化玩家角色
+Character 模組依賴 definition-config 模組的模板定義。
+Character 模組被 combat 模組依賴，用於角色實例化和屬性初始化。

@@ -1,5 +1,4 @@
 import type { IAffixInstance } from '../definitions/IAffixInstance'
-
 /**
  * 效果模板資訊
  *

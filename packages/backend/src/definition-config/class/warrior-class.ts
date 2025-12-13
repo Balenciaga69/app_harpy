@@ -1,5 +1,4 @@
 import { IClassDefinition } from '@/features/character/interfaces/definitions/IClassDefinition'
-
 /**
  * 戰士職業定義範例
  */

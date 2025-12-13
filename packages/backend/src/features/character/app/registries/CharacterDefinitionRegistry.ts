@@ -1,7 +1,6 @@
 import { CharacterError } from '../../domain/CharacterError'
 import { ICharacterDefinition } from '../../interfaces/definitions/ICharacterDefinition'
 import { ICharacterDefinitionRegistry } from '../../interfaces/registries/ICharacterDefinitionRegistry'
-
 export class CharacterDefinitionRegistry implements ICharacterDefinitionRegistry {
   private readonly definitions = new Map<string, ICharacterDefinition>()
   /** 註冊角色定義 */

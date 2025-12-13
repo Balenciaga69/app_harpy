@@ -1,9 +1,7 @@
 // Exporting app modules
 export { CharacterSheetCalculator } from './app'
-
 // Exporting domain modules
 export { EquipmentProcessor, RelicProcessor } from './domain'
-
 // Exporting interfaces
 export { ICharacterSheet } from './interfaces/ICharacterSheet'
 export { ICharacterSheetInput } from './interfaces/ICharacterSheetInput'

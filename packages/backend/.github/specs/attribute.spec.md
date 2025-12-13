@@ -1,45 +1,38 @@
-# Attribute 模組規格說明
+# Attribute 模組
 
 ## 簡介
 
-Attribute 模組負責定義和管理遊戲中的角色屬性系統，包括屬性類型、預設值、限制範圍和基礎配置。模組提供統一的屬性詞彙和驗證機制，確保屬性值的合理性和一致性。最後更新時間：2025/12/09。
+- 負責管理角色的屬性系統，包括：
+  - 基礎屬性值的初始化。
+  - 修飾器的應用與排序。
+  - 最終屬性值的計算。
+- 支援加法與乘法修飾器，並提供優先級處理。
+- 最後更新時間：2025-12-13。
 
 ## 輸入與輸出
 
-### 輸入
+### 主要輸入
 
-- 屬性覆蓋值（Partial<BaseAttributeValues>）：用於自訂角色的特定屬性值
-- 屬性類型查詢（AttributeType）：指定要查詢或驗證的屬性類型
+- BaseAttributeValues：基礎屬性值，用於初始化角色屬性。
+- AttributeModifier：屬性修飾器，包含值、模式和來源。
 
-### 輸出
+### 主要輸出
 
-- 完整屬性配置（BaseAttributeValues）：包含所有屬性的完整數值集合
-- 屬性限制資訊（AttributeLimits）：提供各屬性的最小值和最大值範圍
-- 屬性預設值（AttributeDefaults）：系統預設的屬性數值
+- 計算後的屬性值：應用修飾器後的數值。
+- 修飾器列表：特定屬性的所有修飾器。
+- 屬性狀態：基礎值和修飾器的組合。
 
 ## 元件盤點
 
-### 屬性定義元件
-
-- AttributeType：定義系統中可用的屬性類型，包括血量、能量、攻擊、防禦、暴擊和復活相關屬性。
-- BaseAttributeValues：基礎屬性數值配置介面，涵蓋所有屬性的數值定義。
-- AttributeDefaults：屬性預設值常量，提供系統預設的屬性數值。
-- AttributeLimits：屬性上下限定義，用於屬性值的驗證和範圍檢查。
-
-### 工具元件
-
-- createDefaultAttributes：建立預設屬性值的工廠函式，支持部分屬性覆蓋。
-- AttributeLimitKey：屬性限制鍵的類型定義，便於類型安全的限制查詢。
+- AttributeCalculator：屬性計算器，處理修飾器的排序和應用邏輯。
+- AttributeManager：屬性管理器，管理基礎值和修飾器的增刪查改。
+- AttributeConstants：屬性常數，定義預設值和限制範圍。
+- AttributeValues：屬性值介面，提供基礎屬性結構和預設創建函數。
+- AttributeModifier：修飾器介面，定義修飾器的結構和優先級。
+- AttributeType：屬性類型定義，列出所有支援的屬性。
+- 介面層：定義IAttributeCalculator和IAttributeManager契約，確保元件間一致性。
 
 ## 模組依賴誰?或被誰依賴?
 
-### 依賴的模組
-
-- 無直接依賴：作為基礎定義模組，不依賴其他模組
-
-### 被依賴的模組
-
-- logic/attribute-system：屬性管理和計算系統，依賴屬性定義進行計算
-- logic/combat：戰鬥系統，依賴屬性值進行傷害計算和角色管理
-- domain/character：角色定義，依賴屬性配置建立角色實例
-- UI 層：顯示屬性資訊，依賴屬性類型和限制進行介面渲染
+Attribute 模組依賴 definition-config 模組的屬性模板和類型定義。
+Attribute 模組被 character-sheet 模組依賴，用於計算角色屬性，以及 combat 模組依賴，用於戰鬥屬性應用。

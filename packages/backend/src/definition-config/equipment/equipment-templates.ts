@@ -2,7 +2,6 @@
  * 裝備定義範例（戰士專用）
  */
 import { IEquipmentDefinition } from '@/features/item/interfaces/definitions/IEquipmentDefinition'
-
 /* 武器 */
 export const IRON_SWORD: IEquipmentDefinition = {
   id: 'iron_sword',

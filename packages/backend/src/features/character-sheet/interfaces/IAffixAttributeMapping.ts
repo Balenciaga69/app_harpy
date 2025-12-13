@@ -1,7 +1,6 @@
 import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
 import { AttributeType } from '@/features/attribute/interfaces/AttributeType'
 import { IAffixDefinition } from '@/features/item/interfaces/affixes/IAffixDefinition'
-
 export interface IAffixAttributeMapping {
   readonly affixId: IAffixDefinition['id']
   /** 影響的屬性類型 */
@@ -11,7 +10,6 @@ export interface IAffixAttributeMapping {
   /** 數值轉換函數（可選，預設為直接使用 rolledValue） */
   readonly valueTransform?: (rolledValue: number) => number
 }
-
 export function createModifierFromAffix(
   affixId: string,
   rolledValue: number,

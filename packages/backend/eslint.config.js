@@ -37,45 +37,61 @@ export default [
       // 定義架構層級元素
       'boundaries/elements': [
         {
-          // 領域層：業務邏輯核心
           type: 'domain',
-          pattern: 'src/features/*/domain/**/*',
+          pattern: ['src/**/domain/**/*', 'src/**/domain'],
         },
         {
-          // 應用層：業務流程協調
           type: 'app',
-          pattern: 'src/features/*/app/**/*',
+          pattern: ['src/**/app/**/*', 'src/**/app'],
         },
         {
-          // 基礎設施層：外部依賴實現
           type: 'infra',
-          pattern: 'src/features/*/infra/**/*',
+          pattern: ['src/**/infra/**/*', 'src/**/infra'],
         },
         {
-          // 介面層：契約定義
           type: 'interfaces',
-          pattern: 'src/features/*/interfaces/**/*',
+          pattern: ['src/**/interfaces/**/*', 'src/**/interfaces'],
         },
       ],
+      // 定義 feature 邊界識別規則
+      'boundaries/ignore': ['**/*.spec.ts', '**/*.test.ts', '**/*.d.ts'],
     },
     rules: {
       // 應用 boundaries 推薦規則
       ...boundaries.configs.recommended.rules,
-      // 自訂架構依賴規則
+      // 禁用 no-private 規則（允許同 feature 內引用）
+      'boundaries/no-private': 'off',
+      // 自訂架構依賴規則（嚴格模式）
       'boundaries/element-types': [
         2, // 錯誤級別
         {
           // 預設禁止所有依賴
           default: 'disallow',
           rules: [
-            // 領域層只能依賴領域層內部
-            { from: 'domain', allow: ['domain', 'interfaces'] },
-            // 介面層只能依賴介面層內部
-            { from: 'interfaces', allow: ['interfaces'] },
-            // 應用層可以依賴介面層和領域層
-            { from: 'app', allow: ['interfaces', 'domain'] },
-            // 基礎設施層可以依賴介面層、應用層和領域層
-            { from: 'infra', allow: ['interfaces', 'app', 'domain'] },
+            // domain 層：可引用 interfaces 和 domain
+            {
+              from: ['domain'],
+              allow: ['interfaces', 'domain'],
+              message: 'domain 層只能引用 interfaces 和 domain',
+            },
+            // interfaces 層：只能引用 interfaces（禁止引用 domain）
+            {
+              from: ['interfaces'],
+              allow: ['interfaces'],
+              message: 'interfaces 層只能引用 interfaces，不可引用 domain 或其他實作層',
+            },
+            // app 層：可引用 interfaces、domain 和同層的 app
+            {
+              from: ['app'],
+              allow: ['interfaces', 'domain', 'app'],
+              message: 'app 層可引用 interfaces、domain 和同層 app，禁止引用 infra',
+            },
+            // infra 層：可引用 interfaces、domain 和同層的 infra
+            {
+              from: ['infra'],
+              allow: ['interfaces', 'domain', 'infra'],
+              message: 'infra 層可引用 interfaces、domain 和同層 infra，禁止引用 app',
+            },
           ],
         },
       ],

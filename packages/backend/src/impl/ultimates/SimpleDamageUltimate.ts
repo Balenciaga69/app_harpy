@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 // TODO: 依賴外部模組 combat
-import type { ICombatContext, ICharacter, IUltimateAbility } from '@/features/combat'
+import type { ICombatContext, ICharacter, IUltimateAbility } from '@/game-play/combat'
 import {
   CharacterAccessor,
   DamageChain,
@@ -8,7 +8,7 @@ import {
   UltimateDefaults,
   FirstAliveSelector,
   DamageFactory,
-} from '@/features/combat'
+} from '@/game-play/combat'
 /**
  * Basic damage ultimate - concrete implementation
  *

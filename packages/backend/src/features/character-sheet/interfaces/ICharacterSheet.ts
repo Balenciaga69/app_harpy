@@ -1,5 +1,4 @@
 import { AttributeType } from '@/features/attribute'
-
 export interface ICharacterSheet {
   /** 所有屬性的最終值（基礎值 + 裝備 + 遺物） */
   readonly attributes: Record<AttributeType, number>

@@ -1,5 +1,4 @@
 import { IAffixAttributeMapping } from '../../interfaces/IAffixAttributeMapping'
-
 /**
  * 詞綴屬性映射註冊表
  *

@@ -1,6 +1,5 @@
 import type { ICharacterSheet } from './ICharacterSheet'
 import type { ICharacterSheetInput } from './ICharacterSheetInput'
-
 /**
  * 角色面板計算器介面
  *
