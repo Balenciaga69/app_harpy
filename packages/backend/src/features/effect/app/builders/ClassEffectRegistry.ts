@@ -3,9 +3,7 @@ import type { EffectConstructor } from '../../interfaces/IEffectConstructor'
 export class ClassEffectRegistry {
   private static instance: ClassEffectRegistry
   private registry: Map<string, EffectConstructor> = new Map()
-  private constructor() {
-    // 私有建構子，強制使用 getInstance
-  }
+  private constructor() {}
   static getInstance(): ClassEffectRegistry {
     if (!ClassEffectRegistry.instance) {
       ClassEffectRegistry.instance = new ClassEffectRegistry()

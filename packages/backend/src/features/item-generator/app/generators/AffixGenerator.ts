@@ -1,30 +1,11 @@
-/**
- * AffixGenerator
- *
- * 負責生成詞綴實例的類別。
- * 使用策略模式應用過濾邏輯。
- */
 import type { IAffixDefinition } from '@/features/item/interfaces/definitions/IAffixDefinition'
 import { AffixRoller } from '../../domain/AffixRoller'
 import type { IAffixFilter } from '../../interfaces/strategies/IAffixFilter'
-/**
- * AffixGenerator 配置
- */
 export interface IAffixGeneratorConfig {
-  /** 詞綴過濾策略 */
   filter?: IAffixFilter
 }
-/**
- * AffixGenerator 核心類別
- */
 export class AffixGenerator {
-  // private readonly filter: IAffixFilter
-  constructor(_config: IAffixGeneratorConfig) {
-    // this.filter = config.filter!
-  }
-  /**
-   * 生成詞綴實例
-   */
+  constructor(_config: IAffixGeneratorConfig) {}
   generateAffixes(
     availableAffixes: IAffixDefinition[],
     count: number,
