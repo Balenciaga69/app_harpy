@@ -34,5 +34,37 @@
 
 ## 模組依賴誰?或被誰依賴?
 
-Attribute 模組依賴 definition-config 模組的屬性模板和類型定義。
-Attribute 模組被 character-sheet 模組依賴，用於計算角色屬性，以及 combat 模組依賴，用於戰鬥屬性應用。
+- Attribute 模組依賴 definition-config 模組的屬性模板和類型定義。
+- Attribute 模組被 character-sheet 模組依賴，用於計算角色屬性，以及 combat 模組依賴，用於戰鬥屬性應用。
+
+---
+
+## 這個 Attribute 模組在做什麼？
+
+想像你在做一款遊戲，每個角色都有「攻擊力」、「最大 HP」、「暴擊率」等屬性。這些屬性會被裝備、技能、Buff、Debuff 等各種來源影響，而且這些影響有加法（+100 攻擊力）、乘法（攻擊力 x1.2）、還有優先順序（先加再乘）。
+
+**這個 Attribute 模組，就是專門負責「角色屬性的管理與計算」的。**
+
+---
+
+### 什麼時候你會需要調查或用到它？
+
+#### 1. 玩家裝備了一把新武器
+
+- 你需要把武器的攻擊力加到角色身上。
+- 這時你會呼叫 `AttributeManager.addModifier()`，新增一個攻擊力修飾器。
+- 角色的最終攻擊力怎麼算？呼叫 `AttributeCalculator.calculateAttribute('attackDamage')`，它會自動把所有加法、乘法修飾器套用，算出正確的數值。
+
+#### 2. 玩家中了「攻擊力提升 20%」的 Buff
+
+- 你會新增一個 mode 為 multiply 的修飾器。
+- 這個修飾器會被自動套用在計算流程裡。
+
+#### 3. 玩家死亡復活，HP 要重設
+
+- 你會用 `AttributeManager.setBase('currentHp', 新值)`，同時這個值會被限制在合法範圍內（不會超過最大 HP，也不會變成負數）。
+
+#### 4. 你要 Debug 為什麼角色攻擊力怪怪的
+
+- 你可以用 `AttributeManager.getModifiers('attackDamage')` 查出所有影響攻擊力的修飾器來源。
+- 這樣就能追蹤是哪個裝備、Buff、Debuff 影響了最終數值。

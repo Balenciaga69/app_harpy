@@ -33,13 +33,9 @@ export class AttributeManager implements IAttributeManager {
   }
   /** 驗證屬性值是否在合法範圍內 */
   private validateAttribute(type: AttributeType, value: number): number {
-    const limit = AttributeLimits[type as keyof typeof AttributeLimits]
-    if (!limit) {
-      // 若無限制定義，返回原值（向後兼容）
-      return value
-    }
-    // 限制在最小值與最大值之間（靜默操作，限制是預期行為）
-    return Math.min(limit.max, Math.max(limit.min, value))
+    const limit = AttributeLimits[type]
+    if (!limit) return value // 若無限制定義，返回原值（向後兼容）
+    return Math.min(limit.max, Math.max(limit.min, value)) // 限制在最小值與最大值之間（靜默操作，限制是預期行為）
   }
   /** 添加屬性修飾器 */
   addModifier(modifier: AttributeModifier): void {

@@ -28,5 +28,28 @@
 
 ## 模組依賴誰?或被誰依賴?
 
-Character 模組依賴 definition-config 模組的模板定義。
-Character 模組被 combat 模組依賴，用於角色實例化和屬性初始化。
+- Character 模組依賴 definition-config 模組的模板定義。
+- Character 模組被 combat 模組依賴，用於角色實例化和屬性初始化。
+
+---
+
+## 這個 Character 模組在做什麼？
+
+- 職責：管理「角色」與「職業」的定義資料，確保每個角色、職業的資料唯一、正確，並能根據需求查詢。
+- 定位：這是遊戲角色資料的「資料庫」，負責角色/職業的註冊、查詢、分類與驗證。
+
+### 什麼時候會用到這個模組？
+
+#### 1. 遊戲啟動時載入角色/職業資料
+
+- 你會呼叫 `registerMany()` 把所有角色、職業定義註冊進 Registry。
+- 如果有重複 id，會直接丟出錯誤，避免資料污染。
+
+#### 2. 角色創建流程
+
+- 玩家選擇職業時，系統會用 `ClassDefinitionRegistry.get(classId)` 取得職業資料。
+- 創建角色時，會用 `CharacterDefinitionRegistry.get(characterId)` 取得角色模板，初始化屬性。
+
+#### 3. 查詢某職業下有哪些角色
+
+- 用 `CharacterDefinitionRegistry.getByClass(classId)`，快速取得所有屬於該職業的角色清單。
