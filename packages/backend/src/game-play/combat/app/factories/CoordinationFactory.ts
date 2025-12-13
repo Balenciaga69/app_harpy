@@ -1,7 +1,7 @@
-import type { ICombatContext } from '../interfaces/context/ICombatContext'
-import type { ITickActionSystem } from '../interfaces/coordination/ITickActionSystem'
-import type { ICoordinationFactory } from '../interfaces/factories/ICoordinationFactory'
-import { TickActionSystem } from '../app/coordination/TickActionSystem'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
+import type { ICoordinationFactory } from '../../interfaces/factories/ICoordinationFactory'
+import { TickActionSystem } from '../coordination/TickActionSystem'
 
 /**
  * CoordinationFactory

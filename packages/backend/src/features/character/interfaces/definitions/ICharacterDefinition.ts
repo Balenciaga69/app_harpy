@@ -1,4 +1,4 @@
-import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
+import type { IBaseAttributeValues } from '@/features/attribute/interfaces/IBaseAttributeValues'
 
 /**
  * ICharacterDefinition
@@ -14,5 +14,5 @@ export interface ICharacterDefinition {
   /** 對應職業 ID */
   readonly classId: string
   /** 基礎屬性配置 */
-  readonly baseAttributes: BaseAttributeValues
+  readonly baseAttributes: IBaseAttributeValues
 }

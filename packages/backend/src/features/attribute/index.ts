@@ -3,6 +3,7 @@ export { AttributeDefaults, AttributeLimits, type AttributeLimitKey } from './do
 export { type BaseAttributeValues, createDefaultAttributes } from './domain/AttributeValues'
 
 // interfaces
+export { type IBaseAttributeValues } from './interfaces/IBaseAttributeValues'
 export {
   type AttributeModifier,
   ModifierPriority,

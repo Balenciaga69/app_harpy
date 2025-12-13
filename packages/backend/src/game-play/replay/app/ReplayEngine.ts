@@ -1,7 +1,6 @@
 import type { IReplayEventBus } from '../interfaces/IReplayEventBus'
 import type { ITickScheduler } from '../interfaces/tick-scheduler'
-import { BrowserTickScheduler } from '../infra/BrowserTickScheduler'
-import { ReplayEventBus } from '../infra/ReplayEventBus'
+import type { IReplayInfrastructureFactory } from '../interfaces/factories/IReplayInfrastructureFactory'
 import { DEFAULT_REPLAY_CONFIG, type ReplayConfig } from '../interfaces/ReplayConfig'
 import { createInitialReplayState, type ReplayState } from '../interfaces/ReplayState'
 import { type ReplayEvent, type ReplayEventType } from '../interfaces/ReplayEvent'
@@ -30,12 +29,18 @@ export class ReplayEngine implements IReplayEngine {
   private tickScheduler: ITickScheduler
   private config: ReplayConfig
   private lastFrameTime: number = 0
-  constructor(config?: Partial<ReplayConfig>, tickScheduler?: ITickScheduler, eventBus?: IReplayEventBus) {
+
+  constructor(
+    infraFactory: IReplayInfrastructureFactory,
+    config?: Partial<ReplayConfig>,
+    tickScheduler?: ITickScheduler,
+    eventBus?: IReplayEventBus
+  ) {
     this.config = { ...DEFAULT_REPLAY_CONFIG, ...config }
     this.dataAdapter = new ReplayDataAdapter()
     this.stateMachine = new PlaybackStateMachine(createInitialReplayState())
-    this.eventEmitter = eventBus ?? new ReplayEventBus()
-    this.tickScheduler = tickScheduler ?? new BrowserTickScheduler()
+    this.eventEmitter = eventBus ?? infraFactory.createEventBus()
+    this.tickScheduler = tickScheduler ?? infraFactory.createTickScheduler()
     // Set initial speed from config (clamped to 0.5-3x)
     this.stateMachine.setSpeed(this.clampSpeed(this.config.playbackSpeed))
   }

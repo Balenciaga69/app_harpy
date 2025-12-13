@@ -1,30 +1,10 @@
 import { AttributeDefaults } from './AttributeConstants'
+import type { IBaseAttributeValues } from '../interfaces/IBaseAttributeValues'
 
-export interface BaseAttributeValues {
-  // === Health related ===
-  maxHp: number
-  currentHp: number // 通常等於 maxHp
-  // === Energy related ===
-  maxEnergy: number
-  currentEnergy: number
-  energyRegen: number // 每100 tick 恢復量
-  energyGainOnAttack: number // 攻擊命中獲得量
-  // === Attack related ===
-  attackDamage: number
-  attackCooldown: number // 單位：tick (100 tick = 1 sec)
-  // === Defense related ===
-  armor: number
-  evasion: number
-  accuracy: number
-  // === Critical related ===
-  criticalChance: number // 0-1 範圍 (0.05 = 5%)
-  criticalMultiplier: number // 倍率 (1.5 = 150%)
-  // === Resurrection related ===
-  resurrectionChance: number // 0.03-0.50 範圍 (3%-50%)
-  resurrectionHpPercent: number
-}
+/** @deprecated 請使用 IBaseAttributeValues */
+export type BaseAttributeValues = IBaseAttributeValues
 
-export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>): BaseAttributeValues {
+export function createDefaultAttributes(overrides?: Partial<IBaseAttributeValues>): IBaseAttributeValues {
   return {
     maxHp: AttributeDefaults.maxHp,
     currentHp: AttributeDefaults.currentHp,

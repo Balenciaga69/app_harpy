@@ -10,8 +10,8 @@ import { CombatFailureCode } from '../../interfaces/errors/CombatFailure'
 import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
 import type { ITickerDriver } from '../../interfaces/combat-engine/ITickerDriver'
 import type { ISnapshotCollector } from '../../interfaces/combat-engine/ISnapshotCollector'
-import { CombatInfrastructureFactory } from '../../infra/CombatInfrastructureFactory'
-import { CoordinationFactory } from '../../infra/CoordinationFactory'
+import type { ICombatInfrastructureFactory } from '../../interfaces/factories/ICombatInfrastructureFactory'
+import type { ICoordinationFactory } from '../../interfaces/factories/ICoordinationFactory'
 import { CombatContext } from './CombatContext'
 import { TickerDriver } from './TickerDriver'
 import { SnapshotCollector } from './SnapshotCollector'
@@ -36,15 +36,25 @@ export class CombatEngine {
   private eventLogger!: IEventLogger
   private snapshotCollector!: ISnapshotCollector
   private config: CombatConfig
-  constructor(config: CombatConfig, registry?: IResourceRegistry) {
+  private infraFactory: ICombatInfrastructureFactory
+  private coordFactory: ICoordinationFactory
+
+  constructor(
+    config: CombatConfig,
+    infraFactory: ICombatInfrastructureFactory,
+    coordFactory: ICoordinationFactory,
+    registry?: IResourceRegistry
+  ) {
+    this.infraFactory = infraFactory
+    this.coordFactory = coordFactory
     this.config = {
       maxTicks: CombatTiming.MAX_TICKS,
       snapshotInterval: CombatTiming.DEFAULT_SNAPSHOT_INTERVAL,
       enableLogging: CombatSystem.DEFAULT_ENABLE_LOGGING,
       ...config,
     }
-    const resourceRegistry = registry ?? CombatInfrastructureFactory.createResourceRegistry()
-    const eventBus = CombatInfrastructureFactory.createEventBus()
+    const resourceRegistry = registry ?? this.infraFactory.createResourceRegistry()
+    const eventBus = this.infraFactory.createEventBus()
     this.context = new CombatContext(eventBus, resourceRegistry, this.config.seed)
     this.initializeSystems()
     this.ticker.setStopCondition(() => this.checkBattleEnd())
@@ -73,8 +83,8 @@ export class CombatEngine {
   }
   private initializeSystems(): void {
     this.ticker = new TickerDriver(this.context, this.config.maxTicks)
-    this.tickActionSystem = CoordinationFactory.createTickActionSystem(this.context)
-    this.eventLogger = CombatInfrastructureFactory.createEventLogger(this.context.eventBus)
+    this.tickActionSystem = this.coordFactory.createTickActionSystem(this.context)
+    this.eventLogger = this.infraFactory.createEventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
   private executeCombat(): void {
