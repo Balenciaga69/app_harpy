@@ -1,6 +1,6 @@
 // TODO: 依賴外部模組 combat
-import type { DamageEvent, ICombatHook, ICombatContext, ICharacter } from '@/features/combat'
-import { EffectNames } from '@/features/combat'
+import type { DamageEvent, ICombatHook, ICombatContext, ICharacter } from '@/features/game-play/combat'
+import { EffectNames } from '@/features/game-play/combat'
 import { nanoid } from 'nanoid'
 // TODO: 依賴外部模組 effect
 import type { IEffect, IEffectServices } from '@/features/effect'

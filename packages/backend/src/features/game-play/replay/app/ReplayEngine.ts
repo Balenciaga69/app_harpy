@@ -8,9 +8,9 @@ import { type ReplayEvent, type ReplayEventType } from '../interfaces/ReplayEven
 import type { IReplayEngine } from '../interfaces/IReplayEngine'
 import { PlaybackStateMachine } from '../domain/PlaybackStateMachine'
 import { ReplayDataAdapter } from '../domain/ReplayDataAdapter'
-import { CombatResult } from '@/features/combat/interfaces/combat-engine/CombatResult'
-import { CombatLogEntry } from '@/features/combat/interfaces/logger/CombatLogEntry'
-import { CombatSnapshot } from '@/features/combat/interfaces/combat-engine/CombatSnapshot'
+import { CombatResult } from '@/features/game-play/combat/interfaces/combat-engine/CombatResult'
+import { CombatLogEntry } from '@/features/game-play/combat/interfaces/logger/CombatLogEntry'
+import { CombatSnapshot } from '@/features/game-play/combat/interfaces/combat-engine/CombatSnapshot'
 /**
  * ReplayEngine
  *

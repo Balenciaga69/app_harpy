@@ -1,17 +1,15 @@
-// TODO: 依賴外部模組 attribute
-import type { AttributeType, BaseAttributeValues, AttributeModifier } from '../../../attribute'
 import type { CharacterSnapshot } from '../../interfaces/shared/CharacterSnapshot'
-// TODO: 依賴外部模組 effect
-import { EffectManager, type IEffect } from '../../../effect'
 import { nanoid } from 'nanoid'
-// TODO: 依賴外部模組 attribute (實作類別 - 違反依賴規則，應該透過介面注入)
-import { AttributeCalculator } from '../../../attribute/app/AttributeCalculator'
-import { AttributeManager } from '../../../attribute/app/AttributeManager'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { UltimateManager } from './UltimateManager'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import { CombatEffectServices } from '../CombatEffectServices'
+import { AttributeCalculator } from '@/features/attribute/app/AttributeCalculator'
+import { AttributeManager } from '@/features/attribute/app/AttributeManager'
+import { IEffect, EffectManager } from '@/features/effect'
+import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
+import { AttributeType, AttributeModifier } from '@/features/attribute'
 /**
  * 角色初始化所需的設定參數
  */

@@ -1,18 +1,18 @@
 import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/run-context'
-import { RunState } from '@/features/run/interfaces/run-state'
+import { RunContext } from '@/features/game-play/run/interfaces/run-context'
+import { RunState } from '@/features/game-play/run/interfaces/run-state'
 /**
- * ?åˆ©?€?‹è??†å™¨
+ * ?ï¿½åˆ©?ï¿½?ï¿½ï¿½??ï¿½å™¨
  */
 export class VictoryState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // ?²å…¥?åˆ©?€??
-    // é¡¯ç¤º?åˆ©?«é¢ï¼ˆå??æ??‰é??¡æ??”æ??¹æ?æ¢ä»¶ï¼?
+    // ?ï¿½å…¥?ï¿½åˆ©?ï¿½??
+    // é¡¯ç¤º?ï¿½åˆ©?ï¿½é¢ï¼ˆï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?æ¢ä»¶ï¿½?
   }
   exit(_context: RunContext): void {
-    // ?¢é??åˆ©?€??
+    // ?ï¿½ï¿½??ï¿½åˆ©?ï¿½??
   }
   getAllowedTransitions(): string[] {
-    return [RunState.UNINITIALIZED] // ?åˆ°ä¸»é¸??
+    return [RunState.UNINITIALIZED] // ?ï¿½åˆ°ä¸»é¸??
   }
 }

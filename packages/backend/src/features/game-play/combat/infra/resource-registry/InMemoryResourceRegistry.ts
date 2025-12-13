@@ -1,8 +1,8 @@
 // TODO: 依賴外部模組 effect
-import type { IEffect } from '../../../effect'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'
+import { IEffect } from '@/features/effect'
 /**
  * In-Memory Resource Registry
  *

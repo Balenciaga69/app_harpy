@@ -1,5 +1,5 @@
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-import { CombatOutcome } from '@/features/combat/interfaces/combat-engine/CombatOutcome'
+import { ICharacter } from '@/features/game-play/combat/interfaces/character/ICharacter'
+import { CombatOutcome } from '@/features/game-play/combat/interfaces/combat-engine/CombatOutcome'
 /**
  * OutcomeAnalyzer
  *

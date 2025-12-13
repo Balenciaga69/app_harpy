@@ -1,4 +1,4 @@
-import type { IEventBus } from '../../shared/event-bus/IEventBus'
+import { IEventBus } from '@/features/shared'
 import type { ReplayEvent, ReplayEventType } from './ReplayEvent'
 /**
  * Replay Event Bus Interface

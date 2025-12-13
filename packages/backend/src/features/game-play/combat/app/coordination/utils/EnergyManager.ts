@@ -1,6 +1,6 @@
-import { EnergySystem, UltimateEnergy } from '@/features/combat/domain/config/CombatConstants'
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
+import { EnergySystem, UltimateEnergy } from '@/features/game-play/combat/domain/config/CombatConstants'
+import { ICharacter } from '@/features/game-play/combat/interfaces/character/ICharacter'
+import { ICombatContext } from '@/features/game-play/combat/interfaces/context/ICombatContext'
 /**
  * EnergyManager
  *

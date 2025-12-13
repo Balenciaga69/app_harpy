@@ -1,7 +1,6 @@
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
-// TODO: 依賴外部模組 attribute
-import { AttributeLimits } from '../../../attribute'
+import { AttributeLimits } from '@/features/attribute'
 /**
  * 復活處理器
  *

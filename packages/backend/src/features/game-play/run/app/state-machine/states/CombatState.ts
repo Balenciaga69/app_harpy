@@ -1,17 +1,17 @@
 import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/run-context'
-import { RunState } from '@/features/run/interfaces/run-state'
+import { RunContext } from '@/features/game-play/run/interfaces/run-context'
+import { RunState } from '@/features/game-play/run/interfaces/run-state'
 /**
- * ?°é¬¥ä¸­ç??‹è??†å™¨
+ * ?ï¿½é¬¥ä¸­ï¿½??ï¿½ï¿½??ï¿½å™¨
  */
 export class CombatState implements IRunStateHandler {
   async enter(_context: RunContext): Promise<void> {
-    // ?²å…¥?°é¬¥
-    // èª¿ç”¨ CombatEngine ?·è??°é¬¥
-    // ?°é¬¥?¨ç¬?“å??ï?è¿”å?çµæ?
+    // ?ï¿½å…¥?ï¿½é¬¥
+    // èª¿ç”¨ CombatEngine ?ï¿½ï¿½??ï¿½é¬¥
+    // ?ï¿½é¬¥?ï¿½ç¬?ï¿½ï¿½??ï¿½ï¿½?è¿”ï¿½?çµï¿½?
   }
   exit(_context: RunContext): void {
-    // ?¢é??°é¬¥
+    // ?ï¿½ï¿½??ï¿½é¬¥
   }
   getAllowedTransitions(): string[] {
     return [RunState.POST_COMBAT, RunState.GAME_OVER]

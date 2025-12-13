@@ -1,18 +1,18 @@
 import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/run-context'
-import { RunState } from '@/features/run/interfaces/run-state'
+import { RunContext } from '@/features/game-play/run/interfaces/run-context'
+import { RunState } from '@/features/game-play/run/interfaces/run-state'
 /**
- * ?°å?æº–å??€?‹è??†å™¨
+ * ?ï¿½ï¿½?æº–ï¿½??ï¿½?ï¿½ï¿½??ï¿½å™¨
  */
 export class PreCombatState implements IRunStateHandler {
   async enter(_context: RunContext): Promise<void> {
-    // ?²å…¥?°å?æº–å?
-    // 1. ?Ÿæ?è³½å?è®Šæ•¸
+    // ?ï¿½å…¥?ï¿½ï¿½?æº–ï¿½?
+    // 1. ?ï¿½ï¿½?è³½ï¿½?è®Šæ•¸
     // 2. é¡¯ç¤ºä¸‹æ³¨ä»‹é¢
-    // 3. ç­‰å??©å®¶æº–å?å®Œæ?
+    // 3. ç­‰ï¿½??ï¿½å®¶æº–ï¿½?å®Œï¿½?
   }
   exit(_context: RunContext): void {
-    // ?¢é??°å?æº–å?
+    // ?ï¿½ï¿½??ï¿½ï¿½?æº–ï¿½?
   }
   getAllowedTransitions(): string[] {
     return [RunState.COMBAT, RunState.MAP_VIEW]

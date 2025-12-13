@@ -1,17 +1,17 @@
 import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/run-context'
-import { RunState } from '@/features/run/interfaces/run-state'
+import { RunContext } from '@/features/game-play/run/interfaces/run-context'
+import { RunState } from '@/features/game-play/run/interfaces/run-state'
 /**
- * è§’è‰²?¸æ??€?‹è??†å™¨
+ * è§’è‰²?ï¿½ï¿½??ï¿½?ï¿½ï¿½??ï¿½å™¨
  */
 export class CharacterSelectionState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // ?²å…¥è§’è‰²?¸æ??«é¢
-    // UI å±¤æ???½?€?‹è??–ä¸¦é¡¯ç¤ºè§’è‰²?¸æ?ä»‹é¢
+    // ?ï¿½å…¥è§’è‰²?ï¿½ï¿½??ï¿½é¢
+    // UI å±¤ï¿½???ï¿½ï¿½?ï¿½?ï¿½ï¿½??ï¿½ä¸¦é¡¯ç¤ºè§’è‰²?ï¿½ï¿½?ä»‹é¢
   }
   exit(_context: RunContext): void {
-    // ?¢é?è§’è‰²?¸æ?
-    // ç¢ºä?å·²é¸?‡è???
+    // ?ï¿½ï¿½?è§’è‰²?ï¿½ï¿½?
+    // ç¢ºï¿½?å·²é¸?ï¿½ï¿½???
   }
   getAllowedTransitions(): string[] {
     return [RunState.MAP_VIEW, RunState.UNINITIALIZED]

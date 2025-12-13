@@ -1,4 +1,4 @@
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
+import { ICharacter } from '@/features/game-play/combat/interfaces/character/ICharacter'
 /**
  * SurvivorCollector
  *

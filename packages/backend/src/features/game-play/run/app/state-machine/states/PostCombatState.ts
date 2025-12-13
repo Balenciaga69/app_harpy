@@ -1,18 +1,18 @@
 import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/run-context'
-import { RunState } from '@/features/run/interfaces/run-state'
+import { RunContext } from '@/features/game-play/run/interfaces/run-context'
+import { RunState } from '@/features/game-play/run/interfaces/run-state'
 /**
- * ?°å?çµç??€?‹è??†å™¨
+ * ?ï¿½ï¿½?çµï¿½??ï¿½?ï¿½ï¿½??ï¿½å™¨
  */
 export class PostCombatState implements IRunStateHandler {
   async enter(_context: RunContext): Promise<void> {
-    // ?²å…¥?°å?çµç?
-    // 1. çµç?ä¸‹æ³¨?å‹µ
-    // 2. é¡¯ç¤º?°é¬¥çµæ?
-    // 3. ?¨é€²é€²åº¦
+    // ?ï¿½å…¥?ï¿½ï¿½?çµï¿½?
+    // 1. çµï¿½?ä¸‹æ³¨?ï¿½å‹µ
+    // 2. é¡¯ç¤º?ï¿½é¬¥çµï¿½?
+    // 3. ?ï¿½é€²é€²åº¦
   }
   exit(_context: RunContext): void {
-    // ?¢é??°å?çµç?
+    // ?ï¿½ï¿½??ï¿½ï¿½?çµï¿½?
   }
   getAllowedTransitions(): string[] {
     return [RunState.MAP_VIEW, RunState.SHOP, RunState.VICTORY]

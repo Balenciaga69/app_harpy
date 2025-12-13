@@ -1,5 +1,5 @@
 // TODO: 依賴外部模組 @/features/effect
-import { ICombatContext } from '@/features/combat/interfaces/context/ICombatContext'
+import { ICombatContext } from '@/features/game-play/combat/interfaces/context/ICombatContext'
 import type { ICombatEffectHook } from '@/features/effect'
 import { CombatEffectServices } from '../../CombatEffectServices'
 import { isCharacter } from '../../../domain/TypeGuardUtil'

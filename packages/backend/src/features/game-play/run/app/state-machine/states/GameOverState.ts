@@ -1,19 +1,19 @@
 import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/run-context'
-import { RunState } from '@/features/run/interfaces/run-state'
+import { RunContext } from '@/features/game-play/run/interfaces/run-context'
+import { RunState } from '@/features/game-play/run/interfaces/run-state'
 /**
- * ?Šæˆ²çµæ??€?‹è??†å™¨
+ * ?ï¿½æˆ²çµï¿½??ï¿½?ï¿½ï¿½??ï¿½å™¨
  */
 export class GameOverState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // ?²å…¥?Šæˆ²çµæ?
-    // æª¢æŸ¥?¯å¦?‰ç??½é???
-    // é¡¯ç¤ºçµæ??«é¢
+    // ?ï¿½å…¥?ï¿½æˆ²çµï¿½?
+    // æª¢æŸ¥?ï¿½å¦?ï¿½ï¿½??ï¿½ï¿½???
+    // é¡¯ç¤ºçµï¿½??ï¿½é¢
   }
   exit(_context: RunContext): void {
-    // ?¢é??Šæˆ²çµæ?
+    // ?ï¿½ï¿½??ï¿½æˆ²çµï¿½?
   }
   getAllowedTransitions(): string[] {
-    return [RunState.SHOP, RunState.UNINITIALIZED] // çºŒå‘½?å?åº—ï??–é??°é?å§?
+    return [RunState.SHOP, RunState.UNINITIALIZED] // çºŒå‘½?ï¿½ï¿½?åº—ï¿½??ï¿½ï¿½??ï¿½ï¿½?ï¿½?
   }
 }

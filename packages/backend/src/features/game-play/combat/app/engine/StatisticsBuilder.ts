@@ -1,6 +1,6 @@
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-import { CharacterStats } from '@/features/combat/interfaces/combat-engine/CharacterStats'
-import { CombatStatistics } from '@/features/combat/interfaces/combat-engine/CombatStatistics'
+import { ICharacter } from '@/features/game-play/combat/interfaces/character/ICharacter'
+import { CharacterStats } from '@/features/game-play/combat/interfaces/combat-engine/CharacterStats'
+import { CombatStatistics } from '@/features/game-play/combat/interfaces/combat-engine/CombatStatistics'
 /**
  * StatisticsBuilder
  *

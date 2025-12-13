@@ -1,5 +1,5 @@
-import { ICharacter } from '@/features/combat/interfaces/character/ICharacter'
-import { DamageEvent } from '@/features/combat/interfaces/damage/DamageEvent'
+import { ICharacter } from '@/features/game-play/combat/interfaces/character/ICharacter'
+import { DamageEvent } from '@/features/game-play/combat/interfaces/damage/DamageEvent'
 /**
  * DamageFactory
  *
