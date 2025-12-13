@@ -1,9 +1,8 @@
-import type { DamageEvent, ICombatHook } from '@/app/combat/logic/damage'
+// TODO: 依賴外部模組 combat
+import type { DamageEvent, ICombatHook, ICombatContext, ICharacter } from '@/features/combat'
 import { nanoid } from 'nanoid'
-import type { ICombatContext } from '@/app/combat/context'
-import type { ICharacter } from '@/app/combat/domain/character'
-import type { IEffect } from '@/app/effect-system/models/effect'
-import type { IEffectServices } from '@/app/effect-system'
+// TODO: 依賴外部模組 effect
+import type { IEffect, IEffectServices } from '@/features/effect'
 /**
  * LowHealthArmorEffect
  *

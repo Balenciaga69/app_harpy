@@ -1,0 +1,30 @@
+import type { ICombatContext } from '../../../interfaces/context/ICombatContext'
+import type { ICharacter } from '../../../interfaces/character/ICharacter'
+import { isCharacter } from '../../../domain/TypeGuardUtil'
+import type { AttackExecutor } from '../AttackExecutor'
+import type { CooldownManager } from '../utils/CooldownManager'
+import type { ITickPhase } from '../../../interfaces/tick-phases/ITickPhase'
+export class AttackExecutionPhase implements ITickPhase {
+  readonly name = 'AttackExecution'
+  private attackExecutor: AttackExecutor
+  private cooldownManager: CooldownManager
+  constructor(attackExecutor: AttackExecutor, cooldownManager: CooldownManager) {
+    this.attackExecutor = attackExecutor
+    this.cooldownManager = cooldownManager
+  }
+  execute(context: ICombatContext, tick: number): void {
+    context.getAllEntities().forEach((entity) => {
+      if (!isCharacter(entity)) return
+      const character = entity as ICharacter
+      if (character.isDead) return
+      const cooldown = character.getAttribute('attackCooldown')
+      if (this.cooldownManager.canAttack(character.id, tick, cooldown, () => context.rng.next())) {
+        this.attackExecutor.performAttack(character, tick)
+        this.cooldownManager.updateCooldown(character.id, tick, cooldown)
+      }
+    })
+  }
+  dispose(): void {
+    this.cooldownManager.clear()
+  }
+}

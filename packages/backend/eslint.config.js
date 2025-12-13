@@ -39,17 +39,22 @@ export default [
         {
           // 領域層：業務邏輯核心
           type: 'domain',
-          pattern: 'src/domain/**/*',
+          pattern: 'src/features/*/domain/**/*',
         },
         {
           // 應用層：業務流程協調
           type: 'app',
-          pattern: 'src/app/**/*',
+          pattern: 'src/features/*/app/**/*',
         },
         {
           // 基礎設施層：外部依賴實現
           type: 'infra',
-          pattern: 'src/infra/**/*',
+          pattern: 'src/features/*/infra/**/*',
+        },
+        {
+          // 介面層：契約定義
+          type: 'interfaces',
+          pattern: 'src/features/*/interfaces/**/*',
         },
       ],
     },
@@ -64,11 +69,13 @@ export default [
           default: 'disallow',
           rules: [
             // 領域層只能依賴領域層內部
-            { from: 'domain', allow: ['domain'] },
-            // 應用層只能依賴領域層
-            { from: 'app', allow: ['domain'] },
-            // 基礎設施層可以依賴應用層和領域層
-            { from: 'infra', allow: ['app', 'domain'] },
+            { from: 'domain', allow: ['domain', 'interfaces'] },
+            // 介面層只能依賴介面層內部
+            { from: 'interfaces', allow: ['interfaces'] },
+            // 應用層可以依賴介面層和領域層
+            { from: 'app', allow: ['interfaces', 'domain'] },
+            // 基礎設施層可以依賴介面層、應用層和領域層
+            { from: 'infra', allow: ['interfaces', 'app', 'domain'] },
           ],
         },
       ],
