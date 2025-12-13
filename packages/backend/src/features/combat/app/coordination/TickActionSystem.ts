@@ -21,19 +21,26 @@ export class TickActionSystem implements ITickActionSystem {
   private context: ICombatContext
   private phases: ITickPhase[] = []
   private tickHandler: () => void
-  constructor(context: ICombatContext, targetSelector?: ITargetSelector) {
+  constructor(
+    context: ICombatContext,
+    targetSelector?: ITargetSelector,
+    effectProcessor?: EffectProcessor,
+    energyManager?: EnergyManager,
+    attackExecutor?: AttackExecutor,
+    cooldownManager?: CooldownManager
+  ) {
     this.context = context
     const selector = targetSelector ?? new FirstAliveSelector()
-    // Create utility instances
-    const effectProcessor = new EffectProcessor(context) // TODO: 考慮用工廠或依賴注入
-    const energyManager = new EnergyManager(context) // TODO: 考慮用工廠或依賴注入
-    const attackExecutor = new AttackExecutor(context, selector, energyManager) // TODO: 考慮用工廠或依賴注入
-    const cooldownManager = new CooldownManager() // TODO: 考慮用工廠或依賴注入
-    // Assemble default execution pipeline with injected dependencies
+    const processor = effectProcessor ?? new EffectProcessor(context)
+    const energy = energyManager ?? new EnergyManager(context)
+    const executor = attackExecutor ?? new AttackExecutor(context, selector, energy)
+    const cooldown = cooldownManager ?? new CooldownManager()
+
+    /* 組裝預設執行管線 */
     this.phases = [
-      new EffectTickPhase(effectProcessor),
-      new EnergyRegenPhase(energyManager),
-      new AttackExecutionPhase(attackExecutor, cooldownManager),
+      new EffectTickPhase(processor),
+      new EnergyRegenPhase(energy),
+      new AttackExecutionPhase(executor, cooldown),
     ]
     this.tickHandler = () => this.processTick()
     this.context.eventBus.on('tick:start', this.tickHandler)

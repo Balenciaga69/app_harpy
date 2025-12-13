@@ -17,7 +17,6 @@ export class CombatEffectServices implements ICombatEffectServices {
   getCharacter(characterId: string): ICharacterFacade {
     const char = this.context.registry.getCharacter(characterId) as ICharacter
     if (!char) {
-      //TODO: 用 combat 專屬的error
       throw new Error(`[CombatEffectServices] Character ${characterId} not found`)
     }
     // 返回符合 ICharacterFacade 的最小介面
@@ -35,12 +34,8 @@ export class CombatEffectServices implements ICombatEffectServices {
       },
     }
   }
-  emitEvent(
-    // TODO: 回家記得優化 這邊爛code
-    eventName: Parameters<ICombatContext['eventBus']['emit']>['0'],
-    payload: Parameters<ICombatContext['eventBus']['emit']>['1']
-  ): void {
-    this.context.eventBus.emit(eventName, payload)
+  emitEvent(eventName: string, payload: unknown): void {
+    this.context.eventBus.emit(eventName as never, payload as never)
   }
   getCurrentTick(): number {
     return this.context.getCurrentTick()

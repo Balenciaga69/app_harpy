@@ -14,16 +14,19 @@ import { UltimateDefaults } from '../../domain/config/UltimateConstants'
  * 負責處理攻擊邏輯，包含檢查角色是否選擇目標，並執行普通攻擊或終極技。
  */
 export class AttackExecutor {
-  private context: ICombatContext // TODO: 判斷是否需要用介面
-  private damageChain: DamageChain // TODO: 判斷是否需要用介面
+  private context: ICombatContext
+  private damageChain: DamageChain
   private targetSelector: ITargetSelector
-  private damageFactory: DamageFactory // TODO: 判斷是否需要用介面
-  private energyManager: EnergyManager // TODO: 判斷是否需要用介面
-  constructor(context: ICombatContext, targetSelector: ITargetSelector, energyManager: EnergyManager) {
+  private damageFactory: DamageFactory
+  private energyManager: EnergyManager
+  constructor(
+    context: ICombatContext,
+    targetSelector: ITargetSelector,
+    energyManager: EnergyManager,
+    damageChain?: DamageChain
+  ) {
     this.context = context
-    // TODO: DamageChain 的 steps 應該透過依賴注入或工廠模式提供
-    const damageSteps = createDefaultDamageSteps()
-    this.damageChain = new DamageChain(context, damageSteps)
+    this.damageChain = damageChain ?? new DamageChain(context, createDefaultDamageSteps())
     this.targetSelector = targetSelector
     this.damageFactory = new DamageFactory()
     this.energyManager = energyManager
