@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 // TODO: 依賴外部模組 combat
-import type { ICombatContext, ICharacter, IUltimateAbility } from '@/features/game-play/combat'
+import type { ICombatContext, ICharacter, IUltimateAbility } from '@/game-play/combat'
 import {
   CharacterAccessor,
   DamageChain,
@@ -8,7 +8,7 @@ import {
   UltimateDefaults,
   FirstAliveSelector,
   DamageFactory,
-} from '@/features/game-play/combat'
+} from '@/game-play/combat'
 /**
  * Thunder Strike Ultimate
  *
