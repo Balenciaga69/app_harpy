@@ -1,4 +1,3 @@
-// TODO: 依賴外部模組 effect
 import { IEffect } from '@/features/effect'
 import type { ICombatContext } from '../context/ICombatContext'
 /** Effect owner interface */

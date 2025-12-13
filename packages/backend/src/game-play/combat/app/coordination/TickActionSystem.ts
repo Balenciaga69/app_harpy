@@ -35,7 +35,6 @@ export class TickActionSystem implements ITickActionSystem {
     const energy = energyManager ?? new EnergyManager(context)
     const executor = attackExecutor ?? new AttackExecutor(context, selector, energy)
     const cooldown = cooldownManager ?? new CooldownManager()
-
     /* 組裝預設執行管線 */
     this.phases = [
       new EffectTickPhase(processor),

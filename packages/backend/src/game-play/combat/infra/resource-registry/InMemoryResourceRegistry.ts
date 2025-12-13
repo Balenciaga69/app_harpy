@@ -1,4 +1,3 @@
-// TODO: 依賴外部模組 effect
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { IResourceRegistry } from '../../interfaces/resource-registry/IResourceRegistry'

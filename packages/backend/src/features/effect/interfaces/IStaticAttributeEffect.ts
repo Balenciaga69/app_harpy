@@ -1,8 +1,6 @@
-// TODO: 依賴外部模組 attribute，未來需抽象化
 import type { AttributeType } from '@/features/attribute/interfaces/AttributeType'
 import type { IEffect } from './IEffect'
 import type { IEffectServices } from './IEffectServices'
-// TODO: 依賴外部模組 attribute，未來需抽象化
 import type { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
 import { nanoid } from 'nanoid'
 /**

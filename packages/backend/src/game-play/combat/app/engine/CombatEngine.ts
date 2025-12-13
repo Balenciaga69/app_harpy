@@ -38,7 +38,6 @@ export class CombatEngine {
   private config: CombatConfig
   private infraFactory: ICombatInfrastructureFactory
   private coordFactory: ICoordinationFactory
-
   constructor(
     config: CombatConfig,
     infraFactory: ICombatInfrastructureFactory,

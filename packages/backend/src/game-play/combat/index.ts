@@ -20,12 +20,10 @@ export type { IUltimateAbility } from './interfaces/ultimate/IUltimateAbility'
 export type { IResourceRegistry } from './interfaces/resource-registry/IResourceRegistry'
 export type { ICombatEventBus } from './interfaces/event-bus/ICombatEventBus'
 export type { IEventLogger } from './interfaces/logger/IEventLogger'
-
 // domain exports
 export { CombatTiming, CombatSystem, UltimateEnergy } from './domain/config/CombatConstants'
 export { UltimateDefaults } from './domain/config/UltimateConstants'
 export { EffectNames } from './domain/config/EffectConstants'
-
 // app exports
 export { CombatEngine } from './app/engine/CombatEngine'
 export { Character } from './app/character/Character'

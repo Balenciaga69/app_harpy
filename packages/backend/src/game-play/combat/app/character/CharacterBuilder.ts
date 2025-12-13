@@ -3,7 +3,6 @@ import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { Character } from './Character'
-
 export class CharacterBuilder {
   private name: string = 'Unnamed'
   private team: ICharacter['team'] = 'player'

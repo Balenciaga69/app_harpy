@@ -47,7 +47,6 @@ export class TickerDriver implements ITickerDriver {
   private checkCombatEnd(): boolean {
     return this.stopCondition()
   }
-
   /** Get current tick */
   public getCurrentTick(): number {
     return this.context.getCurrentTick()

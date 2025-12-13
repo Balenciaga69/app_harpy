@@ -1,4 +1,3 @@
-// TODO: 依賴外部模組 @/features/effect
 import type { ICombatEffectServices } from '@/features/effect'
 import type { ICharacterFacade } from '@/features/effect'
 import { ICombatContext } from '../interfaces/context/ICombatContext'

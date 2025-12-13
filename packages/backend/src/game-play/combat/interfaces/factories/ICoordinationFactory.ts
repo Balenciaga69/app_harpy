@@ -1,6 +1,5 @@
 import type { ICombatContext } from '../context/ICombatContext'
 import type { ITickActionSystem } from '../coordination/ITickActionSystem'
-
 /**
  * ICoordinationFactory
  *

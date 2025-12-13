@@ -145,7 +145,6 @@ export class ShopManager implements IShopManager {
   getItems(): IShopItem[] {
     return [...this.currentItems]
   }
-
   /** 取得當前配置 */
   getConfig(): IShopConfig {
     return this.config

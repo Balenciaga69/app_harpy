@@ -1,7 +1,6 @@
 // domain
 export { AttributeDefaults, AttributeLimits, type AttributeLimitKey } from './domain/AttributeConstants'
 export { type BaseAttributeValues, createDefaultAttributes } from './domain/AttributeValues'
-
 // interfaces
 export { type IBaseAttributeValues } from './interfaces/IBaseAttributeValues'
 export {

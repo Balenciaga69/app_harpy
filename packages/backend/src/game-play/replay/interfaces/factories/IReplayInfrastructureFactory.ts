@@ -1,6 +1,5 @@
 import type { IReplayEventBus } from '../IReplayEventBus'
 import type { ITickScheduler } from '../tick-scheduler'
-
 /**
  * IReplayInfrastructureFactory
  *

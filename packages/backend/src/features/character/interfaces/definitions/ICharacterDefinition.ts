@@ -1,5 +1,4 @@
 import type { IBaseAttributeValues } from '@/features/attribute/interfaces/IBaseAttributeValues'
-
 /**
  * ICharacterDefinition
  *

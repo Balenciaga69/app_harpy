@@ -1,6 +1,5 @@
 import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
 import type { IShopItem } from './IShopItem'
-
 /**
  * 商店事件類型
  */

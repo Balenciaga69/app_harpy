@@ -1,5 +1,4 @@
 import { ITickScheduler, TickCallback } from '../interfaces/tick-scheduler'
-
 /**
  * TestTickScheduler
  *

@@ -1,5 +1,4 @@
 import { AttributeType } from '@/features/attribute'
-
 /**
  * IClassDefinition
  *

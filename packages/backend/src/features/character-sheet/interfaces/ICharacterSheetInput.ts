@@ -1,6 +1,5 @@
 import { BaseAttributeValues } from '@/features/attribute'
 import { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
-
 export interface ICharacterSheetInput {
   /** 角色的基礎屬性值 */
   readonly baseAttributes: BaseAttributeValues

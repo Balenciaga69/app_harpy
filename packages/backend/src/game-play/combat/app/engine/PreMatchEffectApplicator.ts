@@ -1,7 +1,6 @@
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { IPreMatchEffectApplicator } from '../../interfaces/combat-engine/IPreMatchEffectApplicator'
-// TODO: 依賴外部模組 effect
 import { IEffect } from '@/features/effect'
 import { isCharacter } from '../../domain/TypeGuardUtil'
 /**

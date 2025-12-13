@@ -1,6 +1,4 @@
-// TODO: 依賴外部模組 item，未來需抽象化
 import type { IAffixDefinition } from '@/features/item/interfaces/definitions/IAffixDefinition'
-// TODO: 依賴外部模組 item，未來需抽象化
 import type { IAffixInstance } from '@/features/item/interfaces/definitions/IAffixInstance'
 /** 隨機數產生器介面，跨語言友好 */
 export interface IRng {

@@ -1,5 +1,4 @@
 import type { CombatResult } from './CombatResult'
-
 /**
  * 戰鬥結果建構器介面
  *

@@ -1,22 +1,5 @@
-import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat' // TODO: 依賴外部模組 combat
+import type { CombatResult, CombatSnapshot, CombatLogEntry } from '../../combat'
 import { ReplayError } from './ReplayError'
-/**
- * ReplayDataAdapter
- *
- * 戰鬥資料轉換器，將 Combat 模組資料轉為 Replay 模組格式。
- * 隔離 Combat 依賴，方便 Replay 系統維護。
- *
- * 主要用途：
- * - 集中管理 Combat 依賴
- * - 快速查找 snapshot（二分搜尋）
- * - 載入時驗證資料完整性
- * - 提供 replay engine 查詢介面
- *
- * 主要職責：
- * - 載入並驗證 CombatResult
- * - 查詢指定 tick 的 snapshot
- * - 查詢 tick 範圍內的 log
- */
 export class ReplayDataAdapter {
   private snapshots: CombatSnapshot[] = []
   private logs: CombatLogEntry[] = []

@@ -20,7 +20,6 @@ import {
   GameOverState,
   VictoryState,
 } from './state-machine/states'
-
 /**
  * Run 主控制器 (Facade Pattern)
  * 對外提供簡潔的介面，協調所有子系統

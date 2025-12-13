@@ -6,7 +6,6 @@ import type { ICharacterSheetInput } from '../interfaces/ICharacterSheetInput'
 import type { IEquipmentProcessor } from '../interfaces/IEquipmentProcessor'
 import type { IRelicProcessor } from '../interfaces/IRelicProcessor'
 import type { ICharacterSheetCalculator } from '../interfaces/ICharacterSheetCalculator'
-
 const ATTRIBUTE_TYPES: readonly AttributeType[] = [
   'maxHp',
   'currentHp',
@@ -29,7 +28,6 @@ export class CharacterSheetCalculator implements ICharacterSheetCalculator {
   private readonly relicProcessor: IRelicProcessor
   private readonly createAttributeManager: (baseAttributes: any) => IAttributeManager
   private readonly createAttributeCalculator: (manager: IAttributeManager) => IAttributeCalculator
-
   constructor(
     equipmentProcessor: IEquipmentProcessor,
     relicProcessor: IRelicProcessor,

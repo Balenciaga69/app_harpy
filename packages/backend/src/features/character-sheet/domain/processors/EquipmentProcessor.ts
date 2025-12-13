@@ -3,7 +3,6 @@ import { IEquipmentInstance } from '@/features/item/interfaces/definitions/IItem
 import { createModifierFromAffix } from '../../interfaces/IAffixAttributeMapping'
 import { AFFIX_MAPPING_LOOKUP } from '../registries/AffixRegistry'
 import type { IEquipmentProcessor } from '../../interfaces/IEquipmentProcessor'
-
 export class EquipmentProcessor implements IEquipmentProcessor {
   process(equipment: IEquipmentInstance): AttributeModifier[] {
     const modifiers: AttributeModifier[] = []
@@ -18,7 +17,6 @@ export class EquipmentProcessor implements IEquipmentProcessor {
     }
     return modifiers
   }
-
   processAll(equipments: readonly IEquipmentInstance[]): AttributeModifier[] {
     return equipments.flatMap((equipment) => this.process(equipment))
   }

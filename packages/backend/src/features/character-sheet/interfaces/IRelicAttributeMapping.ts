@@ -1,6 +1,5 @@
 import type { IBaseAttributeValues } from '@/features/attribute/interfaces/IBaseAttributeValues'
 import type { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
-
 export type RelicAttributeCalculator = (baseAttributes: IBaseAttributeValues, stackCount: number) => AttributeModifier[]
 /**
  * 遺物屬性映射配置

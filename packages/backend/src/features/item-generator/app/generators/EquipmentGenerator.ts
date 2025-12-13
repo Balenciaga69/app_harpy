@@ -1,12 +1,5 @@
-/**
- * EquipmentGenerator
- *
- * 負責生成裝備實例的類別。
- * 根據定義 ID、難度係數和隨機種子生成裝備實例。
- */
 import seedrandom from 'seedrandom'
 import { nanoid } from 'nanoid'
-// TODO: 依賴外部模組 item，未來需抽象化
 import type {
   IEquipmentDefinition,
   IEquipmentInstance,
@@ -14,7 +7,6 @@ import type {
   IAffixInstance,
 } from '@/features/item/interfaces/definitions'
 import { AffixRoller } from '../../domain/AffixRoller'
-// TODO: 依賴外部模組 item，未來需抽象化
 import { ItemDefinitionRegistry, AffixDefinitionRegistry } from '@/features/item/domain/registries'
 import type { IAffixFilter } from '../../interfaces/strategies/IAffixFilter'
 import { SlotBasedFilter } from './SlotBasedFilter'

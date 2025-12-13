@@ -8,7 +8,6 @@ import type { ICombatHook } from '../../../interfaces/damage/ICombatHook'
  */
 export function collectHooks(source: ICharacter, target: ICharacter): ICombatHook[] {
   const hooks: ICombatHook[] = []
-
   /* 從來源角色收集 hooks */
   const sourceEffects = source.getAllEffects()
   for (const effect of sourceEffects) {
@@ -16,7 +15,6 @@ export function collectHooks(source: ICharacter, target: ICharacter): ICombatHoo
       hooks.push(effect)
     }
   }
-
   /* 從目標角色收集 hooks */
   const targetEffects = target.getAllEffects()
   for (const effect of targetEffects) {
@@ -24,10 +22,8 @@ export function collectHooks(source: ICharacter, target: ICharacter): ICombatHoo
       hooks.push(effect)
     }
   }
-
   return hooks
 }
-
 /** 檢查物件是否實作了 ICombatHook */
 function isCombatHook(obj: unknown): obj is ICombatHook {
   if (!obj || typeof obj !== 'object') return false

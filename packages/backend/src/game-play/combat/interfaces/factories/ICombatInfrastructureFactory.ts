@@ -1,7 +1,6 @@
 import type { ICombatEventBus } from '../event-bus/ICombatEventBus'
 import type { IResourceRegistry } from '../resource-registry/IResourceRegistry'
 import type { IEventLogger } from '../logger/IEventLogger'
-
 /**
  * ICombatInfrastructureFactory
  *

@@ -1,4 +1,3 @@
-// TODO: 依賴外部模組 attribute，未來需抽象化
 import type { AttributeType } from '@/features/attribute/interfaces/AttributeType'
 import type { IEffect } from '../../interfaces/IEffect'
 import { InvalidStaticEffectError } from '../../domain/errors/EffectBuilderError'

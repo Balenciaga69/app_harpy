@@ -1,5 +1,4 @@
 import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
-
 /**
  * 庫存介面（用於依賴注入）
  */
@@ -10,14 +9,12 @@ export interface IInventoryAdapter {
   removeItemFromInventory(itemId: string): void
   hasItem(itemId: string): boolean
 }
-
 /**
  * 難度適配器介面
  */
 export interface IDifficultyAdapter {
   getCurrentDifficulty(): number
 }
-
 /**
  * 物品生成器介面
  */

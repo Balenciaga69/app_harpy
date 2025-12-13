@@ -1,5 +1,4 @@
 import type { ICombatContext } from '../context/ICombatContext'
-
 /**
  * 賽前效果應用器介面
  *

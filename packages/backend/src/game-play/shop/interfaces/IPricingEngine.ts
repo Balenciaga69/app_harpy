@@ -1,10 +1,8 @@
 import type { ItemRarity } from '@/features/item/interfaces/definitions/IEquipmentDefinition'
-
 /**
  * 裝備稀有度類型（來自 item 模組）
  */
 export type EquipmentRarity = ItemRarity
-
 /**
  * 定價引擎介面
  */

@@ -5,7 +5,6 @@ import type { IInventoryAdapter, IDifficultyAdapter, IItemGenerator } from './ad
 import type { IShopItem } from './IShopItem'
 import type { IPurchaseResult, ISellResult } from './IShopResults'
 import type { IRefreshResult } from './IRefreshResult'
-
 /**
  * ShopManager 介面
  *
@@ -14,20 +13,15 @@ import type { IRefreshResult } from './IRefreshResult'
 export interface IShopManager {
   /** 獲取當前商品列表 */
   getItems(): IShopItem[]
-
   /** 刷新商店（生成新商品） */
   refresh(chapter: number): IRefreshResult
-
   /** 購買商品 */
   purchase(itemId: string): IPurchaseResult
-
   /** 出售物品 */
   sell(itemId: string): ISellResult
-
   /** 獲取當前配置 */
   getConfig(): IShopConfig
 }
-
 /**
  * ShopManager 配置
  */

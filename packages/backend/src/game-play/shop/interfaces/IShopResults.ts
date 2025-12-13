@@ -1,5 +1,4 @@
 import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
-
 /**
  * 購買結果
  */
@@ -13,7 +12,6 @@ export interface IPurchaseResult {
   /** 錯誤訊息（如果失敗） */
   error?: string
 }
-
 /**
  * 出售結果
  */

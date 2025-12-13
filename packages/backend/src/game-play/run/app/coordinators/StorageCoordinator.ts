@@ -1,5 +1,4 @@
 import { RunContext } from '../../interfaces/run-context'
-
 /**
  * 存檔協調器
  * 封裝與 PersistentStorage 的互動邏輯

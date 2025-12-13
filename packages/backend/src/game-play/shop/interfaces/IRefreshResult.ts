@@ -1,5 +1,4 @@
 import type { IShopItem } from './IShopItem'
-
 /**
  * 刷新結果
  */

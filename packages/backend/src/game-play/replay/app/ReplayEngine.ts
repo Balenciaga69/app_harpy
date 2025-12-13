@@ -29,7 +29,6 @@ export class ReplayEngine implements IReplayEngine {
   private tickScheduler: ITickScheduler
   private config: ReplayConfig
   private lastFrameTime: number = 0
-
   constructor(
     infraFactory: IReplayInfrastructureFactory,
     config?: Partial<ReplayConfig>,
