@@ -1,18 +1,18 @@
-import type { IRunStateHandler } from '../IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/models/run-context'
-import { RunState } from '@/features/run/interfaces/models/run-state'
+import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
+import { RunContext } from '@/features/run/interfaces/run-context'
+import { RunState } from '@/features/run/interfaces/run-state'
 /**
- * 戰後結算狀態處理器
+ * ?��?結�??�?��??�器
  */
 export class PostCombatState implements IRunStateHandler {
   async enter(_context: RunContext): Promise<void> {
-    // 進入戰後結算
-    // 1. 結算下注獎勵
-    // 2. 顯示戰鬥結果
-    // 3. 推進進度
+    // ?�入?��?結�?
+    // 1. 結�?下注?�勵
+    // 2. 顯示?�鬥結�?
+    // 3. ?�進進度
   }
   exit(_context: RunContext): void {
-    // 離開戰後結算
+    // ?��??��?結�?
   }
   getAllowedTransitions(): string[] {
     return [RunState.MAP_VIEW, RunState.SHOP, RunState.VICTORY]

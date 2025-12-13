@@ -3,12 +3,13 @@ import { SurvivorCollector } from './SurvivorCollector'
 import { StatisticsBuilder } from './StatisticsBuilder'
 import { CombatResultData } from '../../interfaces/combat-engine/CombatResultData'
 import { CombatResult } from '../../interfaces/combat-engine/CombatResult'
+import type { IResultBuilder } from '../../interfaces/combat-engine/IResultBuilder'
 /**
  * ResultBuilder
  *
  * Assembles a CombatResult from encapsulated data. Determines outcome, survivors, and statistics.
  */
-export class ResultBuilder {
+export class ResultBuilder implements IResultBuilder {
   private data: CombatResultData
   constructor(data: CombatResultData) {
     this.data = data

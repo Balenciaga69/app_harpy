@@ -1,8 +1,8 @@
-import { RunState } from '../../interfaces/models/run-state'
-import { RunStateType } from '../../interfaces/models/run-state'
-import { RunContext } from '../../interfaces/models/run-context'
-import type { IRunStateMachine } from './IRunStateMachine'
-import type { IRunStateHandler } from './IRunStateHandler'
+import { RunState } from '../../interfaces/run-state'
+import { RunStateType } from '../../interfaces/run-state'
+import { RunContext } from '../../interfaces/run-context'
+import type { IRunStateMachine } from '../../interfaces/IRunStateMachine'
+import type { IRunStateHandler } from '../../interfaces/IRunStateHandler'
 import { InvalidStateTransitionError } from '../../domain/errors/RunError'
 /**
  * Run 狀態機實作

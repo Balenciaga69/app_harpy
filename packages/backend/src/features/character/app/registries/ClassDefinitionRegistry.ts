@@ -2,11 +2,6 @@ import { CharacterError } from '../../domain/CharacterError'
 import { IClassDefinition } from '../../interfaces/definitions/IClassDefinition'
 import { IClassDefinitionRegistry } from '../../interfaces/registries/IClassDefinitionRegistry'
 
-/**
- * ClassDefinitionRegistry
- *
- * 職業定義的靜態註冊表，儲存所有 IClassDefinition 資料。
- */
 export class ClassDefinitionRegistry implements IClassDefinitionRegistry {
   private readonly definitions = new Map<string, IClassDefinition>()
   /** 註冊職業定義 */

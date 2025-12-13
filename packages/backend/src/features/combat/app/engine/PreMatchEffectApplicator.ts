@@ -1,5 +1,6 @@
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
+import type { IPreMatchEffectApplicator } from '../../interfaces/combat-engine/IPreMatchEffectApplicator'
 // TODO: 依賴外部模組 effect
 import type { IEffect } from '../../../effect'
 import { isCharacter } from '../../domain/TypeGuardUtil'
@@ -9,11 +10,13 @@ import { isCharacter } from '../../domain/TypeGuardUtil'
  * Applies pre-match effects to all characters at combat start.
  * Used for pre-battle modifiers like Chill stacks, resurrection rate boost, etc.
  */
-export class PreMatchEffectApplicator {
+export class PreMatchEffectApplicator implements IPreMatchEffectApplicator {
   /**
    * Apply pre-match effects to all characters in context
    */
-  static applyEffects(effects: IEffect[], context: ICombatContext): void {
+  applyEffects(context: ICombatContext): void {
+    // TODO: 目前是空實作，未來需要從 config 讀取 pre-match effects
+    const effects: IEffect[] = []
     if (!effects || effects.length === 0) return
     const entities = context.getAllEntities()
     entities.forEach((entity) => {

@@ -1,4 +1,4 @@
-import { RunContext } from '../../interfaces/models/run-context'
+import { RunContext } from '../../interfaces/run-context'
 
 /**
  * 存檔協調器

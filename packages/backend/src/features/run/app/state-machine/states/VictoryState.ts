@@ -1,18 +1,18 @@
-import type { IRunStateHandler } from '../IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/models/run-context'
-import { RunState } from '@/features/run/interfaces/models/run-state'
+import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
+import { RunContext } from '@/features/run/interfaces/run-context'
+import { RunState } from '@/features/run/interfaces/run-state'
 /**
- * 勝利狀態處理器
+ * ?�利?�?��??�器
  */
 export class VictoryState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // 進入勝利狀態
-    // 顯示勝利畫面（完成所有關卡或達成特殊條件）
+    // ?�入?�利?�??
+    // 顯示?�利?�面（�??��??��??��??��??��?條件�?
   }
   exit(_context: RunContext): void {
-    // 離開勝利狀態
+    // ?��??�利?�??
   }
   getAllowedTransitions(): string[] {
-    return [RunState.UNINITIALIZED] // 回到主選單
+    return [RunState.UNINITIALIZED] // ?�到主選??
   }
 }

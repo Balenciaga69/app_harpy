@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import { createInitialContext, RunContext } from '../../interfaces/models/run-context'
-import { RunState } from '../../interfaces/models/run-state'
+import { createInitialContext, RunContext } from '../../interfaces/run-context'
+import { RunState } from '../../interfaces/run-state'
 /**
  * Run 初始化器
  * 負責建立新的 Run 實例

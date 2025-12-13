@@ -1,131 +1,15 @@
 /**
  * Shop Models
  *
- * 商店模組的核心資料結構定義。
- * 跨語言友好，可序列化為 JSON。
+ * 商店模組的核心資料結構定義 - 向後兼容的 re-export
+ * @deprecated 請直接從各個獨立檔案 import
  */
-import type { IEquipmentInstance, IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
-import type { ItemRarity } from '@/features/item/interfaces/definitions/IEquipmentDefinition'
-import type { Emitter } from 'mitt'
-/**
- * 商店商品
- */
-export interface IShopItem {
-  /** 商品唯一識別碼 */
-  id: string
-  /** 物品實例（裝備或遺物） */
-  item: IEquipmentInstance | IRelicInstance
-  /** 購買價格 */
-  price: number
-  /** 商品類型 */
-  type: 'equipment' | 'relic'
-}
-/**
- * 商店配置
- */
-export interface IShopConfig {
-  /** 每次刷新生成的最少商品數量 */
-  minItemsPerRefresh: number
-  /** 每次刷新生成的最多商品數量 */
-  maxItemsPerRefresh: number
-  /** 出售折扣率（0-1 之間） */
-  sellDiscountRate: number
-  /** 基礎價格倍率 */
-  basePriceMultiplier: number
-  /** 難度價格倍率（每點難度增加的百分比） */
-  difficultyPriceMultiplier: number
-  /** 章節通膨倍率（每章增加的百分比） */
-  chapterInflationMultiplier: number
-}
-/**
- * 購買結果
- */
-export interface IPurchaseResult {
-  /** 是否成功 */
-  success: boolean
-  /** 購買的商品 */
-  item?: IEquipmentInstance | IRelicInstance
-  /** 花費的金幣 */
-  goldSpent: number
-  /** 錯誤訊息（如果失敗） */
-  error?: string
-}
-/**
- * 出售結果
- */
-export interface ISellResult {
-  /** 是否成功 */
-  success: boolean
-  /** 獲得的金幣 */
-  goldEarned: number
-  /** 錯誤訊息（如果失敗） */
-  error?: string
-}
-/**
- * 刷新結果
- */
-export interface IRefreshResult {
-  /** 新生成的商品清單 */
-  items: IShopItem[]
-  /** 刷新時的難度係數 */
-  difficulty: number
-  /** 刷新時的章節層數 */
-  chapter: number
-}
-/**
- * 商店事件類型
- */
-export type ShopEvents = {
-  ShopRefreshed: { items: IShopItem[]; difficulty: number; chapter: number }
-  ItemPurchased: { item: IEquipmentInstance | IRelicInstance; price: number }
-  ItemSold: { itemId: string; price: number }
-}
-/**
- * 庫存介面（用於依賴注入）
- */
-export interface IInventoryAdapter {
-  getPlayerGold(): number
-  updatePlayerGold(amount: number): void
-  addItemToInventory(item: IEquipmentInstance | IRelicInstance): void
-  removeItemFromInventory(itemId: string): void
-  hasItem(itemId: string): boolean
-}
-/**
- * 難度適配器介面
- */
-export interface IDifficultyAdapter {
-  getCurrentDifficulty(): number
-}
-/**
- * 物品生成器介面
- */
-export interface IItemGenerator {
-  generateEquipment(definitionId: string, difficulty: number, seed: string): IEquipmentInstance
-  generateRelic(definitionId: string): IRelicInstance
-}
-/**
- * 定價引擎介面
- */
-export interface IPricingEngine {
-  calculateBuyPrice(rarity: EquipmentRarity, difficulty: number, chapter: number): number
-  calculateSellPrice(rarity: EquipmentRarity, difficulty: number, chapter: number): number
-}
-/**
- * ShopManager 配置
- */
-export interface IShopManagerConfig {
-  /** 商店配置 */
-  shopConfig: IShopConfig
-  /** 事件總線 */
-  eventBus: Emitter<ShopEvents>
-  /** 庫存適配器 */
-  inventory: IInventoryAdapter
-  /** 難度適配器 */
-  difficultyAdapter: IDifficultyAdapter
-  /** 物品生成器（可選，預設創建新實例） */
-  itemGenerator?: IItemGenerator
-}
-/**
- * 裝備稀有度類型（來自 item 模組）
- */
-export type EquipmentRarity = ItemRarity
+
+export type { IShopItem } from './IShopItem'
+export type { IShopConfig } from './IShopConfig'
+export type { IPurchaseResult, ISellResult } from './IShopResults'
+export type { IRefreshResult } from './IRefreshResult'
+export type { ShopEvents } from './ShopEvents'
+export type { IInventoryAdapter, IDifficultyAdapter, IItemGenerator } from './adapters/IShopAdapters'
+export type { IPricingEngine, EquipmentRarity } from './IPricingEngine'
+export type { IShopManager, IShopManagerConfig } from './IShopManager'

@@ -1,18 +1,18 @@
-import type { IRunStateHandler } from '../IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/models/run-context'
-import { RunState } from '@/features/run/interfaces/models/run-state'
+import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
+import { RunContext } from '@/features/run/interfaces/run-context'
+import { RunState } from '@/features/run/interfaces/run-state'
 /**
- * 戰前準備狀態處理器
+ * ?��?準�??�?��??�器
  */
 export class PreCombatState implements IRunStateHandler {
   async enter(_context: RunContext): Promise<void> {
-    // 進入戰前準備
-    // 1. 生成賽前變數
+    // ?�入?��?準�?
+    // 1. ?��?賽�?變數
     // 2. 顯示下注介面
-    // 3. 等待玩家準備完成
+    // 3. 等�??�家準�?完�?
   }
   exit(_context: RunContext): void {
-    // 離開戰前準備
+    // ?��??��?準�?
   }
   getAllowedTransitions(): string[] {
     return [RunState.COMBAT, RunState.MAP_VIEW]

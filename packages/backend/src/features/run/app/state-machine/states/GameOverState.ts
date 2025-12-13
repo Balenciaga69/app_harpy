@@ -1,19 +1,19 @@
-import type { IRunStateHandler } from '../IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/models/run-context'
-import { RunState } from '@/features/run/interfaces/models/run-state'
+import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
+import { RunContext } from '@/features/run/interfaces/run-context'
+import { RunState } from '@/features/run/interfaces/run-state'
 /**
- * 遊戲結束狀態處理器
+ * ?�戲結�??�?��??�器
  */
 export class GameOverState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // 進入遊戲結束
-    // 檢查是否有續命道具
-    // 顯示結束畫面
+    // ?�入?�戲結�?
+    // 檢查?�否?��??��???
+    // 顯示結�??�面
   }
   exit(_context: RunContext): void {
-    // 離開遊戲結束
+    // ?��??�戲結�?
   }
   getAllowedTransitions(): string[] {
-    return [RunState.SHOP, RunState.UNINITIALIZED] // 續命回商店，或重新開始
+    return [RunState.SHOP, RunState.UNINITIALIZED] // 續命?��?店�??��??��?�?
   }
 }

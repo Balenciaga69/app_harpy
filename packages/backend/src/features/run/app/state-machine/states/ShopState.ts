@@ -1,16 +1,16 @@
-import type { IRunStateHandler } from '../IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/models/run-context'
-import { RunState } from '@/features/run/interfaces/models/run-state'
+import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
+import { RunContext } from '@/features/run/interfaces/run-context'
+import { RunState } from '@/features/run/interfaces/run-state'
 /**
- * å•†åº—ç‹€æ…‹è™•ç†å™¨
+ * ?†å??€?‹è??†å™¨
  */
 export class ShopState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // é€²å…¥å•†åº—
-    // åˆ·æ–°å•†å“åˆ—è¡¨
+    // ?²å…¥?†å?
+    // ?·æ–°?†å??—è¡¨
   }
   exit(_context: RunContext): void {
-    // é›¢é–‹å•†åº—
+    // ?¢é??†å?
   }
   getAllowedTransitions(): string[] {
     return [RunState.MAP_VIEW, RunState.PRE_COMBAT]

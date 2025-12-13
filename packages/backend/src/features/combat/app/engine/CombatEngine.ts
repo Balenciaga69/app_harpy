@@ -8,6 +8,8 @@ import { CombatTiming, CombatSystem } from '../../domain/config/CombatConstants'
 import { CombatError } from '../../domain/errors/CombatError'
 import { CombatFailureCode } from '../../interfaces/errors/CombatFailure'
 import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
+import type { ITickerDriver } from '../../interfaces/combat-engine/ITickerDriver'
+import type { ISnapshotCollector } from '../../interfaces/combat-engine/ISnapshotCollector'
 import { CombatInfrastructureFactory } from '../../infra/CombatInfrastructureFactory'
 import { CoordinationFactory } from '../../infra/CoordinationFactory'
 import { CombatContext } from './CombatContext'
@@ -29,10 +31,10 @@ import { PreMatchEffectApplicator } from './PreMatchEffectApplicator'
  */
 export class CombatEngine {
   private context!: ICombatContext
-  private ticker!: TickerDriver
+  private ticker!: ITickerDriver
   private tickActionSystem!: ITickActionSystem
   private eventLogger!: IEventLogger
-  private snapshotCollector!: SnapshotCollector
+  private snapshotCollector!: ISnapshotCollector
   private config: CombatConfig
   constructor(config: CombatConfig, registry?: IResourceRegistry) {
     this.config = {
@@ -70,15 +72,15 @@ export class CombatEngine {
     }
   }
   private initializeSystems(): void {
+    this.ticker = new TickerDriver(this.context, this.config.maxTicks)
     this.tickActionSystem = CoordinationFactory.createTickActionSystem(this.context)
     this.eventLogger = CombatInfrastructureFactory.createEventLogger(this.context.eventBus)
     this.snapshotCollector = new SnapshotCollector(this.context, this.config.snapshotInterval)
   }
   private executeCombat(): void {
     // Apply pre-match effects before combat starts
-    if (this.config.preMatchEffects && this.config.preMatchEffects.length > 0) {
-      PreMatchEffectApplicator.applyEffects(this.config.preMatchEffects, this.context)
-    }
+    const preMatchApplicator = new PreMatchEffectApplicator()
+    preMatchApplicator.applyEffects(this.context)
     this.ticker.start()
     this.emitCombatEnd()
   }

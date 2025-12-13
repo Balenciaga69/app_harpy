@@ -1,28 +1,26 @@
-import {
-  CharacterCoordinator,
-  CombatCoordinator,
-  EncounterCoordinator,
-  ShopCoordinator,
-  StorageCoordinator,
-} from './coordinators'
 import { RunNotInitializedError } from '../domain/errors/RunError'
-import { RunFinalizer, RunInitializer } from './lifecycle'
-import type { RunContext } from '../interfaces/models/run-context'
-import { advanceProgress } from '../interfaces/models/run-progress'
-import { RunState } from '../interfaces/models/run-state'
-import type { RunStateType } from '../interfaces/models/run-state'
+import type { RunContext } from '../interfaces/run-context'
+import { advanceProgress } from '../interfaces/run-progress'
+import { RunState } from '../interfaces/run-state'
+import type { RunStateType } from '../interfaces/run-state'
+import { EncounterCoordinator, ShopCoordinator, StorageCoordinator } from './coordinators'
+import { CharacterCoordinator } from './coordinators/CharacterCoordinator'
+import { CombatCoordinator } from './coordinators/CombatCoordinator'
+import { RunFinalizer } from './lifecycle/RunFinalizer'
+import { RunInitializer } from './lifecycle/RunInitializer'
 import { RunStateMachine } from './state-machine/RunStateMachine'
 import {
   CharacterSelectionState,
+  MapViewState,
+  PreCombatState,
   CombatState,
+  PostCombatState,
+  ShopState,
   EventState,
   GameOverState,
-  MapViewState,
-  PostCombatState,
-  PreCombatState,
-  ShopState,
   VictoryState,
 } from './state-machine/states'
+
 /**
  * Run 主控制器 (Facade Pattern)
  * 對外提供簡潔的介面，協調所有子系統

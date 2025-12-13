@@ -1,9 +1,3 @@
-/**
- * CharacterError
- *
- * 角色領域的專屬錯誤類別。
- * 用於角色定義、職業定義的驗證與管理。
- */
 export class CharacterError extends Error {
   constructor(message: string) {
     super(message)

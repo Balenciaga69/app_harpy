@@ -1,16 +1,16 @@
-import type { IRunStateHandler } from '../IRunStateHandler'
-import { RunContext } from '@/features/run/interfaces/models/run-context'
-import { RunState } from '@/features/run/interfaces/models/run-state'
+import type { IRunStateHandler } from '../../../interfaces/IRunStateHandler'
+import { RunContext } from '@/features/run/interfaces/run-context'
+import { RunState } from '@/features/run/interfaces/run-state'
 /**
- * åœ°åœ–ç€è¦½ç‹€æ…‹è™•ç†å™¨
+ * ?°å??è¦½?€?‹è??†å™¨
  */
 export class MapViewState implements IRunStateHandler {
   enter(_context: RunContext): void {
-    // é€²å…¥åœ°åœ–ç€è¦½
-    // é¡¯ç¤ºç•¶å‰ç« ç¯€çš„ 10 å€‹ç¯€é»
+    // ?²å…¥?°å??è¦½
+    // é¡¯ç¤º?¶å?ç« ç???10 ?‹ç?é»?
   }
   exit(_context: RunContext): void {
-    // é›¢é–‹åœ°åœ–
+    // ?¢é??°å?
   }
   getAllowedTransitions(): string[] {
     return [RunState.PRE_COMBAT, RunState.SHOP, RunState.EVENT, RunState.GAME_OVER]

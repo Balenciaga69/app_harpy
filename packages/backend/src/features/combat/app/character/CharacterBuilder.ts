@@ -3,13 +3,7 @@ import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { Character } from './Character'
-/**
- * CharacterBuilder
- *
- * Builder pattern for creating Character instances with fluent API.
- * Simplifies complex character configuration with many optional attributes.
- * Supports preset templates for common character archetypes.
- */
+
 export class CharacterBuilder {
   private name: string = 'Unnamed'
   private team: ICharacter['team'] = 'player'

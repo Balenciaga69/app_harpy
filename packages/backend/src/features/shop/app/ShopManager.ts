@@ -10,6 +10,7 @@ import type { Emitter } from 'mitt'
 import { ItemGenerator } from '@/features/item-generator'
 // TODO: 依賴內部實作 PricingEngine，應通過 factory 或 DI
 import { PricingEngine } from '../domain/pricing/PricingEngine'
+import type { IShopManager } from '../interfaces/IShopManager'
 import type {
   ShopEvents,
   IInventoryAdapter,
@@ -27,7 +28,7 @@ import { InsufficientFundsError, ItemNotFoundError, InvalidItemError } from '../
 /**
  * 商店管理器
  */
-export class ShopManager {
+export class ShopManager implements IShopManager {
   private readonly config: IShopConfig
   private readonly eventBus: Emitter<ShopEvents>
   private readonly inventory: IInventoryAdapter
@@ -45,7 +46,8 @@ export class ShopManager {
     this.pricingEngine = PricingEngine.fromShopConfig(this.config)
   }
   /** 刷新商品清單 */
-  refresh(): IRefreshResult {
+  refresh(chapter: number): IRefreshResult {
+    this.setChapter(chapter)
     const difficulty = this.difficultyAdapter.getCurrentDifficulty()
     const itemCount = this.generateItemCount()
     const newItems: IShopItem[] = []
@@ -140,8 +142,13 @@ export class ShopManager {
     }
   }
   /** 取得當前商品清單 */
-  getCurrentItems(): IShopItem[] {
+  getItems(): IShopItem[] {
     return [...this.currentItems]
+  }
+
+  /** 取得當前配置 */
+  getConfig(): IShopConfig {
+    return this.config
   }
   /** 設定當前章節（用於價格通膨） */
   setChapter(chapter: number): void {

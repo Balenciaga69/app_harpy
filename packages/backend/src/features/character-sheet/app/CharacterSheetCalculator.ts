@@ -5,6 +5,7 @@ import type { ICharacterSheet } from '../interfaces/ICharacterSheet'
 import type { ICharacterSheetInput } from '../interfaces/ICharacterSheetInput'
 import type { IEquipmentProcessor } from '../interfaces/IEquipmentProcessor'
 import type { IRelicProcessor } from '../interfaces/IRelicProcessor'
+import type { ICharacterSheetCalculator } from '../interfaces/ICharacterSheetCalculator'
 
 const ATTRIBUTE_TYPES: readonly AttributeType[] = [
   'maxHp',
@@ -23,7 +24,7 @@ const ATTRIBUTE_TYPES: readonly AttributeType[] = [
   'resurrectionChance',
   'resurrectionHpPercent',
 ] as const
-export class CharacterSheetCalculator {
+export class CharacterSheetCalculator implements ICharacterSheetCalculator {
   private readonly equipmentProcessor: IEquipmentProcessor
   private readonly relicProcessor: IRelicProcessor
   private readonly createAttributeManager: (baseAttributes: any) => IAttributeManager

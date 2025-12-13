@@ -1,7 +1,8 @@
 import { CombatTiming } from '../../domain/config/CombatConstants'
 import { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ITickerDriver } from '../../interfaces/combat-engine/ITickerDriver'
 const MAX_TICKS = CombatTiming.MAX_TICKS
-export class TickerDriver {
+export class TickerDriver implements ITickerDriver {
   private context: ICombatContext
   private readonly maxTicks: number
   private isRunning: boolean = false
@@ -45,5 +46,10 @@ export class TickerDriver {
   /** Check if combat has ended */
   private checkCombatEnd(): boolean {
     return this.stopCondition()
+  }
+
+  /** Get current tick */
+  public getCurrentTick(): number {
+    return this.context.getCurrentTick()
   }
 }

@@ -1,8 +1,16 @@
-# Combat & Replay 模組 v0.4
-
 ## 很急
 
-基於
+- ShopManager 需要實作介面
+- 需要拆開 內部的代碼 G:\Coding\app_harpy\packages\backend\src\features\shop\interfaces\IShopModels.ts
+- src\features\run\app\state-machine\RunStateMachine.ts
+  src\features\run\app\state-machine\IRunStateMachine.ts
+  src\features\run\app\state-machine\IRunStateHandler.ts 通通搬遷到介面
+- src\features\character-sheet\app\CharacterSheetCalculator.ts 需要實作介面
+- CombatEngine(G:\Coding\app_harpy\packages\backend\src\features\combat\app\combat-engine\CombatEngine.ts)
+  裡面依賴的Class 改成 interface,如果有缺乏就調用
+- G:\Coding\app_harpy\packages\backend\src\features\combat\app\damage\AttackExecutor.ts 已經違反規則了
+  內部依賴需要改成 interface
+- npm run check , npm run lint 可以找到更多錯誤幫我處理
 
 #### COMBAT模組內的開發守則
 
