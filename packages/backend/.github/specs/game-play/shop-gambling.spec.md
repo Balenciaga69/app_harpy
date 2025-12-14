@@ -7,6 +7,10 @@ updated: 2025-12-14
 
 描述 ShopGambling（賭博系統）的規格，核心為拉霸/下注等賭博機制的模擬器與風險控制。模組負責處理押注、隨機結果生成（seed 支援）、賠率計算、結果結算、以及與商店（Shop）和玩家資產（Inventory）之間的整合契約。目標是讓賭博成為遊戲的核心賭注體驗，同時保有可測試性與公平度控制。
 
+**最後更新時間：** 2025-01-16
+
+**實作狀態：** ✅ 已完成核心功能（interfaces/domain/app 層），infra 層待整合 Inventory
+
 ## 輸入與輸出
 
 - 輸入
@@ -37,40 +41,120 @@ updated: 2025-12-14
 
 ## 元件盤點（按功能元件）
 
-- RNG Service（domain/infra）
-  - 功能：封裝隨機數生成，支援外部傳入 seed，提供 deterministic RNG。
+### ✅ Interfaces 層（已完成）
 
-- SlotEngine（domain）
-  - 功能：模擬拉霸機（symbols、reels、paylines、wilds、scatter 等），評估贏線並計算倍數。
-  - 輸入：betMeta（線數/注數）、seed、payoutTable
-  - 輸出：GamblingResult（含細節）
+- **IGamblingConfig**: 賭博配置介面，定義遊戲模式、賭場優勢、各遊戲配置
+  - 檔案：`interfaces/IGamblingConfig.ts`
+  - 匯出常數：`GameMode` (SLOT / FIXED_ODDS / CUSTOM)
+- **IBetRequest / IGamblingResult**: 下注請求與結果介面
+  - 檔案：`interfaces/IBetRequest.ts`, `interfaces/IGamblingResult.ts`
+  - 支援 slot 與 fixed odds 的專屬元數據
+- **IRNGService**: 隨機數生成服務介面
+  - 檔案：`interfaces/IRNGService.ts`
+  - 方法：integer, float, pick, weighted
+- **ISlotEngine / IFixedOddsEngine**: 遊戲引擎介面
+  - 檔案：`interfaces/ISlotEngine.ts`, `interfaces/IFixedOddsEngine.ts`
+  - 定義遊戲結果產生邏輯
+- **IBetValidator**: 下注驗證器介面
+  - 檔案：`interfaces/IBetValidator.ts`
+  - 返回 `IBetValidationResult`（isValid, error, warnings）
+- **IPayoutCalculator**: 賠付計算器介面
+  - 檔案：`interfaces/IPayoutCalculator.ts`
+  - 處理 house edge 扣除
+- **IGamblingOrchestrator**: 賭博編排器介面
+  - 檔案：`interfaces/IGamblingOrchestrator.ts`
+  - 高階 API：`placeBet()`, `getDefaultConfig()`
 
-- FixedOddsEngine（domain）
-  - 功能：處理固定賠率（例如下注某一區間或事件發生與否），計算勝/負機率與賠率。
+### ✅ Domain 層（已完成）
 
-- BetValidator（app）
-  - 功能：驗證 betAmount、最小/最大下注限制、玩家資產。
+- **RNGService**: Chance.js 包裝器
+  - 檔案：`domain/RNGService.ts`
+  - 實作：封裝 Chance.js，提供 deterministic RNG
+  - 方法：integer, float, pick, weighted
+- **SlotEngine**: 老虎機引擎實作
+  - 檔案：`domain/SlotEngine.ts`
+  - 實作：3 轉軸，6 種符號（7/BAR/CHERRY/LEMON/ORANGE/PLUM），加權隨機
+  - 支付線：5 條（橫 3 + 斜 2）
+  - 賠付條件：8 種（三個 7、三個 BAR、兩個 CHERRY 等）
+- **FixedOddsEngine**: 固定賠率引擎實作
+  - 檔案：`domain/FixedOddsEngine.ts`
+  - 實作：3 種風險等級
+    - 高風險：18% 機率贏得 5x
+    - 中風險：30% 機率贏得 3x
+    - 低風險：60% 機率贏得 1.5x
+- **PayoutCalculator**: 賠付計算器實作
+  - 檔案：`domain/PayoutCalculator.ts`
+  - 計算公式：`basePayout × (1 - houseEdge)`
+- **GamblingConfig**: 預設配置常數
+  - 檔案：`domain/GamblingConfig.ts`
+  - 匯出：`DEFAULT_SLOT_CONFIG`, `DEFAULT_FIXED_ODDS_CONFIG`
 
-- PayoutCalculator（domain）
-  - 功能：根據引擎輸出與規則計算最終 payout（含稅或 house cut），並保留可追蹤的計算證明。
+### ✅ App 層（已完成）
 
-- RiskManager（app/domain）
-  - 功能：即時監控 long-run EV（期望值）、玩家連勝/連輸行為、賭注分布，並在必要時調整 houseEdge、限制下注或替換 RNG 演算法（風險緩解策略）。
+- **BetValidator**: 下注驗證器實作
+  - 檔案：`app/BetValidator.ts`
+  - 功能：驗證下注金額、玩家資產、最小/最大百分比限制（預設 0.1%~10%）
+  - 警告：下注超過總資產 5% 時提醒
+- **GamblingOrchestrator**: 賭博編排器實作
+  - 檔案：`app/GamblingOrchestrator.ts`
+  - 功能：統籌驗證、引擎、計算、交易流程
+  - API：`placeBet(betRequest, playerAssets, config?)` → `IGamblingResult`
 
-- TransactionAdapter（infra）
-  - 功能：與 Inventory/Wallet 整合，執行金錢扣款與派發、返回 TransactionResult
+### ⏳ Infra 層（待實作）
 
-- GamblingOrchestrator（app）
-  - 功能：高階 API：placeBet(player, betRequest) -> returns GamblingResult；負責事件發送與審計日誌。
+- **TransactionAdapter**: 交易適配器
+  - 計畫檔案：`infra/TransactionAdapter.ts`
+  - 功能：與 Inventory/Wallet 整合，執行金錢扣款與派發
+  - 狀態：目前 GamblingOrchestrator 使用模擬交易
 
-## 子功能 (Subfeatures) 建議
+### ❌ RiskManager（未實作）
 
-- slot/core：SlotEngine、symbols、paylines、payout table
-- odds/core：FixedOddsEngine、賠率表管理
-- risk/monitor：RiskManager、EV 計算器、風險政策
-- infra/tx：TransactionAdapter、RNG Service
+- **功能**：即時監控 long-run EV、玩家連勝/連輸行為、賭注分布
+- **狀態**：規格中提到但未實作，可作為未來擴展功能
 
-每個 subfeature 建議再拆成 app/domain/infra/interfaces 層以遵守單向依賴規則。
+## 檔案結構（已實作）
+
+```
+src/game-play/shop-gambling/
+├── interfaces/              # 介面層（10 檔案）
+│   ├── IGamblingConfig.ts   # 配置介面 + GameMode 常數
+│   ├── IBetRequest.ts       # 下注請求 + slot/fixed odds 元數據
+│   ├── IGamblingResult.ts   # 賭博結果 + 交易資訊
+│   ├── IRNGService.ts       # RNG 服務介面
+│   ├── ISlotEngine.ts       # 老虎機引擎介面 + 符號權重/支付線/賠付條件配置
+│   ├── IFixedOddsEngine.ts  # 固定賠率引擎介面 + RiskLevel 常數
+│   ├── IBetValidator.ts     # 下注驗證器介面 + 驗證結果
+│   ├── IPayoutCalculator.ts # 賠付計算器介面 + 賠付計算結果
+│   ├── IGamblingOrchestrator.ts # 編排器介面
+│   └── index.ts             # 匯出所有介面
+│
+├── domain/                  # 領域層（6 檔案）
+│   ├── RNGService.ts        # Chance.js 包裝器
+│   ├── GamblingConfig.ts    # 預設配置常數
+│   ├── SlotEngine.ts        # 老虎機引擎實作
+│   ├── FixedOddsEngine.ts   # 固定賠率引擎實作
+│   ├── PayoutCalculator.ts  # 賠付計算器實作
+│   └── index.ts             # 匯出所有領域元件
+│
+├── app/                     # 應用層（3 檔案）
+│   ├── BetValidator.ts      # 下注驗證器實作
+│   ├── GamblingOrchestrator.ts # 編排器實作
+│   └── index.ts             # 匯出所有應用元件
+│
+├── index.ts                 # 模組主入口
+└── README.md                # 使用文件
+```
+
+**依賴架構：**
+
+- interfaces ← domain ← app
+- Domain 依賴 interfaces（IRNGService, IGamblingConfig）
+- App 依賴 interfaces + domain（編排器整合所有元件）
+
+**注意事項：**
+
+- ShopGambling 與 PreCombat 存在命名衝突（`IBetRequest`, `IBetValidationResult`）
+- 因此不在 `game-play/index.ts` 中 re-export，需直接從模組導入
 
 ## 模組依賴誰？或被誰依賴？
 
@@ -124,18 +208,78 @@ updated: 2025-12-14
 - 性能：大量玩家同時拉霸時，Engine 應保持低延遲（單次操作 < 100 ms 為目標）
 - 法律/合規：遊戲內賭博僅為遊戲幣，若有實際金錢需求需額外考量法規（本 spec 假設遊戲內貨幣）。
 
+## 使用範例
+
+### 老虎機下注
+
+```typescript
+import { GamblingOrchestrator, GameMode } from '@/game-play/shop-gambling'
+
+const orchestrator = new GamblingOrchestrator()
+
+const betRequest = {
+  betAmount: 100,
+  gameMode: GameMode.SLOT,
+  slotMeta: {},
+  seed: 'slot-seed-123',
+}
+
+const playerAssets = {
+  availableGold: 1000,
+  totalAssets: 1500,
+}
+
+const result = await orchestrator.placeBet(betRequest, playerAssets)
+// result.outcome: { reelSymbols: ['7', '7', '7'], winLines: [...] }
+// result.payoutAmount: 450 (假設三個 7 賠付 5x × 0.95 house edge)
+// result.netProfit: 350
+```
+
+### 固定賠率下注
+
+```typescript
+const betRequest = {
+  betAmount: 200,
+  gameMode: GameMode.FIXED_ODDS,
+  fixedOddsMeta: { selectedRiskLevel: 'high' },
+  seed: 'fixed-odds-seed-456',
+}
+
+const result = await orchestrator.placeBet(betRequest, playerAssets)
+// result.outcome: { isWin: true, multiplier: 5 }
+// result.payoutAmount: 950 (200 × 5 × 0.95)
+// result.netProfit: 750
+```
+
+---
+
 ## 測試建議
 
-- 單元測試
-  - RNG Service 在相同 seed 下輸出一致序列
-  - SlotEngine 在固定 seed 與配置下輸出可預期 outcome
-  - PayoutCalculator 在多種情況下計算正確
+### 單元測試
 
-- 迴圈/統計測試
-  - 大量模擬（例如 1e5 spins）以估算實際 EV 並與 houseEdgeTarget 比對
+- **RNGService**: 驗證相同種子產生相同隨機序列
+- **SlotEngine**: 驗證轉軸生成、支付線評估、賠付計算
+- **FixedOddsEngine**: 驗證風險等級機率、賠率計算
+- **PayoutCalculator**: 驗證賭場優勢扣除邏輯
+- **BetValidator**: 驗證金額驗證規則、警告觸發
 
-- 整合測試
-  - placeBet -> locked funds -> result -> payout 整體交易一致性（含失敗回滾）
+### 統計測試
+
+- **大量模擬**：執行 1e5 次 spins 估算實際 EV 並與 houseEdgeTarget 比對
+- **符號分布**：驗證加權隨機符號分布符合設定權重
+- **風險等級機率**：驗證固定賠率三種風險等級的勝率接近設定值
+
+### 整合測試
+
+- **GamblingOrchestrator**: 驗證完整下注流程（驗證 → 執行 → 計算 → 交易）
+- **確定性回放**: 使用相同種子驗證結果一致性
+- **邊界條件**: 最小/最大下注金額、零金幣、超額下注
+- **交易一致性**: placeBet → locked funds → result → payout（含失敗回滾）
+
+### 壓力測試
+
+- **大量下注**: 驗證效能與記憶體穩定性
+- **極端配置**: 高符號數量、多條支付線、複雜賠付條件
 
 ## 開發者的碎碎念
 
