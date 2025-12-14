@@ -1,8 +1,8 @@
-import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
 import { IRelicInstance } from '@/features/item/interfaces/definitions/IItemInstance'
 import { RELIC_MAPPING_LOOKUP } from '../registries/RelicRegistry'
 import { AttributeModifier } from '@/features/attribute/interfaces/AttributeModifier'
 import type { IRelicProcessor } from '../../interfaces/IRelicProcessor'
+import { BaseAttributeValues } from '@/features/attribute/interfaces/BaseAttributeValues'
 export class RelicProcessor implements IRelicProcessor {
   /**
    * 從遺物實例提取屬性修飾器

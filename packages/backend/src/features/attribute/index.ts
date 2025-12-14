@@ -1,8 +1,8 @@
 // domain
 export { AttributeDefaults, AttributeLimits, type AttributeLimitKey } from './domain/AttributeConstants'
-export { type BaseAttributeValues, createDefaultAttributes } from './domain/AttributeValues'
+export { createDefaultAttributes } from './domain/AttributeValues'
 // interfaces
-export { type IBaseAttributeValues } from './interfaces/IBaseAttributeValues'
+export { type BaseAttributeValues } from './interfaces/BaseAttributeValues'
 export {
   type AttributeModifier,
   ModifierPriority,

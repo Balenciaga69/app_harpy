@@ -1,16 +1,2 @@
-export type AttributeType =
-  | 'maxHp'
-  | 'currentHp'
-  | 'maxEnergy'
-  | 'currentEnergy'
-  | 'energyRegen'
-  | 'energyGainOnAttack'
-  | 'armor'
-  | 'evasion'
-  | 'attackDamage'
-  | 'attackCooldown'
-  | 'criticalChance'
-  | 'criticalMultiplier'
-  | 'accuracy'
-  | 'resurrectionChance'
-  | 'resurrectionHpPercent'
+import { BaseAttributeValues } from './BaseAttributeValues'
+export type AttributeType = keyof BaseAttributeValues

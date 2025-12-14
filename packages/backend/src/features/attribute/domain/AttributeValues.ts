@@ -1,8 +1,7 @@
+import { BaseAttributeValues } from '../interfaces/BaseAttributeValues'
 import { AttributeDefaults } from './AttributeConstants'
-import type { IBaseAttributeValues } from '../interfaces/IBaseAttributeValues'
-/** @deprecated 請使用 IBaseAttributeValues */
-export type BaseAttributeValues = IBaseAttributeValues
-export function createDefaultAttributes(overrides?: Partial<IBaseAttributeValues>): IBaseAttributeValues {
+
+export function createDefaultAttributes(overrides?: Partial<BaseAttributeValues>): BaseAttributeValues {
   return {
     maxHp: AttributeDefaults.maxHp,
     currentHp: AttributeDefaults.currentHp,

@@ -1,22 +1,15 @@
 import { FirstAliveSelector } from '../../domain/target-select-strategies/FirstAliveSelector'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
 import type { ITargetSelector } from '../../interfaces/target-select-strategies/ITargetSelector'
 import type { ITickPhase } from '../../interfaces/tick-phases/ITickPhase'
-import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
 import { AttackExecutor } from './AttackExecutor'
+import { AttackExecutionPhase } from './tick-phases/AttackExecutionPhase'
+import { EffectTickPhase } from './tick-phases/EffectTickPhase'
+import { EnergyRegenPhase } from './tick-phases/EnergyRegenPhase'
 import { CooldownManager } from './utils/CooldownManager'
 import { EffectProcessor } from './utils/EffectProcessor'
 import { EnergyManager } from './utils/EnergyManager'
-import { EffectTickPhase } from './tick-phases/EffectTickPhase'
-import { EnergyRegenPhase } from './tick-phases/EnergyRegenPhase'
-import { AttackExecutionPhase } from './tick-phases/AttackExecutionPhase'
-/**
- * Tick Action System
- *
- * Orchestrates tick processing using a pipeline of independent phases.
- * Each phase handles a specific responsibility (effects, energy, attacks).
- * Phases can be added, replaced, or removed for extensibility.
- */
 export class TickActionSystem implements ITickActionSystem {
   private context: ICombatContext
   private phases: ITickPhase[] = []

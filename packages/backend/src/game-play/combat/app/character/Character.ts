@@ -8,8 +8,13 @@ import { CombatEffectServices } from '../CombatEffectServices'
 import { AttributeCalculator } from '@/features/attribute/app/AttributeCalculator'
 import { AttributeManager } from '@/features/attribute/app/AttributeManager'
 import { IEffect, EffectManager } from '@/features/effect'
-import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
-import { AttributeType, AttributeModifier } from '@/features/attribute'
+import {
+  AttributeType,
+  AttributeModifier,
+  BaseAttributeValues,
+  IAttributeCalculator,
+  IAttributeManager,
+} from '@/features/attribute'
 /**
  * 角色初始化所需的設定參數
  */
@@ -37,8 +42,8 @@ export class Character implements ICharacter {
   readonly name: string
   readonly team: ICharacter['team']
   isDead: boolean = false
-  private readonly attributeManager: AttributeManager
-  private readonly attributeCalculator: AttributeCalculator
+  private readonly attributeManager: IAttributeManager
+  private readonly attributeCalculator: IAttributeCalculator
   private readonly effectManager: EffectManager
   private readonly ultimateManager: UltimateManager
   private _pendingUltimate?: IUltimateAbility // 用於延遲初始化的終極技能
@@ -48,7 +53,7 @@ export class Character implements ICharacter {
     this.name = config.name
     // 初始化屬性系統
     this.attributeManager = new AttributeManager(config.baseAttributes)
-    this.attributeCalculator = new AttributeCalculator(this.attributeManager)
+    this.attributeCalculator = new AttributeCalculator()
     // 初始化管理器
     this.effectManager = new EffectManager(this.id)
     this.ultimateManager = new UltimateManager()
@@ -70,7 +75,9 @@ export class Character implements ICharacter {
   // === 屬性相關方法 ===
   /** 取得最終屬性值（包含修飾計算） */
   getAttribute(type: AttributeType): number {
-    return this.attributeCalculator.calculateAttribute(type)
+    const baseValue = this.attributeManager.getBase(type)
+    const modifiers = this.attributeManager.getModifiers(type)
+    return this.attributeCalculator.calculate(baseValue, modifiers)
   }
   /** 取得基礎屬性值（不含修飾） */
   getBaseAttribute(type: AttributeType): number {

@@ -60,7 +60,7 @@ export class CharacterSheetCalculator implements ICharacterSheetCalculator {
       attributeManager.addModifier(modifier)
     }
     // 計算所有屬性的最終值
-    const attributes = this.calculateAllAttributes(attributeCalculator)
+    const attributes = this.calculateAllAttributes(attributeManager, attributeCalculator)
     const baseAttributes = this.extractBaseAttributes(attributeManager)
     return {
       attributes,
@@ -72,10 +72,15 @@ export class CharacterSheetCalculator implements ICharacterSheetCalculator {
   /**
    * 計算所有屬性的最終值
    */
-  private calculateAllAttributes(calculator: IAttributeCalculator): Record<AttributeType, number> {
+  private calculateAllAttributes(
+    manager: IAttributeManager,
+    calculator: IAttributeCalculator
+  ): Record<AttributeType, number> {
     const result = {} as Record<AttributeType, number>
     for (const type of ATTRIBUTE_TYPES) {
-      result[type] = calculator.calculateAttribute(type)
+      const baseValue = manager.getBase(type)
+      const modifiers = manager.getModifiers(type)
+      result[type] = calculator.calculate(baseValue, modifiers)
     }
     return result
   }

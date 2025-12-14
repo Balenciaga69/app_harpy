@@ -1,8 +1,9 @@
-import { BaseAttributeValues, createDefaultAttributes } from '@/features/attribute/domain/AttributeValues'
+import { createDefaultAttributes } from '@/features/attribute/domain/AttributeValues'
 import type { ICharacter } from '../../interfaces/character/ICharacter'
 import type { ICombatContext } from '../../interfaces/context/ICombatContext'
 import type { IUltimateAbility } from '../../interfaces/ultimate/IUltimateAbility'
 import { Character } from './Character'
+import { BaseAttributeValues } from '@/features/attribute/interfaces/BaseAttributeValues'
 export class CharacterBuilder {
   private name: string = 'Unnamed'
   private team: ICharacter['team'] = 'player'

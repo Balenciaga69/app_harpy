@@ -1,5 +1,8 @@
+import { AttributeType } from '../interfaces/AttributeType'
+import { BaseAttributeValues } from '../interfaces/BaseAttributeValues'
+
 /** 屬性預設值 */
-export const AttributeDefaults = {
+export const AttributeDefaults: BaseAttributeValues = {
   // === Health related ===
   maxHp: 1000,
   currentHp: 1000,
@@ -23,7 +26,7 @@ export const AttributeDefaults = {
   resurrectionHpPercent: 0.1, // 復活後恢復 10% HP
 } as const
 /** 屬性上下限（用於驗證） */
-export const AttributeLimits = {
+export const AttributeLimits: Record<AttributeType, { min: number; max: number }> = {
   // === Health ===
   maxHp: { min: 1, max: 99999 },
   currentHp: { min: 0, max: 99999 },
