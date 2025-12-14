@@ -1,20 +1,10 @@
-import type { IAttributeManager } from '../interfaces/IAttributeManager'
-import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
 import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } from '../interfaces/AttributeModifier'
-import { AttributeType } from '../interfaces/AttributeType'
+import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
 
 export class AttributeCalculator implements IAttributeCalculator {
-  private manager: IAttributeManager
   /** 初始化屬性計算器，注入屬性管理器 */
-  constructor(manager: IAttributeManager) {
-    this.manager = manager
-  }
-  /** 計算指定屬性類型的最終值（從 manager 取得資料） */
-  calculateAttribute(type: AttributeType): number {
-    const baseValue = this.manager.getBase(type)
-    const modifiers = this.manager.getModifiers(type)
-    return this.calculate(baseValue, modifiers)
-  }
+  constructor() {}
+
   /** 計算指定屬性的最終值 */
   calculate(baseValue: number, modifiers: AttributeModifier[]): number {
     // 先排序再加法後乘法

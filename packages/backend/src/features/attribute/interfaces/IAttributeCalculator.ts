@@ -1,4 +1,4 @@
-import { AttributeType } from './AttributeType'
+import { AttributeModifier } from './AttributeModifier'
 export interface IAttributeCalculator {
-  calculateAttribute(type: AttributeType): number
+  calculate(baseValue: number, modifiers: AttributeModifier[]): number
 }
