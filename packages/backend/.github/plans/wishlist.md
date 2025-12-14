@@ -133,7 +133,7 @@
 - **博弈配置**: CombatBettingConfig，包含區間定義、倍率表、賭金計算。
 - **準備狀態**: PreCombatState，包含注入變數列表、下注資訊、確認狀態。
 
-## 庫存系統 (Inventory) 模組需求
+## 庫存系統 (Inventory) 模組需求(已完成)
 
 ### 核心功能需求
 
@@ -157,7 +157,7 @@
 - **裝備槽位**: EquipmentSlots，定義槽位類型和當前裝備。
 - **操作結果**: InventoryOperationResult，包含成功/失敗狀態和更新資料。
 
-## 角色管理 (CharacterManager) 模組需求
+## 角色管理 (CharacterManager) 模組需求(已在開發)
 
 ### 核心功能需求
 

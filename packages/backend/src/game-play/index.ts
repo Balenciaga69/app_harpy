@@ -1,3 +1,4 @@
+export * from './character-manager'
 export * from './combat'
 export * from './replay'
 export * from './run'

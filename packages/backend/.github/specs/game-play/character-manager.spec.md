@@ -162,4 +162,4 @@
 - 持久化整合是關鍵，需要設計良好的序列化機制
 - 初期先實作基礎功能，逐步添加進階特性
 - 單元測試覆蓋率要高，特別是狀態管理邏輯</content>
-<parameter name="filePath">g:\Coding\app_harpy\packages\backend\.github\specs\game-play\character-manager.spec.md
+  <parameter name="filePath">g:\Coding\app_harpy\packages\backend\.github\specs\game-play\character-manager.spec.md
