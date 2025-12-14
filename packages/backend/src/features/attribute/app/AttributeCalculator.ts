@@ -2,7 +2,6 @@ import { type AttributeModifier, type AttributeModifierEx, ModifierPriority } fr
 import type { IAttributeCalculator } from '../interfaces/IAttributeCalculator'
 
 export class AttributeCalculator implements IAttributeCalculator {
-  /** 初始化屬性計算器，注入屬性管理器 */
   constructor() {}
 
   /** 計算指定屬性的最終值 */

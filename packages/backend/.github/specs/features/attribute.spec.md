@@ -24,13 +24,13 @@
 
 ## 元件盤點
 
-- AttributeCalculator：屬性計算器，處理修飾器的排序和應用邏輯。
-- AttributeManager：屬性管理器，管理基礎值和修飾器的增刪查改。
-- AttributeConstants：屬性常數，定義預設值和限制範圍。
-- AttributeValues：屬性值介面，提供基礎屬性結構和預設創建函數。
-- AttributeModifier：修飾器介面，定義修飾器的結構和優先級。
-- AttributeType：屬性類型定義，列出所有支援的屬性。
-- 介面層：定義IAttributeCalculator和IAttributeManager契約，確保元件間一致性。
+- AttributeCalculator ：屬性計算器，處理修飾器的排序和應用邏輯。
+- AttributeManager ：屬性管理器，管理基礎值和修飾器的增刪查改。
+- AttributeConstants ：屬性常數，定義預設值和限制範圍。
+- AttributeValues ：屬性值介面，提供基礎屬性結構和預設創建函數。
+- AttributeModifier ：修飾器介面，定義修飾器的結構和優先級。
+- AttributeType ：屬性類型定義，列出所有支援的屬性。
+- 介面層 ：定義IAttributeCalculator和IAttributeManager契約，確保元件間一致性。
 
 ## 模組依賴誰?或被誰依賴?
 

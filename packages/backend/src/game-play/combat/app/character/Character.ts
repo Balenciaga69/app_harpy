@@ -8,7 +8,13 @@ import { CombatEffectServices } from '../CombatEffectServices'
 import { AttributeCalculator } from '@/features/attribute/app/AttributeCalculator'
 import { AttributeManager } from '@/features/attribute/app/AttributeManager'
 import { IEffect, EffectManager } from '@/features/effect'
-import { AttributeType, AttributeModifier, BaseAttributeValues, IAttributeCalculator } from '@/features/attribute'
+import {
+  AttributeType,
+  AttributeModifier,
+  BaseAttributeValues,
+  IAttributeCalculator,
+  IAttributeManager,
+} from '@/features/attribute'
 /**
  * 角色初始化所需的設定參數
  */
@@ -36,7 +42,7 @@ export class Character implements ICharacter {
   readonly name: string
   readonly team: ICharacter['team']
   isDead: boolean = false
-  private readonly attributeManager: AttributeManager
+  private readonly attributeManager: IAttributeManager
   private readonly attributeCalculator: IAttributeCalculator
   private readonly effectManager: EffectManager
   private readonly ultimateManager: UltimateManager
