@@ -1,8 +1,8 @@
 import { AttributeType } from '../interfaces/AttributeType'
-import { IBaseAttributeValues } from '../interfaces/IBaseAttributeValues'
+import { BaseAttributeValues } from '../interfaces/BaseAttributeValues'
 
 /** 屬性預設值 */
-export const AttributeDefaults: IBaseAttributeValues = {
+export const AttributeDefaults: BaseAttributeValues = {
   // === Health related ===
   maxHp: 1000,
   currentHp: 1000,

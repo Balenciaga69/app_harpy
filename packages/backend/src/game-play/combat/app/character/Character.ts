@@ -8,8 +8,7 @@ import { CombatEffectServices } from '../CombatEffectServices'
 import { AttributeCalculator } from '@/features/attribute/app/AttributeCalculator'
 import { AttributeManager } from '@/features/attribute/app/AttributeManager'
 import { IEffect, EffectManager } from '@/features/effect'
-import { BaseAttributeValues } from '@/features/attribute/domain/AttributeValues'
-import { AttributeType, AttributeModifier } from '@/features/attribute'
+import { AttributeType, AttributeModifier, BaseAttributeValues } from '@/features/attribute'
 /**
  * 角色初始化所需的設定參數
  */

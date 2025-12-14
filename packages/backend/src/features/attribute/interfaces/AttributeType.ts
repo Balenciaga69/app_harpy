@@ -1,2 +1,2 @@
-import { IBaseAttributeValues } from './IBaseAttributeValues'
-export type AttributeType = keyof IBaseAttributeValues
+import { BaseAttributeValues } from './BaseAttributeValues'
+export type AttributeType = keyof BaseAttributeValues

@@ -2,7 +2,7 @@ import { AttributeLimits } from '../domain/AttributeConstants'
 import type { AttributeModifier as AttributeModifier } from '../interfaces/AttributeModifier'
 import { AttributeType } from '../interfaces/AttributeType'
 import type { IAttributeManager } from '../interfaces/IAttributeManager'
-import { IBaseAttributeValues } from '../interfaces/IBaseAttributeValues'
+import { BaseAttributeValues } from '../interfaces/BaseAttributeValues'
 /**
  * 屬性管理器
  *
@@ -14,7 +14,7 @@ import { IBaseAttributeValues } from '../interfaces/IBaseAttributeValues'
 export class AttributeManager implements IAttributeManager {
   private baseValues: Map<AttributeType, number>
   private modifiers: Map<AttributeType, AttributeModifier[]>
-  constructor(baseAttributes: IBaseAttributeValues) {
+  constructor(baseAttributes: BaseAttributeValues) {
     this.baseValues = new Map()
     this.modifiers = new Map()
     // 初始化基礎屬性

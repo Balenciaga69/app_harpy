@@ -3,7 +3,7 @@
  *
  * 定義角色的所有基礎數值屬性
  */
-export interface IBaseAttributeValues {
+export interface BaseAttributeValues {
   /** Health related */
   maxHp: number
   currentHp: number
