@@ -38,7 +38,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - Help understand complex logic
 - Provide a brief one-line description of a function or class's purpose, allowing for quick browsing without diving into the code
 - Methods use /_* single-line description *_/
-- Class,Type,Interface use /\*_ * multi-line description *_/
+- Class,Type,Interface use // single-line description
 - Methods or function logic comments use // single-line description
 - I don't need any @param, @returns type comments, as these are redundant
 - I found that my colleague's computer does not support Chinese comments, so please
@@ -98,3 +98,10 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
 - sub-feature 內則遵循單向依賴規則
 - 各 sub-feature 引用也應該遵循 單向依賴規則
 - 實作永遠不引用實作(只引用介面)
+
+#### 一個關於後端的期望
+
+- 我希望代碼是無狀態的，代表著不同 Server Instance 間可以無痛切換，不會有使用者必須綁定在某一台 Server Instance 上的問題
+- 我希望代碼是可水平擴展的，代表著可以輕易增加更多 Server Instance 來應付高流量
+- 代表服務不該存東西在本地端記憶體或檔案系統
+- 這專案功能繁多，但不該有狀態保留在服務端的情況

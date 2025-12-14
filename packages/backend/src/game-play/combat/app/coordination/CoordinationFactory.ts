@@ -1,7 +1,7 @@
-import type { ICombatContext } from '../interfaces/context/ICombatContext'
-import type { ITickActionSystem } from '../interfaces/coordination/ITickActionSystem'
-import type { ICoordinationFactory } from '../interfaces/factories/ICoordinationFactory'
-import { TickActionSystem } from '../app/coordination/TickActionSystem'
+import type { ICombatContext } from '../../interfaces/context/ICombatContext'
+import type { ITickActionSystem } from '../../interfaces/coordination/ITickActionSystem'
+import type { ICoordinationFactory } from '../../interfaces/factories/ICoordinationFactory'
+import { TickActionSystem } from './TickActionSystem'
 /**
  * CoordinationFactory
  *
@@ -21,9 +21,5 @@ export class CoordinationFactory implements ICoordinationFactory {
   /** 創建 TickActionSystem 實例 */
   createTickActionSystem(context: ICombatContext): ITickActionSystem {
     return new TickActionSystem(context)
-  }
-  /** @deprecated 請使用 getInstance() */
-  static createTickActionSystem(context: ICombatContext): ITickActionSystem {
-    return CoordinationFactory.getInstance().createTickActionSystem(context)
   }
 }
