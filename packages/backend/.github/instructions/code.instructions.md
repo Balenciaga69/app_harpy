@@ -83,18 +83,13 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
 
 - 因為我安裝了 eslint-plugin-boundaries
 - 我要讓內部遵循 單向依賴規則：箭頭永遠指向內層。
-- infra -> interfaces -> app -> domain (此範本不考慮 presentation 層)
-  - infra 可以透過 interfaces 與 app,domain 引用
-  - infra 放置與基礎設施、外部資源、第三方整合有關的程式碼
-  - interfaces 放置所有介面（interface）、型別（type）、契約（contract）、抽象類別
-  - interfaces 理論上不會引用任何實作，且貧血。
-  - app 放置應用層邏輯，負責協調，不包含任何業務與領域邏輯
-  - app 可以引用 interfaces
-  - domain 放置純業務邏輯、核心規則、演算法
-  - domain 可以引用 interfaces
-  - 所有實作都只 import interface，不 import 其他實作
-- 我們用不到值物件、領域模型、聚合根這些DDD概念
-- 我偏好 feature(舉例:combat,replay) 內有 分層概念，每層再來建立 sub-features folder 的結構
-- sub-feature 內則遵循單向依賴規則
-- 各 sub-feature 引用也應該遵循 單向依賴規則
-- 實作永遠不引用實作(只引用介面)
+- 我將模組分成多層結構。同時若模組規模過大，我會在模組內再細分 sub-modules。
+- domain/app/adapter/infra
+- domain 核心概念幾乎全部分佈在此
+  - 聚合根、實體、值物件、領域服務、領域事件
+- app 定義執行流程，協調實體層
+  - 應用程式服務、儲存庫介面、服務介面
+- 這層將外部的伺服器技術，與內部的邏輯連接起來。
+  - 儲存庫實作、服務實作、呈現器
+- infra這層包含所有技術骨架。
+  - 網路框架、配置依賴注入、日誌系統、監控系統
