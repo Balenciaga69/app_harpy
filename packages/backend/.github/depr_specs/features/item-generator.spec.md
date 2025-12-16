@@ -63,11 +63,11 @@ Item-Generator 模組被 shop 模組依賴，用於生成商店物品，以及�
 
 ## 他是由什麼組裝在一起？
 
-- **ItemGenerator**：協調裝備與遺物生成，對外提供統一入口。
-- **EquipmentGenerator**：處理裝備詞綴的隨機生成與槽位過濾。
-- **RelicGenerator**：產生遺物實例，通常不帶隨機詞綴。
-- **AffixRoller**：根據權重與範圍，隨機選出詞綴並決定其數值。
-- **SlotBasedFilter**：根據裝備槽位過濾可用詞綴，確保合理性。
-- **IAffixFilter**：定義詞綴過濾策略的介面，方便擴充不同過濾邏輯。
+- ItemGenerator：協調裝備與遺物生成，對外提供統一入口。
+- EquipmentGenerator：處理裝備詞綴的隨機生成與槽位過濾。
+- RelicGenerator：產生遺物實例，通常不帶隨機詞綴。
+- AffixRoller：根據權重與範圍，隨機選出詞綴並決定其數值。
+- SlotBasedFilter：根據裝備槽位過濾可用詞綴，確保合理性。
+- IAffixFilter：定義詞綴過濾策略的介面，方便擴充不同過濾邏輯。
 
 這些元件協同合作，讓物品生成流程既靈活又可控，能滿足各種遊戲場景下的隨機物品需求。
