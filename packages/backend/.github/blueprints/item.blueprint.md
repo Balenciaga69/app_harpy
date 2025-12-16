@@ -78,3 +78,12 @@
 2. 檢查排他（Exclusion Group，防止重複）
 3. 根據 Weight 抽出並 Roll
 4. 將詞綴塞到 Item Instance
+
+## relic & equipment
+
+- 裝備和遺物在系統底層都被視為一種 物品
+- 裝備有穿戴限制，每個 Slot 都只能一種
+- 遺物可以無限堆疊。
+- 遺物設計偏向疊屬性或疊機制(類似 Risk of rain 2 的 item)
+- 裝備則能改變玩法或補足屬性
+- 二者皆有詞綴，但遺物跟傳說裝備一樣池子必定拉出固定 Affixes
