@@ -65,3 +65,8 @@
 2. 檢查排他（Exclusion Group，防止重複）
 3. 根據 Weight 抽出並 Roll 數值
 4. 從 AffixTemplate 創建 AffixInstance，並將其塞到 Item Instance
+
+### 上帝測試詞綴生成器 & 附加器結論
+
+- 全能測試工具，能自由組合和附加任何詞綴到物品/敵人上
+- 可行性：Affix 抽象設計允許自由附加任意組合，戰鬥系統會正常處理觸發與聚合。
