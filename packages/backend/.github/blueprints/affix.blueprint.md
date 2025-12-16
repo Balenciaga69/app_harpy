@@ -1,11 +1,5 @@
 ## Affix
 
-- 將所有詞綴（無論是敵人、裝備或技能來源）歸結為一套核心介面 `IAffixTemplate`。
-- 它扮演著連接裝備、異常狀態、戰鬥事件與角色屬性的核心機制。
-- 核心邏輯包括：傷害計算、屬性聚合、事件監聽註冊等。
-- 這些邏輯只需要一套處理服務。
-- 所有的 Affixes 最終都會在戰鬥的 Tick 處理流程中聚合、觸發。
-- 由於它們都來自同一個介面，如果日誌系統設計不佳，很難快速分辨是「敵人模板的詞綴」還是「玩家裝備的詞綴」觸發了效果。
 - 詞綴模板本身不應該關心它能被誰擁有。
 - 不應該關心誰能裝備，或者擁有者能堆疊多少個。
 - 它的職責是定義行為與基礎數值。
@@ -30,3 +24,44 @@
 - 敵人數值也是如此。
 - 賽前變數的效果會以狀態實例或屬性修飾符的形式注入。
 - 這本質上是動態賦予了類似詞綴的短暫效果。
+
+## 詞綴（Affix/Modifier）
+
+### 詞綴定義
+
+- Modifier：戰鬥或運算時的修飾符
+- Affix：藍圖設定的詞綴，一個 Affix 可衍生多個 Modifier（如同時補 HP 又加暴擊）
+
+### 詞綴層次結構
+
+- AffixTemplate (靜態藍圖)：定義觸發條件 + 行為類型 + 參數
+- AffixInstance (運行時實例，掛在裝備/敵人實例上)：從模板實例化，包含具體數值
+- StatModifier (從 AffixInstance 解析出來的純數值修飾)：用於屬性聚合系統運算
+
+### 屬性聚合系統
+
+- 屬性聚合系統不在乎 Affix，只處理 StatModifier
+- Affix 是存在於戰鬥外的，當戰鬥時要運算屬性時 Affix 會轉換成1-n個 Modifier 用於運算屬性
+
+### 詞綴結構
+
+- AffixTemplate：靜態藍圖，定義觸發條件 + 行為類型 + 參數
+- AffixInstance：運行時實例，包含具體數值，掛在裝備/敵人實例上
+- StatModifier：從 AffixInstance 解析出來的純數值修飾，用於屬性運算
+- 結構內容（適用於 AffixTemplate）：
+  - 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）
+
+### 詞綴表（Affix Table）
+
+- 定義單一詞綴所有靜態屬性：ID、Tags、MinMaxRange、CalcType、TargetStat 等
+
+### 詞綴池表（Affix Pool Table）
+
+- 定義詞綴出現概率：詞綴 ID、抽中 weight、可抽 affix 的 ItemTemplate
+
+### 詞綴生成流程
+
+1. 從詞綴池撈出符合條件的 AffixTemplate
+2. 檢查排他（Exclusion Group，防止重複）
+3. 根據 Weight 抽出並 Roll 數值
+4. 從 AffixTemplate 創建 AffixInstance，並將其塞到 Item Instance

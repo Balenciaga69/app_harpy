@@ -2,7 +2,8 @@
 
 ### 來源與觸發
 
-- 來源：物品欄位中的 Skill Gem
+- 來源：物品欄位中的 Ultimate Gem（參考 Path of Exile 的 Grafts 系統）
+- Ultimate Gem 本身是一個物品，附帶提供一個技能
 - 觸發時機：
   - 戰鬥中玩家能量充滿自動釋放終極技能
   - 釋放後能量重置為零
@@ -17,20 +18,22 @@
 
 ### 生成與組合
 
-- Ultimate 技能由終極技能生成器生成
+- Ultimate Gem 由終極技能生成器生成
 - Ultimate Gem：
-  - 由 Affixes 組合
-  - 綁定至特定技能
+  - 附帶提供一個技能
+  - 本身有自己的 Affix 系統，這些 Affix 會影響提供的技能
 - Affix 組合範例：
-  - 斬殺波可有不同附加效果（如生命值恢復、下次攻擊能量充滿）
+  - 技能 破甲劍（無視防禦運算）
+  - Affix1：增加該大招吸血效果
+  - Affix2：減少該大招所需的能量
 
 ### 互動與實例化
 
 - 複雜互動：終極技能常與異常狀態系統互動
 - 戰鬥前實例化：
   - Skill Gem 轉換為技能 Instance
-  - Affix 轉換為監聽戰鬥事件的 Affix Instance
-  - 這些 Affix Instance 參與戰鬥
+  - AffixTemplate 實例化為 AffixInstance，監聽戰鬥事件
+  - 這些 AffixInstance 參與戰鬥
 
 ### 數據角色
 

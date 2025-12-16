@@ -6,7 +6,7 @@
 - 物品內容：
   - 掉落池、原型（Template）、實例（Instance）、生成流程
 - 詞綴內容：
-  - 掉落池、定義、實例、生成流程
+  - 掉落池、模板（AffixTemplate）、實例（AffixInstance）、生成流程
 
 ### 物品原型（Item Template）
 
@@ -22,7 +22,7 @@
 ### 物品生成系統
 
 - 實例化系統：解析數據定義，分離靜態與動態邏輯
-- 詞綴生成系統：隨機生成詞綴，定義範本與詞綴池
+- 詞綴生成系統：隨機生成詞綴，定義模板（AffixTemplate）與詞綴池
 - 生成流程：
   1. 藍圖載入與實例創建
   2. 數值隨機生成
@@ -33,7 +33,7 @@
 - 戰鬥或裝備時：
   - 事件監聽、屬性聚合系統同時運作
   - 監聽器觸發特殊效果
-  - 屬性聚合系統提取詞綴，轉為戰鬥/面板數值
+  - 屬性聚合系統提取詞綴實例 (AffixInstance)，解析為 StatModifier，轉為戰鬥/面板數值
 
 ### 物品的兩種身分
 
@@ -50,34 +50,6 @@
 - 若用 Redis，避免頻繁查詢慢速資料庫：
   - 玩家完整角色數據包存於快取
   - 裝備變化時，先更新記憶體，再同步快取，最後寫入資料庫
-
-## 詞綴（Affix/Modifier）
-
-### 詞綴定義
-
-- Modifier：戰鬥或運算時的修飾符
-- Affix：藍圖設定的詞綴，一個 Affix 可衍生多個 Modifier（如同時補 HP 又加暴擊）
-
-### 詞綴結構
-
-- 每個詞綴為獨立資料結構，存在於範本或實例
-- 結構內容：
-  - 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）
-
-### 詞綴表（Affix Table）
-
-- 定義單一詞綴所有靜態屬性：ID、Tags、MinMaxRange、CalcType、TargetStat 等
-
-### 詞綴池表（Affix Pool Table）
-
-- 定義詞綴出現概率：詞綴 ID、抽中 weight、可抽 affix 的 ItemTemplate
-
-### 詞綴生成流程
-
-1. 從詞綴池撈出符合條件的 Affix
-2. 檢查排他（Exclusion Group，防止重複）
-3. 根據 Weight 抽出並 Roll
-4. 將詞綴塞到 Item Instance
 
 ## relic & equipment
 

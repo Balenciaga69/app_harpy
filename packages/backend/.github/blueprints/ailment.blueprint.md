@@ -46,7 +46,7 @@
 
 ## Affix 附加狀態設計
 
-### Affix 靜態模板
+### AffixTemplate (靜態模板)
 
 - 屬性：
   - 監聽事件類型（eventType，如 ON_HIT）
@@ -55,8 +55,8 @@
 
 ### Affix 運作流程（以冰緩為例）
 
-- 戰鬥前：角色管理系統檢查所有裝備/遺物詞綴
-- 註冊監聽器：對 eventType: "ON_HIT" 詞綴註冊事件
+- 戰鬥前：角色管理系統檢查所有裝備/遺物上的 AffixInstance
+- 註冊監聽器：對 eventType: "ON_HIT" 的 AffixInstance 註冊事件
 - 事件觸發：攻擊事件命中敵人時，事件管理器觸發 ON_HIT
 - 執行詞綴行為：監聽器捕獲事件，執行 action: "APPLY_STATUS"，呼叫 Status System 的 ApplyStatusEffect
 - 狀態實例創建/更新：於敵方 Context 創建或更新 Chill 狀態實例
