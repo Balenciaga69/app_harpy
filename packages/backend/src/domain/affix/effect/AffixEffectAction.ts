@@ -1,3 +1,4 @@
+import { AlimentId } from '../../../ailment/AlimentId'
 import { UnitStatModifierOperation } from '../../stats/StatModifier'
 import { UnitStats } from '../../stats/UnitStats'
 
@@ -9,10 +10,9 @@ export interface StatModifyAction {
   value: number
 }
 
-type ApplyStatusId = string | 'charge' | 'poison' | 'chill'
 export interface ApplyStatusAction {
   type: 'APPLY_STATUS'
-  statusId: ApplyStatusId
+  alimentId: AlimentId
   stacks: number
 }
 
