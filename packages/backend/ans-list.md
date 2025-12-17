@@ -3,8 +3,8 @@
 存在於哪份檔案?
 我的解答屬於有效解答還是無效解答(沒回答到問題)?
 甚至又衍伸新問題？
-還是TradeOffs下不建議這樣做?
-以及你的看法告訴我
+還是TradeOffs下不建議這樣做?或者我的答案與最佳實踐背道而馳?
+以及你的看法告訴我。我需要成長與討論。
 
 Q:
 AffixTemplate（靜態藍圖）定義觸發條件 + 行為類型 + 參數，
@@ -17,3 +17,7 @@ StatModifier（純數值修飾）如何從 AffixInstance 解析？
 屬性聚合系統難以統一處理。
 
 A:
+如何處理「具體數值」（Rolled Value）？
+
+StatModifier（純數值修飾）如何從 AffixInstance 解析？
+Affix 模板會提供

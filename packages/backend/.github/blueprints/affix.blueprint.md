@@ -1,78 +1,97 @@
-# Affix
+# Affix（詞綴 / Affix）
 
-## 語意級
+## 語意級（Designer）
+
+### Affix 的核心定義
+
+- Affix（詞綴）是一種靜態模板，用以描述會在遊戲中發生的效果與參數（例如：影響屬性、觸發行為或賦予狀態）。
+- 模板不包含運行時邏輯；實際行為由生成層與運行時系統（生成系統、事件系統、屬性聚合系統等）協作實現。
 
 ### 詞綴的職責
 
-- 詞綴模板本身不應該關心它能被誰擁有。
-- 不應該關心誰能裝備，或者擁有者能堆疊多少個。
-- 它的職責是定義行為與基礎數值。
-- Affix 藍圖：保持純粹，專注於效果定義，不關心其出現的地理位置和時間。
-- 這個 Affix 是 boss 特有或某裝備特有這件事情，不是 boss 或裝備該關心的。
-- 也不是 affix 本身該關心的，而是生成系統與池系統該關心的。
-- 生成服務（Item/Enemy）只負責讀取 Context 和分佈表，並執行生成行為。
-- 這個詞綴只會出現第一章節的武器上，或第三章以上某一敵人成為 Boss 時，這件事情與 affix 藍圖無關。
+- 詞綴模板（AffixTemplate / 詞綴模板）不應關心誰能擁有或裝備它，也不應該關心持有者可堆疊多少個。
+- 詞綴的責任是定義行為與基礎數值，保持純粹，專注於效果定義。
+- 生成條件與載體（例如 boss 專屬、某章節限定）應屬於生成系統與池（Affix Pool）管理，而非 AffixTemplate 本身。
+- 生成服務（Item / Enemy）負責讀取上下文（Context）與分佈表，並執行生成行為。
 
 ### 誰關心 Affix
 
-- 終極寶石 (Ultimate Gem) 是由詞綴組合。
-- 物品、裝備、遺物是詞綴的主要載體。
-- 詞綴可以指定執行行為。
-- 在無盡模式下，敵人會加入僅此階段出現的特殊 Affixes。
-- 詞綴生成系統：從詞綴池表中，根據 Weight 抽出並 Roll 數值。
-- 然後將詞綴塞到 Item Instance。
-- 沒有 Affixes 就做不出任何物品、裝備、遺物。
-- 也做不出敵人、終極技能、賽前變數等等。
-- 角色與敵人都是 Unit 類型。
-- 角色的成長是透過裝備/遺物/模板上的詞綴聚合而成。
-- 敵人數值也是如此。
-- 賽前變數的效果會以狀態實例或屬性修飾符的形式注入。
-- 這本質上是動態賦予了類似詞綴的短暫效果。
+- 載體：物品、裝備、遺物是主要載體，終極寶石（Ultimate Gem）可由詞綴組合而成。
+- 系統：詞綴生成系統（從 Affix Pool 根據 Weight 抽取並 Roll 數值）、狀態系統、屬性聚合系統、事件系統等。
+- 實際表現：賽前變數的效果會以狀態實例或屬性修飾符（Modifier / StatModifier）注入，為短暫或被動效果。
 
-## 架構級
+### Q&A
 
-### 詞綴定義
+#### Q: 詞綴是什麼？
 
-- Modifier：戰鬥或運算時的修飾符。
-- Affix：藍圖設定的詞綴，一個 Affix 可衍生多個 Modifier（如同時補 HP 又加暴擊）。
+- A: 簡短說明：見上方定義；詞綴為靜態模板，描述效果與參數（ID、Tags、EffectTemplateId 等），生成與運行時規則由其他系統處理。
+
+#### Q: 修飾符是什麼？
+
+- A: 運行時的純數值單元（Modifier / StatModifier），由 AffixInstance（詞綴實體）與 EffectTemplate 解析產生，在條件滿足時被屬性聚合系統使用（Add/Multi/More 等）。
+
+#### Q: 詞綴實體（AffixInstance）如何生成？（簡述）
+
+- A: 生成層從 Affix Pool 篩選符合上下文的 AffixTemplate → 檢查排他/家族規則 → Roll 數值 → 建立 AffixInstance（rolledValue）並注入目標（item/enemy/preCombat）。
+
+## 架構級（Architect）
+
+### 詞綴定義（名詞統一）
+
+- AffixTemplate（詞綴模板）：靜態藍圖，定義觸發條件參考、行為類型與參數。
+- AffixInstance（詞綴實體）：生成後的實例（例如：templateId、rolledValue、sourceId、metadata、uniqueCounter）。
+- Modifier / StatModifier（修飾符 / 屬性修飾符）：由 AffixInstance 與 EffectTemplate 解析出的純數值修飾，用於屬性運算。
 
 ### 詞綴層次結構
 
-- Affix 是存在於戰鬥外的，當戰鬥時要運算屬性時 Affix 會轉換成 1-n 個 Modifier 用於運算屬性。
+- Affix 屬於戰鬥外的靜態資源；在戰鬥時計算屬性時，Affix 會被轉換為 1..n 個 Modifier 並送入聚合系統。
 
-### 屬性聚合系統
+### 屬性聚合系統（設計要點）
 
-- 聚合系統僅依賴 StatModifier，不直接認識 Affix 或 preCombat。
-- 轉換器由上層注入，聚合系統可先設計，型別穩定後再補實作。
-- 來源擴充僅需新增轉換器，不動聚合系統。
+- 聚合系統僅依賴 StatModifier，不直接認識 AffixTemplate 或 preCombat。
+- 轉換器（Converter/Binder）由上層注入，負責把 AffixInstance 與 EffectTemplate 轉為 ModifierInstance；聚合系統維持穩定介面，便於擴充來源。
 
-### 詞綴結構
+### 詞綴池（Affix Pool Table）
 
-- AffixTemplate：靜態藍圖，定義觸發條件 + 行為類型 + 參數。
-- StatModifier：從 AffixInstance 解析出來的純數值修飾，用於屬性運算。
+- 池表欄位範例：影響屬性、運算方式（Add / Multi / More）、Rolled Value 範圍、生效條件（例如低於 50%）、Tags、生成限制（如等級、關卡門檻）、Family / Exclusion。
 
-### 詞綴池表（Affix Pool Table）
+## 代碼級（Engineer）
 
-- 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）。
+### 詞綴生成流程（步驟）
 
-## 代碼級
+1. 從 Affix Pool 撈取符合條件的 AffixTemplate（考量 itemType、level、family、weight）。
+2. 檢查排他機制（Exclusion Group）以避免矛盾或重複。
+3. 根據權重（Weight）抽取並 Roll 數值（生成 rolledValue）。
+4. 建立 AffixInstance 並將其塞入目標（ItemInstance / Enemy / PreCombatState）。
 
-### 詞綴生成流程
+### 上帝測試詞綴生成器與附加器（測試 / 工具）
 
-1. 從詞綴池撈出符合條件的 AffixTemplate。
-2. 檢查排他（Exclusion Group，防止重複）。
-3. 根據 Weight 抽出並 Roll 數值。
-4. 從 AffixTemplate 創建 AffixInstance，並將其塞到 Item Instance。
+- 單一詞綴靜態屬性應完整定義：ID、Tags、MinMaxRange、CalcType、TargetStat 等。
+- 建議提供一個「上帝模式」測試工具，能自由組合並附加任意詞綴到任何載體，用於邊界測試。
+- 實作上：Affix 抽象允許任意組合，但正式環境需套用 Family/Exclusion/Context 規則以確保平衡與合理性。
 
-### 上帝測試詞綴生成器與附加器結論
+### 設計建議（實作準則）
 
-- 定義單一詞綴所有靜態屬性：ID、Tags、MinMaxRange、CalcType、TargetStat 等。
-- 全能測試工具，能自由組合和附加任何詞綴到物品/敵人上。
-- 可行性：Affix 抽象設計允許自由附加任意組合，戰鬥系統會正常處理觸發與聚合。
+- 隔離依賴：Affix 生成涉及多系統，應明確隔離依賴以避免隱性耦合。
+- 轉換器介面：設計專責資料轉換的介面（Converter/Binder），不在其中放業務規則。
 
-### 設計建議
+---
 
-- Affix 生成涉及多系統，易產生隱藏耦合，需明確隔離依賴。
-- 建議設計轉換器介面，專責資料轉換，不參與業務規則。
-- AffixTemplate 只描述啟用後用途，不含生成規則或啟用條件。
-- 生成規則與啟用條件應獨立於 AffixTemplate，集中於生成層。
+## 範例的幾個 Affix
+
+1. (賽前變數)：開局獲得 16 層充能 (異常狀態)
+2. (敵人 A 詞綴) (普通)：每三次攻擊第三次傷害 x2.0
+3. (敵人 A 詞綴) (Boss 特有)：每三次攻擊第三次傷害 x2.0 附加 2 層 Chill
+4. (聖遺物詞綴):每次攻擊吸血 1% 攻擊最終造成傷害 (該遺物可疊加，最多 20 個)
+5. (裝備、賽前):在生命值低於 10% 情況下復活率提高 20% 同時復活生命增加 15%
+6. (賽前變數): 每當施放大招後，敵人閃避與護甲值將下降 10% 直至 0
+7. (裝備): 每有一層 chill 攻擊力提升 5%
+8. (裝備): 每有一層 chill 攻擊力 +12
+
+---
+
+## 實作注意要點（三行摘要）
+
+- 事件驅動是關鍵：多數條件由 EventSystem（OnAttack、OnUltimate、OnDeath、OnCast）實作。
+- 狀態/層數、不可逆與堆疊語義需明確（StateInstance 與可能的 ModifierTemplate 描述）。
+- 保留「上帝測試」工具用於邊界測試；正式生成時應加強 Family/Exclusion/Context 規則以維持平衡。
