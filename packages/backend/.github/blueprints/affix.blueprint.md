@@ -1,4 +1,8 @@
-## Affix
+# Affix
+
+## 語意級
+
+### 詞綴的職責
 
 - 詞綴模板本身不應該關心它能被誰擁有。
 - 不應該關心誰能裝備，或者擁有者能堆疊多少個。
@@ -9,7 +13,7 @@
 - 生成服務（Item/Enemy）只負責讀取 Context 和分佈表，並執行生成行為。
 - 這個詞綴只會出現第一章節的武器上，或第三章以上某一敵人成為 Boss 時，這件事情與 affix 藍圖無關。
 
-## 誰關心 Affix
+### 誰關心 Affix
 
 - 終極寶石 (Ultimate Gem) 是由詞綴組合。
 - 物品、裝備、遺物是詞綴的主要載體。
@@ -25,63 +29,50 @@
 - 賽前變數的效果會以狀態實例或屬性修飾符的形式注入。
 - 這本質上是動態賦予了類似詞綴的短暫效果。
 
-## 詞綴（Affix/Modifier）
+## 架構級
 
 ### 詞綴定義
 
-- Modifier：戰鬥或運算時的修飾符
-- Affix：藍圖設定的詞綴，一個 Affix 可衍生多個 Modifier（如同時補 HP 又加暴擊）
-
-# Affix（詞綴）
-
-## 誰關心 Affix（詞綴）
-
-- AffixInstance (運行時實例，掛在裝備/敵人實例上)：從模板實例化，包含具體數值
-
-## 詞綴（Affix／Modifier）
-
-### 詞綴定義
+- Modifier：戰鬥或運算時的修飾符。
+- Affix：藍圖設定的詞綴，一個 Affix 可衍生多個 Modifier（如同時補 HP 又加暴擊）。
 
 ### 詞綴層次結構
 
-- Affix 是存在於戰鬥外的，當戰鬥時要運算屬性時 Affix 會轉換成1-n個 Modifier 用於運算屬性
+- Affix 是存在於戰鬥外的，當戰鬥時要運算屬性時 Affix 會轉換成 1-n 個 Modifier 用於運算屬性。
 
 ### 屬性聚合系統
 
-### 詞綴結構
+- 聚合系統僅依賴 StatModifier，不直接認識 Affix 或 preCombat。
+- 轉換器由上層注入，聚合系統可先設計，型別穩定後再補實作。
+- 來源擴充僅需新增轉換器，不動聚合系統。
 
 ### 詞綴結構
 
-- AffixTemplate：靜態藍圖，定義觸發條件 + 行為類型 + 參數
-
-### 詞綴表（Affix Table）
-
-- StatModifier：從 AffixInstance 解析出來的純數值修飾，用於屬性運算
+- AffixTemplate：靜態藍圖，定義觸發條件 + 行為類型 + 參數。
+- StatModifier：從 AffixInstance 解析出來的純數值修飾，用於屬性運算。
 
 ### 詞綴池表（Affix Pool Table）
 
-- 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）
+- 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）。
+
+## 代碼級
 
 ### 詞綴生成流程
 
-### 詞綴表（Affix Table）
+1. 從詞綴池撈出符合條件的 AffixTemplate。
+2. 檢查排他（Exclusion Group，防止重複）。
+3. 根據 Weight 抽出並 Roll 數值。
+4. 從 AffixTemplate 創建 AffixInstance，並將其塞到 Item Instance。
 
 ### 上帝測試詞綴生成器與附加器結論
 
-- 定義單一詞綴所有靜態屬性：ID、Tags、MinMaxRange、CalcType、TargetStat 等
-
-### 詞綴池表（Affix Pool Table）
-
-- 定義詞綴出現概率：詞綴 ID、抽中 weight、可抽 affix 的 ItemTemplate
-
-### 詞綴生成流程
-
-1. 從詞綴池撈出符合條件的 AffixTemplate
-2. 檢查排他（Exclusion Group，防止重複）
-3. 根據 Weight 抽出並 Roll 數值
-4. 從 AffixTemplate 創建 AffixInstance，並將其塞到 Item Instance
-
-### 上帝測試詞綴生成器 & 附加器結論
-
-- 全能測試工具，能自由組合和附加任何詞綴到物品/敵人上
+- 定義單一詞綴所有靜態屬性：ID、Tags、MinMaxRange、CalcType、TargetStat 等。
+- 全能測試工具，能自由組合和附加任何詞綴到物品/敵人上。
 - 可行性：Affix 抽象設計允許自由附加任意組合，戰鬥系統會正常處理觸發與聚合。
+
+### 設計建議
+
+- Affix 生成涉及多系統，易產生隱藏耦合，需明確隔離依賴。
+- 建議設計轉換器介面，專責資料轉換，不參與業務規則。
+- AffixTemplate 只描述啟用後用途，不含生成規則或啟用條件。
+- 生成規則與啟用條件應獨立於 AffixTemplate，集中於生成層。

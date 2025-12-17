@@ -4,19 +4,16 @@
 我的解答屬於有效解答還是無效解答(沒回答到問題)?
 甚至又衍伸新問題？
 還是TradeOffs下不建議這樣做?
-
-Q:
-設計強調單向依賴（domain/app/adapter/infra），但 Affix 生成涉及多系統（池、難度、角色），可能形成隱藏耦合。e.g., 屬性聚合系統「不在乎 Affix」，但實際需解析 Modifier，這是否違反解耦？
-
-A:
-Affix Template 轉 Affix instance, Affix 轉 Modifier 都需要一層生成或轉換的專用類
 以及你的看法告訴我
 
 Q:
-沒討論「屬性聚合系統」是否應該完全不認識 Affix，還是只認識 StatModifier。
-A:
-屬性聚合系統應該完全不認識 Affix, stat aggregation system 只認 stat modifier
+AffixTemplate（靜態藍圖）定義觸發條件 + 行為類型 + 參數，
+但轉換為 AffixInstance（運行時實例）時，
+如何處理「具體數值」（Rolled Value）？
+StatModifier（純數值修飾）如何從 AffixInstance 解析？
+文檔提及「影響屬性、運算方式（Added, Multi, More）」，
+但缺乏具體轉換規則（e.g., 一個 Affix 如何衍生多個 Modifier？
+條件觸發如「低於 50% 魔力」如何實作？）。這可能導致實作時邏輯混亂，
+屬性聚合系統難以統一處理。
 
-Q:
-屬性聚合來源於 StatModifier，但來源（Affix/Status/賽前變數）解析流程未明確。
 A:
