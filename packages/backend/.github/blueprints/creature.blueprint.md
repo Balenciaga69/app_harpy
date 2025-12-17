@@ -1,4 +1,4 @@
-## Entity,Unit,Minion
+# Entity／Unit／Minion（實體／單位／召喚物）
 
 - Entity 擁有各自的戰鬥上下文。但它本質上非常抽象。。它代表著可以被狀態、詞綴和戰鬥事件作用的對象。
 - 玩家和敵人都應該被視為同一個 Unit 類型，是 Entity 的具體實作

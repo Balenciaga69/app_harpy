@@ -1,6 +1,6 @@
-## 屬性
+# Stat（屬性）
 
-### 屬性分類
+## 屬性分類
 
 - maxHp / currentHp
 - maxEnergy / currentEnergy
@@ -10,7 +10,7 @@
 - criticalChance / criticalMultiplier
 - resurrectionChance / resurrectionHpPercent
 
-### 屬性聚合與運算
+## 屬性聚合與運算
 
 - 聚合來源：
   - 修飾類型（如 +10 點、增加 50%、造成 30% 更多攻擊力）

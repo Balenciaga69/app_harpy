@@ -1,4 +1,4 @@
-## post-combat
+# Post-Combat（戰後流程）
 
 - 指玩家看到戰鬥結果並點擊繼續後的流程。
 

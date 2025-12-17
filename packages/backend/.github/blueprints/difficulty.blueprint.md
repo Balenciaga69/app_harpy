@@ -1,4 +1,4 @@
-## Difficulty
+# Difficulty（難度）
 
 - Difficulty 為動態變化的數值（或參數組），用於調整數值生成系統的輸出
 - 難度係數決定：

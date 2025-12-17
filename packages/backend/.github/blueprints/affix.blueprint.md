@@ -32,26 +32,41 @@
 - Modifier：戰鬥或運算時的修飾符
 - Affix：藍圖設定的詞綴，一個 Affix 可衍生多個 Modifier（如同時補 HP 又加暴擊）
 
+# Affix（詞綴）
+
+## 誰關心 Affix（詞綴）
+
+- AffixInstance (運行時實例，掛在裝備/敵人實例上)：從模板實例化，包含具體數值
+
+## 詞綴（Affix／Modifier）
+
+### 詞綴定義
+
 ### 詞綴層次結構
 
-- AffixTemplate (靜態藍圖)：定義觸發條件 + 行為類型 + 參數
-- AffixInstance (運行時實例，掛在裝備/敵人實例上)：從模板實例化，包含具體數值
-- StatModifier (從 AffixInstance 解析出來的純數值修飾)：用於屬性聚合系統運算
+- Affix 是存在於戰鬥外的，當戰鬥時要運算屬性時 Affix 會轉換成1-n個 Modifier 用於運算屬性
 
 ### 屬性聚合系統
 
-- 屬性聚合系統不在乎 Affix，只處理 StatModifier
-- Affix 是存在於戰鬥外的，當戰鬥時要運算屬性時 Affix 會轉換成1-n個 Modifier 用於運算屬性
+### 詞綴結構
 
 ### 詞綴結構
 
 - AffixTemplate：靜態藍圖，定義觸發條件 + 行為類型 + 參數
-- AffixInstance：運行時實例，包含具體數值，掛在裝備/敵人實例上
-- StatModifier：從 AffixInstance 解析出來的純數值修飾，用於屬性運算
-- 結構內容（適用於 AffixTemplate）：
-  - 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）
 
 ### 詞綴表（Affix Table）
+
+- StatModifier：從 AffixInstance 解析出來的純數值修飾，用於屬性運算
+
+### 詞綴池表（Affix Pool Table）
+
+- 影響屬性、運算方式（Added, Multi, More）、Rolled Value、生效條件（如低於 50% 魔力）、TAGs、生成限制（如等級、關卡門檻）
+
+### 詞綴生成流程
+
+### 詞綴表（Affix Table）
+
+### 上帝測試詞綴生成器與附加器結論
 
 - 定義單一詞綴所有靜態屬性：ID、Tags、MinMaxRange、CalcType、TargetStat 等
 
