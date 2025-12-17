@@ -656,6 +656,42 @@ ultimate.blueprint.md 中 Ultimate Gem 有 Affix 影響技能，但如何與 Aff
 
 ---
 
+## 藍圖矛盾與衝突
+
+- affix.blueprint.md 強調詞綴完全靜態預綁定、無動態選擇、無權重，但 item.blueprint.md 提到物品生成時需選擇詞綴組合，導致生成邏輯不一致。
+- affix.blueprint.md 規定詞綴不關心持有者或堆疊規則，由載體決定，但 ultimate.blueprint.md 的附魔系統允許動態附加詞綴，潛在違反靜態原則。
+- combat.blueprint.md 將攻擊與技能簡化為普通攻擊與大招，無元素區分，但 ailment.blueprint.md 提及聖火、冰緩等屬性異常狀態，暗示需元素機制卻未整合。
+- level.blueprint.md 規定敵人模板靜態、無 rolled，但 endless.blueprint.md 允許敵人加入特殊詞綴，與靜態模板衝突。
+- pre-combat.blueprint.md 的賽前變數以狀態或屬性修飾符注入，但 affix.blueprint.md 限制詞綴為靜態，動態注入可能違反設計。
+
+## 權衡利弊不足
+
+- affix.blueprint.md 選擇靜態模板以簡化邏輯，但犧牲隨機性與重玩價值，未評估對玩家體驗的長期影響。
+- combat.blueprint.md 採用 Tick 輪作與事件隊列確保順序，但未討論高併發或長戰鬥下的性能開銷，權衡效能與確定性不足。
+- endless.blueprint.md 使用套件處理大數值顯示，但未權衡數值溢出對計算精度的影響，特別在指數級難度曲線下。
+- inventory.blueprint.md 設定裝備與遺物上限 999，但未考慮存儲與查詢效率，權衡容量與系統負載不足。
+- shop.blueprint.md 強調交易原子性由外部系統處理，但本專案不負責，忽略內部邏輯與外部依賴的整合風險。
+
+## 不完備或缺口
+
+- ailment.blueprint.md 狀態處理流程僅粗略描述每 Tick 觸發與清除，但未定義疊層計算、清除條件細節，導致開發時需補充規則。
+- combat.blueprint.md 提及異常狀態機制仍在構思，可能大改，缺完整定義，阻礙戰鬥系統實現。
+- creature.blueprint.md 區分 Unit 與 Minion，但未說明 Minion 的具體屬性聚合與事件處理，缺口影響召喚物邏輯。
+- generator-weight.blueprint.md 描述權重修飾來自系統初始化或事件，但未定義具體 JSON 結構與應用規則，開發時需補充。
+- post-combat.blueprint.md 戰勝生成兩個獎勵組合包，但未說明 reward item 內容生成邏輯，缺口導致獎勵系統不完整。
+- ultimate.blueprint.md 附魔石結構與流程描述，但未定義詞綴池的權重或限制，缺口影響平衡性設計。
+
+## 明顯潛在錯誤
+
+- affix.blueprint.md 的詞綴生成檢查 Family/Exclusion 規則，但若模板預綁定已矛盾，實例化時會直接出錯，未預防模板驗證。
+- combat.blueprint.md 同 Tick 內事件順序需一致，但若致死攻擊與恢復事件同時發生，依賴隊列順序可能導致隨機結果，違反非隨機原則。
+- endless.blueprint.md 移除剩餘重生代幣，但若玩家多裝置登入，代幣狀態不同步可能導致重生邏輯失效。
+- inventory.blueprint.md 整理功能僅限裝備與遺物，但若其他物品類型增加，缺少擴展機制會導致分類錯誤。
+- shop.blueprint.md 多設備同步拒絕舊請求，但若網路延遲，最新狀態回傳可能與玩家預期不符，導致 UI 不同步錯誤。
+- stat.blueprint.md 聚合系統僅處理 StatModifier，但若來源解析規則未統一，多來源可能導致計算不一致或遺漏。
+
+---
+
 ## 這些問題若不及早補足，將在專案規模擴大、運營期、國際化、活動期、平衡調整、bug 修正等階段造成極大阻礙。建議逐一列入藍圖補完與設計審查清單，並以「可測試、可維護、可擴展、可運營」為最高原則。
 
 你可以參考以下理論、設計模式與業界成熟方案，這些在遊戲後端、分散式系統、Roguelite/卡牌/自動戰鬥類遊戲等領域都被廣泛應用，能有效解決你目前藍圖遇到的架構與可維護性問題：
