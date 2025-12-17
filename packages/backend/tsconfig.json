@@ -5,9 +5,6 @@
     "lib": ["ES2022", "DOM"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "moduleResolution": "bundler",
     "moduleDetection": "force",
     "outDir": "dist",
