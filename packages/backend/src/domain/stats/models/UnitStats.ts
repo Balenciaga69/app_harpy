@@ -7,9 +7,8 @@ export interface UnitStats {
   energyGainOnAttack: number
   attackDamage: number
   attackCooldown: number
-  armor: number
+  damageReduction: number
   evasion: number
-  accuracy: number
   criticalChance: number
   criticalMultiplier: number
   resurrectionChance: number

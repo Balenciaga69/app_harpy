@@ -23,7 +23,7 @@
 
 Post-Combat Pipeline 是一個責任鏈模式（Chain of Responsibility）實現的處理管道，用於管理戰鬥後的一系列處理步驟。
 
-- **設計目的**：
+- 設計目的：
   - 提供統一的戰後流程處理框架
   - 支援預設 Processor 與動態可插入/可拔除的 Processor
   - 確保事件邏輯、獎勵生成、狀態清理等步驟有序執行
@@ -33,8 +33,8 @@ Post-Combat Pipeline 是一個責任鏈模式（Chain of Responsibility）實現
 
 ##### 職責與接口
 
-- **職責**：每個 Processor 負責單一責任，執行具體的戰後處理邏輯
-- **接口簽名**：
+- 職責：每個 Processor 負責單一責任，執行具體的戰後處理邏輯
+- 接口簽名：
   ```
   interface PostCombatProcessor {
     name: string  // 唯一標識
@@ -46,27 +46,27 @@ Post-Combat Pipeline 是一個責任鏈模式（Chain of Responsibility）實現
 
 ##### 預設 Processor 列表
 
-1. **StateCleanupProcessor**（狀態清理處理器）
+1. StateCleanupProcessor（狀態清理處理器）
    - 優先級：10
    - 職責：清除所有戰鬥相關的臨時狀態（如負重 Relic、臨時 Buff）
    - 應用場景：事件 3（特訓與負重遺物）戰後清理
 
-2. **EventRewardProcessor**（事件獎勵處理器）
+2. EventRewardProcessor（事件獎勵處理器）
    - 優先級：20
    - 職責：應用事件觸發的獎勵邏輯
    - 應用場景：事件 3 戰後自動裝備加成 Relic
 
-3. **StandardRewardProcessor**（標準獎勵處理器）
+3. StandardRewardProcessor（標準獎勵處理器）
    - 優先級：30
    - 職責：生成標準戰鬥獎勵（金幣、經驗、物品等）
    - 應用場景：每場戰鬥後的基礎獎勵
 
-4. **InventoryManagementProcessor**（倉庫管理處理器）
+4. InventoryManagementProcessor（倉庫管理處理器）
    - 優先級：40
    - 職責：處理倉庫滿載邏輯或物品獲得邏輯
    - 應用場景：獎勵物品放入倉庫前的檢查
 
-5. **ShopRefreshProcessor**（商店刷新處理器）
+5. ShopRefreshProcessor（商店刷新處理器）
    - 優先級：50
    - 職責：刷新商店內容
    - 應用場景：每次戰後自動更新商店
@@ -75,7 +75,7 @@ Post-Combat Pipeline 是一個責任鏈模式（Chain of Responsibility）實現
 
 ##### 核心操作
 
-- **註冊 Processor**：
+- 註冊 Processor：
 
   ```
   pipeline.register(processor: PostCombatProcessor): void
@@ -84,7 +84,7 @@ Post-Combat Pipeline 是一個責任鏈模式（Chain of Responsibility）實現
   - 將 Processor 加入管道
   - 根據 priority 自動排序
 
-- **移除 Processor**：
+- 移除 Processor：
 
   ```
   pipeline.unregister(processorName: string): void
@@ -93,7 +93,8 @@ Post-Combat Pipeline 是一個責任鏈模式（Chain of Responsibility）實現
   - 根據名稱移除特定 Processor
   - 應用場景：臨時禁用某些邏輯
 
-- **執行 Pipeline**：
+- 執行 Pipeline：
+
   ```
   pipeline.execute(context: PostCombatContext): Promise<void>
   ```
@@ -141,7 +142,7 @@ pipeline.register(new CustomAffixRewardProcessor())
 
 #### 設計原則
 
-- **單一責任原則**：每個 Processor 只負責一個具體邏輯
-- **優先級排序**：通過 priority 控制執行順序，避免代碼硬編碼順序
-- **條件判斷**：每個 Processor 獨立判斷是否應執行，增加靈活性
-- **可擴展性**：支援運行時動態註冊/移除，易於新增功能或進行 A/B 測試
+- 單一責任原則：每個 Processor 只負責一個具體邏輯
+- 優先級排序：通過 priority 控制執行順序，避免代碼硬編碼順序
+- 條件判斷：每個 Processor 獨立判斷是否應執行，增加靈活性
+- 可擴展性：支援運行時動態註冊/移除，易於新增功能或進行 A/B 測試

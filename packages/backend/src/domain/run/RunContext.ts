@@ -8,8 +8,7 @@ export interface IRunContext {
   gold: number
   chapters: Record<number, ChapterInfo>
 }
-
 interface ChapterInfo {
   levelNodes: Record<number, LevelType>
-  交手過的敵人ids: Set<string>
+  encounteredEnemyIds: Set<string>
 }
