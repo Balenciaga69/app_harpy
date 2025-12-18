@@ -15,31 +15,3 @@
 把 stat 設定中的
 護甲 轉化成 減傷 (即減傷百分比)
 閃避 命中 簡化成 閃避 (閃避率，會被某些異常影響)
-
----
-
-我想詢問
-RUN 該怎麼生成關卡
-每一章節觸發一次生成函數嗎?
-然後可以生成十個 template 塞到 LevelTemplates 內?
-interface RunContext {
-seed: string
-chapterIndex: number
-levelTemplatesByChapter: Record<number, LevelTemplate[]>
-difficultyFactor: number
-// ...other run state...
-}
-function generateChapterTemplates(run: RunContext, chapterIndex: number): LevelTemplate[] {
-// deterministic RNG using run.seed + chapterIndex
-// 1..10: set #5 elite, #10 boss, others based on probability
-// apply generator weight / difficulty metadata
-// persist into run.levelTemplatesByChapter[chapterIndex]
-return []
-}
-// 玩家進入節點時使用 template 生成 instance
-function createLevelInstanceFromTemplate(run: RunContext, chapterIndex: number, slotIndex: number) {
-const template = run.levelTemplatesByChapter[chapterIndex][slotIndex]
-// 若 template.type === 'normal'|'elite'|'boss' => 從 enemy pool 選擇，套用 difficultyFactor
-// 若 event => 從 event pool 選擇
-// 返回 LevelInstance
-}
