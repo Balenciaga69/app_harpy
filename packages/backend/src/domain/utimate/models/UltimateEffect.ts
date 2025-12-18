@@ -1,5 +1,5 @@
-import { EffectTarget } from '../../shared/models/EffectTarget'
-import { AlimentId } from '../ailment/AlimentId'
+import { EffectTarget } from '../../../shared/models/EffectTarget'
+import { AlimentId } from '../../ailment/models/AlimentId'
 
 interface BaseUltimateEffect {
   type: string

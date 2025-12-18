@@ -1,5 +1,5 @@
-import { UnitStatModifier } from './StatModifier'
-import { UnitStats } from './UnitStats'
+import { UnitStatModifier } from './models/StatModifier'
+import { UnitStats } from './models/UnitStats'
 
 type ByField = Partial<Record<keyof UnitStats, UnitStatModifier[]>>
 

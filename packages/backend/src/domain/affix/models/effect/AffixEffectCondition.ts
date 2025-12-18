@@ -1,4 +1,4 @@
-import { EffectTarget } from '../../../shared/models/EffectTarget'
+import { EffectTarget } from '../../../../shared/models/EffectTarget'
 
 export type AffixEffectConditionProperty = 'HP_PERCENT' | 'ATTACK_COUNTER'
 export type AffixEffectConditionComparator = 'LESS_THAN' | 'GREATER_THAN' | 'EQUAL_TO' | 'MODULO_IS'
