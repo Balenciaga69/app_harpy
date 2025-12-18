@@ -1,6 +1,4 @@
-﻿skillTemplateId: string, // 只能用於該技能
-
-# Ultimate（終極技能）
+﻿# Ultimate（終極技能）
 
 ## 語意級（設計師閱讀）
 
@@ -16,19 +14,21 @@
 - 戰鬥中玩家能量充滿自動釋放終極技能。
 - 釋放後能量重置為零。
 
-### 附魔系統
+### Plugin Affix（技能外掛詞綴）
 
-- Ultimate Gem 本身沒有預設詞綴，需透過附魔石進行附魔。
-- 附魔石：特殊道具，消耗制（一次性使用）。
-- 附魔來源：獎勵系統（Post-Combat Reward）與商店（Shop）。
-- 可用性限制：只有裝備時對應技能，商店和獎勵才會出現該技能的附魔石。
-- 多附魔支持：一個技能可附魔多種不同詞綴（相同詞綴只能附魔一次）。
+- Plugin Affix 是直接注入至 Ultimate 的動態增強機制，無需額外 UI 交互。
+- 注入來源：
+  - 獎勵系統（Post-Combat Reward）
+  - 事件系統（Level Event）
+  - 商店系統（Shop）
+- 注入方式：直接將 Plugin Affix 附加至 UltimateInstance 的詞綴陣列。
+- 多層支持：一個技能可累積多個 Plugin Affix，效果自動疊加。
 
 ### 池設計
 
 - 來源：固定 ultimate pool（按職業分類與通用 pool）。
 - 需求：每 pool 有需求閾值。
-- 詞綴池：每個技能有對應的可用詞綴列表。
+- Plugin Affix 池：每個技能有對應的可用詞綴列表。
 
 ---
 
@@ -39,20 +39,14 @@
 - Ultimate Gem Template 包含：
   - 技能 ID（如破甲劍、冰刃等）。
   - 基礎效能（傷害、命中率、冷卻等）。
-  - 可用詞綴池（該技能能附魔的詞綴清單）。
+  - 可用 Plugin Affix 池（該技能能附加的詞綴清單）。
 
-### 附魔機制
+### Plugin Affix 應用流程
 
-- EnchantStone 結構：
-  - affixId：詞綴 ID。
-  - skillId：對應的技能。
-  - 消耗後從背包移除。
-- 附魔流程：
-  1. 玩家持有技能對應的附魔石。
-  2. 進入裝備/附魔界面，選擇要附魔的技能。
-  3. 選擇該技能的未附魔詞綴。
-  4. 確認後消耗附魔石，詞綴永久附加。
-  5. 詞綴在戰鬥中自動生效。
+- 獎勵系統、事件系統或商店系統決定注入的 Plugin Affix。
+- 驗證該詞綴未被附加過（可選，取決於設計）。
+- 創建 AffixInstance 並加入 ultimateInstance.attachedAffixes。
+- 詞綴在戰鬥中自動生效，無需額外管理。
 
 ---
 
@@ -60,31 +54,30 @@
 
 ### 數據結構（暫定）
 
-- 技能實例 SkillInstance：
-  - skillTemplateId: string
-  - attachedAffixes: AffixInstance[] // 已附魔的詞綴
-- 附魔石道具 EnchantStone：
-  - affixTemplateId: string
-  - skillTemplateId: string // 只能用於該技能
+- 技能實例 UltimateInstance（SkillInstance）：
+  - ultimateTemplateId: string
+  - attachedAffixes: AffixInstance[] // 已附加的 Plugin Affix
 
-### 附魔應用流程
+### Plugin Affix 應用流程（代碼級）
 
-- 驗證玩家持有附魔石且技能已裝備。
-- 驗證該詞綴未被附魔過（無重複）。
-- 創建 AffixInstance 並加入 skillInstance.attachedAffixes。
-- 消耗（刪除）附魔石道具。
+- 獎勵系統、事件系統或商店系統決定注入的 Plugin Affix。
+- 驗證該詞綴未被附加過（可選，取決於設計）。
+- 創建 AffixInstance 並加入 ultimateInstance.attachedAffixes。
 - 持久化到存檔。
 
 ### 戰鬥前準備
 
 - 載入已裝備技能的所有 AffixInstance。
 - 註冊為事件監聽器與修飾符來源。
-- 技能根據附魔詞綴改變行為。
+- 技能根據 Plugin Affix 改變行為。
 
 ---
 
 ## 技能設計範例
 
-1. 消耗能量 100，對血量最低的敵人造成攻擊 240% 傷害，接下來三次命中的攻擊 +5 能量。
-2. 消耗能量 100，對敵人施加 150 層中毒，並附加等值的其他異常（冰緩、流血）層數。
-3. 消耗能量 100，增加 3000 Armor、3000 Evasion，持續 3000 Ticks。
+1. 破甲劍：消耗能量 100，對血量最低的敵人造成攻擊 240% 傷害，接下來三次命中的攻擊 +5 能量。
+   - 月光再生 Plugin Affix 示例：原本生命回復 33%，透過 Plugin Affix 提高至 66%（即 +33%）。
+
+2. 冰刃：消耗能量 100，對敵人施加 150 層冰緩，並附加等值的其他異常（流血、感電）層數。
+
+3. 護盾術：消耗能量 100，增加 3000 Armor、3000 Evasion，持續 3000 Ticks。

@@ -12,24 +12,57 @@
 
 ---
 
-- 移除 affix 對 family 相關敘述
-- affix 詞綴本身不持有「當前是第幾次攻擊」的狀態 詞綴只負責查詢這些數值 。
-- 在轉換詞綴效果時，建立專門的 EffectProcessor
-- Class (職業) 改為 Profession
+- 移除 Ultimate 關於附魔石的敘述，這將會是透過某些方式直接注入 Ultimate Plugins 的方式
+- 舉個例子 讓 "月光再生" 這個技能，從原本 生命回復 33% 在提高 100% => 也就是說沒有其他 PlugIn情況下提高至 66% 了
 
 ---
 
-AilmentTemplate 由設計師定義，遊戲啟動時全量載入。
-AilmentInstance 動態生成，儲存在角色/敵人戰鬥 Context。
-行為規則（如每 tick 扣血、減速等）由 effectModule 決定，參數可用 params 傳遞。
+我知道 物品、招式、敵人的生成會隨著難度提高對應等級
+但我忘了說，設計師在設計 Relic 的時候，難度加成係數應該不影響聖物的Affixes (Affixes設計風格更傾向規則行疊加) 也就是說 Affixes 應該改成 -1 或 0 之類的(我沒規劃好。)
 
 ---
 
-流程將在每章節開頭生成十關
-第五關 = ELITE ENEMY
-第十關 = BOSS ENEMY
-其餘關卡 12%機率為事件 88%為 NORMAL 敵人
+level 中有 event
+如果抽中 event 就會從藍圖 生成 不同事件
+我現在想到幾個 event
 
-流程生成器會負責配置好這十關的關卡模板
-當玩家點開關卡後會依照模板 Template 抽出(POOL)對應配置 生成 LEVEL INSTANCE
-(EnemyLevel or EventLevel 不等)
+事件 1: 隨機給玩家的 Ultimate 附魔一個詞綴
+觸發條件: 玩家手上的 Ultimate 有未附魔的可用詞綴。
+行為: 隨機從可用的詞綴中選擇一個，並附魔到該 Ultimate。
+需要 Ultimate 提供 hasAvailableEnchant 和 getRandomAvailableAffix 方法。
+需要 RunContext 提供對玩家 Ultimate 的訪問。
+
+事件 2: 惡魔交換傳奇裝備
+觸發條件: 玩家裝備著超過 3 件傳奇裝備。
+行為: 惡魔要求交出一件傳奇裝備，並生成一件對應 Slot 的隨機傳奇裝備。
+需要玩家選擇交出的裝備，涉及 UI 交互。
+需要 ItemGenerator 支援生成符合 Slot 和難度的傳奇裝備。
+需要配合的元件
+Inventory 模組: 提供傳奇裝備的篩選與移除功能。
+ItemGenerator: 提供隨機生成傳奇裝備的功能。
+RunContext: 提供玩家當前狀態。
+
+事件 3: 特訓與負重遺物
+觸發條件: 無限制條件。
+行為: 玩家選擇一個屬性，獲得負重DeBuff遺物，戰鬥後負重遺物被自動移除，並自動裝備屬性加成遺物。
+戰鬥後的處理需要解耦，避免直接寫在戰鬥系統中。
+
+事件 4: 惡魔清空倉庫
+觸發條件: 倉庫物品容量超過 50%。 (例如: 50 個物品上限，超過 25 個物品)
+行為: 惡魔清空倉庫，並生成等值的隨機裝備。
+需要 Inventory 提供清空並計算價值的功能。
+需要 ItemGenerator 支援按價值生成裝備。
+需要配合的元件
+Inventory 模組: 提供清空與價值計算功能。
+ItemGenerator: 提供按價值生成裝備的功能。
+RunContext: 提供玩家當前狀態。
+
+---
+
+- 事件很多種，但基本上都有觸發條件器跟行為執行器兩個方法
+- 事件可以拒絕或接受，接受才會執行行為
+
+---
+
+- 為了響應戰鬥後 post-combat ，我決定設計成管道，管道有預設processor與後續可插入與拔除processor
+- 大招的blueprint記得加上 plugin affix 概念。

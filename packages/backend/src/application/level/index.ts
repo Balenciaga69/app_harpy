@@ -15,7 +15,5 @@ export interface EnemyLevel {
 
 export interface EventLevel {
   id: string
-  name: string
-  description: string
   // Event ... 還在構思
 }
