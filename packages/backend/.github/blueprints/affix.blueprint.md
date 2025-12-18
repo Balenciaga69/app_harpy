@@ -61,7 +61,8 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 - Affix 屬戰鬥外靜態資源。
 - 戰鬥時，Affix 轉換為 1..n 個 Modifier 並送入聚合系統。
-- 轉換器（Converter/Binder）由上層注入，負責轉換；聚合系統維持穩定介面。
+- 轉換過程由專門的 EffectProcessor 負責，將 AffixInstance 與 EffectTemplate 解析為 StatModifier。
+- 聚合系統維持穩定介面，不直接依賴轉換細節。
 
 ### 屬性聚合系統
 
@@ -84,7 +85,6 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
     - EffectTemplateId
     - 運算方式（Add / Multi / More）
     - 生效條件
-    - Family / Exclusion
 
 ## 代碼級
 
@@ -92,10 +92,18 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 1. 物品/敵人模板預定義 affixes 陣列。
 2. 實例化時直接讀取該陣列中所有詞綴。
-3. 檢查 Family / Exclusion 規則，移除矛盾的詞綴組合。
-4. 建立 AffixInstance 陣列並注入目標。
+3. 建立 AffixInstance 陣列並注入目標。
 
 【無選擇、無權重、完全按模板決定。】
+
+### EffectProcessor（效果處理器）
+
+轉換詞綴效果的專門処理器，責任清晰：
+
+- 作用：將 AffixInstance 與 EffectTemplate 解析為 StatModifier 或其他可執行的效果單元。
+- 流程：讀取 EffectTemplate 定義 → 應用難度係數倍率 → 生成 ModifierInstance 並注入屬性聚合系統。
+- 隔離：EffectProcessor 獨立於業務邏輯，易於測試與擴展。
+- 復用性：同一 Processor 可被多個來源使用（Affix、Ultimate、Item 等）。
 
 ### 測試工具：上帝模式
 
@@ -103,7 +111,7 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 - 自由選擇並附加任意詞綴組合到任何載體。
 - 用於邊界測試與驗證。
-- 正式環境套用 Family/Exclusion/Context 規則以確保平衡。
+- 正式環境套用 Context 規則以確保平衡。
 
 ### 設計原則
 
@@ -111,6 +119,7 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 - 轉換器介面：設計專責資料轉換的介面，不放業務規則。
 - 事件驅動：多數條件由 EventSystem（OnAttack、OnUltimate、OnDeath、OnCast）實作。
 - 狀態語義：狀態/層數、不可逆與堆疊需明確定義。
+- 無狀態設計：AffixInstance 本身不持有「當前是第幾次攻擊」等運行時狀態，詞綴只負責查詢相關數值。狀態管理由系統層級（如事件計數器、屬性聚合系統）維護。
 
 ## 參考構思範例
 

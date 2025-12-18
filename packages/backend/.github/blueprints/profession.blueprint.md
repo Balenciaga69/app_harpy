@@ -1,4 +1,4 @@
-# Class（職業）
+# Profession（職業/專精）
 
 ## 語意級
 
