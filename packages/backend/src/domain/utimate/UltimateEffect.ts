@@ -1,4 +1,11 @@
+import { EffectTarget } from '../../shared/models/EffectTarget'
 import { AlimentId } from '../ailment/AlimentId'
+
+interface BaseUltimateEffect {
+  type: string
+  target: EffectTarget
+  ultimateMultiplier?: number
+}
 
 export type UltimateEffect =
   | DamageEffect
@@ -8,44 +15,38 @@ export type UltimateEffect =
   | AddStatEffect
   | NextUltimateDamageReductionEffect
 
-export interface DamageEffect {
+export interface DamageEffect extends BaseUltimateEffect {
   type: 'damage'
-  target: 'lowestHpEnemy' | 'allEnemies' | 'enemy' | 'self' | string
   value: number
 }
 
-export interface NextHitEnergyGainEffect {
+export interface NextHitEnergyGainEffect extends BaseUltimateEffect {
   type: 'nextHitEnergyGain'
-  target: 'self' | string
   energyGain: number
   hitCount: number
 }
 
-export interface ApplyAilmentEffect {
+export interface ApplyAilmentEffect extends BaseUltimateEffect {
   type: 'applyAilment'
-  target: 'enemy'
   ailment: AlimentId
   layers: number
 }
 
-export interface ApplyAilmentEqualSumEffect {
+export interface ApplyAilmentEqualSumEffect extends BaseUltimateEffect {
   type: 'applyAilmentEqualSum'
-  target: 'enemy'
   ailments: AlimentId[]
   applyTo: AlimentId
 }
 
-export interface AddStatEffect {
+export interface AddStatEffect extends BaseUltimateEffect {
   type: 'addStat'
-  target: 'self' | string
   stat: string
   value: number
   duration: number // ticks
 }
 
-export interface NextUltimateDamageReductionEffect {
+export interface NextUltimateDamageReductionEffect extends BaseUltimateEffect {
   type: 'nextUltimateDamageReduction'
-  target: 'enemy' | string
   reduction: number // 0.5 = 減免50%
   duration: number // ticks
   exclude?: string[] // 排除傷害類型

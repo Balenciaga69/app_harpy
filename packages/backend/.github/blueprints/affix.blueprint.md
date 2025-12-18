@@ -50,11 +50,11 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 ### 名詞定義統一
 
-- **AffixTemplate（詞綴模板）**
+- AffixTemplate（詞綴模板）
   - 靜態藍圖，定義觸發條件、行為類型與參數
-- **AffixInstance（詞綴實體）**
+- AffixInstance（詞綴實體）
   - 物品模板綁定的詞綴實例，含 affixTemplateId、sourceId、metadata、uniqueCounter
-- **Modifier / StatModifier**
+- Modifier / StatModifier
   - 由 AffixInstance 與 EffectTemplate 解析的純數值修飾，用於屬性運算
 
 ### 詞綴層次與轉換
@@ -114,11 +114,11 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 ## 參考構思範例
 
-- **賽前變數**
+- 賽前變數
   - 開局獲得 16 層充能
-- **敵人詞綴（普通）**
+- 敵人詞綴（普通）
   - 每三次攻擊第三次傷害 ×2.0
-- **敵人詞綴（Boss）**
+- 敵人詞綴（Boss）
   - 每三次攻擊第三次傷害 ×2.0，附加 2 層 Chill
     | 聖遺物詞綴 | 每次攻擊吸血 1%，可疊加最多 20 個 |
     | 裝備詞綴 | 生命值 <10% 時，復活率 +20%、復活生命 +15% |
