@@ -3,6 +3,14 @@
 ## _2025/12/18_
 
 - 研究 Backpack Battles、Skill Legends Royale 這兩款遊戲對於 Aliment 的處理方式
+- 跟 GPT 詢問以下內容可行性:
+  - Slay the Spire, Monster Train 的 地圖分支與節點機制、資源管理與戰利品節奏、隨機事件與遺物系統
+  - Path of Exile 的 傳奇裝備模板 (Unique Items)、沒有插槽概念
+  - Path of Exile 的 固定詞綴 (Affix) 與 修正項 (Modifier)
+  - Path of Exile 的 裝備欄位系統
+  - Skill Legends Royale 的 能量獲取與自動施放大招系統 (Ultimate)
+  - Backpack Battles 的 異常狀態 (Aliment) 堆疊機制
+  - Backpack Battles 的 Tick-based 1v1 自動戰鬥引擎
 
 ## _2025/12/17_
 

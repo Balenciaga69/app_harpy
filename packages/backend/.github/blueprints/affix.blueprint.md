@@ -50,11 +50,11 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 ### 名詞定義統一
 
-- AffixTemplate（詞綴模板）
+- **詞綴模板（AffixTemplate）**
   - 靜態藍圖，定義觸發條件、行為類型與參數
-- AffixInstance（詞綴實體）
+- **詞綴實體（AffixInstance）**
   - 物品模板綁定的詞綴實例，含 affixTemplateId、sourceId、metadata、uniqueCounter
-- Modifier / StatModifier
+- **修飾符（Modifier / StatModifier）**
   - 由 AffixInstance 與 EffectTemplate 解析的純數值修飾，用於屬性運算
 
 ### 詞綴層次與轉換

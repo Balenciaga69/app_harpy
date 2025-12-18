@@ -1,104 +1,179 @@
-# 異常狀態設計概述
+# 異常狀態（Ailment）設計
 
 ## 語意級
 
-### 異常狀態設計階層
+### 核心設計理念
 
-異常狀態系統分為靜態定義與動態實例兩個層次：
+異常狀態系統圍繞三個核心機制展開：
 
-#### AilmentTemplate（異常狀態模板）
+1. **層數堆疊**（Stack Accumulation）
+   - 相同異常狀態層數直接加總，不分來源
+   - 多個來源提供同一異常狀態 → 直接累加層數
+   - 參考《Backpack Battles》機制，簡化設計
+2. **觸發消耗**（Trigger & Decay）
+   - 異常狀態在每個 Tick 產生效果（如扣血、減速）
+   - 可設定自動遞減層數（如每 1000 Tick 衰減 10%）
+   - 觸發條件由事件系統管理，而非獨立計時器
+3. **異常-裝備連動**（Ailment-Equipment Synergy）
+   - 遊戲核心玩法：異常狀態觸發裝備被動效果
+   - 敵人中毒 → 我的裝備 A 觸發吸血
+   - 需要高效事件監聽系統支撐
 
-由設計師預先定義，遊戲啟動時全量載入：
+### 異常狀態列表與數值設計
 
-- 基本欄位：
-  - ID、名稱、類型（如 Chill、Burn、Poison 等）
-  - 視覺表現參數（圖示、顏色、動畫）
-- 疊加與層數規則：
-  - 是否可疊加
-  - 最大/最小疊層限制
-- 狀態管理規則：
-  - 是否可被清除
-  - 持續時間或觸發次數限制
-- 行為規則參數：
-  - 由 effectModule 決定的行為類型與參數（如每 tick 扣血百分比、減速等級）
+#### 中毒（Poison）
 
-#### AilmentInstance（異常狀態實例）
+- **層數效果**：1 層 = -1 HP（持續傷害，無層數上限）
+- **衰減規則**：每 1000 Tick 衰減 10%（最少 -10 層）
+- **觸發條件**：來自詞綴、技能或敵人特性
+- **特性**：純數值累加，與來源無關
 
-動態生成於戰鬥運行時，儲存在角色/敵人的戰鬥 Context 中：
+#### 冰緩（Chill）
 
-- 關鍵欄位：
-  - ailmentTemplateId：指向模板定義
-  - currentStack：當前疊層數
-  - source：狀態來源（詞綴、技能、事件等）
-  - metadata：額外運行時資料（如剩餘時間、觸發次數）
-- 生命週期：
-  - 狀態賦予時創建實例
-  - 每 Tick 執行 effectModule 定義的行為
-  - 清除條件觸發時銷毀實例
+- **層數效果**：1 層 = -1% 攻擊速度（上限 64 層）
+- **衰減規則**：每 1000 Tick 衰減 1 層，同時攻擊力也 -1
+- **屬性影響**：直接修改 attackSpeed、attackDamage
+- **反應機制**：玩家裝備可針對冰緩提供增益
 
-### 狀態實例設計
+#### 充能（Charge）
+
+- **層數效果**：1 層 = +1% 攻擊速度（上限 64 層）
+- **衰減規則**：每 1000 Tick 衰減 1 層，攻擊力也 -1
+- **屬性影響**：與冰緩相反，增強攻擊性能
+- **疊加**：與冰緩層數可同時存在
+
+#### 致盲（Blind）
+
+- **層數效果**：1 層 = -1% 命中率（上限 32 層）
+- **衰減規則**：每 1000 Tick 衰減 1 層，攻擊力也 -1
+- **屬性影響**：降低 accuracy 或 criticalChance
+- **戰術用途**：防守性異常狀態
+
+#### 嗜血（Bleed）
+
+- **層數效果**：1 層提供複合增益（上限 8 層）
+  - +1% 攻擊傷害吸血
+  - +1% 暴擊率
+  - +2% 暴擊加成（Critical Multiplier）
+- **衰減規則**：每 1000 Tick 衰減 1 層，攻擊力也 -1
+- **進攻性**：提升玩家傷害與生存能力
+- **稀有度**：相對難以獲得，收益最高
+
+### 時序與偏移機制
+
+異常狀態處理涉及全場多個單位（20+ 個），需要時序優化：
+
+#### 問題分析
+
+- **同步風險**：如無時序偏移，所有單位在同一毫秒「吸氣」（同時觸發扣血、遞減）
+  - CPU 壓力瞬間飆高
+  - 視覺上所有血條同時抖動，顯得生硬不自然
+- **解決方案**：Tick 偏移（Offset）
+  - 每個單位的異常狀態管理根據生成時間設置 0~1000ms 的隨機偏移
+  - 使全場單位的狀態處理「呼吸」分散開來
+  - CPU 負載平穩分佈，視覺效果自然流暢
 
 ## 架構級
 
-### 狀態處理流程
+### 異常狀態模板（AilmentTemplate）
 
-- 每 Tick 步驟：
-  - 觸發狀態效果
-  - 清除過期/可移除狀態
-  - 聚合所有異常狀態對 stat 的影響
+靜態定義，設計師配置：
 
-### 為何不採用類別處理器
+- **基本欄位**
+  - ID、名稱、類型（Poison / Chill / Charge / Blind / Bleed）
+  - 視覺表現（圖示、顏色、動畫）
+- **層數規則**
+  - 是否可疊加、最大/最小層數限制
+  - 衰減方式（固定值 / 百分比）、衰減週期（Tick 數）
+- **效果規則**
+  - 單層效果數值
+  - 屬性修飾類型（Add / Multi / More）
+  - 觸發條件與事件綁定
 
-- 類別處理器缺點：
-  - 需遍歷所有處理器，效率低
-  - 新增狀態需改核心代碼，維護成本高
+### 異常狀態實體（AilmentInstance）
+
+運行時實例，儲存在單位的戰鬥 Context 中：
+
+- **關鍵欄位**
+  - ailmentTemplateId：指向模板
+  - currentStack：當前層數
+  - source：狀態來源（詞綴 ID、技能 ID、敵人特性 ID）
+  - appliedTime：應用時間戳，用於計算偏移
+  - decayTick：距離下次衰減的 Tick 計數
+- **生命週期**
+  - 創建：詞綴或事件觸發時
+  - 更新：每 Tick 檢查衰減條件
+  - 銷毀：層數降至 0 或戰鬥結束
+
+### 事件監聽與連動
+
+異常狀態效果通過事件系統觸發裝備反應：
+
+- **監聽事件示例**
+  - `ON_POISON_APPLIED`：對方中毒時 → 我的裝備觸發吸血
+  - `ON_CHILL_STACK_CHANGE`：冰緩層數變化 → 更新屬性聚合
+  - `ON_BLEED_TRIGGER`：嗜血觸發時 → 增加我的暴擊
+- **性能優化**
+  - 使用選擇器模式過濾監聽器，避免全表掃描
+  - 批量更新屬性聚合結果，減少計算頻率
 
 ## 代碼級
 
-### AilmentTemplate 靜態定義
-
-異常狀態模板以資料驅動方式定義，格式範例（JSON）：
+### 異常狀態模板定義（JSON 範例）
 
 ```json
 {
-  "id": "chill",
-  "name": "冰緩",
+  "id": "poison",
+  "name": "中毒",
   "type": "debuff",
   "stackable": true,
-  "maxStack": 20,
-  "removable": true,
-  "effectModule": "slow_effect",
-  "params": {
-    "slowPercentage": 0.1,
-    "perStack": true
+  "maxStack": null,
+  "minStack": 0,
+  "decayMode": "percentage",
+  "decayValue": 10,
+  "decayPeriod": 1000,
+  "effectPerStack": {
+    "type": "damage",
+    "value": 1
   }
 }
 ```
 
-### EffectModule 行為規則
+### 核心邏輯流程
 
-行為規則由 effectModule 決定，每個 Tick 觸發一次：
+#### 應用異常狀態
 
-- effectModule 類型範例：
-  - `slow_effect`：每層減速固定百分比
-  - `damage_effect`：每層造成持續傷害
-  - `attribute_modifier`：每層修改屬性
-- 參數傳遞：通過 params 欄位傳遞行為所需參數，無需硬編碼
-- 執行流程：
-  1. 狀態系統每 Tick 遍歷所有 AilmentInstance
-  2. 查詢對應的 effectModule
-  3. 調用 effectModule 執行函式，傳入 params 與 currentStack
-  4. effectModule 計算並應用效果
+```
+1. 詞綴或事件觸發 → APPLY_AILMENT action
+2. 查詢或創建 AilmentInstance
+3. 若已存在相同異常 → currentStack += newStack
+4. 若新建 → 初始化並設置隨機 offset (0-1000ms)
+5. 註冊事件監聽器（供裝備反應）
+6. 更新屬性聚合結果
+```
 
-### Affix 附加異常狀態
+#### 每 Tick 異常狀態處理
 
-詞綴通過 APPLY_STATUS action 附加異常狀態：
+```
+1. 遍歷該單位所有 AilmentInstance
+2. 根據 offset，判斷是否觸發本 Tick 的效果
+3. 執行效果（扣血 / 減速 / 增益等）
+4. 檢查衰減條件，更新 currentStack
+5. 若層數 = 0，移除該實例
+6. 廣播事件，觸發裝備監聽器反應
+```
 
-- 行為執行：
-  - 監聽器捕獲事件（如 ON_HIT）
-  - 執行 action: "APPLY_STATUS"，指定目標 ailmentTemplateId 與疊層數
-  - 調用 Status System 的 ApplyStatusEffect
-- Affix 運作流程（以冰緩為例）：
-  - 事件觸發：攻擊命中敵人時觸發 ON_HIT
-  - 詞綴行為：監聽器捕獲事件，執行 APPLY_STATUS action
-  - 狀態應用：Status System 創建或更新 AilmentInstance，增加對應疊層
+#### 時序偏移實現
+
+```
+offset = random(0, 1000)
+if (currentTick % 1000 === offset) {
+  // 執行本單位的異常狀態效果
+  applyAilmentEffect()
+  checkDecay()
+}
+```
+
+### 防腐層（ACL）考量
+
+異常狀態系統與裝備系統間的耦合應通過事件系統隔離，避免直接引用。修改異常狀態規則時，僅需更新監聽器邏輯，無需觸及裝備模組。
