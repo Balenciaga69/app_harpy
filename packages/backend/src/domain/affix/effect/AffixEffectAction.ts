@@ -1,4 +1,4 @@
-import { AlimentId } from '../../../ailment/AlimentId'
+import { AlimentId } from '../../ailment/AlimentId'
 import { UnitStatModifierOperation } from '../../stats/StatModifier'
 import { UnitStats } from '../../stats/UnitStats'
 

@@ -1,4 +1,4 @@
-import { AlimentId } from '../../ailment/AlimentId'
+import { AlimentId } from '../ailment/AlimentId'
 
 export type UltimateEffect =
   | DamageEffect
@@ -23,14 +23,14 @@ export interface NextHitEnergyGainEffect {
 
 export interface ApplyAilmentEffect {
   type: 'applyAilment'
-  target: 'enemy' | 'allEnemies' | string
+  target: 'enemy'
   ailment: AlimentId
   layers: number
 }
 
 export interface ApplyAilmentEqualSumEffect {
   type: 'applyAilmentEqualSum'
-  target: 'enemy' | 'allEnemies' | string
+  target: 'enemy'
   ailments: AlimentId[]
   applyTo: AlimentId
 }
@@ -49,5 +49,4 @@ export interface NextUltimateDamageReductionEffect {
   reduction: number // 0.5 = 減免50%
   duration: number // ticks
   exclude?: string[] // 排除傷害類型
-  stackable?: boolean // 是否可疊加
 }

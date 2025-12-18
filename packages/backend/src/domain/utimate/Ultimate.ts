@@ -1,4 +1,4 @@
-import { I18nField } from '../../shared/I18nField'
+import { I18nField } from '../../shared/models/I18nField'
 import { UltimateEffect } from './UltimateEffect'
 
 export interface Ultimate {
