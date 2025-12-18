@@ -1,7 +1,7 @@
-import { EffectTarget } from '../../../../shared/models/EffectTarget'
-import { AlimentId } from '../../../ailment/models/AlimentId'
-import { UnitStatModifierOperation } from '../../../stats/models/StatModifier'
-import { UnitStats } from '../../../stats/models/UnitStats'
+import { EffectTarget } from '../../../shared/models/EffectTarget'
+import { AlimentId } from '../../ailment/AlimentId'
+import { UnitStatModifierOperation } from '../../stats/models/StatModifier'
+import { UnitStats } from '../../stats/models/UnitStats'
 
 interface BaseAffixEffectAction {
   type: string

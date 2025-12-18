@@ -1,5 +1,5 @@
-import { BaseInstanceFields, WithCreatedAt } from '../../../shared/models/BaseInstanceFields'
-import { AffixInstance } from '../../affix/models/AffixInstance'
+import { BaseInstanceFields, WithCreatedAt } from '../../shared/models/BaseInstanceFields'
+import { AffixInstance } from '../affix/AffixInstance'
 import { EquipmentSlot } from './ItemTemplate'
 
 export interface ItemInstance extends BaseInstanceFields, WithCreatedAt {

@@ -1,7 +1,7 @@
-import { ItemInstance } from '../item/models/ItemInstance'
-import { EquipmentSlot } from '../item/models/ItemTemplate'
+import { ItemInstance } from '../item/itemInstance'
+import { EquipmentSlot } from '../item/ItemTemplate'
 import { UnitStats } from '../stats/models/UnitStats'
-import { UltimateInstance } from '../ultimate/models/UltimateInstance'
+import { UltimateInstance } from '../ultimate/UltimateInstance'
 
 export interface CharacterInstance {
   id: string

@@ -1,8 +1,8 @@
 import { BaseInstanceFields, WithCreatedAt } from '../../shared/models/BaseInstanceFields'
 import { I18nField } from '../../shared/models/I18nField'
-import { AffixInstance } from '../affix/models/AffixInstance'
+import { AffixInstance } from '../affix/AffixInstance'
 import { UnitStats } from '../stats/models/UnitStats'
-import { UltimateInstance } from '../ultimate/models/UltimateInstance'
+import { UltimateInstance } from '../ultimate/UltimateInstance'
 
 export type EnemyRole = 'NORMAL' | 'ELITE' | 'BOSS'
 export interface EnemyInstance extends BaseInstanceFields, WithCreatedAt {

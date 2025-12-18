@@ -1,10 +1,10 @@
-import { EffectTarget } from '../../../shared/models/EffectTarget'
-import { AlimentId } from '../../ailment/models/AlimentId'
+import { EffectTarget } from '../../shared/models/EffectTarget'
+import { AlimentId } from '../ailment/AlimentId'
 
 interface BaseUltimateEffect {
-  type: string
-  target: EffectTarget
-  ultimateMultiplier?: number
+  readonly type: string
+  readonly target: EffectTarget
+  readonly ultimateMultiplier?: number
 }
 
 export type UltimateEffect =
@@ -49,5 +49,4 @@ export interface NextUltimateDamageReductionEffect extends BaseUltimateEffect {
   type: 'nextUltimateDamageReduction'
   reduction: number // 0.5 = 減免50%
   duration: number // ticks
-  exclude?: string[] // 排除傷害類型
 }
