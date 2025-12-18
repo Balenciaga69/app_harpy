@@ -1,5 +1,5 @@
 import { EffectTarget } from '../../../shared/models/EffectTarget'
-import { AlimentId } from '../../ailment/AlimentId'
+import { AilmentId } from '../../ailment/AilmentId'
 import { UnitStatModifierOperation } from '../../stats/models/StatModifier'
 import { UnitStats } from '../../stats/models/UnitStats'
 
@@ -17,7 +17,7 @@ export interface StatModifyAction extends BaseAffixEffectAction {
 
 export interface ApplyStatusAction extends BaseAffixEffectAction {
   type: 'APPLY_STATUS'
-  alimentId: AlimentId
+  alimentId: AilmentId
   target: EffectTarget
   stacks: number
 }

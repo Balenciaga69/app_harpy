@@ -11,7 +11,7 @@ export const UnitGenerator = {}
 export interface IUnit {
   id: string
   statSnapshot: UnitStats
-  aliments: Map<string, string> // alimentId , layers
+  ailments: Map<string, string> // alimentId , layers
   affixes: AffixInstance[]
 }
 

@@ -1,5 +1,5 @@
 import { EffectTarget } from '../../shared/models/EffectTarget'
-import { AlimentId } from '../ailment/AlimentId'
+import { AilmentId } from '../ailment/AilmentId'
 
 interface BaseUltimateEffect {
   readonly type: string
@@ -28,14 +28,14 @@ export interface NextHitEnergyGainEffect extends BaseUltimateEffect {
 
 export interface ApplyAilmentEffect extends BaseUltimateEffect {
   type: 'applyAilment'
-  ailment: AlimentId
+  ailment: AilmentId
   layers: number
 }
 
 export interface ApplyAilmentEqualSumEffect extends BaseUltimateEffect {
   type: 'applyAilmentEqualSum'
-  ailments: AlimentId[]
-  applyTo: AlimentId
+  ailments: AilmentId[]
+  applyTo: AilmentId
 }
 
 export interface AddStatEffect extends BaseUltimateEffect {
