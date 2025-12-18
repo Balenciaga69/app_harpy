@@ -1,4 +1,4 @@
-export interface AtAcquisitionInfo {
+export interface AtCreatedInfo {
   readonly stageProgress: number
   readonly difficulty: number
 }

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
-import { AffixInstanceGenerator } from '../affix/AffixInstanceGenerator'
-import { EquipmentInstance, ItemInstance, RelicInstance } from './models/itemInstance'
-import { EquipmentTemplate, ItemTemplate, RelicTemplate } from './models/ItemTemplate'
+import { ItemInstance, EquipmentInstance, RelicInstance } from '../../domain/item/models/ItemInstance'
+import { ItemTemplate, EquipmentTemplate, RelicTemplate } from '../../domain/item/models/ItemTemplate'
+import { AffixInstanceGenerator } from './AffixInstanceGenerator'
 
 const generateItemInstance = (
   template: ItemTemplate,
@@ -14,7 +14,7 @@ const generateItemInstance = (
     id: `item-${nanoid()}`,
     templateId: template.id,
     affixInstances: affixInstances,
-    atAcquisition: {
+    atCreated: {
       stageProgress,
       difficulty,
     },

@@ -1,11 +1,14 @@
-import { AtAcquisitionInfo } from './AtAcquisitionInfo'
+import { AtCreatedInfo } from './AtCreatedInfo'
 
 export interface BaseInstanceFields {
   readonly id: string
   readonly templateId: string
-  readonly atAcquisition: AtAcquisitionInfo
 }
 
-export interface InstanceHasSourceUnit {
+export interface WithCreatedAt {
+  readonly atCreated: AtCreatedInfo
+}
+
+export interface WithSourceUnit {
   readonly sourceUnitId: string
 }

@@ -1,12 +1,12 @@
 import { nanoid } from 'nanoid'
-import { AffixInstance } from './models/AffixInstance'
+import { AffixInstance } from '../../domain/affix/models/AffixInstance'
 
 const generate = (templateIds: string[], difficulty: number, stageProgress: number, sourceUnitId: string) => {
   const templates: AffixInstance[] = templateIds.map((templateId) => ({
     id: `affix-instance-${nanoid()}`,
     templateId,
     sourceUnitId,
-    atAcquisition: {
+    atCreated: {
       stageProgress,
       difficulty,
     },
