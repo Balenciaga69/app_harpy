@@ -17,7 +17,7 @@ export interface StatModifyAction extends BaseAffixEffectAction {
 
 export interface ApplyStatusAction extends BaseAffixEffectAction {
   type: 'APPLY_STATUS'
-  alimentId: AilmentId
+  ailmentId: AilmentId
   target: EffectTarget
   stacks: number
 }
