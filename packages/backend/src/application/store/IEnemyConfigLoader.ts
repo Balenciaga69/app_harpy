@@ -12,7 +12,7 @@ export interface EnemyConfig {
 
 export interface EnemyConfigDTO {
   configs: EnemyConfig[]
-  spawnInfo: EnemySpawnInfo[]
+  spawnInfos: EnemySpawnInfo[]
 }
 
 export interface IEnemyConfigLoader {

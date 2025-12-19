@@ -1,5 +1,6 @@
 import { BaseInstanceFields, WithCreatedAt } from '../../shared/models/BaseInstanceFields'
 import { I18nField } from '../../shared/models/I18nField'
+import { SpawnInfo, WithChapter } from '../../shared/models/SpawnInfo'
 import { AffixInstance } from '../affix/AffixInstance'
 import { UltimateInstance } from '../ultimate/UltimateInstance'
 
@@ -22,8 +23,4 @@ export interface EnemyTemplate {
   roleConfigs: Record<EnemyRole, EnemyRoleConfig>
 }
 
-export interface EnemySpawnInfo {
-  readonly templateId: string
-  readonly weight: number
-  readonly chapters: Array<1 | 2 | 3>
-}
+export interface EnemySpawnInfo extends SpawnInfo, WithChapter {}

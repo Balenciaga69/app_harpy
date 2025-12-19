@@ -1,5 +1,5 @@
-import { StageType } from '../../../domain/stage'
-import { RandomHelper } from '../../../shared/helpers/RandomHelper'
+import { StageType } from '../../domain/stage'
+import { RandomHelper } from '../../shared/helpers/RandomHelper'
 
 const LEVEL_COUNT = 10
 const ELITE_POSITION = 5

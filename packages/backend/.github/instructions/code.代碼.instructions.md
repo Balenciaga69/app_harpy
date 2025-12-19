@@ -6,29 +6,30 @@ Provide project context and coding guidelines that AI should follow when generat
 
 ### 關於代碼
 
-- 乾淨代碼
-- 低耦合
-- 高內聚
-- 可維護性強
-- 易讀性高
-- 在寫方法與類別的時候要預先想好，這東西是要被單元測試的(但你不用先寫測試)。
-- 遵循SOLID原則(尤其是單一職責原則最重要)
-- 善用設計模式
-- 命名有意義
-- KISS,YAGNI,DRY 原則很注重
-- 避免魔法數字和魔法字串
-- 代碼就是最好的文檔
-- 物件關係不應形成循環依賴，依賴應該是單向的
-- 如果你要寫 markdown 請以中文為主。
-- 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
-- 一個檔案裡面應該只會包含一個類別或是一個主要功能的程式碼。(Type,Interface 也是如此) 當我搜尋檔案名可以很有效率的找到我想要的東西。
-- 當你 Create,Update,Delete 也要關注是否有連動的檔案或spec.md
+- 基礎原-+
+  則
+  - 乾淨代碼
+  - 低耦合
+  - 高內聚
+  - 可維護性強
+  - 易讀性高
+  - 命名有意義
+  - 避免魔法數字和魔法字串
+  - KISS,YAGNI,DRY 原則很注重
+  - 代碼就是最好的文檔(理不用任何comment也能懂主要邏輯)
+- 更佳實踐
+  - 善用設計模式
+  - 在寫方法與類別的時候要預先想好，這東西是要被單元測試的(但你不用先寫測試)。
+  - 遵循SOLID原則(尤其是單一職責原則最重要)
+  - 物件關係不應形成循環依賴，依賴應該是單向的
+  - 如果你要寫 markdown 請以中文為主。
+  - 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
+  - 當你 Create,Update,Delete 也要關注是否有連動的檔案或spec.md
 
 ### 如果這是 OOP
 
 - 建構子不要有過多參數，若有就要用設計模式簡化。
-- 禁止使用全局單例
-  - 原因: 測試困難(狀態共享)、隱藏依賴、生命週期失控、難以支援多實例場景、跨語言移植困難
+- 禁止使用全局單例，這會測試困難(狀態共享)、隱藏依賴、生命週期失控、難以支援多實例場景、跨語言移植困難
 - 每個目錄最多 10 個檔案，超過應重構或分類
 
 ### 關於註解
@@ -42,7 +43,7 @@ Provide project context and coding guidelines that AI should follow when generat
 - Methods or function logic comments use // single-line description
 - I don't need any @param, @returns type comments, as these are redundant
 - I found that my colleague's computer does not support Chinese comments, so please
-- ZH_TW comments throughout.
+- ## ZH_TW comments throughout.
 
 ### Typescript 檔案與資料夾與物件命名規範
 
@@ -84,7 +85,7 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
 - 因為我安裝了 eslint-plugin-boundaries
 - 我要讓內部遵循 單向依賴規則：箭頭永遠指向內層。
 - 我將模組分成多層結構。同時若模組規模過大，我會在模組內再細分 sub-modules。
-- domain/app/adapter/infra
+- domain/app/infra
   - domain 核心概念幾乎全部分佈在此
     - 聚合根、實體、值物件、領域服務、領域事件
     - domain 層是核心價值所在，必須保持其純粹性，不被任何外部技術細節污染。

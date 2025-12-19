@@ -3,6 +3,10 @@ import { EnemyConfigList, EnemyWeightList } from '../../data/enemy/enemy-spawn.d
 
 export class InternalEnemyConfigLoader implements IEnemyConfigLoader {
   async load(): Promise<EnemyConfigDTO> {
-    return Promise.resolve({ configs: EnemyConfigList, spawnInfo: EnemyWeightList } as EnemyConfigDTO)
+    const dto: EnemyConfigDTO = {
+      configs: EnemyConfigList,
+      spawnInfos: EnemyWeightList,
+    }
+    return Promise.resolve(dto)
   }
 }
