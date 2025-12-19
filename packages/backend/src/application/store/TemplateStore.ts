@@ -25,7 +25,13 @@ export class TemplateStore {
   async initialize() {
     await this.loadEnemyTemplates()
     this.isLoaded = true
+    this.relics.get('ddd')?.tags
   }
+
+  // 我們來盤點多個業務情境
+  // 1. 拿 enemySpawnInfo 找出 chapter 3 可用敵人 我需要裡面的 id 與權重
+  // 2. 拿 生成資訊命中權重 這樣是否代表 enemySpawnInfo 更適合用陣列存取而非 Map?
+  // 然後每個 map 衍伸出方法提供 has get 之類的功能?
 
   async loadEnemyTemplates() {
     const { configs, spawnInfo } = await this.enemyConfigLoader.load()

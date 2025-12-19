@@ -18,5 +18,4 @@ export interface EquipmentTemplate extends ItemTemplate {
 
 export interface RelicTemplate extends ItemTemplate {
   readonly stackLimit: number
-  currentStacks: number
 }

@@ -38,7 +38,7 @@ const generateRelic = (
   stageProgress: number
 ): RelicInstance => {
   const item = generateItemInstance(template, ownerUnitId, difficulty, stageProgress)
-  return { ...item, currentStacks: template.currentStacks }
+  return { ...item } as RelicInstance
 }
 
 export const ItemGenerator = {
