@@ -1,0 +1,16 @@
+export type UnitStatType =
+  | 'maxHp'
+  | 'currentHp'
+  | 'maxEnergy'
+  | 'currentEnergy'
+  | 'energyRegen'
+  | 'energyGainOnAttack'
+  | 'attackDamage'
+  | 'attackCooldown'
+  | 'damageReduction'
+  | 'evasion'
+  | 'criticalChance'
+  | 'criticalMultiplier'
+  | 'resurrectionChance'
+  | 'resurrectionHpPercent'
+export type UnitStats = Record<UnitStatType, number>
