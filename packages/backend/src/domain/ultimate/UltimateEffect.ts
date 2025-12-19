@@ -1,5 +1,6 @@
 import { EffectTarget } from '../../shared/models/EffectTarget'
 import { AilmentId } from '../ailment/AilmentId'
+import { UnitStatType, UnitStats } from '../stats/models/UnitStats'
 
 interface BaseUltimateEffect {
   readonly type: string
@@ -40,7 +41,7 @@ export interface ApplyAilmentEqualSumEffect extends BaseUltimateEffect {
 
 export interface AddStatEffect extends BaseUltimateEffect {
   type: 'addStat'
-  stat: string
+  stat: UnitStatType
   value: number
   duration: number // ticks
 }

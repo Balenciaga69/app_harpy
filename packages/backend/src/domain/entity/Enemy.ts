@@ -1,7 +1,6 @@
 import { BaseInstanceFields, WithCreatedAt } from '../../shared/models/BaseInstanceFields'
 import { I18nField } from '../../shared/models/I18nField'
 import { AffixInstance } from '../affix/AffixInstance'
-import { UnitStats } from '../stats/models/UnitStats'
 import { UltimateInstance } from '../ultimate/UltimateInstance'
 
 export type EnemyRole = 'NORMAL' | 'ELITE' | 'BOSS'
@@ -20,6 +19,5 @@ export interface EnemyTemplate {
   id: string
   name: I18nField
   desc: I18nField
-  staticStats: UnitStats
-  roleConfigs: Map<EnemyRole, EnemyRoleConfig>
+  roleConfigs: Record<EnemyRole, EnemyRoleConfig>
 }
