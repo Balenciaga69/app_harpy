@@ -30,21 +30,21 @@
 
 #### 第一階段：章節開始時生成關卡配置
 
-章節生成器在章節開始時生成 10 個關卡配置（Stage Config）：
+章節生成器在章節開始時生成 10 個關卡配置（Stage Template）：
 
 - 根據分佈規則配置每關的類型（NORMAL / ELITE / BOSS / EVENT）
-- 第 5 關必定為 ELITE_CONFIG
-- 第 10 關必定為 BOSS_CONFIG
+- 第 5 關必定為 ELITE_Template
+- 第 10 關必定為 BOSS_Template
 - 其餘關卡（1-4、6-9 關）根據機率分佈生成：
-  - 12% 機率 → EVENT_CONFIG
-  - 88% 機率 → NORMAL_CONFIG
+  - 12% 機率 → EVENT_Template
+  - 88% 機率 → NORMAL_Template
 - 整個配置陣列在此階段完成並鎖定，供本章節使用
 
 #### 第二階段：玩家進入關卡時生成實例
 
 當玩家點開具體關卡時，根據對應配置生成實例（Stage Instance）：
 
-- 讀取該關的 Stage Config
+- 讀取該關的 Stage Template
 - 根據配置類型決定實例化邏輯：
   - **戰鬥節點實例（Combat Stage Instance）**
     - 從敵人池選擇並生成敵人實例

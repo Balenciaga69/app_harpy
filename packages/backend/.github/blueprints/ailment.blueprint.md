@@ -93,7 +93,7 @@
 
 ## 架構級
 
-### 異常狀態配置（Ailment Config）
+### 異常狀態配置（Ailment Template）
 
 靜態定義，由設計師配置。存儲異常狀態的核心參數與行為規則：
 
@@ -119,7 +119,7 @@
 
 #### 關鍵欄位
 
-- `ailmentConfigId`：指向對應的異常狀態配置
+- `ailmentTemplateId`：指向對應的異常狀態配置
 - `currentStack`：當前層數
 - `source`：狀態來源（詞綴 ID、技能 ID、敵人特性 ID 等）
 - `appliedTime`：應用時間戳，用於計算 Tick 偏移

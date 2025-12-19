@@ -1,8 +1,9 @@
-import { EnemySpawnInfo, EnemyTemplatePackage } from './interfaces'
-import { chemist_package } from './templates/chemist-package'
+import { EnemyConfig } from '../../application/loader/IEnemyConfigLoader'
+import { EnemySpawnInfo } from '../../domain/entity/Enemy'
+import { chemist_config } from './templates/chemist-package'
 
 export const EnemyWeightList: EnemySpawnInfo[] = [
-  { templateId: chemist_package.enemyTemplate.id, weight: 100, chapters: [1, 2, 3] },
+  { templateId: chemist_config.enemyTemplate.id, weight: 100, chapters: [1, 2, 3] },
 ]
 
-export const EnemyTemplates: EnemyTemplatePackage[] = [chemist_package]
+export const EnemyConfigList: EnemyConfig[] = [chemist_config]

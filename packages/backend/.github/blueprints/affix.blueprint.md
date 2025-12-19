@@ -52,7 +52,7 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 - **詞綴模板（Affix Template）**
   - 靜態藍圖，定義觸發條件、行為類型與參數
-  - 注：當前名稱為「Template」，但本質為靜態配置，未來可考慮改名為「AffixConfig」以提高語義準確性
+  - 注：當前名稱為「Template」，但本質為靜態配置，未來可考慮改名為「AffixTemplate」以提高語義準確性
 - **詞綴實例（Affix Instance）**
   - 物品或敵人在運行時承載的詞綴實例，包含 `affixTemplateId`、`sourceId`、`metadata`、`uniqueCounter` 等字段
 - **修飾符（Modifier / Stat Modifier）**

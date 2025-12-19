@@ -21,3 +21,9 @@ export interface EnemyTemplate {
   desc: I18nField
   roleConfigs: Record<EnemyRole, EnemyRoleConfig>
 }
+
+export interface EnemySpawnInfo {
+  readonly templateId: string
+  readonly weight: number
+  readonly chapters: Array<1 | 2 | 3>
+}

@@ -36,7 +36,7 @@
 
 ### 技能定義
 
-**終極技能配置（Ultimate Config）** 包含：
+**終極技能配置（Ultimate Template）** 包含：
 
 - 技能 ID（如破甲劍、冰刃等）
 - 基礎效能（傷害、命中率、冷卻等）
@@ -67,7 +67,7 @@
 
 終極技能實例（Ultimate Instance，又稱 Skill Instance）包含：
 
-- `ultimateConfigId`：指向對應的技能配置
+- `ultimateTemplateId`：指向對應的技能配置
 - `attachedAffixes`：已附加的外掛詞綴陣列（`AffixInstance[]`）
 
 ### 外掛詞綴應用流程（代碼級）
