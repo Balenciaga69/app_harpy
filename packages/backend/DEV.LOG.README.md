@@ -1,5 +1,9 @@
 # 摘要
 
+## _2025/12/19_
+
+- 建立 Run, Nodes, Enemy, Event 各種模板與生成機制
+
 ## _2025/12/18_
 
 - 研究 Backpack Battles、Skill Legends Royale 這兩款遊戲對於 Aliment 的處理方式

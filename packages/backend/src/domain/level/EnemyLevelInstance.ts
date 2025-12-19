@@ -1,4 +1,4 @@
-import { EnemyInstance } from '../entity/Enemy'
+import { EnemyInstance } from '../entity/Enemy/Enemy'
 
 export interface EnemyLevelInstance {
   id: string
