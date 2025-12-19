@@ -1,6 +1,6 @@
 import { EffectTarget } from '../../shared/models/EffectTarget'
 import { AilmentId } from '../ailment/AilmentId'
-import { UnitStatType, UnitStats } from '../stats/models/UnitStats'
+import { UnitStatType } from '../stats/models/UnitStats'
 
 interface BaseUltimateEffect {
   readonly type: string

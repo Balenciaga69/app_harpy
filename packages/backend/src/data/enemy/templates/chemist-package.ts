@@ -1,8 +1,7 @@
-import { EnemyConfig } from '../../../application/loader/IEnemyConfigLoader'
+import { EnemyConfig } from '../../../application/store/IEnemyConfigLoader'
 import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffect'
 import { EnemyTemplate } from '../../../domain/entity/Enemy'
-import { UltimateEffect } from '../../../domain/ultimate/UltimateEffect'
 import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
 
 const enemy_template_chemist: EnemyTemplate = {
@@ -58,23 +57,21 @@ export const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   },
   tags: ['POISON'],
   energyCost: 100,
-  effectIds: ['ult_effect_chemist_gain_shield_30', 'ult_effect_chemist_poison_attacker_30'],
-}
-
-// UltimateEffect: 獲得護盾
-export const ult_effect_chemist_gain_shield_30: UltimateEffect = {
-  type: 'addStat',
-  target: 'SELF',
-  stat: 'damageReduction',
-  value: 30,
-  duration: 10000, // 100SEC
-}
-// UltimateEffect: 攻擊者受到 30 層中毒
-export const ult_effect_chemist_poison_enemy_30: UltimateEffect = {
-  type: 'applyAilment',
-  target: 'ENEMY',
-  ailment: 'POISON',
-  layers: 30,
+  effect: [
+    {
+      type: 'addStat',
+      target: 'SELF',
+      stat: 'damageReduction',
+      value: 30,
+      duration: 10000, // 100SEC
+    },
+    {
+      type: 'applyAilment',
+      target: 'ENEMY',
+      ailment: 'POISON',
+      layers: 30,
+    },
+  ],
 }
 
 export const chemist_config: EnemyConfig = {
@@ -82,5 +79,4 @@ export const chemist_config: EnemyConfig = {
   affixTemplates: [affix_chemist_poison_resist_1],
   affixEffects: [affix_effect_chemist_poison_resist_1],
   ultimateTemplate: ultimate_chemist_poison_bomb_shield,
-  ultimateEffects: [ult_effect_chemist_gain_shield_30, ult_effect_chemist_poison_enemy_30],
 }

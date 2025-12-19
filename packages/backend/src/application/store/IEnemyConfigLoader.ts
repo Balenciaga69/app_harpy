@@ -1,7 +1,6 @@
 import { AffixTemplate } from '../../domain/affix/AffixTemplate'
 import { AffixEffect } from '../../domain/affix/effect/AffixEffect'
 import { EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
-import { UltimateEffect } from '../../domain/ultimate/UltimateEffect'
 import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
 
 export interface EnemyConfig {
@@ -9,12 +8,11 @@ export interface EnemyConfig {
   affixTemplates: AffixTemplate[]
   affixEffects: AffixEffect[]
   ultimateTemplate: UltimateTemplate
-  ultimateEffects: UltimateEffect[]
 }
 
 export interface EnemyConfigDTO {
   configs: EnemyConfig[]
-  weights: EnemySpawnInfo[]
+  spawnInfo: EnemySpawnInfo[]
 }
 
 export interface IEnemyConfigLoader {
