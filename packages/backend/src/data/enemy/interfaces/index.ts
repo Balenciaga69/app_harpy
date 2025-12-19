@@ -1,6 +1,6 @@
 import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffect'
-import { EnemyTemplate } from '../../../domain/entity/Enemy/Enemy'
+import { EnemyTemplate } from '../../../domain/entity/Enemy'
 import { UltimateEffect } from '../../../domain/ultimate/UltimateEffect'
 import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
 

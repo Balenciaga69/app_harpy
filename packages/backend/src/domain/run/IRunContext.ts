@@ -1,4 +1,4 @@
-import { LevelType } from '../level/LevelType'
+import { LevelType } from '../level'
 
 export interface IRunContext {
   id: string

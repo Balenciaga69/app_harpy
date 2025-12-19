@@ -1,9 +1,9 @@
-import { AffixTemplate } from '../domain/affix/AffixTemplate'
-import { AffixEffect } from '../domain/affix/effect/AffixEffect'
-import { EnemyTemplate } from '../domain/entity/Enemy/Enemy'
-import { UltimateEffect } from '../domain/ultimate/UltimateEffect'
-import { UltimateTemplate } from '../domain/ultimate/UltimateTemplate'
-import { EnemyTemplatePackage } from './enemy/interfaces'
+import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixEffect } from '../../../domain/affix/effect/AffixEffect'
+import { EnemyTemplate } from '../../../domain/entity/Enemy'
+import { UltimateEffect } from '../../../domain/ultimate/UltimateEffect'
+import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
+import { EnemyTemplatePackage } from '../interfaces'
 
 const enemy_template_chemist: EnemyTemplate = {
   id: 'enemy_template_chemist',
@@ -77,7 +77,7 @@ export const ult_effect_chemist_poison_enemy_30: UltimateEffect = {
   layers: 30,
 }
 
-export const chemist_templatePackage: EnemyTemplatePackage = {
+export const chemist_package: EnemyTemplatePackage = {
   enemyTemplate: enemy_template_chemist,
   affixTemplates: [affix_chemist_poison_resist_1],
   affixEffects: [affix_effect_chemist_poison_resist_1],

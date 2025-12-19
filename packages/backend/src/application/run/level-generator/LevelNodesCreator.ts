@@ -1,4 +1,4 @@
-import { LevelType } from '../../../domain/level/LevelType'
+import { LevelType } from '../../../domain/level'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 
 const LEVEL_COUNT = 10
