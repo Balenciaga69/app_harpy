@@ -50,35 +50,40 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 
 ### 名詞定義統一
 
-- 詞綴模板（AffixTemplate）
+- **詞綴模板（Affix Template）**
   - 靜態藍圖，定義觸發條件、行為類型與參數
-- 詞綴實體（AffixInstance）
-  - 物品模板綁定的詞綴實例，含 affixTemplateId、sourceId、metadata、uniqueCounter
-- 修飾符（Modifier / StatModifier）
-  - 由 AffixInstance 與 EffectTemplate 解析的純數值修飾，用於屬性運算
+  - 注：當前名稱為「Template」，但本質為靜態配置，未來可考慮改名為「AffixConfig」以提高語義準確性
+- **詞綴實例（Affix Instance）**
+  - 物品或敵人在運行時承載的詞綴實例，包含 `affixTemplateId`、`sourceId`、`metadata`、`uniqueCounter` 等字段
+- **修飾符（Modifier / Stat Modifier）**
+  - 由 `AffixInstance` 與 `EffectTemplate` 解析產生的純數值修飾單元
+  - 用於屬性聚合系統的計算，不涉及複雜邏輯
 
-### 詞綴層次與轉換
+### 詞綴轉換層次
 
-- Affix 屬戰鬥外靜態資源。
-- 戰鬥時，Affix 轉換為 1..n 個 Modifier 並送入聚合系統。
-- 轉換過程由專門的 EffectProcessor 負責，將 AffixInstance 與 EffectTemplate 解析為 StatModifier。
-- 聚合系統維持穩定介面，不直接依賴轉換細節。
+- **靜態層（Static Layer）**
+  - Affix 為戰鬥外的靜態資源定義
+- **運行時層（Runtime Layer）**
+  - 戰鬥時，Affix 轉換為 1 到 n 個 `Modifier` 並送入屬性聚合系統
+  - 轉換過程由專門的 `EffectProcessor` 負責，將 `AffixInstance` 與 `EffectTemplate` 解析為 `StatModifier`
+  - 聚合系統維持穩定介面，不直接依賴轉換細節
 
-### 屬性聚合系統
+### 屬性聚合系統設計
 
-聚合系統要點：
+聚合系統核心要點：
 
-- 僅依賴 StatModifier，不直接認識 AffixTemplate 或 preCombat。
-- 轉換器由上層注入，轉換 AffixInstance 與 EffectTemplate 為 ModifierInstance。
-- 聚合系統維持穩定介面，便於擴充來源。
+- 僅依賴 `StatModifier`，不直接認識 `AffixTemplate` 或戰前系統
+- 轉換器由上層注入，將 `AffixInstance` 與 `EffectTemplate` 轉換為 `ModifierInstance`
+- 聚合系統維持穩定接口，便於新增修飾來源或擴充功能
 
 ### 詞綴綁定結構
 
-- 詞綴直接綁定在模板中：
-  - 物品模板綁定：
-    - itemTemplate.affixes = [affixId1, affixId2, ...]（無權重、無選擇）
-  - 敵人模板綁定：
-    - enemyTemplate.affixes（按難度模式不同可設定不同詞綴陣列）
+詞綴直接綁定在對應的模板中，由模板定義自身的所有效果：
+
+- **物品模板綁定**
+  - `itemTemplate.affixes = [affixId1, affixId2, ...]`（無權重、無選擇、無動態 roll）
+- **敵人模板綁定**
+  - enemyTemplate.affixes（按難度模式不同可設定不同詞綴陣列）
   - 詞綴定義：
     - ID
     - Tags

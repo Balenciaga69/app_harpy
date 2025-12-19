@@ -19,7 +19,7 @@
 - Plugin Affix 是直接注入至 Ultimate 的動態增強機制，無需額外 UI 交互。
 - 注入來源：
   - 獎勵系統（Post-Combat Reward）
-  - 事件系統（Level Event）
+  - 事件系統（Stage Event）
   - 商店系統（Shop）
 - 注入方式：直接將 Plugin Affix 附加至 UltimateInstance 的詞綴陣列。
 - 多層支持：一個技能可累積多個 Plugin Affix，效果自動疊加。
@@ -36,17 +36,28 @@
 
 ### 技能定義
 
-- Ultimate Gem Template 包含：
-  - 技能 ID（如破甲劍、冰刃等）。
-  - 基礎效能（傷害、命中率、冷卻等）。
-  - 可用 Plugin Affix 池（該技能能附加的詞綴清單）。
+**終極技能配置（Ultimate Config）** 包含：
 
-### Plugin Affix 應用流程
+- 技能 ID（如破甲劍、冰刃等）
+- 基礎效能（傷害、命中率、冷卻等）
+- 可用外掛詞綴池（該技能能附加的詞綴清單）
+- 注：當前名稱為「UltimateTemplate」，但本質為靜態配置
 
-- 獎勵系統、事件系統或商店系統決定注入的 Plugin Affix。
-- 驗證該詞綴未被附加過（可選，取決於設計）。
-- 創建 AffixInstance 並加入 ultimateInstance.attachedAffixes。
-- 詞綴在戰鬥中自動生效，無需額外管理。
+### 外掛詞綴（Plugin Affix）應用流程
+
+外掛詞綴是直接注入至終極技能的動態增強機制，無需額外 UI 交互：
+
+#### 注入來源
+
+- 獎勵系統（Post-Combat Reward）
+- 事件系統（Stage Event）
+- 商店系統（Shop）
+
+#### 應用方式
+
+- 直接將 `AffixInstance` 附加至 `UltimateInstance` 的詞綴陣列
+- 一個技能可累積多個外掛詞綴，效果自動疊加
+- 外掛詞綴在戰鬥中自動生效，無需額外管理
 
 ---
 
@@ -54,22 +65,23 @@
 
 ### 數據結構（暫定）
 
-- 技能實例 UltimateInstance（SkillInstance）：
-  - ultimateTemplateId: string
-  - attachedAffixes: AffixInstance[] // 已附加的 Plugin Affix
+終極技能實例（Ultimate Instance，又稱 Skill Instance）包含：
 
-### Plugin Affix 應用流程（代碼級）
+- `ultimateConfigId`：指向對應的技能配置
+- `attachedAffixes`：已附加的外掛詞綴陣列（`AffixInstance[]`）
 
-- 獎勵系統、事件系統或商店系統決定注入的 Plugin Affix。
-- 驗證該詞綴未被附加過（可選，取決於設計）。
-- 創建 AffixInstance 並加入 ultimateInstance.attachedAffixes。
-- 持久化到存檔。
+### 外掛詞綴應用流程（代碼級）
+
+1. 獎勵系統、事件系統或商店系統決定注入的外掛詞綴
+2. 驗證該詞綴未被附加過（可選，取決於設計）
+3. 創建 `AffixInstance` 並加入 `ultimateInstance.attachedAffixes`
+4. 持久化到存檔
 
 ### 戰鬥前準備
 
-- 載入已裝備技能的所有 AffixInstance。
-- 註冊為事件監聽器與修飾符來源。
-- 技能根據 Plugin Affix 改變行為。
+- 載入已裝備技能的所有 `AffixInstance`
+- 註冊為事件監聽器與修飾符來源
+- 技能根據外掛詞綴改變行為和效果
 
 ---
 

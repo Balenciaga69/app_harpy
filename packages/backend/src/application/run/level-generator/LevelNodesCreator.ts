@@ -1,4 +1,4 @@
-import { LevelType } from '../../../domain/level'
+import { StageType } from '../../../domain/stage'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 
 const LEVEL_COUNT = 10
@@ -7,10 +7,10 @@ const BOSS_POSITION = 10
 const EVENT_PROBABILITY = 0.12
 
 const create = (seed: number) => {
-  const result: Record<number, LevelType> = {}
+  const result: Record<number, StageType> = {}
   const rngHelper = new RandomHelper(seed)
   for (let i = 1; i <= LEVEL_COUNT; i++) {
-    const levelType = (() => {
+    const stageType = (() => {
       switch (true) {
         case i === ELITE_POSITION:
           return 'ELITE'
@@ -20,11 +20,11 @@ const create = (seed: number) => {
           return rngHelper.next() < EVENT_PROBABILITY ? 'EVENT' : 'NORMAL'
       }
     })()
-    result[i] = levelType
+    result[i] = stageType
   }
   return result
 }
 
-export const LevelNodesCreator = {
+export const StageNodesCreator = {
   create: create,
 }

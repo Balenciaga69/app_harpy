@@ -1,14 +1,15 @@
-import { LevelType } from '../level'
+import { StageType } from '../stage'
 
 export interface IRunContext {
   id: string
   seed: number
-  currentChapter: number
-  currentLevel: number
   gold: number
+  currentChapter: number
+  currentStage: number
+  encounteredEnemyIds: string[]
   chapters: Record<number, ChapterInfo>
 }
+
 interface ChapterInfo {
-  levelNodes: Record<number, LevelType>
-  encounteredEnemyIds: Set<string>
+  stageNodes: Record<number, StageType>
 }
