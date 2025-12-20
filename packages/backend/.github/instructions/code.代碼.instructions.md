@@ -6,8 +6,7 @@ Provide project context and coding guidelines that AI should follow when generat
 
 ### 關於代碼
 
-- 基礎原-+
-  則
+- 基礎原則
   - 乾淨代碼
   - 低耦合
   - 高內聚
@@ -101,5 +100,4 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
     - 下游上下文應該建立防腐層來保護自己免受上游變化的影響。
   - 內層絕不能直接引用外層的實作，若需要外層的能力必須依賴外層定義的介面
 - 介面是非常重要的，這樣我們才能解耦與替換實作與測試
-- 每個 sub-module 或 module 都應該有一個 index.ts 作為進入點，並且只暴露必要的介面與類別
 - 其餘地方不會有任何 index.ts

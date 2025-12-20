@@ -11,6 +11,3 @@
   - 請調整排版
 
 ---
-
-ISSUE:文件要求「一個檔案只包含一個類別或主要功能，連 Type 和 Interface 也是」 。
-Ans:在現代 TypeScript 開發中，將高度關聯的小型 Interface 或簡單的 Utility Function 放在同一個檔案（尤其是同一個 Domain 下）通常能提高開發效率。強制拆分會導致檔案數量爆炸，增加在專案間切換的認知負擔，這種做法偏向 Java 時代的舊習慣。
