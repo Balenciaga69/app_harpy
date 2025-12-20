@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid'
 import { EquipmentInstance, ItemInstance, RelicInstance } from '../../domain/item/itemInstance'
 import { EquipmentTemplate, ItemTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
 import { AffixInstantiator } from './AffixInstantiator'
-import { ChapterLevel } from '../../shared/models/SpawnInfo'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 
 const instantiateItem = (params: {
   template: ItemTemplate
@@ -50,7 +50,7 @@ const instantiateRelic = (
   stage: number
 ): RelicInstance => {
   const item = instantiateItem({ template, ownerUnitId, difficulty, chapter, stage })
-  return { ...item } as RelicInstance
+  return { ...item, currentStacks: 1 } as RelicInstance
 }
 
 export const ItemInstantiator = {

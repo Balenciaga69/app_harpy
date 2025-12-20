@@ -1,4 +1,4 @@
-import { StageType } from '../../domain/stage'
+import { StageType } from '../../domain/stage/Stage'
 import { RandomHelper } from '../../shared/helpers/RandomHelper'
 
 const LEVEL_COUNT = 10

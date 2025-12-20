@@ -1,6 +1,6 @@
 import { EnemyConfig } from '../../../application/store/IEnemyConfigLoader'
 import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
-import { AffixEffect } from '../../../domain/affix/effect/AffixEffect'
+import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemyTemplate } from '../../../domain/entity/Enemy'
 import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
 
@@ -34,7 +34,7 @@ const affix_chemist_poison_resist_1: AffixTemplate = {
   effectIds: ['affix_effect_chemist_poison_resist_1'],
 }
 
-const affix_effect_chemist_poison_resist_1: AffixEffect = {
+const affix_effect_chemist_poison_resist_1: AffixEffectTemplate = {
   id: 'affix_effect_chemist_poison_resist_1',
   trigger: 'ON_BEFORE_DAMAGE',
   conditions: [{ comparator: 'EQUAL_TO', property: 'DAMAGE_TYPE', target: 'SELF', value: 'POISON' }],

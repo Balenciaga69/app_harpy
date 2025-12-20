@@ -1,14 +1,14 @@
-import { SpawnInfo } from '../models/SpawnInfo'
+import { TemplateWeightInfo } from '../models/TemplateWeightInfo'
 import { RandomHelper } from './RandomHelper'
 
-type ValidInfo = { info: SpawnInfo; cumWeight: number }
+type ValidInfo = { info: TemplateWeightInfo; cumWeight: number }
 
-const roll = (seed: number, spawnInfo: SpawnInfo[]) => {
+const roll = (seed: number, weightInfo: TemplateWeightInfo[]) => {
   const randomHelper = new RandomHelper(seed)
   let cumWeight = 0
   const validInfos: ValidInfo[] = []
 
-  spawnInfo.forEach((info) => {
+  weightInfo.forEach((info) => {
     if (info.weight <= 0) return
     cumWeight += info.weight
     validInfos.push({ info, cumWeight })
@@ -22,7 +22,7 @@ const roll = (seed: number, spawnInfo: SpawnInfo[]) => {
     if (randomValue < cumWeight) return info.templateId
   }
 
-  return spawnInfo[spawnInfo.length - 1].templateId
+  return weightInfo[weightInfo.length - 1].templateId
 }
 
 export const TemplateRoller = {

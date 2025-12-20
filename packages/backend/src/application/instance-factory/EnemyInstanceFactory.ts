@@ -1,4 +1,4 @@
-import { EnemyInstance, EnemyRole, EnemyTemplate } from '../../domain/entity/Enemy'
+import { EnemyInstance, EnemyRole, EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
 import { IRunContext } from '../../domain/run/IRunContext'
 import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
@@ -6,34 +6,33 @@ import { TemplateRoller } from '../../shared/helpers/TemplateRoller'
 import { AffixInstantiator } from '../instantiator/AffixInstantiator'
 import { TemplateStore } from '../store/TemplateStore'
 
-export const EnemyInstanceGenerator = () => {
+export const EnemyInstanceFactory = () => {
   generate
 }
 
 const generate = (ctx: IRunContext, templateStore: TemplateStore) => {
   // 取得可用敵人列表
-  const availableTemplates = getAvailableEnemyTemplates(ctx, templateStore)
-  // 隨機選一位敵人 只選可用的敵人
-  const spawnInfos = templateStore
-    .getAllEnemySpawnInfos()
-    .filter((info) => availableTemplates.some((temp) => temp.id === info.templateId))
-
-  const rolledEnemyTemplateId = TemplateRoller.roll(ctx.seed, spawnInfos)
+  const [_, availableInfos] = getAvailableEnemyTemplateAndInfos(ctx, templateStore)
+  // 骰出敵人
+  const rolledEnemyTemplateId = TemplateRoller.roll(ctx.seed, availableInfos)
   // 實體化敵人
   const enemyInstance = createInstance(ctx, templateStore, rolledEnemyTemplateId)
   return enemyInstance
 }
 
-function getAvailableEnemyTemplates(ctx: IRunContext, templateStore: TemplateStore): EnemyTemplate[] {
-  // 取得已遇過的敵人ID
+/** 取得目前關卡可用的 EnemyTemplate 與 EnemySpawnInfo */
+function getAvailableEnemyTemplateAndInfos(
+  ctx: IRunContext,
+  templateStore: TemplateStore
+): [EnemyTemplate[], EnemySpawnInfo[]] {
   const encounteredIds = ctx.encounteredEnemyIds
   const currentChapter = ctx.currentChapter
-  const info = templateStore.getEnemySpawnInfosByChapter(currentChapter)
-  const templates = info
+  const info = templateStore
+    .getEnemySpawnInfosByChapter(currentChapter)
     .filter((i) => !encounteredIds.includes(i.templateId))
-    .map((i) => templateStore.getEnemy(i.templateId))
-    .filter((e) => e !== undefined)
-  return templates
+  const templates = info.map((i) => templateStore.getEnemy(i.templateId)).filter((e) => e !== undefined)
+
+  return [templates, info]
 }
 
 const createInstance = (ctx: IRunContext, templateStore: TemplateStore, rolledEnemyTemplateId: string) => {

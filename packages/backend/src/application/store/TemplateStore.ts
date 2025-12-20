@@ -1,23 +1,25 @@
 import { AffixTemplate } from '../../domain/affix/AffixTemplate'
-import { AffixEffect } from '../../domain/affix/effect/AffixEffect'
+import { AffixEffectTemplate } from '../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
+import { ItemRollConstraint } from '../../domain/item/ItemRollConstraint'
 import { EquipmentTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
 import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
-import { ChapterLevel } from '../../shared/models/SpawnInfo'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 import { IEnemyConfigLoader } from './IEnemyConfigLoader'
 
 export class TemplateStore {
   // Maps
   enemies: Map<string, EnemyTemplate> = new Map()
+  itemRollConstraints: Map<string, ItemRollConstraint> = new Map()
   enemySpawnInfos: Map<string, EnemySpawnInfo> = new Map()
   affixes: Map<string, AffixTemplate> = new Map()
-  affixEffects: Map<string, AffixEffect> = new Map()
+  affixEffects: Map<string, AffixEffectTemplate> = new Map()
   ultimates: Map<string, UltimateTemplate> = new Map()
   equipments: Map<string, EquipmentTemplate> = new Map()
   relics: Map<string, RelicTemplate> = new Map()
   // Loaders
   private enemyConfigLoader: IEnemyConfigLoader
-  private isLoaded: boolean = false
+  private isLoaded: boolean = false //TODO: 載入限制尚未被採用
   // ctor
   constructor(enemyConfigLoader: IEnemyConfigLoader) {
     this.enemyConfigLoader = enemyConfigLoader
@@ -52,11 +54,25 @@ export class TemplateStore {
   hasEnemySpawnInfo(id: string): boolean {
     return this.enemySpawnInfos.has(id)
   }
+
+  /** 取得指定 chapter 的 EnemySpawnInfo */
   getEnemySpawnInfosByChapter(chapter: ChapterLevel): EnemySpawnInfo[] {
     return Array.from(this.enemySpawnInfos.values()).filter((info) => info.chapters.includes(chapter))
   }
   getAllEnemySpawnInfos(): EnemySpawnInfo[] {
     return Array.from(this.enemySpawnInfos.values())
+  }
+
+  getAllItemRollConstraints(): ItemRollConstraint[] {
+    return Array.from(this.itemRollConstraints.values())
+  }
+
+  getItemRollConstraint(id: string): ItemRollConstraint | undefined {
+    return this.itemRollConstraints.get(id)
+  }
+
+  hasItemRollConstraint(id: string): boolean {
+    return this.itemRollConstraints.has(id)
   }
 
   getAffix(id: string): AffixTemplate | undefined {
@@ -66,7 +82,7 @@ export class TemplateStore {
     return this.affixes.has(id)
   }
 
-  getAffixEffect(id: string): AffixEffect | undefined {
+  getAffixEffect(id: string): AffixEffectTemplate | undefined {
     return this.affixEffects.get(id)
   }
   hasAffixEffect(id: string): boolean {

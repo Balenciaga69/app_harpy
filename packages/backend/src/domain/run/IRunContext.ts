@@ -1,5 +1,5 @@
-import { ChapterLevel } from '../../shared/models/SpawnInfo'
-import { StageType } from '../stage'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+import { StageType } from '../stage/Stage'
 
 export interface IRunContext {
   id: string
@@ -8,7 +8,7 @@ export interface IRunContext {
   currentChapter: ChapterLevel
   currentStage: number
   encounteredEnemyIds: string[]
-  chapters: Record<number, ChapterInfo>
+  chapters: Record<ChapterLevel, ChapterInfo>
 }
 
 interface ChapterInfo {

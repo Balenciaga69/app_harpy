@@ -1,4 +1,4 @@
-import { ChapterLevel } from './SpawnInfo'
+import { ChapterLevel } from './TemplateWeightInfo'
 
 /**
  * 所有 Instance 都會包含的欄位

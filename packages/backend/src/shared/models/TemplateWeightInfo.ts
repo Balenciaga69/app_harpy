@@ -1,7 +1,7 @@
 /**
  * 準備生成的相關資訊
  */
-export interface SpawnInfo {
+export interface TemplateWeightInfo {
   templateId: string
   weight: number
 }

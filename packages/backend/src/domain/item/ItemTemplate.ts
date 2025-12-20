@@ -1,7 +1,7 @@
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
 
-export type ItemRarity = 'COMMON' | 'UNCOMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
+export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
 export type EquipmentSlot = 'HEAD' | 'BODY' | 'LEGS' | 'WEAPON' | 'ACCESSORY'
 export interface ItemTemplate {
   readonly id: string

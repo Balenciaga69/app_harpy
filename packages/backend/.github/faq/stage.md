@@ -7,17 +7,17 @@
 
 ## What is a stage and a chapter?
 
-- Stage 是組成 Chapter 的基本單位
-- Chapter 固定由 10 個 Stages 組成
-- Run 有 3 個 Chapters
-- Stage 分為 Enemy 與 Event 兩種 Stage
-  - Enemy Stage 包含 Normal, Elite, Boss Stage
-  - Stage 5 is always an Elite Stage
-  - Stage 10 is always a Boss Stage
-  - Event Stage 包含各種隨機事件
+- 關卡是組成章節的基本單位
+- 章節固定由 10 個關卡組成
+- Run 有 3 個 章節
+- 關卡 分為 敵人關卡 與 事件關卡
+  - 敵人關卡包含 普通, 精英, 首領 三種
+  - 每章節第 5 關為 精英關卡
+  - 每章節第 10 關為 首領關卡
+  - 事件關卡包含各種隨機事件
 
 ## How do a stage and chapter work?
 
-- 當 Player 進入新的 Chapter 時, 會生成 10 個 Stage Nodes, 並分配每個 Node 類型
-- 當 Player 到達 Stage Node 時, 會根據 Node 類型生成對應的 Stage Instance
-- 如果是 Enemy Stage, 則會骰出符合條件的 EnemyTemplate, 再添加上 Difficulty 後生成 EnemyInstance 資訊存放在 [TODO:] 某個地方。
+- 當玩家進入新的章節時, 會生成 10 個關卡節點, 並分配每個節點類型
+- 當玩家到達關卡節點時, 會根據節點類型生成對應的關卡實例
+- 如果是敵人關卡, 則會骰出符合條件的敵人模板, 再添加上難度後生成敵人實例資訊存放在 [TODO:] 某個地方。
