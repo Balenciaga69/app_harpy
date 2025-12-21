@@ -1,6 +1,6 @@
-import { EquipmentInstance, RelicInstance } from '../item/itemInstance'
-import { EquipmentSlot } from '../item/ItemTemplate'
-import { UltimateInstance } from '../ultimate/UltimateInstance'
+import { EquipmentInstance, RelicInstance } from '../../../domain/item/itemInstance'
+import { EquipmentSlot } from '../../../domain/item/ItemTemplate'
+import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
 
 export interface ICharacterContext {
   readonly id: string

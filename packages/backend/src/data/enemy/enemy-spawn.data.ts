@@ -1,4 +1,4 @@
-import { EnemyConfig } from '../../application/store/IEnemyConfigLoader'
+import { EnemyConfig } from '../../application/store/loader/IEnemyConfigLoader'
 import { EnemySpawnInfo } from '../../domain/entity/Enemy'
 import { chemist_config } from './templates/chemist-package'
 

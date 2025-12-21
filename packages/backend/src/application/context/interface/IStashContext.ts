@@ -1,4 +1,4 @@
-import { ItemInstance } from '../item/itemInstance'
+import { ItemInstance } from '../../../domain/item/itemInstance'
 
 export interface IStashContext {
   readonly id: string

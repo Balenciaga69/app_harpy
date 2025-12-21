@@ -1,4 +1,4 @@
-import { EnemyConfig } from '../../../application/store/IEnemyConfigLoader'
+import { EnemyConfig } from '../../../application/store/loader/IEnemyConfigLoader'
 import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
 import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemyTemplate } from '../../../domain/entity/Enemy'

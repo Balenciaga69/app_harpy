@@ -2,7 +2,11 @@ import { TagType } from '../../../shared/models/TagType'
 import { EquipmentSlot, ItemRarity } from '../ItemTemplate'
 
 // 物品生成修飾符介面(modifier)
-export type ItemRollModifier = EquipmentRollSlotModifier | ItemRollRarityModifier | ItemRollTagModifier
+export type ItemRollModifier =
+  | EquipmentRollSlotModifier
+  | ItemRollRarityModifier
+  | ItemRollTagModifier
+  | ItemRollIdModifier
 
 // 裝備插槽
 export type EquipmentRollSlotModifier = { type: 'EQUIPMENT_SLOT'; slot: EquipmentSlot } & BaseRollModifier

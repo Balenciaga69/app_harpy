@@ -1,12 +1,11 @@
-import { ICharacterContext } from '../../domain/context/ICharacterContext'
-import { IStashContext } from '../../domain/context/IStashContext'
 import { ItemInstance } from '../../domain/item/itemInstance'
 import { TagType } from '../../shared/models/TagType'
-import { TemplateStore } from '../store/TemplateStore'
-
-const countTags = (items: ItemInstance[], templateStore: TemplateStore): Partial<Record<TagType, number>> => {
+import { IAppContext } from '../context/interface/IAppContext'
+// TODO: 該專案分類錯誤位置 記得更換
+const countTags = (appCtx: IAppContext, items: ItemInstance[]): Partial<Record<TagType, number>> => {
+  const { itemStore } = appCtx
   const ids = items.map((e) => e.id).flat()
-  const tags = templateStore.getManyItems(ids).flatMap((item) => item.tags)
+  const tags = itemStore.getManyItems(ids).flatMap((item) => item.tags)
   const tagCntMap: Partial<Record<TagType, number>> = {}
   for (const tag of tags) {
     tagCntMap[tag] = (tagCntMap[tag] ?? 0) + 1
@@ -14,18 +13,31 @@ const countTags = (items: ItemInstance[], templateStore: TemplateStore): Partial
   return tagCntMap
 }
 
+const recordToList = (record: Partial<Record<TagType, number>>) => {
+  return Object.entries(record).map(([tag, count]) => ({ tag: tag as TagType, count }))
+}
+
+type CountResult = {
+  record: Partial<Record<TagType, number>>
+  toList: () => { tag: TagType; count: number }[]
+}
+
 export const TagCounter = {
-  countAllItemTags(charCtx: ICharacterContext, stashCtx: IStashContext, templateStore: TemplateStore) {
-    const equipments = Object.values(charCtx.equipments).filter(Boolean)
-    const relics = charCtx.relics
-    const stashItems = stashCtx.items
-    return countTags([...equipments, ...relics, ...stashItems], templateStore)
+  countAllItemTags(appCtx: IAppContext): CountResult {
+    const { items } = appCtx.stashContext
+    const { equipments, relics } = appCtx.characterContext
+    const equipmentList = Object.values(equipments).filter(Boolean)
+    const relicList = relics
+    const record = countTags(appCtx, [...equipmentList, ...relicList, ...items])
+    return { record, toList: () => recordToList(record) }
   },
-  countEquippedTags(charCtx: ICharacterContext, templateStore: TemplateStore) {
-    const equipments = Object.values(charCtx.equipments).filter(Boolean)
-    return countTags(equipments, templateStore)
+  countEquippedTags(appCtx: IAppContext) {
+    const equipments = Object.values(appCtx.characterContext.equipments).filter(Boolean)
+    const record = countTags(appCtx, equipments)
+    return { record, toList: () => recordToList(record) }
   },
-  countRelicTags(charCtx: ICharacterContext, templateStore: TemplateStore) {
-    return countTags(charCtx.relics, templateStore)
+  countRelicTags(appCtx: IAppContext) {
+    const record = countTags(appCtx, appCtx.characterContext.relics)
+    return { record, toList: () => recordToList(record) }
   },
 }

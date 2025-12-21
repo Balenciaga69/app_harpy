@@ -1,6 +1,6 @@
-import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
-import { ItemRollModifier } from '../item/roll/ItemRollModifier'
-import { StageType } from '../stage/Stage'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
+import { StageType } from '../../../domain/stage/Stage'
 
 export interface IRunContext {
   readonly id: string

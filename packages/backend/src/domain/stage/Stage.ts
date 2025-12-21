@@ -1,6 +1,6 @@
 import { I18nField } from '../../shared/models/I18nField'
 import { EnemyInstance } from '../entity/Enemy'
-import { IRunContext } from '../context/IRunContext'
+import { IRunContext } from '../../application/context/interface/IRunContext'
 
 export type StageType = 'NORMAL' | 'ELITE' | 'BOSS' | 'EVENT'
 
