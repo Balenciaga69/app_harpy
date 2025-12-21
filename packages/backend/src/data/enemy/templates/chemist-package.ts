@@ -48,7 +48,7 @@ const affix_effect_chemist_poison_resist_1: AffixEffectTemplate = {
   ],
 }
 
-export const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
+const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb_shield',
   name: { tw: '劇毒護盾', en: 'Toxic Shield' },
   desc: {

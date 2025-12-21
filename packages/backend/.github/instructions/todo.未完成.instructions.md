@@ -1,3 +1,7 @@
+---
+applyTo: '/*.ts, /*.md'
+---
+
 ## 已經可以:
 
 - 可以在單一 Chapter 生成十個 StageNodes

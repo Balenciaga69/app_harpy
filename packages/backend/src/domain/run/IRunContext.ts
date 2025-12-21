@@ -1,4 +1,5 @@
 import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+import { ItemRollModifier } from '../item/roll/ItemRollModifier'
 import { StageType } from '../stage/Stage'
 
 export interface IRunContext {
@@ -9,6 +10,7 @@ export interface IRunContext {
   currentStage: number
   encounteredEnemyIds: string[]
   chapters: Record<ChapterLevel, ChapterInfo>
+  rollModifiers: ItemRollModifier[]
 }
 
 interface ChapterInfo {

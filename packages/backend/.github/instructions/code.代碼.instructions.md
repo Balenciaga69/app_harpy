@@ -2,8 +2,6 @@
 applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
 ---
 
-Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
-
 ### 關於代碼
 
 - 基礎原則
@@ -22,7 +20,8 @@ Provide project context and coding guidelines that AI should follow when generat
   - 遵循SOLID原則(尤其是單一職責原則最重要)
   - 物件關係不應形成循環依賴，依賴應該是單向的
   - 如果你要寫 markdown 請以中文為主。
-  - 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
+  - 我偏好業界最佳實踐、已被驗證過成熟的方案，而非創新或實驗性質的東西。
+  - 我在命名以及架構上偏好使用通用語言，就是最接近業界標準的作法與定義。
   - 當你 Create,Update,Delete 也要關注是否有連動的檔案或spec.md
 
 ### 如果這是 OOP

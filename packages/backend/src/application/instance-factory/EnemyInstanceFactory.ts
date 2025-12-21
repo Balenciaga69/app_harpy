@@ -2,7 +2,7 @@ import { EnemyInstance, EnemyRole, EnemySpawnInfo, EnemyTemplate } from '../../d
 import { IRunContext } from '../../domain/run/IRunContext'
 import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
-import { TemplateRoller } from '../../shared/helpers/TemplateRoller'
+import { WeightRoller } from '../../shared/helpers/WeightRoller'
 import { AffixInstantiator } from '../instantiator/AffixInstantiator'
 import { TemplateStore } from '../store/TemplateStore'
 
@@ -14,7 +14,8 @@ const generate = (ctx: IRunContext, templateStore: TemplateStore) => {
   // 取得可用敵人列表
   const [_, availableInfos] = getAvailableEnemyTemplateAndInfos(ctx, templateStore)
   // 骰出敵人
-  const rolledEnemyTemplateId = TemplateRoller.roll(ctx.seed, availableInfos)
+  const forRollInfos = availableInfos.map((info) => ({ id: info.templateId, weight: info.weight }))
+  const rolledEnemyTemplateId = WeightRoller.rollTemplate(ctx.seed, forRollInfos)
   // 實體化敵人
   const enemyInstance = createInstance(ctx, templateStore, rolledEnemyTemplateId)
   return enemyInstance
@@ -35,12 +36,13 @@ function getAvailableEnemyTemplateAndInfos(
   return [templates, info]
 }
 
+/** 實體化 Enemy */
 const createInstance = (ctx: IRunContext, templateStore: TemplateStore, rolledEnemyTemplateId: string) => {
   const difficulty = DifficultyHelper.getDifficultyFactor(ctx.currentChapter, ctx.currentStage)
   const stageEnemyRole = ctx.chapters[ctx.currentChapter].stageNodes[ctx.currentStage]
   const enemyTemplate = templateStore.getEnemy(rolledEnemyTemplateId) // TODO: 找不到就拋錯
   const enemyRoleConfig = enemyTemplate?.roleConfigs[stageEnemyRole as EnemyRole] // TODO: 有錯就拋錯
-  // 實體化附加物
+  // 實體化 詞綴
   const affixInstances = AffixInstantiator.instantiateMany({
     templateIds: enemyRoleConfig?.affixIds ?? [],
     chapter: ctx.currentChapter,
@@ -49,6 +51,7 @@ const createInstance = (ctx: IRunContext, templateStore: TemplateStore, rolledEn
     sourceUnitId: rolledEnemyTemplateId,
   })
 
+  // 實體化 大絕招
   const ultimateInstance: UltimateInstance = {
     id: `ultimate-instance-${ctx.seed}-${enemyRoleConfig?.ultimateId}`,
     templateId: enemyRoleConfig?.ultimateId || '',
@@ -57,6 +60,7 @@ const createInstance = (ctx: IRunContext, templateStore: TemplateStore, rolledEn
     atCreated: { chapter: ctx.currentChapter, stage: ctx.currentStage, difficulty: difficulty },
   }
 
+  // 組合成 EnemyInstance
   const enemyInstance: EnemyInstance = {
     affixes: affixInstances,
     id: `enemy-instance-${rolledEnemyTemplateId}-${ctx.seed}`,
