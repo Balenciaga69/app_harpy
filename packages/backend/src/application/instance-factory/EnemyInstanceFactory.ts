@@ -1,5 +1,5 @@
 import { EnemyInstance, EnemyRole, EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
-import { IRunContext } from '../../domain/run/IRunContext'
+import { IRunContext } from '../../domain/context/IRunContext'
 import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../shared/helpers/WeightRoller'
@@ -15,7 +15,7 @@ const generate = (ctx: IRunContext, templateStore: TemplateStore) => {
   const [_, availableInfos] = getAvailableEnemyTemplateAndInfos(ctx, templateStore)
   // 骰出敵人
   const forRollInfos = availableInfos.map((info) => ({ id: info.templateId, weight: info.weight }))
-  const rolledEnemyTemplateId = WeightRoller.rollTemplate(ctx.seed, forRollInfos)
+  const rolledEnemyTemplateId = WeightRoller.roll(ctx.seed, forRollInfos)
   // 實體化敵人
   const enemyInstance = createInstance(ctx, templateStore, rolledEnemyTemplateId)
   return enemyInstance

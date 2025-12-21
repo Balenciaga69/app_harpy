@@ -100,7 +100,7 @@ export class TemplateStore {
   hasUltimate(id: string): boolean {
     return this.ultimates.has(id)
   }
-  // === Item ===
+  // === Equipment ===
   getEquipment(id: string): EquipmentTemplate | undefined {
     return this.equipments.get(id)
   }
@@ -113,5 +113,22 @@ export class TemplateStore {
   }
   hasRelic(id: string): boolean {
     return this.relics.has(id)
+  }
+  // === Item ===
+  getManyItems(ids: string[]): (EquipmentTemplate | RelicTemplate)[] {
+    const items: (EquipmentTemplate | RelicTemplate)[] = []
+    for (const id of ids) {
+      const equipment = this.getEquipment(id)
+      if (equipment) {
+        items.push(equipment)
+        continue
+      }
+      const relic = this.getRelic(id)
+      if (relic) {
+        items.push(relic)
+        continue
+      }
+    }
+    return items
   }
 }

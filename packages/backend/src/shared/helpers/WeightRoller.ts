@@ -30,5 +30,5 @@ const getRolledId = (seed: number, validInfos: ValidInfo[], cumWeight: number) =
 }
 
 export const WeightRoller = {
-  rollTemplate: roll,
+  roll,
 }
