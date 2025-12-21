@@ -6,10 +6,10 @@ import { WeightRoller } from '../../shared/helpers/WeightRoller'
 import { AffixInstantiator } from '../instantiator/AffixInstantiator'
 
 export const EnemyInstanceFactory = () => {
-  generate
+  generateRandomEnemyInstance
 }
 
-const generate = (appCtx: IAppContext) => {
+const generateRandomEnemyInstance = (appCtx: IAppContext) => {
   const { seed } = appCtx.runContext
   // 取得可用敵人列表
   const [_, availableInfos] = getAvailableEnemyTemplateAndInfos(appCtx)
