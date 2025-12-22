@@ -1,12 +1,14 @@
-import { ItemRarity } from '../../domain/item/ItemTemplate'
-import { ItemRollConfig, ItemRollSourceType } from '../../domain/item/roll/ItemRollConfig'
+import { ItemRarity, ItemTemplate } from '../../domain/item/ItemTemplate'
+import { ItemRollConfig, ItemRollSourceType, ItemRollType } from '../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../domain/item/roll/ItemRollModifier'
+import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../shared/helpers/WeightRoller'
 import { IAppContextService } from '../context/service/IAppContextService'
+import { ItemInstantiator } from '../instantiator/ItemInstantiator'
 import { TagCounter } from './TagCounter'
 
 const generate = (service: IAppContextService, generationSource: ItemRollSourceType) => {
-  const { characterContext, runContext, stashContext, itemStore } = service.getAppContext()
+  const { runContext, itemStore } = service.getAppContext()
   // 取得靜態物品掉落限制表
   const staticRollConfig = itemStore.getItemRollConfig(generationSource)
   if (!staticRollConfig) throw new Error('TODO: 拋領域錯誤')
@@ -14,30 +16,51 @@ const generate = (service: IAppContextService, generationSource: ItemRollSourceT
   const modifiers = getLatestItemRollModifiers(service)
   const itemType = rollItemType(runContext.seed, staticRollConfig)
   const itemRarity = rollItemRarity(runContext.seed, staticRollConfig, modifiers)
-  // const rolledItem = templateStore 骰物品
+  const availableItemTemplates = fetchAvailableItemTemplates(service, itemType, itemRarity)
+  const rolledItemTemplateId = rollItemTemplate(runContext.seed, availableItemTemplates)
+  return createItemInstance(service, rolledItemTemplateId, itemType)
 }
 
 const getLatestItemRollModifiers = (service: IAppContextService): ItemRollModifier[] => {
-  /**
-   * 將根據玩家當前上下文（如已啟用的裝備、遺物、倉庫物品等）動態計算物品生成權重修飾符。
-   * 具體包括：
-   * - 根據特定屬性標籤（如毒、火等）在玩家所有持有物品中的分布情況，調整對應類型物品的生成概率。(O)
-   * - 根據玩家持有某些特殊遺物的數量或狀態，動態提升該遺物相關物品的生成權重。(O)
-   * - 根據物品的最大堆疊限制（MaxStack=1），若玩家已持有該物品，則在生成時移除該物品的生成概率。
-   * - 需要對玩家倉庫及已裝備物品進行聚合查詢，以獲取完整的物品分布資訊。
-   * - 最終返回根據上述規則動態計算後、且未過期（durationStages !== 0）的 ItemRollModifier 列表。
-   */
   const runCtx1 = service.getAppContext().runContext
   const nextRollModifiers = [
     ...runCtx1.rollModifiers.filter((mod) => mod.durationStages !== 0),
-    ...getHighFreqTagModifiers(service), // 當局有效不該存入 runContext
-    ...highStackRelicModifiers(service), // 當局有效不該存入 runContext
+    ...getHighFrequencyTagModifiers(service), // 當局有效不該存入 runContext
+    ...getHighStackRelicModifiers(service), // 當局有效不該存入 runContext
   ]
-  // service.setRunContext({ ...runCtx1, rollModifiers: nextRollModifiers })
   return nextRollModifiers
 }
 
-const getHighFreqTagModifiers = (service: IAppContextService) => {
+/** 取得已排除限制的物品樣板 */
+const fetchAvailableItemTemplates = (service: IAppContextService, itemType: ItemRollType, itemRarity: ItemRarity) => {
+  if (itemType === 'RELIC') {
+    const items = service
+      .getAppContext()
+      .itemStore.getAllRelics()
+      .filter((item) => item.rarity === itemRarity && IsItemGenerationAllowed(service, item))
+    return items
+  }
+  return []
+}
+const IsItemGenerationAllowed = (service: IAppContextService, itemTemplate: ItemTemplate) => {
+  const { characterContext, runContext, itemStore } = service.getAppContext()
+  const constraint = itemStore.getItemRollConstraint(itemTemplate.id)
+  if (!constraint) return true
+  // 如果有篇章限制 且 不再當前篇章中 則排除
+  if (constraint.chapters && !constraint.chapters.includes(runContext.currentChapter)) return false
+  // 如果有職業限制 且 不符合角色職業 則排除
+  if (constraint.professionIds && !constraint.professionIds.includes(characterContext.professionId)) return false
+  // 如果是屬於敵人或事件掉落的物品 則排除
+  if (
+    (!!constraint.eventIds && constraint.eventIds.length > 0) ||
+    (!!constraint.enemyIds && constraint.enemyIds?.length > 0)
+  )
+    return false
+  return true
+}
+
+/** 找出已裝備高頻率標籤物品轉換成 tag 修飾符 */
+const getHighFrequencyTagModifiers = (service: IAppContextService) => {
   const threshold = 5
   const equippedTags = TagCounter.countEquippedTags(service.getAppContext()).toList()
   const highFreqTags = equippedTags.filter((t) => t.count >= threshold).map((t) => t.tag)
@@ -50,13 +73,14 @@ const getHighFreqTagModifiers = (service: IAppContextService) => {
   }))
   return modifiers
 }
-
-const highStackRelicModifiers = (service: IAppContextService): ItemRollModifier[] => {
+/** 找出高堆疊數物品轉換成 id 修飾符 */
+const getHighStackRelicModifiers = (service: IAppContextService): ItemRollModifier[] => {
   const { characterContext, itemStore } = service.getAppContext()
   const relics = characterContext.relics
+  const threshold = 5
   // Filter relics with high stacks (>=5) and not at max stack limit
   const highStackRelics = relics.filter((r) => {
-    const isHighStack = r.currentStacks >= 5
+    const isHighStack = r.currentStacks >= threshold
     const relicTemplate = itemStore.getRelic(r.templateId)
     const notAtMax = relicTemplate ? r.currentStacks < relicTemplate.stackLimit : false
     return isHighStack && notAtMax
@@ -71,27 +95,49 @@ const highStackRelicModifiers = (service: IAppContextService): ItemRollModifier[
   }))
 }
 
+/** 骰物品類型 */
 const rollItemType = (seed: number, rollConfig: ItemRollConfig) => {
   const itemTypeWeightList = Object.entries(rollConfig.itemTypeWeights).map(([itemType, weight]) => ({
-    id: itemType,
+    id: itemType as ItemRollType,
     weight: weight,
   }))
-  return WeightRoller.roll(seed, itemTypeWeightList)
+  return WeightRoller.roll<ItemRollType>(seed, itemTypeWeightList)
 }
 
-const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): string => {
-  // Aggregate rarity modifiers
+/** 骰稀有度 */
+const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]) => {
+  // 找出 rarity 相關的 mods
   const rarityModifiers = modifiers.filter((mod) => mod.type === 'RARITY')
+  // 聚合同一 rarity 的 mod
   const aggregatedMods = new Map<ItemRarity, number>()
   for (const mod of rarityModifiers) {
     aggregatedMods.set(mod.rarity, (aggregatedMods.get(mod.rarity) ?? 1) + mod.multiplier)
   }
-  // Build weighted rarity list
   const rarityWeightList = Object.entries(rollConfig.rarityWeights).map(([rarity, weight]) => ({
-    id: rarity,
+    id: rarity as ItemRarity,
     weight: weight * (aggregatedMods.get(rarity as ItemRarity) ?? 1),
   }))
+  // 骰出 rarity
+  return WeightRoller.roll<ItemRarity>(seed, rarityWeightList)
+}
 
-  // Roll for rarity
-  return WeightRoller.roll(seed, rarityWeightList)
+/** 骰物品樣板 */
+const rollItemTemplate = (seed: number, templates: ItemTemplate[]) => {
+  const templateWeightList = templates.map((template) => ({
+    id: template.id,
+    weight: 1, // TODO: 未來可能會有不同權重
+  }))
+  return WeightRoller.roll<string>(seed, templateWeightList)
+}
+
+const createItemInstance = (service: IAppContextService, templateId: string, itemType: ItemRollType) => {
+  if (itemType !== 'RELIC') throw new Error('TODO: 拋領域錯誤,暫時沒有其他類型')
+  const { characterContext, runContext, itemStore } = service.getAppContext()
+  const { id: ownerId } = characterContext
+  const { currentChapter, currentStage } = runContext
+  const template = itemStore.getRelic(templateId)
+  if (!template) throw new Error('TODO: 拋領域錯誤')
+  const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
+  const instance = ItemInstantiator.instantiateRelic(template, ownerId, difficulty, currentChapter, currentStage)
+  return instance
 }

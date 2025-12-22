@@ -23,12 +23,14 @@ type CountResult = {
 }
 
 export const TagCounter = {
+  /** 找出所有物品標籤的計數 */
   countAllItemTags(appCtx: IAppContext): CountResult {
     const { items } = appCtx.stashContext
     const { relics } = appCtx.characterContext
     const record = countTags(appCtx, [...relics, ...items])
     return { record, toList: () => recordToList(record) }
   },
+  /** 找出已裝備物品標籤的計數 */
   countEquippedTags(appCtx: IAppContext) {
     const equipped = Object.values(appCtx.characterContext.relics).filter(Boolean)
     const record = countTags(appCtx, equipped)

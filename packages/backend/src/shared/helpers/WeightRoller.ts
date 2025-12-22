@@ -1,15 +1,15 @@
 import { RandomHelper } from './RandomHelper'
 
-type ValidInfo = { id: string; cumWeight: number }
+type ValidInfo<T = string> = { id: T; cumWeight: number }
 
-export interface RollInfo {
-  id: string
+export interface RollInfo<T = string> {
+  id: T
   weight: number
 }
 
-const roll = (seed: number, weightInfo: RollInfo[]) => {
+const roll = <T = string>(seed: number, weightInfo: RollInfo<T>[]) => {
   let cumWeight = 0
-  const validInfos: ValidInfo[] = []
+  const validInfos: ValidInfo<T>[] = []
   weightInfo.forEach((info) => {
     if (info.weight <= 0) return
     cumWeight += info.weight
@@ -19,7 +19,7 @@ const roll = (seed: number, weightInfo: RollInfo[]) => {
   return getRolledId(seed, validInfos, cumWeight)
 }
 
-const getRolledId = (seed: number, validInfos: ValidInfo[], cumWeight: number) => {
+const getRolledId = <T = string>(seed: number, validInfos: ValidInfo<T>[], cumWeight: number): T => {
   const randomValue = new RandomHelper(seed).next() * cumWeight
 
   for (const { id, cumWeight } of validInfos) {

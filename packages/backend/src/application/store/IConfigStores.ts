@@ -25,7 +25,9 @@ export interface IItemStore {
   getRelic(id: string): RelicTemplate | undefined
   hasRelic(id: string): boolean
   getManyItems(ids: string[]): ItemTemplate[]
+  getAllItems(): ItemTemplate[]
   getManyRelics(ids: string[]): RelicTemplate[]
+  getAllRelics(): RelicTemplate[]
 }
 
 export interface IAffixStore {
