@@ -1,8 +1,7 @@
-import { EquipmentSlot, ItemRarity } from '../../domain/item/ItemTemplate'
+import { ItemRarity } from '../../domain/item/ItemTemplate'
 import { ItemRollConfig, ItemRollSourceType } from '../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../domain/item/roll/ItemRollModifier'
 import { WeightRoller } from '../../shared/helpers/WeightRoller'
-import { TagType } from '../../shared/models/TagType'
 import { IAppContextService } from '../context/service/IAppContextService'
 import { TagCounter } from './TagCounter'
 

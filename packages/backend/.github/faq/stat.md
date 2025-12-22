@@ -4,22 +4,12 @@
 
 - 單位的各種屬性總稱
 - 分為以下類:
-  - 防禦:
-    - hp: 生命
-    - evasion: 閃避百分比
-    - damageReduction: 傷害減免百分比
-  - 攻擊:
-    - attackDamage: 攻擊力
-    - attackCooldown: 攻擊冷卻時間(毫秒)
-    - criticalChance: 暴擊百分比
-    - criticalMultiplier: 暴擊傷害倍率
-  - 能量:
-    - maxEnergy: 最大能量
-    - energyRegen: 每秒能量回復
-    - energyGainOnAttack: 攻擊時獲得能量
-  - 復活:
-    - resurrectionChance: 復活機率
-    - resurrectionHpPercent: 復活後生命百分比
+  - hp: 生命
+  - evasion: 閃避百分比
+  - attackDamage: 攻擊力
+  - maxEnergy: 最大能量
+  - resurrectionChance: 復活機率
+  - resurrectionHpPercent: 復活後生命百分比
 - Stats 會被多種來源影響, 但不論什麼來源都會先被修飾成 Stat Modifier 再進行計算
 
 ## How are Stats calculated?
@@ -36,6 +26,10 @@
 - 大部分 AffectEffect 在某些對應觸發點會轉換成 Stat Modifier
 - 在進入聚合運算前, 所有 AffectEffect 都會先被轉換成 Stat Modifier
 - 流程: 各種來源(Affix[]) -> AffectEffect -> Stat Modifier -> Stat Calculator 進行計算
+
+## AffectEffect -> Stat Modifier 轉換過程
+
+- [TODO:]
 
 ## When are Stats calculations used?
 

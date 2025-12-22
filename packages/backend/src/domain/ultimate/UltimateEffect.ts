@@ -1,6 +1,4 @@
 import { EffectTarget } from '../../shared/models/EffectTarget'
-import { AilmentId } from '../ailment/AilmentId'
-import { UnitStatType } from '../stats/models/UnitStats'
 
 interface BaseUltimateEffect {
   readonly type: string
@@ -8,46 +6,14 @@ interface BaseUltimateEffect {
   readonly ultimateMultiplier?: number
 }
 
-export type UltimateEffect =
-  | DamageEffect
-  | NextHitEnergyGainEffect
-  | ApplyAilmentEffect
-  | ApplyAilmentEqualSumEffect
-  | AddStatEffect
-  | NextUltimateDamageReductionEffect
+export type UltimateEffect = PolluteCardsEffect | PolluteRanksEffect
 
-export interface DamageEffect extends BaseUltimateEffect {
-  type: 'damage'
-  value: number
+/** 汙染某個花色, 使其獲得化學毒素 */
+export interface PolluteCardsEffect extends BaseUltimateEffect {
+  type: 'polluteCards'
 }
 
-export interface NextHitEnergyGainEffect extends BaseUltimateEffect {
-  type: 'nextHitEnergyGain'
-  energyGain: number
-  hitCount: number
-}
-
-export interface ApplyAilmentEffect extends BaseUltimateEffect {
-  type: 'applyAilment'
-  ailment: AilmentId
-  layers: number
-}
-
-export interface ApplyAilmentEqualSumEffect extends BaseUltimateEffect {
-  type: 'applyAilmentEqualSum'
-  ailments: AilmentId[]
-  applyTo: AilmentId
-}
-
-export interface AddStatEffect extends BaseUltimateEffect {
-  type: 'addStat'
-  stat: UnitStatType
-  value: number
-  duration: number // ticks
-}
-
-export interface NextUltimateDamageReductionEffect extends BaseUltimateEffect {
-  type: 'nextUltimateDamageReduction'
-  reduction: number // 0.5 = 減免50%
-  duration: number // ticks
+/** 汙染某個點數, 使其獲得化學毒素 */
+export interface PolluteRanksEffect extends BaseUltimateEffect {
+  type: 'polluteRanks'
 }

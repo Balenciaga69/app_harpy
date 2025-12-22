@@ -25,19 +25,13 @@ type CountResult = {
 export const TagCounter = {
   countAllItemTags(appCtx: IAppContext): CountResult {
     const { items } = appCtx.stashContext
-    const { equipments, relics } = appCtx.characterContext
-    const equipmentList = Object.values(equipments).filter(Boolean)
-    const relicList = relics
-    const record = countTags(appCtx, [...equipmentList, ...relicList, ...items])
+    const { relics } = appCtx.characterContext
+    const record = countTags(appCtx, [...relics, ...items])
     return { record, toList: () => recordToList(record) }
   },
   countEquippedTags(appCtx: IAppContext) {
-    const equipments = Object.values(appCtx.characterContext.equipments).filter(Boolean)
-    const record = countTags(appCtx, equipments)
-    return { record, toList: () => recordToList(record) }
-  },
-  countRelicTags(appCtx: IAppContext) {
-    const record = countTags(appCtx, appCtx.characterContext.relics)
+    const equipped = Object.values(appCtx.characterContext.relics).filter(Boolean)
+    const record = countTags(appCtx, equipped)
     return { record, toList: () => recordToList(record) }
   },
 }

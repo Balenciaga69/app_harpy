@@ -1,7 +1,7 @@
 import { AffixTemplate } from '../../domain/affix/AffixTemplate'
 import { AffixEffectTemplate } from '../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
-import { EquipmentTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
+import { ItemTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
 import { ItemRollConfig } from '../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../domain/item/roll/ItemRollConstraint'
 import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
@@ -35,7 +35,6 @@ export class EnemyStore implements IEnemyStore {
 export class ItemStore implements IItemStore {
   itemRollConstraints: Map<string, ItemRollConstraint> = new Map()
   itemRollConfigs: Map<string, ItemRollConfig> = new Map()
-  equipments: Map<string, EquipmentTemplate> = new Map()
   relics: Map<string, RelicTemplate> = new Map()
 
   getAllItemRollConstraints(): ItemRollConstraint[] {
@@ -53,33 +52,26 @@ export class ItemStore implements IItemStore {
   hasItemRollConfig(id: string): boolean {
     return this.itemRollConfigs.has(id)
   }
-  getEquipment(id: string): EquipmentTemplate | undefined {
-    return this.equipments.get(id)
-  }
-  hasEquipment(id: string): boolean {
-    return this.equipments.has(id)
-  }
   getRelic(id: string): RelicTemplate | undefined {
     return this.relics.get(id)
   }
   hasRelic(id: string): boolean {
     return this.relics.has(id)
   }
-  getManyItems(ids: string[]): (EquipmentTemplate | RelicTemplate)[] {
-    const items: (EquipmentTemplate | RelicTemplate)[] = []
+  getManyItems(ids: string[]): ItemTemplate[] {
+    const relics = this.getManyRelics(ids)
+    return [...relics]
+  }
+
+  getManyRelics(ids: string[]): RelicTemplate[] {
+    const relics: RelicTemplate[] = []
     for (const id of ids) {
-      const equipment = this.getEquipment(id)
-      if (equipment) {
-        items.push(equipment)
-        continue
-      }
-      const relic = this.getRelic(id)
-      if (relic) {
-        items.push(relic)
-        continue
+      const found = this.getRelic(id)
+      if (found) {
+        relics.push(found)
       }
     }
-    return items
+    return relics
   }
 }
 

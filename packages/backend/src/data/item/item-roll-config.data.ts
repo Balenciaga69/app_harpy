@@ -7,9 +7,7 @@ import { ItemRollConfig } from '../../domain/item/roll/ItemRollConfig'
 const ShopRefresh: ItemRollConfig = {
   sourceType: 'SHOP_REFRESH',
   itemTypeWeights: {
-    EQUIPMENT: 8,
-    RELIC: 10,
-    SKILL_GEM: 1,
+    RELIC: 1,
   },
   rarityWeights: {
     COMMON: 32,
@@ -21,9 +19,7 @@ const ShopRefresh: ItemRollConfig = {
 const PostGameReward: ItemRollConfig = {
   sourceType: 'POST_GAME_REWARD',
   itemTypeWeights: {
-    EQUIPMENT: 25,
-    RELIC: 20,
-    SKILL_GEM: 1,
+    RELIC: 1,
   },
   rarityWeights: {
     COMMON: 0,

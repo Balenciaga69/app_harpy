@@ -1,7 +1,7 @@
 import { AffixTemplate } from '../../domain/affix/AffixTemplate'
 import { AffixEffectTemplate } from '../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
-import { EquipmentTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
+import { ItemTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
 import { ItemRollConfig } from '../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../domain/item/roll/ItemRollConstraint'
 import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
@@ -22,11 +22,10 @@ export interface IItemStore {
   hasItemRollConstraint(id: string): boolean
   getItemRollConfig(id: string): ItemRollConfig | undefined
   hasItemRollConfig(id: string): boolean
-  getEquipment(id: string): EquipmentTemplate | undefined
-  hasEquipment(id: string): boolean
   getRelic(id: string): RelicTemplate | undefined
   hasRelic(id: string): boolean
-  getManyItems(ids: string[]): (EquipmentTemplate | RelicTemplate)[]
+  getManyItems(ids: string[]): ItemTemplate[]
+  getManyRelics(ids: string[]): RelicTemplate[]
 }
 
 export interface IAffixStore {

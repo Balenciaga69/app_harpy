@@ -6,4 +6,5 @@ export interface ItemRollConstraint {
   readonly chapters?: ChapterLevel[]
   readonly eventIds?: string[]
   readonly enemyIds?: string[]
+  readonly professionIds?: string[]
 }

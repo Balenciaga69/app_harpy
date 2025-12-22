@@ -14,11 +14,11 @@ const enemy_template_chemist: EnemyTemplate = {
   roleConfigs: {
     NORMAL: {
       affixIds: ['affix_chemist_poison_resist_1', 'affix_chemist_damage_reduction_1'],
-      ultimateId: 'ult_chemist_poison_bomb',
+      ultimateId: 'ultimate_chemist_poison_bomb',
     },
     ELITE: {
       affixIds: ['affix_chemist_poison_resist_1', 'affix_chemist_damage_reduction_1', 'affix_chemist_hp_2'],
-      ultimateId: 'ult_chemist_poison_bomb',
+      ultimateId: 'ultimate_chemist_poison_bomb',
     },
     BOSS: {
       affixIds: ['affix_chemist_poison_resist_1', 'affix_chemist_damage_reduction_1', 'affix_chemist_hp_2'],
@@ -41,35 +41,63 @@ const affix_effect_chemist_poison_resist_1: AffixEffectTemplate = {
   actions: [
     {
       type: 'STAT_MODIFY',
-      stat: 'damageReduction',
+      stat: 'evasion',
       operation: 'MULTIPLY',
       value: 0.5,
     },
   ],
 }
 
+const ultimate_chemist_poison_bomb: UltimateTemplate = {
+  id: 'ult_chemist_poison_bomb',
+  name: { tw: '毒化擴散', en: 'Toxic Spores' },
+  desc: {
+    tw: '污染敵方若干花色的牌；被污染的牌在抽到時會觸發化學毒素傷害',
+    en: 'Pollute certain suits in the enemy deck. Polluted cards deal chemical toxin damage on draw.',
+  },
+  tags: ['POISON'],
+  energyCost: 80,
+  // 使用 hooks-only 格式：在 ON_CAST 時污染敵方牌
+  hooks: [
+    {
+      event: 'ON_CAST',
+      effects: [
+        {
+          type: 'polluteCards',
+          target: 'ENEMY',
+        },
+      ],
+    },
+  ],
+}
+
+/*
+  BOSS 版：除了污染花色外，亦污染牌面數字（點數）
+  - ranksCount 可指定污染幾個數字（每次重抽不可重複）
+*/
 const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb_shield',
   name: { tw: '劇毒護盾', en: 'Toxic Shield' },
   desc: {
-    tw: '獲得一個護盾，能阻擋 30 傷害，同時攻擊者受到 30 層中毒',
-    en: 'Gain a shield that blocks 30 damage; attacker receives 30 poison stacks',
+    tw: '污染敵方花色與數字，被污染的牌在抽到時會造成化學毒素傷害並增加污染計數',
+    en: 'Pollute enemy suits and ranks. Polluted cards deal toxin damage on draw and increment toxin counters.',
   },
   tags: ['POISON'],
   energyCost: 100,
-  effect: [
+  // hooks-only: ON_CAST 時污染花色與數字
+  hooks: [
     {
-      type: 'addStat',
-      target: 'SELF',
-      stat: 'damageReduction',
-      value: 30,
-      duration: 10000, // 100SEC
-    },
-    {
-      type: 'applyAilment',
-      target: 'ENEMY',
-      ailment: 'POISON',
-      layers: 30,
+      event: 'ON_CAST',
+      effects: [
+        {
+          type: 'polluteCards',
+          target: 'ENEMY',
+        },
+        {
+          type: 'polluteRanks',
+          target: 'ENEMY',
+        },
+      ],
     },
   ],
 }
