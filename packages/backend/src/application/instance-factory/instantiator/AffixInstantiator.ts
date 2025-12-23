@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import { AffixInstance } from '../../domain/affix/AffixInstance'
-import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+import { AffixInstance } from '../../../domain/affix/AffixInstance'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 
 const instantiateMany = (params: {
   templateIds: string[]

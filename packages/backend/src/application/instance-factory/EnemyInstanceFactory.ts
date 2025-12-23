@@ -3,7 +3,7 @@ import { EnemyInstance, EnemyRole, EnemySpawnInfo, EnemyTemplate } from '../../d
 import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../shared/helpers/WeightRoller'
-import { AffixInstantiator } from '../instantiator/AffixInstantiator'
+import { AffixInstantiator } from './instantiator/AffixInstantiator'
 export const EnemyInstanceFactory = () => {
   generateRandomEnemyInstance
 }

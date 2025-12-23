@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
-import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 
 const instantiate = (params: {
   templateIds: string[]

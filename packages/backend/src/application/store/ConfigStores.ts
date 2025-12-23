@@ -71,6 +71,7 @@ export class ItemStore implements IItemStore {
   }
   getManyRelics(ids: string[]): RelicTemplate[] {
     const relics: RelicTemplate[] = []
+
     for (const id of ids) {
       const found = this.getRelic(id)
       if (found) {

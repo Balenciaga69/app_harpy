@@ -1,7 +1,7 @@
 import { ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
 import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
 import { IAppContextService } from '../../../context/service/IAppContextService'
-import { ItemInstantiator } from '../../../instantiator/ItemInstantiator'
+import { ItemInstantiator } from '../../instantiator/ItemInstantiator'
 
 /** 創建物品實例 */
 export const createItemInstance = (service: IAppContextService, templateId: string, itemType: ItemRollType) => {

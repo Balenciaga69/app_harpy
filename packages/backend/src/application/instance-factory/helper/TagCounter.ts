@@ -4,7 +4,7 @@ import { IAppContext } from '../../context/interface/IAppContext'
 // TODO: 該專案分類錯誤位置 記得更換
 const countTags = (appCtx: IAppContext, items: ItemInstance[]): Partial<Record<TagType, number>> => {
   const itemStore = appCtx.configStore.itemStore
-  const ids = items.map((e) => e.id).flat()
+  const ids = items.map((e) => e.id)
   const tags = itemStore.getManyItems(ids).flatMap((item) => item.tags)
   const tagCntMap: Partial<Record<TagType, number>> = {}
   for (const tag of tags) {

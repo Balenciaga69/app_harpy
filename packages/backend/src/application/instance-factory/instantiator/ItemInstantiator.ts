@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import { ItemInstance, RelicInstance } from '../../domain/item/itemInstance'
-import { ItemTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
+import { ItemInstance, RelicInstance } from '../../../domain/item/itemInstance'
+import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
 import { AffixInstantiator } from './AffixInstantiator'
-import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 
 const instantiateItem = (params: {
   template: ItemTemplate

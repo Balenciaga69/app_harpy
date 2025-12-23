@@ -1,6 +1,6 @@
 import { StageType } from '../../domain/stage/Stage'
 import { RandomHelper } from '../../shared/helpers/RandomHelper'
-
+// TODO: 未來搬到 env 配置 (目前暫時不處理)
 const LEVEL_COUNT = 10
 const ELITE_POSITION = 5
 const BOSS_POSITION = 10
