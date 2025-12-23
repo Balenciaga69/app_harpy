@@ -53,7 +53,7 @@ const ultimate_chemist_poison_bomb: UltimateTemplate = {
   },
   tags: ['POISON'],
   energyCost: 80,
-  // 使用 hooks-only 格式：在 ON_CAST 時污染敵方牌
+  // 使用 hooks-only 格式:在 ON_CAST 時污染敵方牌
   hooks: [
     {
       event: 'ON_CAST',
@@ -67,14 +67,14 @@ const ultimate_chemist_poison_bomb: UltimateTemplate = {
   ],
 }
 /*
-  BOSS 版：除了污染花色外，亦污染牌面數字（點數）
-  - ranksCount 可指定污染幾個數字（每次重抽不可重複）
+  BOSS 版:除了污染花色外, 亦污染牌面數字 (點數)
+  - ranksCount 可指定污染幾個數字 (每次重抽不可重複)
 */
 const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb_shield',
   name: { tw: '劇毒護盾', en: 'Toxic Shield' },
   desc: {
-    tw: '污染敵方花色與數字，被污染的牌在抽到時會造成化學毒素傷害並增加污染計數',
+    tw: '污染敵方花色與數字, 被污染的牌在抽到時會造成化學毒素傷害並增加污染計數',
     en: 'Pollute enemy suits and ranks. Polluted cards deal toxin damage on draw and increment toxin counters.',
   },
   tags: ['POISON'],

@@ -1,5 +1,5 @@
 /**
- * TODO: 這一塊需要重新整理，等到要來製作戰鬥模組前會再來處理
+ * TODO: 這一塊需要重新整理, 等到要來製作戰鬥模組前會再來處理
  */
 import { AffixInstance } from '../affix/AffixInstance'
 import { UnitStats } from '../stats/models/UnitStats'

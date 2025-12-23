@@ -27,7 +27,7 @@ export default [
       boundaries,
     },
     settings: {
-      // 配置模組解析器，支持 TypeScript 路徑映射
+      // 配置模組解析器, 支持 TypeScript 路徑映射
       'import/resolver': {
         typescript: {
           alwaysTryTypes: true,
@@ -59,38 +59,38 @@ export default [
     rules: {
       // 應用 boundaries 推薦規則
       ...boundaries.configs.recommended.rules,
-      // 禁用 no-private 規則（允許同 feature 內引用）
+      // 禁用 no-private 規則 (允許同 feature 內引用)
       'boundaries/no-private': 'off',
-      // 自訂架構依賴規則（嚴格模式）
+      // 自訂架構依賴規則 (嚴格模式)
       'boundaries/element-types': [
         2, // 錯誤級別
         // {
         //   // 預設禁止所有依賴
         //   default: 'disallow',
         //   rules: [
-        //     // domain 層：可引用 interfaces 和 domain
+        //     // domain 層:可引用 interfaces 和 domain
         //     {
         //       from: ['domain'],
         //       allow: ['interfaces', 'domain'],
         //       message: 'domain 層只能引用 interfaces 和 domain',
         //     },
-        //     // interfaces 層：只能引用 interfaces（禁止引用 domain）
+        //     // interfaces 層:只能引用 interfaces (禁止引用 domain)
         //     {
         //       from: ['interfaces'],
         //       allow: ['interfaces'],
-        //       message: 'interfaces 層只能引用 interfaces，不可引用 domain 或其他實作層',
+        //       message: 'interfaces 層只能引用 interfaces, 不可引用 domain 或其他實作層',
         //     },
-        //     // app 層：可引用 interfaces、domain 和同層的 app
+        //     // app 層:可引用 interfaces, domain 和同層的 app
         //     {
         //       from: ['app'],
         //       allow: ['interfaces', 'domain', 'app'],
-        //       message: 'app 層可引用 interfaces、domain 和同層 app，禁止引用 infra',
+        //       message: 'app 層可引用 interfaces, domain 和同層 app, 禁止引用 infra',
         //     },
-        //     // infra 層：可引用 interfaces、domain 和同層的 infra
+        //     // infra 層:可引用 interfaces, domain 和同層的 infra
         //     {
         //       from: ['infra'],
         //       allow: ['interfaces', 'domain', 'infra'],
-        //       message: 'infra 層可引用 interfaces、domain 和同層 infra，禁止引用 app',
+        //       message: 'infra 層可引用 interfaces, domain 和同層 infra, 禁止引用 app',
         //     },
         //   ],
         // },
