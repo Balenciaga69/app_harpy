@@ -10,6 +10,7 @@ export interface IRunContext {
   readonly encounteredEnemyIds: string[]
   readonly chapters: Record<ChapterLevel, ChapterInfo>
   readonly rollModifiers: ItemRollModifier[]
+  readonly version: number
 }
 interface ChapterInfo {
   readonly stageNodes: Record<number, StageType>

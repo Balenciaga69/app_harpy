@@ -7,4 +7,5 @@ export interface ICharacterContext {
   readonly relics: RelicInstance[]
   readonly ultimate: UltimateInstance
   readonly loadCapacity: number
+  readonly version: number
 }
