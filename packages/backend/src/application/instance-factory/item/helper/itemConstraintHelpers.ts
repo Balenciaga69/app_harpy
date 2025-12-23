@@ -10,16 +10,20 @@ export const fetchAvailableItemTemplates = (
 ): ItemTemplate[] => {
   if (itemType === 'RELIC') {
     return service
-      .getAppContext()
+      .GetConfig()
       .itemStore.getAllRelics()
-      .filter((item) => item.rarity === itemRarity && isItemGenerationAllowed(service, item))
+      .filter((item: ItemTemplate) => item.rarity === itemRarity && isItemGenerationAllowed(service, item))
   }
   return []
 }
 
 /** 檢查物品是否允許生成 */
 export const isItemGenerationAllowed = (service: IAppContextService, itemTemplate: ItemTemplate): boolean => {
-  const { characterContext, runContext, itemStore } = service.getAppContext()
+  const contexts = service.GetContexts()
+  const config = service.GetConfig()
+  const characterContext = contexts.characterContext
+  const runContext = contexts.runContext
+  const itemStore = config.itemStore
   const constraint = itemStore.getItemRollConstraint(itemTemplate.id)
   if (!constraint) return true
   if (constraint.chapters && !constraint.chapters.includes(runContext.currentChapter)) return false

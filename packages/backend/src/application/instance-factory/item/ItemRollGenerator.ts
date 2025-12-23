@@ -7,7 +7,10 @@ import { createItemInstance } from './helper/itemCreationHelpers'
 
 /** 生成物品實例 */
 export const generate = (service: IAppContextService, generationSource: ItemRollSourceType) => {
-  const { runContext, itemStore } = service.getAppContext()
+  const contexts = service.GetContexts()
+  const config = service.GetConfig()
+  const runContext = contexts.runContext
+  const itemStore = config.itemStore
   // 取得靜態物品掉落限制表
   const staticRollConfig = itemStore.getItemRollConfig(generationSource)
   if (!staticRollConfig) throw new Error('TODO: 拋領域錯誤')

@@ -1,4 +1,4 @@
-import { ItemRarity } from '../../../../domain/item/ItemTemplate'
+import { ItemRarity, ItemTemplate } from '../../../../domain/item/ItemTemplate'
 import { ItemRollConfig, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
@@ -27,7 +27,7 @@ export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifie
 }
 
 /** 骰物品樣板 */
-export const rollItemTemplate = (seed: number, templates: any[]): string => {
+export const rollItemTemplate = (seed: number, templates: ItemTemplate[]): string => {
   const templateWeightList = templates.map((template) => ({
     id: template.id,
     weight: 1, // TODO: 未來可能會有不同權重

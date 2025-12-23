@@ -1,22 +1,22 @@
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../../context/service/IAppContextService'
-import { TagCounter } from '../../TagCounter'
-
+import { IAppContext } from '../../../context/interface/IAppContext'
+import { TagCounter } from '../../helper/TagCounter'
 /** 取得最新物品骰選修飾符 */
 export const getLatestItemRollModifiers = (service: IAppContextService): ItemRollModifier[] => {
-  const runCtx = service.getAppContext().runContext
+  const runCtx = service.GetContexts().runContext
   const nextRollModifiers = [
-    ...runCtx.rollModifiers.filter((mod) => mod.durationStages !== 0),
+    ...runCtx.rollModifiers.filter((mod: ItemRollModifier) => mod.durationStages !== 0),
     ...getHighFrequencyTagModifiers(service),
     ...getHighStackRelicModifiers(service),
   ]
   return nextRollModifiers
 }
-
 /** 找出已裝備高頻率標籤物品轉換成 tag 修飾符 */
 export const getHighFrequencyTagModifiers = (service: IAppContextService): ItemRollModifier[] => {
   const threshold = 5
-  const equippedTags = TagCounter.countEquippedTags(service.getAppContext()).toList()
+  const appCtx = { contexts: service.GetContexts(), configStore: service.GetConfig() } as IAppContext
+  const equippedTags = TagCounter.countEquippedTags(appCtx).toList()
   const highFreqTags = equippedTags.filter((t) => t.count >= threshold).map((t) => t.tag)
   return highFreqTags.map((tag) => ({
     id: `modifier-tag-${tag}`,
@@ -26,10 +26,12 @@ export const getHighFrequencyTagModifiers = (service: IAppContextService): ItemR
     durationStages: 0,
   }))
 }
-
 /** 找出高堆疊數物品轉換成 id 修飾符 */
 export const getHighStackRelicModifiers = (service: IAppContextService): ItemRollModifier[] => {
-  const { characterContext, itemStore } = service.getAppContext()
+  const contexts = service.GetContexts()
+  const config = service.GetConfig()
+  const characterContext = contexts.characterContext
+  const itemStore = config.itemStore
   const relics = characterContext.relics
   const threshold = 5
   const highStackRelics = relics.filter((r) => {

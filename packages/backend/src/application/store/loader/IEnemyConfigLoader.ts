@@ -7,7 +7,7 @@ export interface EnemyConfig {
   enemyTemplate: EnemyTemplate
   affixTemplates: AffixTemplate[]
   affixEffects: AffixEffectTemplate[]
-  ultimateTemplate: UltimateTemplate
+  ultimateTemplate: UltimateTemplate[]
 }
 
 export interface EnemyConfigDTO {

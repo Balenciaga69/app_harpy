@@ -6,7 +6,11 @@ import { ItemInstantiator } from '../../../instantiator/ItemInstantiator'
 /** 創建物品實例 */
 export const createItemInstance = (service: IAppContextService, templateId: string, itemType: ItemRollType) => {
   if (itemType !== 'RELIC') throw new Error('TODO: 拋領域錯誤,暫時沒有其他類型')
-  const { characterContext, runContext, itemStore } = service.getAppContext()
+  const contexts = service.GetContexts()
+  const config = service.GetConfig()
+  const characterContext = contexts.characterContext
+  const runContext = contexts.runContext
+  const itemStore = config.itemStore
   const { id: ownerId } = characterContext
   const { currentChapter, currentStage } = runContext
   const template = itemStore.getRelic(templateId)

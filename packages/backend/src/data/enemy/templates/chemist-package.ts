@@ -3,7 +3,6 @@ import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
 import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemyTemplate } from '../../../domain/entity/Enemy'
 import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
-
 const enemy_template_chemist: EnemyTemplate = {
   id: 'enemy_template_chemist',
   name: { en: 'Chemist', tw: '化學家' },
@@ -26,14 +25,12 @@ const enemy_template_chemist: EnemyTemplate = {
     },
   },
 }
-
 const affix_chemist_poison_resist_1: AffixTemplate = {
   id: 'affix_chemist_poison_resist_1',
   desc: { tw: '一切毒傷害降低50%', en: 'Reduce all poison damage by 50%' },
   tags: ['POISON'],
   effectIds: ['affix_effect_chemist_poison_resist_1'],
 }
-
 const affix_effect_chemist_poison_resist_1: AffixEffectTemplate = {
   id: 'affix_effect_chemist_poison_resist_1',
   trigger: 'ON_BEFORE_DAMAGE',
@@ -47,7 +44,6 @@ const affix_effect_chemist_poison_resist_1: AffixEffectTemplate = {
     },
   ],
 }
-
 const ultimate_chemist_poison_bomb: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb',
   name: { tw: '毒化擴散', en: 'Toxic Spores' },
@@ -70,7 +66,6 @@ const ultimate_chemist_poison_bomb: UltimateTemplate = {
     },
   ],
 }
-
 /*
   BOSS 版：除了污染花色外，亦污染牌面數字（點數）
   - ranksCount 可指定污染幾個數字（每次重抽不可重複）
@@ -101,10 +96,9 @@ const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
     },
   ],
 }
-
 export const chemist_config: EnemyConfig = {
   enemyTemplate: enemy_template_chemist,
   affixTemplates: [affix_chemist_poison_resist_1],
   affixEffects: [affix_effect_chemist_poison_resist_1],
-  ultimateTemplate: ultimate_chemist_poison_bomb_shield,
+  ultimateTemplate: [ultimate_chemist_poison_bomb_shield, ultimate_chemist_poison_bomb],
 }

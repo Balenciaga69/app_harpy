@@ -4,13 +4,11 @@ import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../shared/helpers/WeightRoller'
 import { AffixInstantiator } from '../instantiator/AffixInstantiator'
-
 export const EnemyInstanceFactory = () => {
   generateRandomEnemyInstance
 }
-
 const generateRandomEnemyInstance = (appCtx: IAppContext) => {
-  const { seed } = appCtx.runContext
+  const { seed } = appCtx.contexts.runContext
   // 取得可用敵人列表
   const [_, availableInfos] = getAvailableEnemyTemplateAndInfos(appCtx)
   // 骰出敵人
@@ -20,23 +18,21 @@ const generateRandomEnemyInstance = (appCtx: IAppContext) => {
   const enemyInstance = createInstance(appCtx, rolledEnemyTemplateId)
   return enemyInstance
 }
-
 /** 取得目前關卡可用的 EnemyTemplate 與 EnemySpawnInfo */
 function getAvailableEnemyTemplateAndInfos(appCtx: IAppContext): [EnemyTemplate[], EnemySpawnInfo[]] {
-  const { runContext, enemyStore } = appCtx
+  const { runContext } = appCtx.contexts
+  const { enemyStore } = appCtx.configStore
   const { encounteredEnemyIds, currentChapter } = runContext
-  const info = enemyStore
+  const info: EnemySpawnInfo[] = enemyStore
     .getEnemySpawnInfosByChapter(currentChapter)
     .filter((i) => !encounteredEnemyIds.includes(i.templateId))
   const templates = info.map((i) => enemyStore.getEnemy(i.templateId)).filter((e) => e !== undefined)
-
   return [templates, info]
 }
-
 /** 實體化 Enemy */
 const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
-  const { enemyStore } = appCtx
-  const { currentChapter, currentStage, chapters, seed } = appCtx.runContext
+  const { enemyStore } = appCtx.configStore
+  const { currentChapter, currentStage, chapters, seed } = appCtx.contexts.runContext
   const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
   const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage]
   const enemyTemplate = enemyStore.getEnemy(rolledEnemyTemplateId) // TODO: 找不到就拋錯
@@ -49,7 +45,6 @@ const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
     difficulty: difficulty,
     sourceUnitId: rolledEnemyTemplateId,
   })
-
   // 實體化 大絕招
   const ultimateInstance: UltimateInstance = {
     id: `ultimate-instance-${seed}-${enemyRoleConfig?.ultimateId}`,
@@ -58,7 +53,6 @@ const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
     pluginIds: [],
     atCreated: { chapter: currentChapter, stage: currentStage, difficulty: difficulty },
   }
-
   // 組合成 EnemyInstance
   const enemyInstance: EnemyInstance = {
     affixes: affixInstances,
