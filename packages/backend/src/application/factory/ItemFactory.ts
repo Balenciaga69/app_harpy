@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import { ItemInstance, RelicInstance } from '../../../domain/item/itemInstance'
-import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
-import { AffixInstantiator } from './AffixInstantiator'
-import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+import { ItemInstance, RelicInstance } from '../../domain/item/itemInstance'
+import { ItemTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
+import { AffixFactory } from './AffixFactory'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 
 const instantiateItem = (params: {
   template: ItemTemplate
@@ -12,7 +12,7 @@ const instantiateItem = (params: {
   stage: number
 }): ItemInstance => {
   const { template, ownerUnitId, difficulty, chapter, stage } = params
-  const affixInstances = AffixInstantiator.instantiateMany({
+  const affixInstances = AffixFactory.createMany({
     templateIds: template.affixIds,
     difficulty,
     chapter,
@@ -31,7 +31,7 @@ const instantiateItem = (params: {
   }
 }
 
-const instantiateRelic = (
+const createRelic = (
   template: RelicTemplate,
   ownerUnitId: string,
   difficulty: number,
@@ -42,6 +42,6 @@ const instantiateRelic = (
   return { ...item, currentStacks: 1 } as RelicInstance
 }
 
-export const ItemInstantiator = {
-  instantiateRelic,
+export const ItemFactory = {
+  createRelic,
 }

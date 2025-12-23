@@ -3,7 +3,7 @@ import { TagType } from '../../shared/models/TagType'
 import { UltimateEffect } from './UltimateEffect'
 
 // 明確的 hook event 列舉（暫時放在此處，之後可移出成共用檔）
-export type UltimateHookEvent =
+export type UltimateHookEvent = //TODO: AffixEffectTrigger也有類似東西，應該統一配置為 戰鬥內外的HOOK
   | 'ON_CAST' // 當大絕招施放時（通常在攻擊階段取代普通攻擊）
   | 'ON_DRAW' // 當抽到牌時觸發（可由引擎在抽牌流程中呼叫）
   | 'ON_REDRAW' // 重新抽牌/重抽時的事件

@@ -25,6 +25,7 @@ const create = (seed: number) => {
   return result
 }
 
-export const StageNodesCreator = {
-  create: create,
+/** 節點生成器 */
+export const StageNodeFactory = {
+  create,
 }

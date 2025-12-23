@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
-import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 
-const instantiate = (params: {
+const create = (params: {
   templateIds: string[]
   difficulty: number
   chapter: ChapterLevel
@@ -24,6 +24,6 @@ const instantiate = (params: {
   return instances
 }
 
-export const UltimateInstantiator = {
-  instantiate,
+export const UltimateFactory = {
+  create,
 }

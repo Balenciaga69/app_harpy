@@ -1,7 +1,7 @@
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../../context/service/IAppContextService'
 import { IAppContext } from '../../../context/interface/IAppContext'
-import { TagCounter } from '../../helper/TagCounter'
+import { TagStatistics } from '../../helper/TagStatistics'
 /** 取得最新物品骰選修飾符 */
 export const getLatestItemRollModifiers = (service: IAppContextService): ItemRollModifier[] => {
   const runCtx = service.GetContexts().runContext
@@ -16,7 +16,7 @@ export const getLatestItemRollModifiers = (service: IAppContextService): ItemRol
 export const getHighFrequencyTagModifiers = (service: IAppContextService): ItemRollModifier[] => {
   const threshold = 5
   const appCtx = { contexts: service.GetContexts(), configStore: service.GetConfig() } as IAppContext
-  const equippedTags = TagCounter.countEquippedTags(appCtx).toList()
+  const equippedTags = TagStatistics.countEquippedTags(appCtx).toList()
   const highFreqTags = equippedTags.filter((t) => t.count >= threshold).map((t) => t.tag)
   return highFreqTags.map((tag) => ({
     id: `modifier-tag-${tag}`,

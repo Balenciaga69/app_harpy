@@ -1,7 +1,7 @@
 import { ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
 import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
 import { IAppContextService } from '../../../context/service/IAppContextService'
-import { ItemInstantiator } from '../../instantiator/ItemInstantiator'
+import { ItemFactory } from '../../ItemFactory'
 
 /** 創建物品實例 */
 export const createItemInstance = (service: IAppContextService, templateId: string, itemType: ItemRollType) => {
@@ -16,5 +16,5 @@ export const createItemInstance = (service: IAppContextService, templateId: stri
   const template = itemStore.getRelic(templateId)
   if (!template) throw new Error('TODO: 拋領域錯誤')
   const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-  return ItemInstantiator.instantiateRelic(template, ownerId, difficulty, currentChapter, currentStage)
+  return ItemFactory.createRelic(template, ownerId, difficulty, currentChapter, currentStage)
 }

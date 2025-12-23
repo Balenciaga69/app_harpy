@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
-import { AffixInstance } from '../../../domain/affix/AffixInstance'
-import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+import { AffixInstance } from '../../domain/affix/AffixInstance'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 
-const instantiateMany = (params: {
+const createMany = (params: {
   templateIds: string[]
   difficulty: number
   chapter: ChapterLevel
@@ -11,11 +11,11 @@ const instantiateMany = (params: {
 }) => {
   const { templateIds, difficulty, chapter, stage, sourceUnitId } = params
   const templates: AffixInstance[] = templateIds.map((templateId) =>
-    instantiateOne({ templateId, difficulty, chapter, stage, sourceUnitId })
+    createOne({ templateId, difficulty, chapter, stage, sourceUnitId })
   )
   return templates
 }
-const instantiateOne = (params: {
+const createOne = (params: {
   templateId: string
   difficulty: number
   chapter: ChapterLevel
@@ -35,7 +35,7 @@ const instantiateOne = (params: {
   }
 }
 
-export const AffixInstantiator = {
-  instantiateMany,
-  instantiateOne,
+export const AffixFactory = {
+  createMany,
+  createOne,
 }

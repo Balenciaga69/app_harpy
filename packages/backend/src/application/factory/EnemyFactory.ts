@@ -3,11 +3,11 @@ import { EnemyInstance, EnemyRole, EnemySpawnInfo, EnemyTemplate } from '../../d
 import { UltimateInstance } from '../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../shared/helpers/WeightRoller'
-import { AffixInstantiator } from './instantiator/AffixInstantiator'
-export const EnemyInstanceFactory = () => {
-  generateRandomEnemyInstance
+import { AffixFactory } from './AffixFactory'
+export const EnemyFactory = () => {
+  createRandomOne
 }
-const generateRandomEnemyInstance = (appCtx: IAppContext) => {
+const createRandomOne = (appCtx: IAppContext) => {
   const { seed } = appCtx.contexts.runContext
   // 取得可用敵人列表
   const [_, availableInfos] = getAvailableEnemyTemplateAndInfos(appCtx)
@@ -38,7 +38,7 @@ const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
   const enemyTemplate = enemyStore.getEnemy(rolledEnemyTemplateId) // TODO: 找不到就拋錯
   const enemyRoleConfig = enemyTemplate?.roleConfigs[stageEnemyRole as EnemyRole] // TODO: 有錯就拋錯
   // 實體化 詞綴
-  const affixInstances = AffixInstantiator.instantiateMany({
+  const affixInstances = AffixFactory.createMany({
     templateIds: enemyRoleConfig?.affixIds ?? [],
     chapter: currentChapter,
     stage: currentStage,

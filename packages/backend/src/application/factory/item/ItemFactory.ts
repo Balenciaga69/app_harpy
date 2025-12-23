@@ -6,7 +6,7 @@ import { fetchAvailableItemTemplates } from './helper/itemConstraintHelpers'
 import { createItemInstance } from './helper/itemCreationHelpers'
 
 /** 生成物品實例 */
-export const generate = (service: IAppContextService, generationSource: ItemRollSourceType) => {
+const createRandomOne = (service: IAppContextService, generationSource: ItemRollSourceType) => {
   const contexts = service.GetContexts()
   const config = service.GetConfig()
   const runContext = contexts.runContext
@@ -21,4 +21,8 @@ export const generate = (service: IAppContextService, generationSource: ItemRoll
   const availableItemTemplates = fetchAvailableItemTemplates(service, itemType, itemRarity)
   const rolledItemTemplateId = rollItemTemplate(runContext.seed, availableItemTemplates)
   return createItemInstance(service, rolledItemTemplateId, itemType)
+}
+
+export const ItemFactory = {
+  createRandomOne,
 }

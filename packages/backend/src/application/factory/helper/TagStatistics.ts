@@ -19,7 +19,7 @@ type CountResult = {
   record: Partial<Record<TagType, number>>
   toList: () => { tag: TagType; count: number }[]
 }
-export const TagCounter = {
+export const TagStatistics = {
   /** 找出所有物品標籤的計數 */
   countAllItemTags(appCtx: IAppContext): CountResult {
     const items = appCtx.contexts.stashContext.items
