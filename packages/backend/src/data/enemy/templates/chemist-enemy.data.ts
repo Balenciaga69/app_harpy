@@ -1,7 +1,6 @@
 import { EnemyTemplate } from '../../../domain/entity/Enemy'
 
-// ZH_TW: 化學家敵方模板
-const enemy_template_chemist: EnemyTemplate = {
+export const enemy_template_chemist: EnemyTemplate = {
   id: 'enemy_template_chemist',
   name: { en: 'Chemist', tw: '化學家' },
   desc: {
@@ -23,5 +22,3 @@ const enemy_template_chemist: EnemyTemplate = {
     },
   },
 }
-
-export const EnemyTemplateList: EnemyTemplate[] = [enemy_template_chemist]

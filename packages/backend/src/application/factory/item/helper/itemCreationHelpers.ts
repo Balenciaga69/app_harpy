@@ -11,10 +11,10 @@ export const createItemInstance = (service: IAppContextService, templateId: stri
   const characterContext = contexts.characterContext
   const runContext = contexts.runContext
   const itemStore = config.itemStore
-  const { id: ownerId } = characterContext
+  const { characterId } = characterContext
   const { currentChapter, currentStage } = runContext
   const template = itemStore.getRelic(templateId)
   if (!template) throw new Error('TODO: 拋領域錯誤')
   const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-  return ItemFactory.createRelic(template, ownerId, difficulty, currentChapter, currentStage)
+  return ItemFactory.createRelic(template, characterId, difficulty, currentChapter, currentStage)
 }

@@ -1,6 +1,6 @@
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
-import { StageType } from '../../../domain/stage/Stage'
+import { StageType } from '../../../domain/stage/StageType'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 export interface IRunContext extends WithRunIdAndVersion {
   readonly seed: number
