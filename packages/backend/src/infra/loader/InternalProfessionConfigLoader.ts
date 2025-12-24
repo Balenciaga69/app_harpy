@@ -1,7 +1,7 @@
 import {
   ProfessionConfigDTO,
   IProfessionConfigLoader,
-} from '../../application/static-config/loader/IProfessionConfigLoader'
+} from '../../application/core-infrastructure/static-config/loader/IProfessionConfigLoader'
 import { ProfessionTemplateList } from '../../data/profession/profession.data'
 
 export class InternalProfessionConfigLoader implements IProfessionConfigLoader {

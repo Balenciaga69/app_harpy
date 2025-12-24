@@ -1,4 +1,7 @@
-import { EnemyConfigDTO, IEnemyConfigLoader } from '../../application/static-config/loader/IEnemyConfigLoader'
+import {
+  EnemyConfigDTO,
+  IEnemyConfigLoader,
+} from '../../application/core-infrastructure/static-config/loader/IEnemyConfigLoader'
 import { EnemyTemplateList, EnemyWeightList } from '../../data/enemy/enemy.data'
 
 export class InternalEnemyConfigLoader implements IEnemyConfigLoader {

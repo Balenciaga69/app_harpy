@@ -1,4 +1,7 @@
-import { ItemConfigDTO, IItemConfigLoader } from '../../application/static-config/loader/IItemConfigLoader'
+import {
+  ItemConfigDTO,
+  IItemConfigLoader,
+} from '../../application/core-infrastructure/static-config/loader/IItemConfigLoader'
 import { RelicTemplateList } from '../../data/item/item.data'
 import { ItemRollConfigList } from '../../data/item/item-roll-config.data'
 import { ItemRollConstraintList } from '../../data/item/item-roll-constraint.data'

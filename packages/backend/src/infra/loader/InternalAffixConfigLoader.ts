@@ -1,4 +1,7 @@
-import { AffixConfigDTO, IAffixConfigLoader } from '../../application/static-config/loader/IAffixConfigLoader'
+import {
+  AffixConfigDTO,
+  IAffixConfigLoader,
+} from '../../application/core-infrastructure/static-config/loader/IAffixConfigLoader'
 import { AffixEffectTemplateList, AffixTemplateList } from '../../data/affix/affix.data'
 
 export class InternalAffixConfigLoader implements IAffixConfigLoader {
