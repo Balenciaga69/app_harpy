@@ -1,11 +1,10 @@
 import { RelicInstance } from '../../../domain/item/itemInstance'
 import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
-export interface ICharacterContext {
-  readonly id: string
+import { WithRunIdAndVersion } from './WithRunIdAndVersion'
+export interface ICharacterContext extends WithRunIdAndVersion {
   readonly name: string
   readonly professionId: string
   readonly relics: RelicInstance[]
   readonly ultimate: UltimateInstance
   readonly loadCapacity: number
-  readonly version: number
 }

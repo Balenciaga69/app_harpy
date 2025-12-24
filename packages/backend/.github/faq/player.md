@@ -3,7 +3,7 @@
 ## 什麼是 Game Player
 
 - 遊戲中 Run 之外的資訊
-- 包含養成內容, 解鎖內容, 成就系統, 帳戶資訊等
+- 包含養成內容、解鎖內容、成就系統、帳戶資訊等
 
 ## 帳戶進度管理
 
@@ -11,11 +11,11 @@
 
 - 帳戶資料
   - 長期儲存, 跨 Run 保留
-  - 包含: 解鎖的職業, 遺物, 升級, 成就, 統計資訊
+  - 包含: 解鎖的職業、遺物、升級、成就、統計資訊
   - 不會因為 Run 失敗而重置
 - Run Context
   - 臨時儲存, 僅限單一 Run 使用
-  - 包含: 角色, 倉庫, 進度, 金幣, 種子
+  - 包含: 角色、倉庫、進度、金幣、種子
   - Run 結束時清除或歸檔
 - 分離的好處
   - 帳戶資料與遊戲進度邏輯解耦
@@ -25,15 +25,15 @@
 ### 帳戶層與 Run 層儲存契約
 
 - 帳戶層
-  - 存儲玩家帳戶資訊 (ID, 名稱, 創建時間)
-  - 存儲解鎖進度 (職業, 遺物, 成就)
+  - 存儲玩家帳戶資訊 (ID、名稱、創建時間)
+  - 存儲解鎖進度 (職業、遺物、成就)
   - 存儲永久升級或修飾符
   - Repository: IPlayerAccountRepository
     - getById(accountId)
     - update(account, expectedVersion)
     - create(account)
 - Run 層
-  - 存儲當前活躍的 Run Context (角色, 倉庫, 進度)
+  - 存儲當前活躍的 Run Context (角色、倉庫、進度)
   - Repository: IContextBatchRepository 與單個 context repository
   - 關聯到帳戶 ID, 但存儲獨立
 - 關聯關係

@@ -1,21 +1,24 @@
 import { ICharacterContext } from '../context/interface/ICharacterContext'
 import { IRunContext } from '../context/interface/IRunContext'
 import { IStashContext } from '../context/interface/IStashContext'
+import { WithRunIdAndVersion } from '../context/interface/WithRunIdAndVersion'
 interface ISingleContextUpdate<T> {
   context: T
   expectedVersion: number
 }
-export interface IRepository<T extends { id: string; version: number }> {
+type ContextKey = 'RUN' | 'STASH' | 'CHARACTER'
+export interface IRepository<T extends WithRunIdAndVersion> {
   getById(id: string): Promise<T | null>
   update(context: T, expectedVersion: number): Promise<T | null>
   create(context: T): Promise<T>
+  delete(id: string): Promise<void>
 }
 interface IContextUpdateResult {
   success: boolean
   runContext?: IRunContext
   stashContext?: IStashContext
   characterContext?: ICharacterContext
-  failedKeys?: ('run' | 'stash' | 'character')[]
+  failedKeys?: ContextKey[]
   globalVersion?: number // 成功時回傳新的全域版本
 }
 export interface IRunContextRepository extends IRepository<IRunContext> {}

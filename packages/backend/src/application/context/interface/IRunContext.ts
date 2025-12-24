@@ -1,8 +1,8 @@
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { StageType } from '../../../domain/stage/Stage'
-export interface IRunContext {
-  readonly id: string
+import { WithRunIdAndVersion } from './IAppContext'
+export interface IRunContext extends WithRunIdAndVersion {
   readonly seed: number
   readonly gold: number
   readonly currentChapter: ChapterLevel
@@ -10,7 +10,6 @@ export interface IRunContext {
   readonly encounteredEnemyIds: string[]
   readonly chapters: Record<ChapterLevel, ChapterInfo>
   readonly rollModifiers: ItemRollModifier[]
-  readonly version: number
 }
 interface ChapterInfo {
   readonly stageNodes: Record<number, StageType>

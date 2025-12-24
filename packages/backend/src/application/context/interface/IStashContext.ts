@@ -1,6 +1,5 @@
 import { ItemInstance } from '../../../domain/item/itemInstance'
-export interface IStashContext {
-  readonly id: string
-  readonly version: number
+import { WithRunIdAndVersion } from './WithRunIdAndVersion'
+export interface IStashContext extends WithRunIdAndVersion {
   readonly items: readonly ItemInstance[]
 }
