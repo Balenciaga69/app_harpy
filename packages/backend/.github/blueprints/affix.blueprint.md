@@ -85,11 +85,11 @@ A: 物品模板預定義詞綴列表 → 直接附加所有詞綴到物品實例
 - **敵人模板綁定**
   - enemyTemplate.affixes (按難度模式不同可設定不同詞綴陣列)
   - 詞綴定義:
-    - ID
-    - Tags
-    - EffectTemplateId
-    - 運算方式 (Add / Multi / More)
-    - 生效條件
+- ID
+- Tags
+- EffectTemplateId
+- 運算方式 (Add / Multi / More)
+- 生效條件
 
 ## 代碼級
 
