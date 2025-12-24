@@ -27,6 +27,8 @@ applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
 
 - 命名一堆單字組合而成
 - 函數或方法的參數一大堆
+- 沒用到的代碼也不刪除
+- 大量 nested structure,loops, conditionals
 - 沒有型別或者型別在調用途中被破壞
 - 一份資料夾十個檔案
 - 有副作用無法追查
