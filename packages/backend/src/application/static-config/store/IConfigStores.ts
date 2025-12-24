@@ -6,7 +6,7 @@ import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-// TODO: 缺乏 SET 資料的功能需要補上
+
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate | undefined
   hasEnemy(id: string): boolean
@@ -14,8 +14,9 @@ export interface IEnemyStore {
   hasEnemySpawnInfo(id: string): boolean
   getEnemySpawnInfosByChapter(chapter: ChapterLevel): EnemySpawnInfo[]
   getAllEnemySpawnInfos(): EnemySpawnInfo[]
+  setMany(enemies: EnemyTemplate[]): void
+  setEnemySpawnInfos(infos: EnemySpawnInfo[]): void
 }
-
 export interface IItemStore {
   getAllItemRollConstraints(): ItemRollConstraint[]
   getItemRollConstraint(id: string): ItemRollConstraint | undefined
@@ -28,16 +29,19 @@ export interface IItemStore {
   getAllItems(): ItemTemplate[]
   getManyRelics(ids: string[]): RelicTemplate[]
   getAllRelics(): RelicTemplate[]
+  setMany(relics: RelicTemplate[]): void
+  setItemRollConfigs(configs: ItemRollConfig[]): void
 }
-
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate | undefined
   hasAffix(id: string): boolean
   getAffixEffect(id: string): AffixEffectTemplate | undefined
   hasAffixEffect(id: string): boolean
+  setMany(affixes: AffixTemplate[]): void
+  setAffixEffects(effects: AffixEffectTemplate[]): void
 }
-
 export interface IUltimateStore {
   getUltimate(id: string): UltimateTemplate | undefined
   hasUltimate(id: string): boolean
+  setMany(ultimates: UltimateTemplate[]): void
 }
