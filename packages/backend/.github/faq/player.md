@@ -1,60 +1,70 @@
-# Player
+# player（玩家帳戶）通用問答
 
-## 什麼是 Game Player
+## player 是什麼
 
-- 遊戲中 Run 之外的資訊
-- 包含養成內容、解鎖內容、成就系統、帳戶資訊等
+- player（玩家帳戶）是 Run 之外的長期進度資料
+- 包含養成、解鎖、成就、帳戶資訊等
 
-## 帳戶進度管理
+## player 帳戶與 Run 有什麼不同
 
-### 玩家帳戶資料 vs Run Context 分離
+- 帳戶資料長期保存，Run Context（遊戲進程資料）僅限單次遊戲
+- 帳戶資料不會因 Run 失敗而重置
+- Run 結束時帳戶資料可更新
 
-- 帳戶資料
-  - 長期儲存, 跨 Run 保留
-  - 包含: 解鎖的職業、遺物、升級、成就、統計資訊
-  - 不會因為 Run 失敗而重置
-- Run Context
-  - 臨時儲存, 僅限單一 Run 使用
-  - 包含: 角色、倉庫、進度、金幣、種子
-  - Run 結束時清除或歸檔
-- 分離的好處
-  - 帳戶資料與遊戲進度邏輯解耦
-  - 帳戶操作與 Run 操作可獨立進行
-  - 版本控制策略可不同
+## player 帳戶進度如何管理
 
-### 帳戶層與 Run 層儲存契約
+- 解鎖職業、遺物、成就等都屬於帳戶進度
+- 帳戶進度與 Run 進度分離，互不影響
 
-- 帳戶層
-  - 存儲玩家帳戶資訊 (ID、名稱、創建時間)
-  - 存儲解鎖進度 (職業、遺物、成就)
-  - 存儲永久升級或修飾符
-  - Repository: IPlayerAccountRepository
-    - getById(accountId)
-    - update(account, expectedVersion)
-    - create(account)
-- Run 層
-  - 存儲當前活躍的 Run Context (角色、倉庫、進度)
-  - Repository: IContextBatchRepository 與單個 context repository
-  - 關聯到帳戶 ID, 但存儲獨立
-- 關聯關係
-  - 建立 Run 時, 驗證帳戶是否已解鎖所選職業
-  - Run 結束時, 更新帳戶的解鎖進度或統計資訊
+# player 給設計師
 
-### 版本控制應用場景
+## 如何設計 player 帳戶
 
-- 帳戶級版本控制
-  - 玩家解鎖新職業, 帳戶版本遞增
-  - 多裝置登入時, 一個裝置解鎖職業, 另一裝置嘗試建立 Run
-  - 需驗證最新版本帳戶的解鎖狀態
-- Run 級版本控制
-  - Run 進度更新, 各 context 版本遞增
-  - 多裝置同時進行一個 Run, 需防止衝突
-  - 確保戰鬥結算、商店購買等操作的正確性
-- 跨層版本控制
-  - Run 結束後, 需更新帳戶進度
-  - 原子性: 同時提交 Run 狀態更新與帳戶進度更新
-  - 若其中一個失敗, 整個操作回滾
+- 帳戶資料需能跨 Run 保留
+- 解鎖內容、成就、升級等都屬於帳戶層級
+- Run Context 僅保存單次遊戲的臨時資料
+- 帳戶與 Run 分離有助於遊戲體驗與資料安全
+
+## 帳戶進度與 Run 進度的關聯
+
+- 建立 Run 時需驗證帳戶解鎖狀態
+- Run 結束時可根據表現更新帳戶進度
+- 設計時可考慮多裝置登入、進度同步等場景
+
+## 設計注意事項
+
+- 帳戶資料需有版本控制，避免多裝置衝突
+- Run 進度更新需能原子性同步帳戶進度
+- 帳戶資料與 Run Context 分離有助於維護
+
+# player 給工程師
+
+## 技術細節
+
+- 帳戶資料長期儲存，包含解鎖、成就、升級、統計等
+- Run Context 為臨時資料，包含角色、倉庫、進度、金幣、種子
+- 帳戶與 Run Context 分離，資料結構獨立
+- 帳戶層 Repository：IPlayerAccountRepository
+  - getById(accountId)
+  - update(account, expectedVersion)
+  - create(account)
+- Run 層 Repository：IContextBatchRepository 及各 context repository
+- Run 與帳戶以帳戶 ID 關聯，但資料獨立
+
+## 版本控制與同步
+
+- 帳戶級版本控制：解鎖新內容時帳戶版本遞增
+- Run 級版本控制：每個 context 有獨立版本
+- 跨層版本控制：Run 結束時需原子性同步帳戶與 Run 狀態
+- 多裝置登入時需驗證最新版本，避免衝突
+
+## 技術實作注意事項
+
+- 樂觀鎖機制：更新時比對版本號，衝突時回滾
+- Repository 介面需支援原子性批次更新
+- 版本衝突需優雅處理，非 bug
+- Store 僅用於靜態資源，Repository 用於動態資料
 
 ## 安全性設計
 
-- TODO: 尚未說明
+- 尚未說明，建議補充帳戶安全、資料一致性等設計

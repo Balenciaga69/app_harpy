@@ -1,129 +1,65 @@
-# Run
+# run（遊戲進程）通用問答
 
-## 什麼是 Run
+## run 是什麼
 
-- 遊戲的核心循環單位, 代表一次完整的遊戲運行
-- 類似 Slay the Spire 或 Hades 的單次冒險
-- 每次 Run 包含隨機生成的關卡、敵人、物品和事件
-- 玩家從選擇角色開始, 通過戰鬥和決策推進, 直到勝利或失敗
-- Run 狀態是臨時的, 成功或失敗後結束
-- 玩家帳戶層級的進度 (成就、解鎖內容) 會保留
-- 由多個 Context 組成: 角色資訊、倉庫、商店狀態、關卡進程
-- Context 在 Run 期間動態更新
+    - run（遊戲進程）是遊戲的核心循環單位，代表一次完整的遊戲運行
+    - 每次 run 包含隨機生成的關卡、敵人、物品、事件
+    - run 狀態是臨時的，結束後歸零
+    - 玩家帳戶進度（成就、解鎖）會永久保留
 
-## 創建角色與開啟新 Run
+## 如何開始 run
 
-### 創角色
+    - 選擇角色與起始遺物
+    - 驗證帳戶是否已解鎖所選職業
+    - 生成所有 context（角色、倉庫、商店、關卡等）
+    - 若有未結束 run，需先恢復或結束
 
-- 取得玩家可選的 Profession 和 Start Relic 等模板給前端
-- 玩家可調整名稱 (可選)
-- 驗證模板是否存在、是否已解鎖 (基於帳戶進度)
-- 創建角色實例, 連同 Run Context 存儲到帳戶
+## run 進度如何保存
 
-### 開啟新遊戲
+    - run 由多個 context 組成，動態更新
+    - context 拆分儲存，彼此獨立
+    - 每個 context 有自己的版本號
 
-- 若有局外之物需注入本 Run (如永久升級), 做成管道函數
-- API 端口層驗證是否可創建: 檢查無其他啟動中的 Run、用戶合法性、資源充足
-- 生成所有 Context: 角色資訊、倉庫、商店狀態、關卡進程
-- 序列化後存儲到外部持久化系統
-- 存儲策略: 拆分成多個子 JSON 欄位, 添加版本與樂觀鎖機制
-- 若玩家有未結束 Run: 提供恢復選項或強制結束舊 Run
+# run 給設計師
 
-### 找回 Run 的內容
+## 如何設計 run
 
-- 大多數功能都需與各種 Context 交互
-- 從持久化存儲調取反序列資訊是必須的
-- 所有行為視為請求, 非本地狀態管理
-- 初始化函數: 在 serverless 環境中預載入 RUN Context
-  - 從外部持久化系統獲取子欄位
-  - 加速請求並確保數據一致性
-- 創角色請求不需初始化 (僅帳戶數據)
-- Run 相關請求 (如繼續遊戲) 需觸發初始化
+    - run 是單次冒險，結束即歸零
+    - context 拆分有助於資料安全與查詢效率
+    - 帳戶資料與 run 進度分離，提升遊戲體驗
+    - 可設計多種 context：角色、倉庫、商店、關卡等
 
-## Run 狀態持久化
+## run 進度與帳戶進度的關聯
 
-### Context 拆分儲存策略
+    - run 結束時可根據表現更新帳戶進度
+    - 設計時可考慮多裝置登入、進度同步等場景
 
-- 不把所有 context 儲存在單一文件或欄位
-- 拆分為多個獨立的 JSON 欄位
-  - RunContext、CharacterContext、StashContext 等
-  - 並行更新效率更高
-  - 易於查詢和序列化
-  - 若某個 context 損壞, 不影響其他欄位
+## 設計注意事項
 
-### 版本號與全域版本欄位
+    - context 拆分有助於防呆與資料修復
+    - 每個 context 需有獨立版本號，便於版本控制
+    - run 進度更新需能原子性同步帳戶進度
 
-- 每個 context 都有自己的 version 欄位 - 詳見 context.md
-- 額外的 globalVersion 欄位
-  - 存放在 Run 的主文件或獨立欄位
-  - 任何 context 變更都遞增 globalVersion
-  - 用於跨 context 原子性檢查
+# run 給工程師
 
-### Repository 介面契約
+## 技術細節
 
-- 定義泛型 Repository 介面, 所有 context repo 繼承
-  - getById(id): 讀取 context, 包含版本號
-  - update(context, expectedVersion): 樂觀鎖更新, 衝突回傳 null
-  - create(context): 建立新 context, 自動設定 version=1
-  - delete(id): 刪除 context
-- 定義 ContextBatchRepository 介面
-  - updateBatch(updates, globalVersion): 原子性更新多個 context
-  - 若任一 context 版本不符, 全部回滾
-- 介面定義在 app 層, 實作在外部專案 (infra 層)
+    - run 由多個 context 組成：RunContext、CharacterContext、StashContext、ShopContext 等
+    - context 拆分為多個獨立 json 欄位，並行更新效率高
+    - 每個 context 有獨立 version 欄位，另有 globalVersion（全域版本號）
+    - context repository 需支援 getById、update（樂觀鎖）、create、delete
+    - ContextBatchRepository 支援 updateBatch，原子性更新多個 context
+    - context 變更時 globalVersion 遞增，用於跨 context 原子性檢查
 
-### 跨 Context 操作示意
+## 版本控制與同步
 
-- 戰鬥結算
-  - 更新 RunContext、CharacterContext、StashContext
-  - 一次呼叫 updateBatch, 全部成功或全部失敗
-- 商店購買 (減少金幣、增加物品)
-  - 更新 StashContext、RunContext、ShopContext
-  - 一次呼叫 updateBatch
-- 裝備遺物
-  - 更新 CharacterContext: 遺物
-  - 更新 StashContext: 移除遺物
-  - 一次呼叫 updateBatch
+    - 樂觀鎖：更新時比對版本號，衝突時回滾
+    - 多裝置登入時需驗證最新版本，避免衝突
+    - 跨 context 操作需一次呼叫 updateBatch，全部成功或全部失敗
+    - 版本衝突需優雅處理，非 bug
 
-## 版本控制與併發安全
+## 技術實作注意事項
 
-### 樂觀鎖原理簡述
-
-- 樂觀鎖: 假設衝突不常發生, 不在讀取時上鎖
-- 流程
-  - 讀取資料及其版本號
-  - 在本地修改資料
-  - 更新時, 檢查版本號是否與資料庫相符
-  - 相符: 寫入並遞增版本號
-  - 不相符: 放棄寫入, 提示衝突
-- 優點: 高併發下效率更好、無死鎖風險
-- 缺點: 衝突後需重試、應用層邏輯略複雜
-
-### 多裝置登入同帳號的一致性保證
-
-- 玩家在裝置 A 和裝置 B 同時登入
-- 兩個裝置都讀取相同版本的 context (v1)
-- 裝置 A 先更新 context v1 -> v2, 存入資料庫
-- 裝置 B 嘗試更新, 但期望版本是 v1, 資料庫版本已是 v2
-- 衝突檢查失敗, 裝置 B 回傳 null 或錯誤
-- 裝置 B 應重新讀取最新資料 (v2), 重新計算、重新提交
-- 最終結果: 全部操作都對應到最新版本, 保證一致性
-
-### 外部專案職責 (交易、回滾)
-
-- 外部專案 (NestJS + DocumentDB 或其他可能的技術實踐) 實作
-  - 版本號比對邏輯
-  - 原子性寫入 (多 context 同時更新)
-  - 衝突時的自動回滾
-  - 自動遞增版本號
-  - 重試機制 (可選)
-- 本專案只需
-  - 定義 repository 介面
-  - 傳遞 expectedVersion
-  - 根據結果決定應用層動作
-- 版本衝突不是 bug, 是正常的併發現象, 應優雅處理
-
-## Store vs Repository
-
-- 專案中有 Store, Repo 兩種儲存會使人困惑
-- Store 是靜態資源的訪問器, 就好比遊戲該有哪些裝備模板,角色模板,不用在乎併發問題
-- Repository 是即時遊戲狀態的動態持久操作, 在實作會涉及 DB, 版本檢查,鎖 等機制
+    - 外部專案（如 NestJS + DocumentDB）負責版本號比對、原子性寫入、自動回滾、重試
+    - 本專案僅需定義 repository 介面，傳遞 expectedVersion，根據結果決定應用層動作
+    - Store 僅用於靜態資源，Repository 用於動態資料
