@@ -1,7 +1,7 @@
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
-import { TagStatistics } from '../../enemy-encounter/helper/TagStatistics'
+import { TagStatistics } from '../../content-generation/helper/TagStatistics'
 /** 取得最新物品骰選修飾符 */
 export const getLatestItemRollModifiers = (service: IAppContextService): ItemRollModifier[] => {
   const runCtx = service.GetContexts().runContext

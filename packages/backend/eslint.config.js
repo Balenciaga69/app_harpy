@@ -38,19 +38,23 @@ export default [
       'boundaries/elements': [
         {
           type: 'domain',
-          pattern: ['src/**/domain/**/*', 'src/**/domain'],
+          pattern: 'src/domain/**/*',
         },
         {
-          type: 'app',
-          pattern: ['src/**/app/**/*', 'src/**/app'],
+          type: 'application',
+          pattern: 'src/application/**/*',
         },
         {
           type: 'infra',
-          pattern: ['src/**/infra/**/*', 'src/**/infra'],
+          pattern: 'src/infra/**/*',
         },
         {
-          type: 'interfaces',
-          pattern: ['src/**/interfaces/**/*', 'src/**/interfaces'],
+          type: 'shared',
+          pattern: 'src/shared/**/*',
+        },
+        {
+          type: 'data',
+          pattern: 'src/data/**/*',
         },
       ],
       // 定義 feature 邊界識別規則
@@ -64,36 +68,36 @@ export default [
       // 自訂架構依賴規則 (嚴格模式)
       'boundaries/element-types': [
         2, // 錯誤級別
-        // {
-        //   // 預設禁止所有依賴
-        //   default: 'disallow',
-        //   rules: [
-        //     // domain 層:可引用 interfaces 和 domain
-        //     {
-        //       from: ['domain'],
-        //       allow: ['interfaces', 'domain'],
-        //       message: 'domain 層只能引用 interfaces 和 domain',
-        //     },
-        //     // interfaces 層:只能引用 interfaces (禁止引用 domain)
-        //     {
-        //       from: ['interfaces'],
-        //       allow: ['interfaces'],
-        //       message: 'interfaces 層只能引用 interfaces, 不可引用 domain 或其他實作層',
-        //     },
-        //     // app 層:可引用 interfaces, domain 和同層的 app
-        //     {
-        //       from: ['app'],
-        //       allow: ['interfaces', 'domain', 'app'],
-        //       message: 'app 層可引用 interfaces, domain 和同層 app, 禁止引用 infra',
-        //     },
-        //     // infra 層:可引用 interfaces, domain 和同層的 infra
-        //     {
-        //       from: ['infra'],
-        //       allow: ['interfaces', 'domain', 'infra'],
-        //       message: 'infra 層可引用 interfaces, domain 和同層 infra, 禁止引用 app',
-        //     },
-        //   ],
-        // },
+        {
+          default: 'disallow',
+          rules: [
+            // domain: 只能引用 domain 和 shared
+            {
+              from: ['domain'],
+              allow: ['domain', 'shared'],
+            },
+            // application: 可引用 application, domain, shared
+            {
+              from: ['application'],
+              allow: ['application', 'domain', 'shared'],
+            },
+            // infra: 可引用所有層（因為要實作各層）
+            {
+              from: ['infra'],
+              allow: ['application', 'domain', 'shared', 'infra', 'data'],
+            },
+            // shared: 只能引用 shared
+            {
+              from: ['shared'],
+              allow: ['shared'],
+            },
+            // data: 只能引用 data 和 shared
+            {
+              from: ['data'],
+              allow: ['data', 'domain', 'application', 'shared'],
+            },
+          ],
+        },
       ],
     },
   },

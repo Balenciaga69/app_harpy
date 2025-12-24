@@ -1,7 +1,7 @@
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
-import { TagStatistics } from '../../enemy-encounter/helper/TagStatistics'
+import { TagStatistics } from '../../content-generation/helper/TagStatistics'
 
 /* 聚合並計算物品骰選的修飾符 */
 export class ItemModifierAggregationService {

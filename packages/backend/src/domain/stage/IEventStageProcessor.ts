@@ -1,7 +1,13 @@
-import { IRunContext } from '../../application/core-infrastructure/context/interface/IRunContext'
+import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 
 export interface IEventStageProcessor {
-  canTrigger: (ctx: IRunContext) => boolean
-  process: (ctx: IRunContext) => void
+  canTrigger: (ctx: StageProcessorContext) => boolean
+  process: (ctx: StageProcessorContext) => void
 }
-// FIXME: IRunContext 是 application layer!!!, 這裡是 domain layer
+
+export interface StageProcessorContext {
+  readonly seed: number
+  readonly currentChapter: ChapterLevel
+  readonly currentStage: number
+  readonly encounteredEnemyIds: string[]
+}
