@@ -1,6 +1,6 @@
 import { ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
 import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
-import { IAppContextService } from '../../../context/service/IAppContextService'
+import { IAppContextService } from '../../../context/service/AppContextService'
 import { ItemFactory } from '../../ItemFactory'
 
 /** 創建物品實例 */

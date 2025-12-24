@@ -1,6 +1,6 @@
 import { ItemRarity, ItemTemplate } from '../../../../domain/item/ItemTemplate'
 import { ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
-import { IAppContextService } from '../../../context/service/IAppContextService'
+import { IAppContextService } from '../../../context/service/AppContextService'
 
 /** 取得已排除限制的物品樣板 */
 export const fetchAvailableItemTemplates = (

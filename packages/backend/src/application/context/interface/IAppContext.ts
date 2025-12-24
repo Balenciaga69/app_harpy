@@ -1,4 +1,4 @@
-import { IAffixStore, IEnemyStore, IItemStore, IUltimateStore } from '../../store/IConfigStores'
+import { IAffixStore, IEnemyStore, IItemStore, IUltimateStore } from '../../static-config/store/IConfigStores'
 import { ICharacterContext } from './ICharacterContext'
 import { IRunContext } from './IRunContext'
 import { IStashContext } from './IStashContext'

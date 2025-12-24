@@ -1,5 +1,5 @@
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
-import { IAppContextService } from '../../../context/service/IAppContextService'
+import { IAppContextService } from '../../../context/service/AppContextService'
 import { IAppContext } from '../../../context/interface/IAppContext'
 import { TagStatistics } from '../../helper/TagStatistics'
 /** 取得最新物品骰選修飾符 */

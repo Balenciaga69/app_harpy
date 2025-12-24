@@ -1,5 +1,5 @@
 import { ItemRollSourceType } from '../../../domain/item/roll/ItemRollConfig'
-import { IAppContextService } from '../../context/service/IAppContextService'
+import { IAppContextService } from '../../context/service/AppContextService'
 import { rollItemType, rollItemRarity, rollItemTemplate } from './helper/itemRollHelpers'
 import { getLatestItemRollModifiers } from './helper/itemModifierHelpers'
 import { fetchAvailableItemTemplates } from './helper/itemConstraintHelpers'

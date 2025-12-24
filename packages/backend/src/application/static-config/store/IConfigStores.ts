@@ -1,11 +1,11 @@
-import { AffixTemplate } from '../../domain/affix/AffixTemplate'
-import { AffixEffectTemplate } from '../../domain/affix/effect/AffixEffectTemplate'
-import { EnemySpawnInfo, EnemyTemplate } from '../../domain/entity/Enemy'
-import { ItemTemplate, RelicTemplate } from '../../domain/item/ItemTemplate'
-import { ItemRollConfig } from '../../domain/item/roll/ItemRollConfig'
-import { ItemRollConstraint } from '../../domain/item/roll/ItemRollConstraint'
-import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
-import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
+import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
+import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 // TODO: 缺乏 SET 資料的功能需要補上
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate | undefined

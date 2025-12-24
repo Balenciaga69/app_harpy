@@ -1,10 +1,10 @@
 import { StageType } from '../../domain/stage/Stage'
 import { RandomHelper } from '../../shared/helpers/RandomHelper'
 // TODO: 未來搬到 env 配置 (目前暫時不處理)
-const LEVEL_COUNT = 10
-const ELITE_POSITION = 5
-const BOSS_POSITION = 10
-const EVENT_PROBABILITY = 0.12
+const LEVEL_COUNT = 10 // 單一章節關卡數
+const ELITE_POSITION = 5 // 菁英關卡
+const BOSS_POSITION = 10 // 首領關卡
+const EVENT_PROBABILITY = 0.12 // 事件生成機率
 
 const create = (seed: number) => {
   const result: Record<number, StageType> = {}
