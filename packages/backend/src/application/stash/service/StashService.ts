@@ -1,73 +1,151 @@
-import { Stash } from '../../../domain/stash/Stash'
-import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { ItemInstance } from '../../../domain/item/itemInstance'
+import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
+import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
+import {
+  IStashContextRepository,
+  ICharacterContextRepository,
+} from '../../core-infrastructure/repository/IRepositories'
 
-export interface IStashService {
-  /** 從 context 載入 Stash domain 物件 */
-  loadFromContext(context: IStashContext): Stash
-
-  /** 將 Stash domain 物件轉為 context，準備儲存 */
-  toContext(stash: Stash): IStashContext
-
-  /** 存取資料庫（repository）取得 Stash context */
-  fetchStashContext(playerId: string): Promise<IStashContext>
-
-  /** 儲存 Stash context 到資料庫 */
-  saveStashContext(playerId: string, context: IStashContext): Promise<void>
-
-  /** 玩家存放物品到倉庫 */
-  addItemToStash(playerId: string, item: ItemInstance): Promise<boolean>
-
-  /** 玩家從倉庫取出物品 */
-  takeItemFromStash(playerId: string, itemId: string, count?: number): Promise<ItemInstance | null>
-
-  /** 擴充倉庫容量 */
-  expandStashCapacity(playerId: string, amount: number): Promise<void>
-
-  /** 查詢玩家倉庫內容 */
-  getStashItems(playerId: string): Promise<ReadonlyArray<ItemInstance>>
+export interface StashOperation {
+  type: 'ADD' | 'REMOVE'
+  item: ItemInstance
+  // 可加上操作序號、來源、時間戳等
 }
 
-export class StashService implements IStashService {
-  // TODO: 注入 repository 依賴
+export interface IStashService {
+  /** 取得玩家背包內容 */
+  getStash(runId: string): Promise<IStashContext>
 
-  loadFromContext(context: IStashContext): Stash {
-    // TODO: context 轉 domain
-    throw new Error('Not implemented')
+  /** 依據操作日誌更新玩家背包內容（含驗證）- 用戶版本 */
+  updateStashFromOperations(
+    runId: string,
+    operations: StashOperation[],
+    characterId: string,
+    newCapacity?: number
+  ): Promise<void>
+}
+
+// 內部服務接口 - 只給其他服務使用
+export interface IInternalStashService {
+  /** 直接新增物品到倉庫 */
+  addItemToStash(runId: string, item: ItemInstance): Promise<void>
+
+  /** 直接從倉庫移除物品 */
+  removeItemFromStash(runId: string, itemId: string): Promise<void>
+
+  /** 擴充倉庫容量 */
+  expandStashCapacity(runId: string, newCapacity: number): Promise<void>
+}
+
+export class StashService implements IStashService, IInternalStashService {
+  private readonly stashRepo: IStashContextRepository
+  private readonly characterRepo: ICharacterContextRepository
+  private readonly appContextService: IAppContextService
+
+  constructor(
+    stashRepo: IStashContextRepository,
+    characterRepo: ICharacterContextRepository,
+    appContextService: IAppContextService
+  ) {
+    this.stashRepo = stashRepo
+    this.characterRepo = characterRepo
+    this.appContextService = appContextService
+  }
+  // 取得玩家背包內容
+  async getStash(runId: string): Promise<IStashContext> {
+    const ctx = await this.stashRepo.getById(runId)
+    if (!ctx) throw new Error('StashContext not found')
+    return ctx
   }
 
-  toContext(stash: Stash): IStashContext {
-    // TODO: domain 轉 context
-    throw new Error('Not implemented')
+  // 依據操作日誌更新玩家背包內容，含驗證 - 用戶版本
+  async updateStashFromOperations(
+    runId: string,
+    operations: StashOperation[],
+    characterId: string,
+    newCapacity?: number
+  ): Promise<void> {
+    const ctx = await this.getStash(runId)
+    const character = await this.characterRepo.getById(characterId)
+    if (!character) throw new Error('CharacterContext not found')
+    const items = [...ctx.items]
+    let characterRelics = [...character.relics]
+    const capacity = newCapacity ?? ctx.capacity
+    for (const op of operations) {
+      if (op.type === 'ADD') {
+        // 新增物品只能來自角色身上（relics）且 Stash 不含該物品
+        if (!this.isValidAdd(op.item, items, characterRelics)) throw new Error('Invalid add operation')
+        if (items.length + 1 > capacity) throw new Error('Exceeds stash capacity')
+        items.push(op.item)
+        // 從角色 relics 移除
+        characterRelics = characterRelics.filter((r) => r.id !== op.item.id)
+      } else if (op.type === 'REMOVE') {
+        // 只能移除 Stash 裡已有的物品
+        const idx = items.findIndex((i) => i.id === op.item.id)
+        if (idx === -1) throw new Error('Item not found for removal')
+        items.splice(idx, 1)
+      } else {
+        throw new Error('Unknown operation type')
+      }
+    }
+    // 最終容量驗證
+    if (items.length > capacity) throw new Error('Exceeds stash capacity')
+    const newCtx: IStashContext = { ...ctx, items, capacity }
+    // 更新 Stash 與 Character（角色 relics）
+    await this.stashRepo.update(newCtx, ctx.version)
+    await this.characterRepo.update({ ...character, relics: characterRelics }, character.version)
   }
 
-  async fetchStashContext(playerId: string): Promise<IStashContext> {
-    // TODO: 從 repository 取得 context
-    throw new Error('Not implemented')
+  // 僅允許合法來源物品加入
+  private isValidAdd(item: ItemInstance, currentItems: ItemInstance[], characterRelics: ItemInstance[]): boolean {
+    // 不能新增已存在於 Stash 的物品
+    if (currentItems.find((i) => i.id === item.id)) return false
+    // 必須存在於角色 relics
+    if (!characterRelics.find((r) => r.id === item.id)) return false
+    // 檢查 item.templateId 是否存在於合法模板
+    const { itemStore } = this.appContextService.GetConfig()
+    if (!item.templateId || !itemStore.hasRelic(item.templateId)) return false
+    return true
   }
 
-  async saveStashContext(playerId: string, context: IStashContext): Promise<void> {
-    // TODO: 儲存 context 到 repository
-    throw new Error('Not implemented')
+  // ===== 內部服務方法 - 只給其他服務使用 =====
+
+  /** 直接新增物品到倉庫 */
+  async addItemToStash(runId: string, item: ItemInstance): Promise<void> {
+    const ctx = await this.getStash(runId)
+    if (ctx.items.length >= ctx.capacity) {
+      throw new Error('Stash capacity exceeded')
+    }
+    if (ctx.items.find((i) => i.id === item.id)) {
+      throw new Error('Item already exists in stash')
+    }
+    const newItems = [...ctx.items, item]
+    const newCtx: IStashContext = { ...ctx, items: newItems }
+    await this.stashRepo.update(newCtx, ctx.version)
   }
 
-  async addItemToStash(playerId: string, item: ItemInstance): Promise<boolean> {
-    // TODO: 取得 context -> domain，執行 addItem，儲存
-    throw new Error('Not implemented')
+  /** 直接從倉庫移除物品 */
+  async removeItemFromStash(runId: string, itemId: string): Promise<void> {
+    const ctx = await this.getStash(runId)
+    const itemIndex = ctx.items.findIndex((i) => i.id === itemId)
+    if (itemIndex === -1) {
+      throw new Error('Item not found in stash')
+    }
+    const newItems = ctx.items.filter((i) => i.id !== itemId)
+    const newCtx: IStashContext = { ...ctx, items: newItems }
+    await this.stashRepo.update(newCtx, ctx.version)
   }
 
-  async takeItemFromStash(playerId: string, itemId: string, count?: number): Promise<ItemInstance | null> {
-    // TODO: 取得 context -> domain，執行 takeItem，儲存
-    throw new Error('Not implemented')
-  }
-
-  async expandStashCapacity(playerId: string, amount: number): Promise<void> {
-    // TODO: 取得 context -> domain，執行 expandCapacity，儲存
-    throw new Error('Not implemented')
-  }
-
-  async getStashItems(playerId: string): Promise<ReadonlyArray<ItemInstance>> {
-    // TODO: 取得 context，回傳 items
-    throw new Error('Not implemented')
+  /** 擴充倉庫容量 */
+  async expandStashCapacity(runId: string, newCapacity: number): Promise<void> {
+    if (newCapacity <= 0) {
+      throw new Error('Invalid capacity value')
+    }
+    const ctx = await this.getStash(runId)
+    if (newCapacity < ctx.items.length) {
+      throw new Error('New capacity cannot be less than current item count')
+    }
+    const newCtx: IStashContext = { ...ctx, capacity: newCapacity }
+    await this.stashRepo.update(newCtx, ctx.version)
   }
 }
