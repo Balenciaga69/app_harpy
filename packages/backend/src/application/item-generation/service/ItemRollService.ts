@@ -2,6 +2,7 @@ import { ItemRarity } from '../../../domain/item/ItemTemplate'
 import { ItemRollType } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
+import { rollItemRarity, rollItemTemplate, rollItemType } from '../helper/itemRollHelpers'
 import { ItemConstraintService } from './ItemConstraintService'
 
 /* 負責物品骰選邏輯的服務 */
