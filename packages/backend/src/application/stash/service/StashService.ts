@@ -1,4 +1,5 @@
 import { ItemInstance } from '../../../domain/item/itemInstance'
+import { IStash, Stash } from '../../../domain/stash/Stash'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
 import {
@@ -113,39 +114,58 @@ export class StashService implements IStashService, IInternalStashService {
   /** 直接新增物品到倉庫 */
   async addItemToStash(runId: string, item: ItemInstance): Promise<void> {
     const ctx = await this.getStash(runId)
-    if (ctx.items.length >= ctx.capacity) {
-      throw new Error('Stash capacity exceeded')
+    const stash = this.createStashFromContext(ctx)
+
+    if (!stash.addItem(item)) {
+      throw new Error('Failed to add item to stash')
     }
-    if (ctx.items.find((i) => i.id === item.id)) {
-      throw new Error('Item already exists in stash')
+
+    const newCtx: IStashContext = {
+      ...ctx,
+      items: stash.listItems(),
+      capacity: stash.capacity,
     }
-    const newItems = [...ctx.items, item]
-    const newCtx: IStashContext = { ...ctx, items: newItems }
     await this.stashRepo.update(newCtx, ctx.version)
   }
 
   /** 直接從倉庫移除物品 */
   async removeItemFromStash(runId: string, itemId: string): Promise<void> {
     const ctx = await this.getStash(runId)
-    const itemIndex = ctx.items.findIndex((i) => i.id === itemId)
-    if (itemIndex === -1) {
+    const stash = this.createStashFromContext(ctx)
+
+    if (!stash.removeItem(itemId)) {
       throw new Error('Item not found in stash')
     }
-    const newItems = ctx.items.filter((i) => i.id !== itemId)
-    const newCtx: IStashContext = { ...ctx, items: newItems }
+
+    const newCtx: IStashContext = {
+      ...ctx,
+      items: stash.listItems(),
+      capacity: stash.capacity,
+    }
     await this.stashRepo.update(newCtx, ctx.version)
   }
 
   /** 擴充倉庫容量 */
   async expandStashCapacity(runId: string, newCapacity: number): Promise<void> {
-    if (newCapacity <= 0) {
-      throw new Error('Invalid capacity value')
-    }
     const ctx = await this.getStash(runId)
-    if (newCapacity < ctx.items.length) {
-      throw new Error('New capacity cannot be less than current item count')
+    const stash = this.createStashFromContext(ctx)
+
+    if (!stash.expandCapacity(newCapacity)) {
+      throw new Error('Invalid capacity expansion')
     }
-    const newCtx: IStashContext = { ...ctx, capacity: newCapacity }
+
+    const newCtx: IStashContext = {
+      ...ctx,
+      items: stash.listItems(),
+      capacity: stash.capacity,
+    }
     await this.stashRepo.update(newCtx, ctx.version)
+  }
+
+  // ===== 私有輔助方法 =====
+
+  /** 從 IStashContext 創建 Stash domain object */
+  private createStashFromContext(ctx: IStashContext): IStash {
+    return new Stash([...ctx.items], ctx.capacity)
   }
 }

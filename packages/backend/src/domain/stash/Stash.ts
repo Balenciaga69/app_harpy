@@ -4,12 +4,18 @@ export interface IStash {
   readonly items: ReadonlyArray<ItemInstance>
   readonly capacity: number
 
+  // 基本操作
   addItem(item: ItemInstance): boolean
-  removeItem(itemId: string, count?: number): boolean
-  takeItem(itemId: string, count?: number): ItemInstance | null
+  removeItem(itemId: string): boolean
+  takeItem(itemId: string): ItemInstance | null
   listItems(): ReadonlyArray<ItemInstance>
   getUsedCapacity(): number
-  expandCapacity(amount: number): void
+  expandCapacity(newCapacity: number): boolean
+
+  // 業務規則檢查
+  canAddItem(item: ItemInstance): boolean
+  hasItem(itemId: string): boolean
+  isAtCapacity(): boolean
 }
 
 export class Stash implements IStash {
@@ -30,22 +36,22 @@ export class Stash implements IStash {
   }
 
   addItem(item: ItemInstance): boolean {
-    if (this._items.length >= this._capacity) return false
+    if (!this.canAddItem(item)) return false
     this._items.push(item)
     return true
   }
 
-  removeItem(itemId: string, count: number = 1): boolean {
+  removeItem(itemId: string): boolean {
     const idx = this._items.findIndex((i) => i.id === itemId)
     if (idx === -1) return false
-    this._items.splice(idx, count)
+    this._items.splice(idx, 1)
     return true
   }
 
-  takeItem(itemId: string, count: number = 1): ItemInstance | null {
+  takeItem(itemId: string): ItemInstance | null {
     const idx = this._items.findIndex((i) => i.id === itemId)
     if (idx === -1) return null
-    const [item] = this._items.splice(idx, count)
+    const [item] = this._items.splice(idx, 1)
     return item || null
   }
 
@@ -57,7 +63,26 @@ export class Stash implements IStash {
     return this._items.length
   }
 
-  expandCapacity(amount: number): void {
-    this._capacity += amount
+  expandCapacity(newCapacity: number): boolean {
+    if (newCapacity <= 0 || newCapacity < this._items.length) return false
+    this._capacity = newCapacity
+    return true
+  }
+
+  // 業務規則檢查方法
+  canAddItem(item: ItemInstance): boolean {
+    // 檢查容量
+    if (this.isAtCapacity()) return false
+    // 檢查物品是否已存在
+    if (this.hasItem(item.id)) return false
+    return true
+  }
+
+  hasItem(itemId: string): boolean {
+    return this._items.some((i) => i.id === itemId)
+  }
+
+  isAtCapacity(): boolean {
+    return this._items.length >= this._capacity
   }
 }
