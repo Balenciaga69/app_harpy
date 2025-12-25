@@ -16,10 +16,6 @@ applyTo: '/*.ts, /*.md'
 
 ### 那就要先做
 
-- IXxxRepository 介面
-- Contexts 的 樂觀鎖與版本 序列 與 反序列功能
-- 樣板載入器
-
 ### 再來是
 
 - 角色生成器, Run 生成器, 倉庫

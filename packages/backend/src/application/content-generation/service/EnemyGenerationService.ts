@@ -1,7 +1,7 @@
-import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
+import { EnemyRole, EnemySpawnInfo } from '../../../domain/entity/Enemy'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../../shared/helpers/WeightRoller'
-import { EnemySpawnInfo } from '../../../domain/entity/Enemy'
+import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 
 /* 協調敵人生成的完整流程 */
 export class EnemyGenerationService {
@@ -36,12 +36,12 @@ export class EnemyGenerationService {
     const { currentChapter, currentStage, chapters } = this.appCtx.contexts.runContext
 
     const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-    const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage] as any // TODO: 型別轉換
+    const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage] // TODO: 型別轉換
 
     const enemyTemplate = enemyStore.getEnemy(rolledEnemyTemplateId)
     if (!enemyTemplate) throw new Error('TODO: 找不到敵人樣板')
 
-    const enemyRoleConfig = (enemyTemplate.roleConfigs as any)[stageEnemyRole]
+    const enemyRoleConfig = enemyTemplate.roleConfigs[stageEnemyRole as EnemyRole]
     if (!enemyRoleConfig) throw new Error('TODO: 敵人沒有該角色配置')
 
     // TODO: 實體化敵人的完整邏輯

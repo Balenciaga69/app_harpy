@@ -1,8 +1,7 @@
-import { ItemRollType } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRarity } from '../../../domain/item/ItemTemplate'
+import { ItemRollType } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
-import { rollItemType, rollItemRarity, rollItemTemplate } from '../helper/itemRollHelpers'
 import { ItemConstraintService } from './ItemConstraintService'
 
 /* 負責物品骰選邏輯的服務 */
@@ -22,7 +21,7 @@ export class ItemRollService {
     const runContext = contexts.runContext
     const itemStore = config.itemStore
 
-    const staticRollConfig = itemStore.getItemRollConfig(source as any)
+    const staticRollConfig = itemStore.getItemRollConfig(source)
     if (!staticRollConfig) throw new Error('TODO: 拋領域錯誤')
 
     const itemType = rollItemType(runContext.seed, staticRollConfig)
