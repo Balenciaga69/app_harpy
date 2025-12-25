@@ -36,7 +36,7 @@ export class ItemModifierAggregationService {
 
     return highFreqTags.map((tag) => ({
       id: `modifier-tag-${tag}`,
-      type: 'TAG' as const,
+      type: 'TAG',
       tag,
       multiplier: 0.5,
       durationStages: 0,
@@ -61,7 +61,7 @@ export class ItemModifierAggregationService {
 
     return highStackRelics.map((r) => ({
       id: `modifier-relic-${r.templateId}`,
-      type: 'ID' as const,
+      type: 'ID',
       templateId: r.templateId,
       multiplier: 0.2,
       durationStages: 0,

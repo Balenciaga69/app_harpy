@@ -3,8 +3,8 @@ import { AffixEffectTemplate } from '../../../../domain/affix/effect/AffixEffect
 import { IAffixStore } from './IConfigStores'
 
 export class AffixStore implements IAffixStore {
-  private affixes: Map<string, AffixTemplate> = new Map()
-  private affixEffects: Map<string, AffixEffectTemplate> = new Map()
+  private readonly affixes: Map<string, AffixTemplate> = new Map()
+  private readonly affixEffects: Map<string, AffixEffectTemplate> = new Map()
 
   getAffix(id: string): AffixTemplate | undefined {
     return this.affixes.get(id)

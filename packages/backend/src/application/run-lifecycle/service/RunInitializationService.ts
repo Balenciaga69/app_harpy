@@ -116,6 +116,7 @@ export class RunInitializationService {
     const stashContext: IStashContext = {
       runId,
       version: INITIAL_VERSION,
+      capacity: 20,
       items: [],
     }
 
