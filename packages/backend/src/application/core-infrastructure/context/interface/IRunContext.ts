@@ -11,6 +11,6 @@ export interface IRunContext extends WithRunIdAndVersion {
   readonly chapters: Record<ChapterLevel, ChapterInfo>
   readonly rollModifiers: ItemRollModifier[]
 }
-interface ChapterInfo {
+export interface ChapterInfo {
   readonly stageNodes: Record<number, StageType>
 }
