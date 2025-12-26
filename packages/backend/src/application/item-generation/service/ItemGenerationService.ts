@@ -4,7 +4,8 @@ import { ItemConstraintService } from './ItemConstraintService'
 import { ItemRollService } from './ItemRollService'
 import { ItemModifierAggregationService } from './ItemModifierAggregationService'
 import { ItemInstantiationService } from './ItemInstantiationService'
-/* 協調物品生成的完整流程 */
+
+/** 協調物品生成流程：檢驗→聚合修飾符→骰選→實例化 */
 export class ItemGenerationService {
   private constraintService: ItemConstraintService
   private modifierService: ItemModifierAggregationService
@@ -16,20 +17,18 @@ export class ItemGenerationService {
     this.rollService = new ItemRollService(appContextService, this.constraintService)
     this.instantiationService = new ItemInstantiationService(appContextService)
   }
-  /* 生成隨機物品 */
+
+  /** 根據來源與當前修飾符生成隨機物品 */
   generateRandomItem(source: ItemRollSourceType) {
-    // 步驟 1: 檢驗是否可生成
     if (!this.constraintService.canGenerateItems()) {
       return null
     }
-    // 步驟 2: 聚合修飾符
     const modifiers = this.modifierService.aggregateModifiers()
-    // 步驟 3: 骰選物品類型、稀有度、樣板
     const { itemTemplateId, itemType } = this.rollService.rollItem(source, modifiers)
-    // 步驟 4: 實例化物品
     return this.instantiationService.createItemInstance(itemTemplateId, itemType)
   }
-  /* 生成特定樣板的物品 */
+
+  /** 生成指定樣板的物品，跳過骰選步驟 */
   generateItemFromTemplate(templateId: string, itemType: 'RELIC') {
     if (!this.constraintService.canGenerateItemTemplate(templateId)) {
       return null

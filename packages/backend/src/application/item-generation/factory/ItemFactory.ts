@@ -3,6 +3,8 @@ import { ItemInstance, RelicInstance } from '../../../domain/item/itemInstance'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { AffixFactory } from '../../content-generation/factory/AffixFactory'
+
+/** 根據樣板創建物品實例，聚合相關詞綴 */
 const createItem = (params: {
   template: ItemTemplate
   ownerUnitId: string
@@ -29,6 +31,8 @@ const createItem = (params: {
     },
   }
 }
+
+/** 創建聖物實例，基於物品實例擴展堆疊計數 */
 const createRelic = (
   template: RelicTemplate,
   ownerUnitId: string,

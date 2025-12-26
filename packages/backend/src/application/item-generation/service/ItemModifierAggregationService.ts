@@ -2,23 +2,23 @@ import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 import { TagStatistics } from '../../content-generation/helper/TagStatistics'
-/* 聚合並計算物品骰選的修飾符 */
+
+/** 聚合高頻標籤與高堆疊物品為修飾符，影響物品骰選權重 */
 export class ItemModifierAggregationService {
   constructor(private appContextService: IAppContextService) {}
-  /* 取得最新的物品骰選修飾符 */
+
+  /** 聚合未過期修飾符、高頻標籤與高堆疊物品為當前骰選修飾符 */
   aggregateModifiers(): ItemRollModifier[] {
     const runCtx = this.appContextService.GetContexts().runContext
     const nextRollModifiers = [
-      // 保留未過期的修飾符
       ...runCtx.rollModifiers.filter((mod: ItemRollModifier) => mod.durationStages !== 0),
-      // 添加高頻率標籤修飾符
       ...this.getHighFrequencyTagModifiers(),
-      // 添加高堆疊物品修飾符
       ...this.getHighStackRelicModifiers(),
     ]
     return nextRollModifiers
   }
-  /* 找出已裝備高頻率標籤物品轉換成 tag 修飾符 */
+
+  /** 統計已裝備物品標籤頻率，高頻標籤轉換為修飾符增加其骰選權重 */
   private getHighFrequencyTagModifiers(): ItemRollModifier[] {
     const threshold = 5
     const appCtx = {
@@ -35,7 +35,8 @@ export class ItemModifierAggregationService {
       durationStages: 0,
     }))
   }
-  /* 找出高堆疊數物品轉換成 id 修飾符 */
+
+  /** 篩選未達堆疊上限但已達閾值的聖物，轉換為修飾符增加其骰選概率 */
   private getHighStackRelicModifiers(): ItemRollModifier[] {
     const contexts = this.appContextService.GetContexts()
     const config = this.appContextService.GetConfig()
