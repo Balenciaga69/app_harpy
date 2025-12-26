@@ -1,5 +1,8 @@
 import { RelicInstance } from '../item/itemInstance'
 import { UltimateInstance } from '../ultimate/UltimateInstance'
+import { UnitStats, DEFAULT_UNIT_STATS } from '../stats/models/UnitStats'
+import { UnitStatModifier } from '../stats/models/StatModifier'
+import { UnitStatAggregate } from '../stats/UnitStatAggregate'
 
 /**
  * Character interface to define the structure and behavior of a game character.
@@ -20,6 +23,8 @@ export interface ICharacter {
   isOverloaded(): boolean
   // Capacity management
   expandCapacity(newCapacity: number): boolean
+  // Stat calculation
+  calculateDefaultStats(): UnitStats
 }
 
 /** 遊戲主角，承載角色的核心屬性與無依賴的邏輯 */
@@ -101,5 +106,19 @@ export class Character implements ICharacter {
     if (newCapacity <= this._capacity) return false
     this._capacity = newCapacity
     return true
+  }
+
+  /**
+   * 計算角色在戰鬥外的默認面板數值。
+   * - 基於 DEFAULT_UNIT_STATS 與現有遺物的詞綴修飾。
+   * - 無副作用。
+   * - 邊界條件：遺物必須能轉換為 UnitStatModifier。
+   */
+  calculateDefaultStats(): UnitStats {
+    // TODO: 將遺物上的詞綴轉換為 UnitStatModifier 陣列
+    // 當前作為黑盒子，返回空陣列
+    const modifiers: UnitStatModifier[] = []
+    // 透過 UnitStatAggregate 計算最終屬性
+    return UnitStatAggregate(DEFAULT_UNIT_STATS, modifiers)
   }
 }
