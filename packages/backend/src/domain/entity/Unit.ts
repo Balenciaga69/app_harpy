@@ -18,7 +18,7 @@ export interface IUnit {
   affixes: AffixInstance[]
 }
 
-/** 擁有最終技能的單位的擴展介面 */
+/** 擁有大絕招的單位的擴展介面 */
 export interface WithUltimate {
   ultimate: UltimateInstance
 }

@@ -2,7 +2,7 @@ import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
 import { UltimateEffect } from './UltimateEffect'
 
-/** 最終技能的引擎鉤子事件，決定最終技能在何時執行效果 */
+/** 大絕招的引擎鉤子事件，決定大絕招在何時執行效果 */
 // TODO: AffixEffectTrigger 也有類似東西，應該統一配置為戰鬥內外的 HOOK
 export type UltimateHookEvent =
   | 'ON_CAST' // 當大絕招施放時 (通常在攻擊階段取代普通攻擊)
@@ -11,7 +11,7 @@ export type UltimateHookEvent =
   | 'ON_START' // 戰鬥或回合開始
   | 'ON_END' // 戰鬥或回合結束
 
-/** 最終技能樣板，定義最終技能的靜態屬性、消耗與觸發效果 */
+/** 大絕招樣板，定義大絕招的靜態屬性、消耗與觸發效果 */
 export interface UltimateTemplate {
   readonly id: string
   readonly name: I18nField
