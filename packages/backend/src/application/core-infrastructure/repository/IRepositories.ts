@@ -11,14 +11,14 @@ interface ISingleContextUpdate<T> {
 type ContextKey = 'RUN' | 'STASH' | 'CHARACTER'
 /**
  * 通用持久化存儲介面：支援上下文的 CRUD 操作
- * 版本控制策略：樂觀鎖（expectedVersion）確保並發安全
+ * 版本控制策略：樂觀鎖(expectedVersion)確保並發安全
  */
 export interface IRepository<T extends WithRunIdAndVersion> {
   /** 根據 ID 查詢上下文 */
   getById(id: string): Promise<T | null>
   /** 根據樂觀鎖更新上下文，版本不符返回 null */
   update(context: T, expectedVersion: number): Promise<T | null>
-  /** 創建新上下文（初始版本為 0） */
+  /** 創建新上下文(初始版本為 0) */
   create(context: T): Promise<T>
   /** 刪除上下文 */
   delete(id: string): Promise<void>
@@ -40,7 +40,7 @@ export interface IStashContextRepository extends IRepository<IStashContext> {}
 export interface ICharacterContextRepository extends IRepository<ICharacterContext> {}
 /**
  * 批量上下文更新介面：支援多個上下文的原子性更新
- * 特點：全部成功或全部失敗（回滾），確保一致性
+ * 特點：全部成功或全部失敗(回滾)，確保一致性
  */
 export interface IContextBatchRepository {
   /**

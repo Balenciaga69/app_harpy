@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { AffixInstance } from '../../../domain/affix/AffixInstance'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-/** 將詞綴樣板轉換為詞綴實例，記錄創建上下文（章節、難度等） */
+/** 將詞綴樣板轉換為詞綴實例，記錄創建上下文(章節、難度等) */
 type CreateManyParams = {
   templateIds: string[]
   difficulty: number
@@ -38,7 +38,7 @@ const createOne = (params: CreateOneParams) => {
     },
   }
 }
-/** 詞綴工廠：負責將詞綴樣板實例化，記錄創建背景（章節、難度、來源單位） */
+/** 詞綴工廠：負責將詞綴樣板實例化，記錄創建背景(章節、難度、來源單位) */
 export const AffixFactory = {
   createMany,
   createOne,

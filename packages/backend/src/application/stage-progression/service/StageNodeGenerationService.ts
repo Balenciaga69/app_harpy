@@ -21,7 +21,7 @@ export interface IStageNodeGenerationService {
 
 /**
  * 關卡節點生成服務：為章節生成所有關卡節點
- * 職責：根據規則生成關卡類型分佈（菁英、首領、事件、一般）
+ * 職責：根據規則生成關卡類型分佈(菁英、首領、事件、一般)
  */
 export class StageNodeGenerationService implements IStageNodeGenerationService {
   /**
@@ -30,8 +30,8 @@ export class StageNodeGenerationService implements IStageNodeGenerationService {
    *   1. 第 5 關固定為菁英關卡
    *   2. 第 10 關固定為首領關卡
    *   3. 其他關卡根據機率骰選事件或一般
-   * 邊界：關卡數固定為 10（由常數定義）
-   * 副作用：無（純生成邏輯）
+   * 邊界：關卡數固定為 10(由常數定義)
+   * 副作用：無(純生成邏輯)
    */
   generateStageNodes(seed: number): StageNodeMap {
     return this.create(seed)

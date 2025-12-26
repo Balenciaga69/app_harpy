@@ -35,7 +35,7 @@ export class ItemStore implements IItemStore {
   hasRelic(id: string): boolean {
     return this.relics.has(id)
   }
-  /** 批量查詢物品樣板（目前返回聖物） */
+  /** 批量查詢物品樣板(目前返回聖物) */
   getManyItems(ids: string[]): ItemTemplate[] {
     const relics = this.getManyRelics(ids)
     return [...relics]

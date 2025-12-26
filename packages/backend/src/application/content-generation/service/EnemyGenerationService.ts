@@ -11,7 +11,7 @@ export class EnemyGenerationService {
   /**
    * 根據當前進度生成隨機敵人，流程：篩選可用敵人 → 權重骰選 → 實體化
    * 邊界：必須存在可用敵人樣板
-   * 副作用：無（敵人實例化在記憶體中）
+   * 副作用：無(敵人實例化在記憶體中)
    */
   generateRandomEnemy() {
     const { seed } = this.appCtx.contexts.runContext
@@ -32,7 +32,7 @@ export class EnemyGenerationService {
   }
   /**
    * 根據骰選的敵人樣板 ID 實體化敵人實例
-   * 副作用：無（記憶體中創建實例）
+   * 副作用：無(記憶體中創建實例)
    * 邊界：敵人樣板與角色配置必須存在，否則拋錯
    */
   private createEnemyInstance(rolledEnemyTemplateId: string) {

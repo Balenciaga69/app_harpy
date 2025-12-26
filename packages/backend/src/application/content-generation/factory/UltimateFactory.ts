@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-/** 大絕招工廠：將大絕招樣板轉換為實例，記錄創建背景（章節、難度、來源單位） */
+/** 大絕招工廠：將大絕招樣板轉換為實例，記錄創建背景(章節、難度、來源單位) */
 const create = (params: {
   templateIds: string[]
   difficulty: number

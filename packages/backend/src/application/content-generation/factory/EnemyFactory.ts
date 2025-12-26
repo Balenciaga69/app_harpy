@@ -16,7 +16,7 @@ const createRandomOne = (appCtx: IAppContext) => {
   // 步驟 2: 根據權重骰選敵人樣板
   const forRollInfos = availableInfos.map((info) => ({ id: info.templateId, weight: info.weight }))
   const rolledEnemyTemplateId = WeightRoller.roll(seed, forRollInfos)
-  // 步驟 3: 實體化敵人（聚合詞綴與大絕招）
+  // 步驟 3: 實體化敵人(聚合詞綴與大絕招)
   const enemyInstance = createInstance(appCtx, rolledEnemyTemplateId)
   return enemyInstance
 }

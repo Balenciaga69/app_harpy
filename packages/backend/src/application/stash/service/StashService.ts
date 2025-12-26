@@ -14,7 +14,7 @@ export interface StashOperation {
 export interface IStashService {
   /** 取得玩家背包內容 */
   getStash(runId: string): Promise<IStashContext>
-  /** 依據操作日誌更新玩家背包內容（含驗證）- 用戶版本 */
+  /** 依據操作日誌更新玩家背包內容(含驗證)- 用戶版本 */
   updateStashFromOperations(
     runId: string,
     operations: StashOperation[],
@@ -81,7 +81,7 @@ export class StashService implements IStashService, IInternalStashService {
     const capacity = newCapacity ?? ctx.capacity
     for (const op of operations) {
       if (op.type === 'ADD') {
-        // 新增物品只能來自角色身上（relics）且 Stash 不含該物品
+        // 新增物品只能來自角色身上(relics)且 Stash 不含該物品
         if (!this.isValidAdd(op.item, items, characterRelics)) throw new Error('Invalid add operation')
         if (items.length + 1 > capacity) throw new Error('Exceeds stash capacity')
         items.push(op.item)
@@ -99,7 +99,7 @@ export class StashService implements IStashService, IInternalStashService {
     // 最終容量驗證
     if (items.length > capacity) throw new Error('Exceeds stash capacity')
     const newCtx: IStashContext = { ...ctx, items, capacity }
-    // 更新 Stash 與 Character（角色 relics）
+    // 更新 Stash 與 Character(角色 relics)
     await this.stashRepo.update(newCtx, ctx.version)
     await this.characterRepo.update({ ...character, relics: characterRelics }, character.version)
   }

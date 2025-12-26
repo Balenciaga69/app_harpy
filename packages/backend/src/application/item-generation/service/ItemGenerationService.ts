@@ -25,8 +25,8 @@ export class ItemGenerationService {
   }
   /**
    * 根據來源與當前修飾符生成隨機物品
-   * 邊界：來源必須有效，修飾符不得為空（使用當前聚合修飾符）
-   * 副作用：無狀態修改（實例化在記憶體中）
+   * 邊界：來源必須有效，修飾符不得為空(使用當前聚合修飾符)
+   * 副作用：無狀態修改(實例化在記憶體中)
    */
   generateRandomItem(source: ItemRollSourceType) {
     if (!this.constraintService.canGenerateItems()) {
@@ -60,7 +60,7 @@ export class ItemConstraintService {
    * 副作用：無
    */
   canGenerateItems(): boolean {
-    // TODO: 未來可能有其他限制條件（如物品池已滿）
+    // TODO: 未來可能有其他限制條件(如物品池已滿)
     return true
   }
   /**
@@ -118,7 +118,7 @@ export class ItemInstantiationService {
    * 邊界：
    *   - 目前只支援聖物類型，其他類型拋錯
    *   - 樣板必須存在，否則拋錯
-   * 副作用：無（實例化在記憶體中）
+   * 副作用：無(實例化在記憶體中)
    */
   createItemInstance(templateId: string, itemType: ItemRollType) {
     const contexts = this.appContextService.GetContexts()
@@ -145,7 +145,7 @@ export class ItemModifierAggregationService {
   constructor(private appContextService: IAppContextService) {}
   /**
    * 聚合所有適用的骰選修飾符：未過期修飾符 + 高頻標籤 + 高堆疊聖物
-   * 副作用：無（純聚合邏輯）
+   * 副作用：無(純聚合邏輯)
    * 邊界：修飾符 durationStages > 0 表示未過期
    */
   aggregateModifiers(): ItemRollModifier[] {
@@ -158,7 +158,7 @@ export class ItemModifierAggregationService {
     return nextRollModifiers
   }
   /**
-   * 統計已裝備物品標籤頻率，將高頻標籤（計數 >= 5）轉換為骰選修飾符
+   * 統計已裝備物品標籤頻率，將高頻標籤(計數 >= 5)轉換為骰選修飾符
    * 業務規則：高頻標籤增加相同標籤物品的骰選權重 (乘數 0.5)
    * 副作用：無
    */
@@ -179,7 +179,7 @@ export class ItemModifierAggregationService {
     }))
   }
   /**
-   * 篩選未達堆疊上限但已達閾值（計數 >= 5）的聖物，轉換為骰選修飾符
+   * 篩選未達堆疊上限但已達閾值(計數 >= 5)的聖物，轉換為骰選修飾符
    * 業務規則：高堆疊聖物增加其再獲得的骰選權重，鼓勵高層級聖物升級
    * 邊界：不包含已達堆疊上限的聖物
    * 副作用：無
@@ -218,7 +218,7 @@ export class ItemRollService {
   /**
    * 按順序骰選物品類型、稀有度，最後從符合限制的樣板中骰選
    * 邊界：來源配置必須存在，否則拋錯
-   * 副作用：無（純骰選邏輯）
+   * 副作用：無(純骰選邏輯)
    */
   rollItem(
     source: string,

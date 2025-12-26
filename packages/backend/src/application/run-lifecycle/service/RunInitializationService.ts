@@ -87,7 +87,7 @@ export class RunInitializationService {
       configStore: this.configStore,
     }
   }
-  /** 初始化各個上下文（Run、Stash、Character） */
+  /** 初始化各個上下文(Run、Stash、Character) */
   private buildContexts(runId: string, params: RunInitializationParams, seed: number) {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
     const chaptersLevels: ChapterLevel[] = DEFAULT_CHAPTER_LEVELS
