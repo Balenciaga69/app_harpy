@@ -23,7 +23,7 @@ export interface IStashService {
   ): Promise<void>
 }
 // 內部服務接口 - 只給其他服務使用
-export interface IInternalStashService {
+interface IInternalStashService {
   /** 直接新增物品到倉庫 */
   addItemToStash(runId: string, item: ItemInstance): Promise<void>
   /** 直接從倉庫移除物品 */
@@ -101,6 +101,7 @@ export class StashService implements IStashService, IInternalStashService {
     const newCtx: IStashContext = { ...ctx, items, capacity }
     // 更新 Stash 與 Character(角色 relics)
     await this.stashRepo.update(newCtx, ctx.version)
+    // FIXME: stash service 直接操作 characterRepo 可能違反單一職責原則，考慮移動此邏輯到更高層的服務
     await this.characterRepo.update({ ...character, relics: characterRelics }, character.version)
   }
   /**

@@ -8,7 +8,7 @@ type ByField = Partial<Record<keyof UnitStats, UnitStatModifier[]>>
  * 計算單一統計值，應用 ADD → MULTIPLY → SET 的優先級順序
  * 依據優先級應用修飾符：先累加所有 ADD 操作，再累乘 MULTIPLY 操作，最後檢查是否有 SET 操作覆蓋
  */
-function computeAggregatedValue(base: number, mods: UnitStatModifier[]): number {
+function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[]): number {
   let addSum = 0
   let multiplySum = 0
   let lastSet: number | undefined = undefined

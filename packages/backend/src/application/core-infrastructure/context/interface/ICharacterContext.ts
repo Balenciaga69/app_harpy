@@ -1,3 +1,4 @@
+import { Stats } from 'fs'
 import { RelicInstance } from '../../../../domain/item/itemInstance'
 import { UltimateInstance } from '../../../../domain/ultimate/UltimateInstance'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
