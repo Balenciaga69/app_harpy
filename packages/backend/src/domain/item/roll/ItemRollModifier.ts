@@ -1,12 +1,17 @@
 import { TagType } from '../../../shared/models/TagType'
 import { ItemRarity } from '../ItemTemplate'
-// 物品生成修飾符介面(modifier)
+
+/** 物品生成修飾符，用於臨時調整生成權重與持續期限 */
 export type ItemRollModifier = ItemRollRarityModifier | ItemRollTagModifier | ItemRollIdModifier
-// 物品稀有度
+
+/** 稀有度修飾符，提升特定稀有度物品的出現機率 */
 export type ItemRollRarityModifier = { type: 'RARITY'; rarity: ItemRarity } & BaseRollModifier
-// 物品標籤
+
+/** 標籤修飾符，提升具有特定標籤物品的出現機率 */
 export type ItemRollTagModifier = { type: 'TAG'; tag: TagType } & BaseRollModifier
-// 單一物品
+
+/** ID 修飾符，提升特定物品的出現機率 */
 export type ItemRollIdModifier = { type: 'ID'; templateId: string } & BaseRollModifier
-// 倍率乘數 與 可以持續多少關卡或永久
+
+/** 生成修飾符的基礎配置，定義倍率與持續期限 */
 type BaseRollModifier = { multiplier: number; durationStages: number }
