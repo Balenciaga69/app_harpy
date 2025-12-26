@@ -2,6 +2,14 @@
 
 ## _2025/12/26_
 
+- 只留 id 去查找的模式, 雖然解耦但問題浮現
+  - 必須在 app 層中，手動查找每個 affixInstance 的 template、effectIds、effectTemplate，然後再組裝 statModifiers。
+  - 每次都要從 context 拿到 relics，再從 relics 拿 affixInstances，再從 affixInstances 拿 templateId，再查 affixStore。
+  - 若未來 affix 或 effect 的規則變動，必須修改 service 層的多層查找與組裝邏輯，違反開放封閉原則。
+  - 單元測試也變得困難，因為必須 mock 多層 store 與資料結構。
+
+## _2025/12/26_
+
 - 開始構思單元測試與 AI 品質檢查關卡機制
 - 建立大量未實作空殼, 與單元測試. 讓 AI 品質檢查關卡能夠運作
 - 添加大量指令, 從傳統乾淨代碼品質工法 轉為 AI 優先驅動

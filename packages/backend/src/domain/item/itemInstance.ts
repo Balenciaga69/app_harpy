@@ -1,6 +1,5 @@
 import { BaseInstanceFields, WithCreatedAt } from '../../shared/models/BaseInstanceFields'
 import { AffixInstance } from '../affix/AffixInstance'
-import { RelicTemplate } from './ItemTemplate'
 /** 物品實例，代表玩家擁有的特定物品，包含附著的詞綴 */
 export interface ItemInstance extends BaseInstanceFields, WithCreatedAt {
   readonly affixInstances: AffixInstance[]

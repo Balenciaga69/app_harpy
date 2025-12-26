@@ -52,7 +52,7 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
    *   - 同步更新倉庫（遺物在倉庫與角色間移動）。
    */
   async updateRelicsFromOperations(
-    // TODO: 這個可能˙要重寫
+    // TODO: 這裡是必要重構, 但先不管 我們先討論其他
     runId: string,
     characterId: string,
     operations: CharacterRelicOperation[]
