@@ -4,7 +4,6 @@ import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../../shared/helpers/WeightRoller'
 import { AffixFactory } from './AffixFactory'
-
 /** 敵人工廠：根據應用上下文生成隨機敵人實例，包含樣板選擇、詞綴與大絕招聚合 */
 export const EnemyFactory = () => {
   createRandomOne
@@ -42,19 +41,16 @@ const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
   const { currentChapter, currentStage, chapters, seed } = appCtx.contexts.runContext
   const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
   const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage]
-
   // 步驟 1: 驗證敵人樣板存在，不存在則拋錯
   const enemyTemplate = enemyStore.getEnemy(rolledEnemyTemplateId)
   if (!enemyTemplate) {
     throw new Error(`敵人樣板不存在: ${rolledEnemyTemplateId}`)
   }
-
   // 步驟 2: 驗證敵人在該角色的配置存在
   const enemyRoleConfig = enemyTemplate?.roleConfigs[stageEnemyRole as EnemyRole]
   if (!enemyRoleConfig) {
     throw new Error(`敵人缺少角色配置: ${rolledEnemyTemplateId} - ${stageEnemyRole}`)
   }
-
   // 步驟 3: 實體化詞綴
   const affixInstances = AffixFactory.createMany({
     templateIds: enemyRoleConfig?.affixIds ?? [],
@@ -63,7 +59,6 @@ const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
     difficulty: difficulty,
     sourceUnitId: rolledEnemyTemplateId,
   })
-
   // 步驟 4: 實體化大絕招
   const ultimateInstance: UltimateInstance = {
     id: `ultimate-instance-${seed}-${enemyRoleConfig?.ultimateId}`,
@@ -72,7 +67,6 @@ const createInstance = (appCtx: IAppContext, rolledEnemyTemplateId: string) => {
     pluginIds: [],
     atCreated: { chapter: currentChapter, stage: currentStage, difficulty: difficulty },
   }
-
   // 步驟 5: 組合成完整敵人實例
   const enemyInstance: EnemyInstance = {
     affixes: affixInstances,

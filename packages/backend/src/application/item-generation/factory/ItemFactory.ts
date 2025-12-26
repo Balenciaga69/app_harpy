@@ -3,13 +3,6 @@ import { ItemInstance, RelicInstance } from '../../../domain/item/itemInstance'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { AffixFactory } from '../../content-generation/factory/AffixFactory'
-
-/**
- * 物品工廠：將物品樣板轉換為實例，聚合詞綴並記錄創建背景
- * 職責：物品與聖物實例化、詞綴聚合、創建背景記錄
- */
-
-/** 根據樣板創建物品實例，聚合相關詞綴 */
 const createItem = (params: {
   template: ItemTemplate
   ownerUnitId: string

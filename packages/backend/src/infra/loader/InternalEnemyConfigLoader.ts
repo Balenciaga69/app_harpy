@@ -1,7 +1,7 @@
 import {
   EnemyConfigDTO,
   IEnemyConfigLoader,
-} from '../../application/core-infrastructure/static-config/loader/IEnemyConfigLoader'
+} from '../../application/core-infrastructure/static-config/loader/IConfigLoaders'
 import { EnemyTemplateList, EnemyWeightList } from '../../data/enemy/enemy.data'
 export class InternalEnemyConfigLoader implements IEnemyConfigLoader {
   async load(): Promise<EnemyConfigDTO> {

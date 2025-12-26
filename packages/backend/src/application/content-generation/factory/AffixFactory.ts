@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid'
 import { AffixInstance } from '../../../domain/affix/AffixInstance'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-
 /** 將詞綴樣板轉換為詞綴實例，記錄創建上下文（章節、難度等） */
 type CreateManyParams = {
   templateIds: string[]
@@ -25,7 +24,6 @@ const createMany = (params: CreateManyParams) => {
   )
   return templates
 }
-
 /** 根據樣板 ID 創建單一詞綴實例 */
 const createOne = (params: CreateOneParams) => {
   const { templateId, difficulty, chapter, stage, sourceUnitId } = params

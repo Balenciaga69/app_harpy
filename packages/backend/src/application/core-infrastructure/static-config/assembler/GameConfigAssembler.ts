@@ -1,15 +1,21 @@
-import { AffixConfigDTO, IAffixConfigLoader } from '../loader/IAffixConfigLoader'
-import { EnemyConfigDTO, IEnemyConfigLoader } from '../loader/IEnemyConfigLoader'
-import { IItemConfigLoader, ItemConfigDTO } from '../loader/IItemConfigLoader'
-import { IProfessionConfigLoader, ProfessionConfigDTO } from '../loader/IProfessionConfigLoader'
-import { IUltimateConfigLoader, UltimateConfigDTO } from '../loader/IUltimateConfigLoader'
+import {
+  AffixConfigDTO,
+  EnemyConfigDTO,
+  IAffixConfigLoader,
+  IEnemyConfigLoader,
+  IItemConfigLoader,
+  IProfessionConfigLoader,
+  ItemConfigDTO,
+  IUltimateConfigLoader,
+  ProfessionConfigDTO,
+  UltimateConfigDTO,
+} from '../loader/IConfigLoaders'
 import { AffixStore } from '../store/AffixStore'
 import { EnemyStore } from '../store/EnemyStore'
 import { ItemStore } from '../store/ItemStore'
 import { ProfessionStore } from '../store/ProfessionStore'
 import { UltimateStore } from '../store/UltimateStore'
 import { IGameConfigAssembler } from './IGameConfigAssembler'
-
 /**
  * 遊戲配置組裝器：協調所有配置加載器，將配置轉換為存儲
  * 職責：並行加載所有配置、轉換為內部存儲、管理存儲實例生命週期
@@ -90,22 +96,18 @@ export class GameConfigAssembler implements IGameConfigAssembler {
   getEnemyStore(): EnemyStore {
     return this.enemyStore
   }
-
   /** 取得物品存儲 */
   getItemStore(): ItemStore {
     return this.itemStore
   }
-
   /** 取得職業存儲 */
   getProfessionStore(): ProfessionStore {
     return this.professionStore
   }
-
   /** 取得大絕招存儲 */
   getUltimateStore(): UltimateStore {
     return this.ultimateStore
   }
-
   /** 取得詞綴存儲 */
   getAffixStore(): AffixStore {
     return this.affixStore
