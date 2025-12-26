@@ -1,79 +1,79 @@
-﻿# Ultimate（終極技能）
+﻿# Ultimate (終極技能)
 
-## 語意級（設計師閱讀）
+## 語意級 (設計師閱讀)
 
 ### 數值調整與難度係數
 
-- Ultimate Effect 數值會根據「難度係數倍率」進行調整。
-- 生成 Ultimate 時，會帶入當前關卡或遊戲進度的難度係數。
-- 計算公式與 affix 相同，確保技能強度隨進度動態調整。
+- Ultimate Effect 數值會根據「難度係數倍率」進行調整
+- 生成 Ultimate 時, 會帶入當前關卡或遊戲進度的難度係數
+- 計算公式與 affix 相同, 確保技能強度隨進度動態調整
 
 ### 來源與觸發
 
-- Ultimate Gem 源自物品欄位，本身是物品，附帶提供一個技能。
-- 戰鬥中玩家能量充滿自動釋放終極技能。
-- 釋放後能量重置為零。
+- Ultimate Gem 源自物品欄位, 本身是物品, 附帶提供一個技能
+- 戰鬥中玩家能量充滿自動釋放終極技能
+- 釋放後能量重置為零
 
-### Plugin Affix（技能外掛詞綴）
+### Plugin Affix (技能外掛詞綴)
 
-- Plugin Affix 是直接注入至 Ultimate 的動態增強機制，無需額外 UI 交互。
-- 注入來源：
-  - 獎勵系統（Post-Combat Reward）
-  - 事件系統（Stage Event）
-  - 商店系統（Shop）
-- 注入方式：直接將 Plugin Affix 附加至 UltimateInstance 的詞綴陣列。
-- 多層支持：一個技能可累積多個 Plugin Affix，效果自動疊加。
+- Plugin Affix 是直接注入至 Ultimate 的動態增強機制, 無需額外 UI 交互
+- 注入來源:
+  - 獎勵系統 (Post-Combat Reward)
+  - 事件系統 (Stage Event)
+  - 商店系統 (Shop)
+- 注入方式:直接將 Plugin Affix 附加至 UltimateInstance 的詞綴陣列
+- 多層支持:一個技能可累積多個 Plugin Affix, 效果自動疊加
 
 ### 池設計
 
-- 來源：固定 ultimate pool（按職業分類與通用 pool）。
-- 需求：每 pool 有需求閾值。
-- Plugin Affix 池：每個技能有對應的可用詞綴列表。
+- 來源:固定 ultimate pool (按職業分類與通用 pool)
+- 需求:每 pool 有需求閾值
+- Plugin Affix 池:每個技能有對應的可用詞綴列表
 
 ---
 
-## 架構級（架構師閱讀）
+## 架構級 (架構師閱讀)
 
 ### 技能定義
 
-**終極技能配置（Ultimate Template）** 包含：
+**終極技能配置 (Ultimate Template)** 包含:
 
-- 技能 ID（如破甲劍、冰刃等）
-- 基礎效能（傷害、命中率、冷卻等）
-- 可用外掛詞綴池（該技能能附加的詞綴清單）
-- 注：當前名稱為「UltimateTemplate」，但本質為靜態配置
+- 技能 ID (如破甲劍, 冰刃等)
+- 基礎效能 (傷害, 命中率, 冷卻等)
+- 可用外掛詞綴池 (該技能能附加的詞綴清單)
+- 注:當前名稱為「UltimateTemplate」, 但本質為靜態配置
 
-### 外掛詞綴（Plugin Affix）應用流程
+### 外掛詞綴 (Plugin Affix)應用流程
 
-外掛詞綴是直接注入至終極技能的動態增強機制，無需額外 UI 交互：
+外掛詞綴是直接注入至終極技能的動態增強機制, 無需額外 UI 交互:
 
 #### 注入來源
 
-- 獎勵系統（Post-Combat Reward）
-- 事件系統（Stage Event）
-- 商店系統（Shop）
+- 獎勵系統 (Post-Combat Reward)
+- 事件系統 (Stage Event)
+- 商店系統 (Shop)
 
 #### 應用方式
 
 - 直接將 `AffixInstance` 附加至 `UltimateInstance` 的詞綴陣列
-- 一個技能可累積多個外掛詞綴，效果自動疊加
-- 外掛詞綴在戰鬥中自動生效，無需額外管理
+- 一個技能可累積多個外掛詞綴, 效果自動疊加
+- 外掛詞綴在戰鬥中自動生效, 無需額外管理
 
 ---
 
-## 代碼級（工程師閱讀）
+## 代碼級 (工程師閱讀)
 
-### 數據結構（暫定）
+### 數據結構 (暫定)
 
-終極技能實例（Ultimate Instance，又稱 Skill Instance）包含：
+終極技能實例 (Ultimate Instance, 又稱 Skill Instance)包含:
 
-- `ultimateTemplateId`：指向對應的技能配置
-- `attachedAffixes`：已附加的外掛詞綴陣列（`AffixInstance[]`）
+- `ultimateTemplateId`:指向對應的技能配置
+- `attachedAffixes`:已附加的外掛詞綴陣列 (`AffixInstance[]`)
 
-### 外掛詞綴應用流程（代碼級）
+### 外掛詞綴應用流程 (代碼級)
 
-1. 獎勵系統、事件系統或商店系統決定注入的外掛詞綴
-2. 驗證該詞綴未被附加過（可選，取決於設計）
+1. 獎勵系統, 事件系統或商店系統決定注入的外掛詞綴
+2. 驗證該詞綴未被附加過 (可選, 取決於設計)
 3. 創建 `AffixInstance` 並加入 `ultimateInstance.attachedAffixes`
 4. 持久化到存檔
 
@@ -87,9 +87,9 @@
 
 ## 技能設計範例
 
-1. 破甲劍：消耗能量 100，對血量最低的敵人造成攻擊 240% 傷害，接下來三次命中的攻擊 +5 能量。
-   - 月光再生 Plugin Affix 示例：原本生命回復 33%，透過 Plugin Affix 提高至 66%（即 +33%）。
+1. 破甲劍:消耗能量 100, 對血量最低的敵人造成攻擊 240% 傷害, 接下來三次命中的攻擊 +5 能量
+   - 月光再生 Plugin Affix 示例:原本生命回復 33%, 透過 Plugin Affix 提高至 66% (即 +33%)
 
-2. 冰刃：消耗能量 100，對敵人施加 150 層冰緩，並附加等值的其他異常（流血、感電）層數。
+2. 冰刃:消耗能量 100, 對敵人施加 150 層冰緩, 並附加等值的其他異常 (流血, 感電)層數
 
-3. 護盾術：消耗能量 100，增加 3000 Armor、3000 Evasion，持續 3000 Ticks。
+3. 護盾術:消耗能量 100, 增加 3000 Armor, 3000 Evasion, 持續 3000 Ticks

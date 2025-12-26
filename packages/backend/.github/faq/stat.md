@@ -1,38 +1,46 @@
-# Stats
+# stat（屬性）通用問答
 
-## What are Stats?
+## stat 是什麼
 
-- 單位的各種屬性總稱
-- 分為以下類:
-  - 防禦:
-    - hp: 生命
-    - evasion: 閃避百分比
-    - damageReduction: 傷害減免百分比
-  - 攻擊:
-    - attackDamage: 攻擊力
-    - attackCooldown: 攻擊冷卻時間(毫秒)
-    - criticalChance: 暴擊百分比
-    - criticalMultiplier: 暴擊傷害倍率
-  - 能量:
-    - maxEnergy: 最大能量
-    - energyRegen: 每秒能量回復
-    - energyGainOnAttack: 攻擊時獲得能量
-  - 復活:
-    - resurrectionChance: 復活機率
-    - resurrectionHpPercent: 復活後生命百分比
-- Stats 會被多種來源影響, 但不論什麼來源都會先被修飾成 Stat Modifier 再進行計算
+- stat（屬性）是角色或敵人身上的各種能力數值總稱
+- 常見屬性有生命、閃避、攻擊力、最大能量、復活機率、復活後生命百分比
 
-## How are Stats calculated?
+## stat 有哪些用途
 
-- 先將所有來源都轉換成 Stat Modifier
-- 再透過 Stat Calculator 進行中的 Add, Multiply 等運算
+- 決定角色與敵人在戰鬥中的表現
+- 顯示在角色或敵人資訊面板
 
-## When are Stats calculations used?
+## stat 來源有哪些
 
-- 戰鬥時
-- 角色或敵人資訊面板顯示時
+- 玩家 stat 來自裝備、遺物等物品
+- 敵人 stat 來自模板設定與難度加成
 
-## Different sources of Stats for Player and Enemy
+# stat 給設計師
 
-- Player 來源來自各種物品的修飾詞
-- Enemy 來源來自 模板定義好的詞綴 與 難度加成
+## 如何設計 stat
+
+- 每個角色或敵人都可以有多種屬性
+- 可設計不同的屬性類型與數值範圍
+- 屬性可以被物品、詞綴（affix）、難度等多種來源影響
+- 設計時可考慮哪些屬性會影響戰鬥、哪些只做顯示
+
+## stat 設計注意事項
+
+- 屬性來源需明確，方便玩家理解
+- 可設計加法與乘法兩種影響方式
+- 屬性計算時機需明確，例如進入戰鬥或打開面板時
+
+# stat 給工程師
+
+## 技術細節
+
+- 所有屬性來源需先轉換成 Stat Modifier（屬性修飾器）
+- Stat Modifier 分為 Add（加法）與 Multiply（乘法）
+- Stat Calculator 負責將所有 Stat Modifier 計算成最終屬性值
+- 主要流程：
+  - 收集所有來源（裝備、詞綴、難度等）
+  - 轉換成 Stat Modifier
+  - Stat Calculator 計算最終值
+- Affix（詞綴）上的 AffectEffect 需轉換為 Stat Modifier
+- Stat Modifier 計算順序與合併規則需明確
+- TODO：AffectEffect 轉 Stat Modifier 的詳細轉換過程

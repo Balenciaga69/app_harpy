@@ -21,8 +21,6 @@
     "seedrandom": "^3.0.5"
   },
   "devDependencies": {
-    "@types/seedrandom": "^3.0.8",
-    "madge": "^8.0.0",
-    "typescript": "^5.9.3"
+    "@types/seedrandom": "^3.0.8"
   }
 }

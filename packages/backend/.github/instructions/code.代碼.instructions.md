@@ -2,73 +2,101 @@
 applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
 ---
 
-Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
-
 ### 關於代碼
 
-- 基礎原-+
-  則
+- 基礎原則
   - 乾淨代碼
   - 低耦合
   - 高內聚
   - 可維護性強
   - 易讀性高
   - 命名有意義
-  - 避免魔法數字和魔法字串
-  - KISS,YAGNI,DRY 原則很注重
-  - 代碼就是最好的文檔(理不用任何comment也能懂主要邏輯)
+  - KISS, YAGNI, DRY 原則很注重
+  - 代碼就是最好的文檔 - 不用註解就能看懂是最高品質
+  - 拒絕過度抽象與過度設計：抽象應該以當前問題為導向，越簡單越好
+  - 少即是多：抽象往往是複雜度的來源，優先考慮直接、明確的實作
+  - 語言中立：設計應能被 Python/TS/Go/Java 等語言無痛接軌
+  - 依賴即毒藥：視外部依賴為有成本的資源，使用介面隔離並限縮依賴範圍
 - 更佳實踐
-  - 善用設計模式
-  - 在寫方法與類別的時候要預先想好，這東西是要被單元測試的(但你不用先寫測試)。
-  - 遵循SOLID原則(尤其是單一職責原則最重要)
-  - 物件關係不應形成循環依賴，依賴應該是單向的
-  - 如果你要寫 markdown 請以中文為主。
-  - 你要扮演資深遊戲架構師，重視架構與品質與業界最佳實踐來導入我的方法。
-  - 當你 Create,Update,Delete 也要關注是否有連動的檔案或spec.md
+  - 善用簡潔的設計模式（非為模式而模式）
+  - 在寫方法與類別的時候要預先想好, 這東西是要被單元測試的 - 但你不用先寫測試
+  - 遵循 SOLID 原則 - 尤其是單一職責原則最重要，但不要為了分層而拆掉流程的清晰度
+  - 物件關係不應形成循環依賴 - 依賴應該是單向的
+  - 使用明確的介面來解耦實作與測試，保證核心邏輯可以用極簡 Mock 驗證
+  - 優先以靜態類型與靜態分析工具來保證合約，讓編譯器替你找錯誤
+  - 強烈偏好簡單且可理解的實作，而非追求工業流程般的統一風格或過度抽象
+  - 如果你要寫 markdown 請以中文為主
+  - 我偏好業界最佳實踐, 已被驗證過成熟的方案, 而非創新或實驗性質的東西
+  - 我在命名以及架構上偏好使用通用語言, 就是最接近業界標準的作法與定義
+  - 當你建立 (Create)、更新 (Update)、刪除 (Delete) 時也要關注是否有連動的檔案或 spec.md
 
-### 如果這是 OOP
+### 我認為糟糕的代碼
 
-- 建構子不要有過多參數，若有就要用設計模式簡化。
-- 禁止使用全局單例，這會測試困難(狀態共享)、隱藏依賴、生命週期失控、難以支援多實例場景、跨語言移植困難
-- 每個目錄最多 10 個檔案，超過應重構或分類
+- 命名一堆單字組合而成
+- 函數或方法的參數一大堆
+- 沒用到的代碼也不刪除
+- 大量 nested structure,loops, conditionals
+- 沒有型別或者型別在調用途中被破壞
+- 一份資料夾十個檔案
+- 有副作用無法追查
+- 換個語言或框架或套件這個功能就廢掉了
+- 單元測試不能準確測試這段代碼
+- 過度設計 - 設計是為了解決現在的問題而不是未來的問題
+- 偷偷使用全域或單例
+- 魔法數字和魔法字串
+- 一個檔案或類別幾千行, 它什麼都管
+- 過度抽象，為了模式而模式，導致使用成本大於收益
+- 為簡單 CRUD 拆出 5 個檔案、3 個介面、2 個 DTO 去轉型（拒絕為架構而架構）
+- 函數參數無止境膨脹、邏輯與 UI 高度耦合、以及大量不可測試的 if-else 嵌套
 
 ### 關於註解
 
-- When you refactor or modify code, be sure to update related comments to maintain consistency
-- Comments have two purposes
-- Help understand complex logic
-- Provide a brief one-line description of a function or class's purpose, allowing for quick browsing without diving into the code
-- Methods use /_* single-line description *_/
-- Class,Type,Interface use // single-line description
-- Methods or function logic comments use // single-line description
-- I don't need any @param, @returns type comments, as these are redundant
-- I found that my colleague's computer does not support Chinese comments, so please
-- ## ZH_TW comments throughout.
+修改或重構代碼時務必更新相關註解以保持一致性
 
-### Typescript 檔案與資料夾與物件命名規範
+註解有兩個目的
 
-File names:
-Almost time, FileName = InternalName
-React Components: PascalCase (e.g., UserProfile.tsx)
-Class, Abstract Class: PascalCase (e.g., UserProfile.ts)
-Utility, Helper, Common: PascalCase (e.g., DataFetch.ts)
-Interface, Type, Enum: PascalCase (e.g., IUserProfile,CharacterInformation.ts)
+- 協助理解複雜邏輯
+- 提供函數或類別的單行簡要描述, 可快速瀏覽而無需深入代碼
 
-InternalNaming:
-Class: PascalCase (e.g., UserProfile)
-Class's Interface: I + PascalCase (e.g., IUserProfile)
-Data Interface or Type Alias: PascalCase (e.g., UserID)
-Enum: PascalCase (e.g., UserRole)
-Constants: UPPER_SNAKE_CASE (e.g., MAX_RETRY_COUNT)
-Utility, Helper, Common Functions: camelCase (e.g., fetchData)
+註解規範
+
+- 方法使用 /_ single-line description _/
+- 類別、型別、介面使用 // single-line description
+- 邏輯註解使用 // single-line description
+- 不需要 @param、@returns 型別註解, 這些是多餘的
+- 同事的電腦不支援中文註解, 請使用 ZH_TW 標記的中文註解
+- 優先依靠型別與測試來說明合約，註解不應承載可執行邏輯的真相
+
+### TypeScript 檔案與資料夾與物件命名規範
+
+檔案名稱規範
+
+- React 元件: PascalCase (例如 UserProfile.tsx)
+- 類別、抽象類別: PascalCase (例如 UserProfile.ts)
+- 工具類、輔助類、公用類: PascalCase (例如 DataFetch.ts)
+- 介面、型別、列舉: PascalCase (例如 IUserProfile, CharacterInformation.ts)
+
+物件內部命名規範
+
+- 類別: PascalCase (例如 UserProfile)
+- 類別介面: I + PascalCase (例如 IUserProfile)
+- 資料介面或型別別名: PascalCase (例如 UserID)
+- 列舉: PascalCase (例如 UserRole)
+- 常數: UPPER_SNAKE_CASE (例如 MAX_RETRY_COUNT)
+- 工具函數、輔助函數、公用函數: camelCase (例如 fetchData)
 
 ### 本專案限定內容
 
-- 我們做邏輯(非UI)的內容一律以未來邏輯內容能被 CSharp Python Go 等語言無痛轉移為優先考量
-- 再遷移時候不會煩惱依賴某套件、或者耦合某個框架
+- 我們做邏輯 (非 UI) 的內容一律以未來邏輯內容能被 CSharp、Python、Go 等語言無痛轉移為優先考量
+- 再遷移時候不會煩惱依賴某套件, 或者耦合某個框架
 - 我們使用了模組化架構來做專案結構
-- 專案理論上可以被拆成前端與後端與獨立微服務之間不該有耦合，(除非共享契約與邏輯)
-- 我們使用了 TS 套件包括:
+- 專案理論上可以被拆成前端與後端與獨立微服務之間不該有耦合 (除非共享契約與邏輯)
+- 我們視依賴為有成本的資源：依賴引入前先評估替代方案與介面隔離策略
+- 依賴應透過介面抽象，不允許直接將外部實作滲透到 domain 核心
+- 優先使用靜態分析、型別系統與小量單元測試來保證行為，而非大量整合測試來掩蓋設計缺陷
+- 在可能的情況下，核心業務邏輯能用極簡的 Mock 就能測試通過
+- 拒絕為了架構而架構：如果拆分、抽象帶來的成本高於收益，就回到簡單實作
+- 我們使用的 TS 套件包括
 - 純 TS 套件
   - mitt
   - chance
@@ -83,23 +111,22 @@ Utility, Helper, Common Functions: camelCase (e.g., fetchData)
 #### 模組內的開發守則
 
 - 因為我安裝了 eslint-plugin-boundaries
-- 我要讓內部遵循 單向依賴規則：箭頭永遠指向內層。
-- 我將模組分成多層結構。同時若模組規模過大，我會在模組內再細分 sub-modules。
+- 我要讓內部遵循單向依賴規則 - 箭頭永遠指向內層
+- 我將模組分成多層結構, 同時若模組規模過大, 我會在模組內再細分 sub-modules
 - domain/app/infra
   - domain 核心概念幾乎全部分佈在此
-    - 聚合根、實體、值物件、領域服務、領域事件
-    - domain 層是核心價值所在，必須保持其純粹性，不被任何外部技術細節污染。
-    - 明確要求所有值物件都必須是不可變的
-  - app 定義執行流程，協調實體層
-    - 應用程式服務、儲存庫介面、服務介面
-  - 這層將外部的伺服器技術，與內部的邏輯連接起來。
-    - 儲存庫實作、服務實作、呈現器
-  - infra這層包含所有技術骨架。
-    - 網路框架、配置依賴注入、日誌系統、監控系統
-  - 當您有 A,B 兩個不同限界上下文需要合作，防腐層（ACL）通常是必需的。
-    - 避免污染核心模型、隔離外部系統的變動、強制單向依賴
-    - 下游上下文應該建立防腐層來保護自己免受上游變化的影響。
-  - 內層絕不能直接引用外層的實作，若需要外層的能力必須依賴外層定義的介面
-- 介面是非常重要的，這樣我們才能解耦與替換實作與測試
-- 每個 sub-module 或 module 都應該有一個 index.ts 作為進入點，並且只暴露必要的介面與類別
+- 聚合根, 實體, 值物件, 領域服務, 領域事件
+- domain 層是核心價值所在, 必須保持其純粹性, 不被任何外部技術細節污染
+- 明確要求所有值物件都必須是不可變的
+  - app 定義執行流程, 協調實體層
+- 應用程式服務, 儲存庫介面, 服務介面
+  - 這層將外部的伺服器技術, 與內部的邏輯連接起來
+- 儲存庫實作, 服務實作, 呈現器
+  - infra 這層包含所有技術骨架
+- 網路框架, 配置依賴注入, 日誌系統, 監控系統
+  - 當您有 A、B 兩個不同限界上下文需要合作, 防腐層 (ACL) 通常是必需的
+- 避免污染核心模型, 隔離外部系統的變動, 強制單向依賴
+- 下游上下文應該建立防腐層來保護自己免受上游變化的影響
+  - 內層絕不能直接引用外層的實作, 若需要外層的能力必須依賴外層定義的介面
+- 介面是非常重要的, 這樣我們才能解耦與替換實作與測試
 - 其餘地方不會有任何 index.ts

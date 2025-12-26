@@ -1,26 +1,35 @@
-# Enemy
+# enemy（敵人）通用問答
 
-## What is an Enemy?
+## enemy 是什麼
 
-- Enemy: 語意上指的是 遊戲中所有可遇見的 NPC 敵對角色
-- EnemyTemplate: 由設計師設計的靜態敵人資料
-- EnemyInstance: 由系統動態生成的動態敵人資料
-  - 包含套用 Difficulty 後的 Stats, Affixes, Ultimate 等資訊
-  - 將會在 combat simulation 中轉變成 Unit 進行互動
-- Enemy
-  - 有 stats, affixes, ultimate
-  - 沒有 equipments, relics
-  - 且被分成 NORMAL, ELITE, BOSS 三種 roles
-  - 每個 enemy 都會配置當他們是不同 role 時的 affixes 與 ultimate
-- Enemy Spawn Rules:
-  - 該 Chapter 可出現的
-  - 之前沒打過的
+- enemy（敵人）是遊戲中所有可遇見的敵對角色
+- 擁有屬性、詞綴（affix）、大絕招（ultimate）
+- 分為普通、精英、首領三種等級
 
-## How are Enemies generated?
+## enemy 有哪些特性
 
-### Enemy generation process
+- 不同等級會配置不同的詞綴與大絕招
+- 敵人沒有物品或職業
 
-- 有個 Store 會從外部載入所有 EnemyTemplates 與 Spawn Info
-- 由 WeightRoller 骰出符合條件的 EnemyTemplate
-- 根據當前 Difficulty 生成 EnemyInstance
-- [TODO:] 轉為 Combat Unit 進行戰鬥
+# enemy 給設計師
+
+## 如何設計 enemy
+
+- 設計靜態 enemyTemplate（敵人模板），包含大絕招與詞綴模板
+- 決定不同等級敵人的詞綴與大絕招配置
+- 可設計不同章節出現的敵人，豐富遊戲內容
+
+## 設計注意事項
+
+- 敵人生成規則需考慮章節限制與重複出現
+- 可設計特殊敵人只在特定章節出現
+
+# enemy 給工程師
+
+## 技術細節
+
+- Store 從外部載入所有 enemyTemplate（敵人模板）與 spawn info（生成資訊）
+- 由權重隨機選出符合條件的 enemyTemplate
+- 根據當前難度係數生成 enemyInstance（敵人實例），套用屬性、詞綴、大絕招
+- 戰鬥時將 enemyInstance 轉為單位進行互動
+- 需支援章節過濾、重複排除等生成規則
