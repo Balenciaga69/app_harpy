@@ -41,4 +41,19 @@ AffixEffectConditionProperty ON_EQUIP 有效果的 Affixes 將會默認穿戴上
 - Stage Event 支援
 - 召喚系概念
 
-## 臨時備忘錄:
+# 我有想法了!
+
+## 事件掛勾系統
+
+- Type: GameHook (這裡後續我會自己調整,你先這樣做就好,這不需要豐富物件模型, 只需要一個簡單的 類型)
+  ON_BEFORE_DAMAGE
+  ON_COMBAT_START
+  ON_EQUIP
+  ON_UNEQUIP
+  ON_CAST
+  ON_DRAW
+  ON_REDRAW
+  ON_BATTLE_START
+  ON_BATTLE_END
+  先幫我做這幾個類別 然後讓 UltimateTemplate.UltimateHookEvent 跟 AffixEffectTrigger 都不再使用, 改用這個類
+  這樣即可
