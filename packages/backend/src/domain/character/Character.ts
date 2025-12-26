@@ -49,12 +49,8 @@ export class Character implements ICharacter {
   }
 
   /**
+   * //TODO: 從多行改單行
    * 嘗試裝備遺物。
-   * - 邊界條件：
-   *   - 背包未達容量上限。
-   *   - 遺物未存在於背包中。
-   * - 副作用：
-   *   - 若成功，遺物將被加入背包。
    */
   equipRelic(relic: RelicInstance): boolean {
     if (!this.canEquipRelic(relic)) return false
@@ -63,11 +59,8 @@ export class Character implements ICharacter {
   }
 
   /**
+   * //TODO: 從多行改單行
    * 嘗試卸下遺物。
-   * - 邊界條件：
-   *   - 遺物必須存在於背包中。
-   * - 副作用：
-   *   - 若成功，遺物將從背包中移除。
    */
   unequipRelic(relicId: string): boolean {
     const index = this.relics.findIndex((r) => r.id === relicId)
@@ -77,10 +70,8 @@ export class Character implements ICharacter {
   }
 
   /**
+   * //TODO: 從多行改單行
    * 檢查是否可以裝備遺物。
-   * - 邊界條件：
-   *   - 背包未達容量上限。
-   *   - 遺物未存在於背包中。
    */
   canEquipRelic(relic: RelicInstance): boolean {
     if (this.relics.length >= this._capacity) return false
@@ -89,6 +80,7 @@ export class Character implements ICharacter {
   }
 
   /**
+   * //TODO: 從多行改單行
    * 檢查角色是否超載。
    */
   isOverloaded(): boolean {
@@ -96,11 +88,8 @@ export class Character implements ICharacter {
   }
 
   /**
+   * //TODO: 從多行改單行
    * 嘗試擴展背包容量。
-   * - 邊界條件：
-   *   - 新容量必須大於當前容量。
-   * - 副作用：
-   *   - 若成功，背包容量將被更新。
    */
   expandCapacity(newCapacity: number): boolean {
     if (newCapacity <= this._capacity) return false

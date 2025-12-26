@@ -34,12 +34,8 @@ export class Stash implements IStash {
     return this._capacity
   }
   /**
+   * //TODO: 從多行改單行
    * 嘗試新增物品到背包。
-   * - 邊界條件：
-   *   - 背包未達容量上限。
-   *   - 物品未存在於背包中。
-   * - 副作用：
-   *   - 若成功，物品將被加入背包。
    */
   addItem(item: ItemInstance): boolean {
     if (!this.canAddItem(item)) return false
@@ -47,11 +43,8 @@ export class Stash implements IStash {
     return true
   }
   /**
+   * //TODO: 從多行改單行
    * 嘗試從背包移除物品。
-   * - 邊界條件：
-   *   - 物品必須存在於背包中。
-   * - 副作用：
-   *   - 若成功，物品將從背包中移除。
    */
   removeItem(itemId: string): boolean {
     const idx = this._items.findIndex((i) => i.id === itemId)
@@ -60,11 +53,8 @@ export class Stash implements IStash {
     return true
   }
   /**
+   * //TODO: 從多行改單行
    * 嘗試從背包中取出物品。
-   * - 邊界條件：
-   *   - 物品必須存在於背包中。
-   * - 副作用：
-   *   - 若成功，物品將從背包中移除並返回。
    */
   takeItem(itemId: string): ItemInstance | null {
     const idx = this._items.findIndex((i) => i.id === itemId)
@@ -73,23 +63,22 @@ export class Stash implements IStash {
     return item || null
   }
   /**
+   * //TODO: 從多行改單行
    * 列出背包中的所有物品。
    */
   listItems(): ReadonlyArray<ItemInstance> {
     return this._items
   }
   /**
+   * //TODO: 從多行改單行
    * 獲取背包已使用的容量。
    */
   getUsedCapacity(): number {
     return this._items.length
   }
   /**
+   * //TODO: 從多行改單行
    * 嘗試擴展背包容量。
-   * - 邊界條件：
-   *   - 新容量必須大於當前已使用的容量。
-   * - 副作用：
-   *   - 若成功，背包容量將被更新。
    */
   expandCapacity(newCapacity: number): boolean {
     if (newCapacity <= 0 || newCapacity < this._items.length) return false
@@ -97,10 +86,8 @@ export class Stash implements IStash {
     return true
   }
   /**
+   * //TODO: 從多行改單行
    * 檢查是否可以新增物品到背包。
-   * - 邊界條件：
-   *   - 背包未達容量上限。
-   *   - 物品未存在於背包中。
    */
   canAddItem(item: ItemInstance): boolean {
     // 檢查容量
@@ -110,12 +97,14 @@ export class Stash implements IStash {
     return true
   }
   /**
+   * //TODO: 從多行改單行
    * 檢查背包中是否包含指定物品。
    */
   hasItem(itemId: string): boolean {
     return this._items.some((i) => i.id === itemId)
   }
   /**
+   * //TODO: 從多行改單行
    * 檢查背包是否已達容量上限。
    */
   isAtCapacity(): boolean {
