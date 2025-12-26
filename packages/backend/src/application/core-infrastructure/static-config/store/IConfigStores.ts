@@ -6,7 +6,6 @@ import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../../domain/item/roll/ItemRollConstraint'
 import { UltimateTemplate } from '../../../../domain/ultimate/UltimateTemplate'
 import { ChapterLevel } from '../../../../shared/models/TemplateWeightInfo'
-
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate | undefined
   hasEnemy(id: string): boolean

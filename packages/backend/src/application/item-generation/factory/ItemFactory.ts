@@ -3,7 +3,6 @@ import { ItemInstance, RelicInstance } from '../../../domain/item/itemInstance'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { AffixFactory } from '../../content-generation/factory/AffixFactory'
-
 const createItem = (params: {
   template: ItemTemplate
   ownerUnitId: string
@@ -30,7 +29,6 @@ const createItem = (params: {
     },
   }
 }
-
 const createRelic = (
   template: RelicTemplate,
   ownerUnitId: string,
@@ -41,7 +39,6 @@ const createRelic = (
   const item = createItem({ template, ownerUnitId, difficulty, chapter, stage })
   return { ...item, currentStacks: 1 } as RelicInstance
 }
-
 export const ItemFactory = {
   createRelic, // 建立聖物實例
 }

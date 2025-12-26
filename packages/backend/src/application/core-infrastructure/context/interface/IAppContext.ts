@@ -2,7 +2,6 @@ import { IAffixStore, IEnemyStore, IItemStore, IUltimateStore } from '../../stat
 import { ICharacterContext } from './ICharacterContext'
 import { IRunContext } from './IRunContext'
 import { IStashContext } from './IStashContext'
-
 export interface IAppContext {
   readonly contexts: IContexts
   readonly configStore: IConfigStore

@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid'
 import { AffixInstance } from '../../../domain/affix/AffixInstance'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-
 type CreateManyParams = {
   templateIds: string[]
   difficulty: number
@@ -36,7 +35,6 @@ const createOne = (params: CreateOneParams) => {
     },
   }
 }
-
 export const AffixFactory = {
   createMany,
   createOne,

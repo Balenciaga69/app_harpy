@@ -40,7 +40,6 @@ function getDifficultyFactor(chapter: number, stage: number): number {
   }
   return 1
 }
-
 export const DifficultyHelper = {
   getDifficultyFactor,
 }

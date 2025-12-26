@@ -6,17 +6,14 @@ import {
   IStashContextRepository,
   ICharacterContextRepository,
 } from '../../core-infrastructure/repository/IRepositories'
-
 export interface StashOperation {
   type: 'ADD' | 'REMOVE'
   item: ItemInstance
   // 可加上操作序號、來源、時間戳等
 }
-
 export interface IStashService {
   /** 取得玩家背包內容 */
   getStash(runId: string): Promise<IStashContext>
-
   /** 依據操作日誌更新玩家背包內容（含驗證）- 用戶版本 */
   updateStashFromOperations(
     runId: string,
@@ -25,24 +22,24 @@ export interface IStashService {
     newCapacity?: number
   ): Promise<void>
 }
-
 // 內部服務接口 - 只給其他服務使用
 export interface IInternalStashService {
   /** 直接新增物品到倉庫 */
   addItemToStash(runId: string, item: ItemInstance): Promise<void>
-
   /** 直接從倉庫移除物品 */
   removeItemFromStash(runId: string, itemId: string): Promise<void>
-
   /** 擴充倉庫容量 */
   expandStashCapacity(runId: string, newCapacity: number): Promise<void>
 }
-
+/**
+ * StashService 提供玩家背包 (Stash) 的管理功能。
+ * - 負責處理玩家背包的查詢、更新、擴容等操作。
+ * - 確保背包操作的合法性，並維護與角色 (Character) 的一致性。
+ */
 export class StashService implements IStashService, IInternalStashService {
   private readonly stashRepo: IStashContextRepository
   private readonly characterRepo: ICharacterContextRepository
   private readonly appContextService: IAppContextService
-
   constructor(
     stashRepo: IStashContextRepository,
     characterRepo: ICharacterContextRepository,
@@ -52,14 +49,23 @@ export class StashService implements IStashService, IInternalStashService {
     this.characterRepo = characterRepo
     this.appContextService = appContextService
   }
-  // 取得玩家背包內容
+  /**
+   * 取得玩家背包內容。
+   * @param runId - 遊戲運行 ID。
+   * @returns 玩家背包內容的上下文。
+   */
   async getStash(runId: string): Promise<IStashContext> {
     const ctx = await this.stashRepo.getById(runId)
     if (!ctx) throw new Error('StashContext not found')
     return ctx
   }
-
-  // 依據操作日誌更新玩家背包內容，含驗證 - 用戶版本
+  /**
+   * 根據操作日誌更新玩家背包內容，並進行合法性驗證。
+   * @param runId - 遊戲運行 ID。
+   * @param operations - 背包操作日誌。
+   * @param characterId - 角色 ID。
+   * @param newCapacity - （可選）新的背包容量。
+   */
   async updateStashFromOperations(
     runId: string,
     operations: StashOperation[],
@@ -96,8 +102,13 @@ export class StashService implements IStashService, IInternalStashService {
     await this.stashRepo.update(newCtx, ctx.version)
     await this.characterRepo.update({ ...character, relics: characterRelics }, character.version)
   }
-
-  // 僅允許合法來源物品加入
+  /**
+   * 驗證是否允許新增物品到背包。
+   * @param item - 欲新增的物品。
+   * @param currentItems - 當前背包中的物品。
+   * @param characterRelics - 角色身上的遺物。
+   * @returns 如果新增合法則返回 true。
+   */
   private isValidAdd(item: ItemInstance, currentItems: ItemInstance[], characterRelics: ItemInstance[]): boolean {
     // 不能新增已存在於 Stash 的物品
     if (currentItems.find((i) => i.id === item.id)) return false
@@ -108,18 +119,18 @@ export class StashService implements IStashService, IInternalStashService {
     if (!item.templateId || !itemStore.hasRelic(item.templateId)) return false
     return true
   }
-
   // ===== 內部服務方法 - 只給其他服務使用 =====
-
-  /** 直接新增物品到倉庫 */
+  /**
+   * 直接新增物品到倉庫。
+   * @param runId - 遊戲運行 ID。
+   * @param item - 欲新增的物品。
+   */
   async addItemToStash(runId: string, item: ItemInstance): Promise<void> {
     const ctx = await this.getStash(runId)
     const stash = this.createStashFromContext(ctx)
-
     if (!stash.addItem(item)) {
       throw new Error('Failed to add item to stash')
     }
-
     const newCtx: IStashContext = {
       ...ctx,
       items: stash.listItems(),
@@ -127,16 +138,17 @@ export class StashService implements IStashService, IInternalStashService {
     }
     await this.stashRepo.update(newCtx, ctx.version)
   }
-
-  /** 直接從倉庫移除物品 */
+  /**
+   * 直接從倉庫移除物品。
+   * @param runId - 遊戲運行 ID。
+   * @param itemId - 欲移除的物品 ID。
+   */
   async removeItemFromStash(runId: string, itemId: string): Promise<void> {
     const ctx = await this.getStash(runId)
     const stash = this.createStashFromContext(ctx)
-
     if (!stash.removeItem(itemId)) {
       throw new Error('Item not found in stash')
     }
-
     const newCtx: IStashContext = {
       ...ctx,
       items: stash.listItems(),
@@ -144,16 +156,17 @@ export class StashService implements IStashService, IInternalStashService {
     }
     await this.stashRepo.update(newCtx, ctx.version)
   }
-
-  /** 擴充倉庫容量 */
+  /**
+   * 擴充倉庫容量。
+   * @param runId - 遊戲運行 ID。
+   * @param newCapacity - 新的倉庫容量。
+   */
   async expandStashCapacity(runId: string, newCapacity: number): Promise<void> {
     const ctx = await this.getStash(runId)
     const stash = this.createStashFromContext(ctx)
-
     if (!stash.expandCapacity(newCapacity)) {
       throw new Error('Invalid capacity expansion')
     }
-
     const newCtx: IStashContext = {
       ...ctx,
       items: stash.listItems(),
@@ -161,10 +174,12 @@ export class StashService implements IStashService, IInternalStashService {
     }
     await this.stashRepo.update(newCtx, ctx.version)
   }
-
   // ===== 私有輔助方法 =====
-
-  /** 從 IStashContext 創建 Stash domain object */
+  /**
+   * 從 IStashContext 創建 Stash 領域對象。
+   * @param ctx - 背包上下文。
+   * @returns Stash 領域對象。
+   */
   private createStashFromContext(ctx: IStashContext): IStash {
     return new Stash([...ctx.items], ctx.capacity)
   }

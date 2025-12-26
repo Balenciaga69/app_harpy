@@ -2,7 +2,6 @@ import { ItemRarity, ItemTemplate } from '../../../domain/item/ItemTemplate'
 import { ItemRollConfig, ItemRollType } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { WeightRoller } from '../../../shared/helpers/WeightRoller'
-
 /** 骰物品類型 */
 export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRollType => {
   const itemTypeWeightList = Object.entries(rollConfig.itemTypeWeights).map(([itemType, weight]) => ({
@@ -11,7 +10,6 @@ export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRoll
   }))
   return WeightRoller.roll<ItemRollType>(seed, itemTypeWeightList)
 }
-
 /** 骰稀有度 */
 export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): ItemRarity => {
   const rarityModifiers = modifiers.filter((mod) => mod.type === 'RARITY')
@@ -25,7 +23,6 @@ export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifie
   }))
   return WeightRoller.roll<ItemRarity>(seed, rarityWeightList)
 }
-
 /** 骰物品樣板 */
 export const rollItemTemplate = (seed: number, templates: ItemTemplate[]): string => {
   const templateWeightList = templates.map((template) => ({

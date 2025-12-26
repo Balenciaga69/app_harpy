@@ -1,9 +1,7 @@
 // ItemRollType
 // ItemRollSourceType
 // ItemRollConfig
-
 import { ItemRollConfig } from '../../domain/item/roll/ItemRollConfig'
-
 const ShopRefresh: ItemRollConfig = {
   sourceType: 'SHOP_REFRESH',
   itemTypeWeights: {
@@ -28,5 +26,4 @@ const PostGameReward: ItemRollConfig = {
     LEGENDARY: 1,
   },
 }
-
 export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, PostGameReward]

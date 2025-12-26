@@ -1,6 +1,5 @@
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
-
 export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
 export interface ItemTemplate {
   readonly id: string
@@ -11,7 +10,6 @@ export interface ItemTemplate {
   readonly tags: TagType[]
   readonly loadCost: number
 }
-
 export interface RelicTemplate extends ItemTemplate {
   readonly stackLimit: number
 }

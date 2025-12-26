@@ -1,5 +1,4 @@
 import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
-
 // ZH_TW: 化學家毒化擴散
 const ultimate_chemist_poison_bomb: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb',
@@ -22,7 +21,6 @@ const ultimate_chemist_poison_bomb: UltimateTemplate = {
     },
   ],
 }
-
 // ZH_TW: 化學家劇毒護盾
 const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb_shield',
@@ -49,7 +47,6 @@ const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
     },
   ],
 }
-
 export const UltimateTemplateList: UltimateTemplate[] = [
   ultimate_chemist_poison_bomb,
   ultimate_chemist_poison_bomb_shield,

@@ -12,11 +12,9 @@ import {
 import { ItemFactory } from '../../item-generation/factory/ItemFactory'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RelicInstance } from '../../../domain/item/itemInstance'
-
 const INITIAL_VERSION = 1
 const CREATE_EXPECTED_VERSION = 0
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3]
-
 export class VersionConflictError extends Error {
   constructor(
     message: string,
@@ -26,7 +24,6 @@ export class VersionConflictError extends Error {
     this.name = 'VersionConflictError'
   }
 }
-
 export interface RunInitializationParams {
   professionId: string
   relicIds?: string[]
@@ -35,21 +32,17 @@ export interface RunInitializationParams {
   seed?: number
   persist?: boolean
 }
-
 export class RunInitializationService {
   constructor(
     private readonly configStore: IAppContext['configStore'],
     private readonly repos?: { batch?: IContextBatchRepository },
     private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
-
   async initialize(params: RunInitializationParams): Promise<IAppContext> {
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
     const runId = this.generateRunId(rng)
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
-
     const contexts = this.buildContexts(runId, params, seed)
-
     if (!!params.persist && this.repos && this.repos.batch) {
       const updates = {
         run: { context: contexts.runContext, expectedVersion: CREATE_EXPECTED_VERSION },
@@ -58,7 +51,6 @@ export class RunInitializationService {
       }
       const result = await this.repos.batch.updateBatch(updates)
       if (result === null) throw new VersionConflictError('version conflict while creating contexts', { runId })
-
       return {
         contexts: {
           runContext: result.runContext ?? contexts.runContext,
@@ -68,22 +60,18 @@ export class RunInitializationService {
         configStore: this.configStore,
       }
     }
-
     return {
       contexts,
       configStore: this.configStore,
     }
   }
-
   private buildContexts(runId: string, params: RunInitializationParams, seed: number) {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
     const chaptersLevels: ChapterLevel[] = DEFAULT_CHAPTER_LEVELS
     const chapters: Record<ChapterLevel, ChapterInfo> = {} as Record<ChapterLevel, ChapterInfo>
-
     for (const ch of chaptersLevels) {
       chapters[ch] = { stageNodes: stageGen.generateStageNodes(seed + ch) }
     }
-
     const runContext: IRunContext = {
       runId,
       version: INITIAL_VERSION,
@@ -95,7 +83,6 @@ export class RunInitializationService {
       chapters: chapters,
       rollModifiers: [],
     }
-
     const characterContext: ICharacterContext = {
       runId,
       version: INITIAL_VERSION,
@@ -112,22 +99,18 @@ export class RunInitializationService {
       },
       loadCapacity: 0,
     }
-
     const stashContext: IStashContext = {
       runId,
       version: INITIAL_VERSION,
       capacity: 20,
       items: [],
     }
-
     return { runContext, characterContext, stashContext }
   }
-
   private createInitialRelics(runId: string, startingRelicIds?: string[]): RelicInstance[] {
     if (!startingRelicIds || startingRelicIds.length === 0) {
       return []
     }
-
     return startingRelicIds
       .map((id) => this.configStore.itemStore.getRelic(id))
       .filter((template): template is NonNullable<typeof template> => template !== undefined)
@@ -141,7 +124,6 @@ export class RunInitializationService {
         )
       )
   }
-
   private generateRunId(rng?: RandomHelper): string {
     const randomPart = rng ? Math.floor(rng.next() * 1000) : Math.floor(Math.random() * 1000)
     return `run-${Date.now().toString(36)}-${randomPart}`

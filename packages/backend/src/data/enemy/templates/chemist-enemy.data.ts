@@ -1,5 +1,4 @@
 import { EnemyTemplate } from '../../../domain/entity/Enemy'
-
 export const enemy_template_chemist: EnemyTemplate = {
   id: 'enemy_template_chemist',
   name: { en: 'Chemist', tw: '化學家' },
