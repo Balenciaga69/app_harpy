@@ -1,6 +1,7 @@
-import { EnemySpawnInfo, EnemyTemplate } from '../../../../domain/entity/Enemy'
-import { IEnemyStore } from './IConfigStores'
-import { ChapterLevel } from '../../../../shared/models/TemplateWeightInfo'
+import { IEnemyStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
+import { EnemyTemplate, EnemySpawnInfo } from '../../../domain/entity/Enemy'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+
 /** 敵人配置存儲：管理敵人樣板與生成資訊 */
 export class EnemyStore implements IEnemyStore {
   private enemies: Map<string, EnemyTemplate> = new Map()

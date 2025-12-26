@@ -1,8 +1,8 @@
 import {
   AffixConfigDTO,
   IAffixConfigLoader,
-} from '../../application/core-infrastructure/static-config/loader/IConfigLoaders'
-import { AffixEffectTemplateList, AffixTemplateList } from '../../data/affix/affix.data'
+} from '../../../application/core-infrastructure/static-config/IConfigLoaders'
+import { AffixEffectTemplateList, AffixTemplateList } from '../../../data/affix/affix.data'
 export class InternalAffixConfigLoader implements IAffixConfigLoader {
   async load(): Promise<AffixConfigDTO> {
     const dto: AffixConfigDTO = {

@@ -1,6 +1,7 @@
-import { AffixTemplate } from '../../../../domain/affix/AffixTemplate'
-import { AffixEffectTemplate } from '../../../../domain/affix/effect/AffixEffectTemplate'
-import { IAffixStore } from './IConfigStores'
+import { IAffixStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
+import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
+
 /** 詞綴配置存儲：管理詞綴樣板與詞綴效果樣板 */
 export class AffixStore implements IAffixStore {
   private readonly affixes: Map<string, AffixTemplate> = new Map()

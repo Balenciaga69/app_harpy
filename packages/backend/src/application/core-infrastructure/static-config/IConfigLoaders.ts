@@ -1,11 +1,11 @@
-import { AffixTemplate } from '../../../../domain/affix/AffixTemplate'
-import { AffixEffectTemplate } from '../../../../domain/affix/effect/AffixEffectTemplate'
-import { EnemySpawnInfo, EnemyTemplate } from '../../../../domain/entity/Enemy'
-import { RelicTemplate } from '../../../../domain/item/ItemTemplate'
-import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
-import { ItemRollConstraint } from '../../../../domain/item/roll/ItemRollConstraint'
-import { ProfessionTemplate } from '../../../../domain/profession/ProfessionTemplate'
-import { UltimateTemplate } from '../../../../domain/ultimate/UltimateTemplate'
+import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
+import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
+import { RelicTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
+import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
 /** 詞綴配置資料傳輸物件 */
 export interface AffixConfigDTO {
   affixTemplates: AffixTemplate[]

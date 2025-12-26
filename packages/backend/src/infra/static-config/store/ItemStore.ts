@@ -1,7 +1,8 @@
-import { ItemTemplate, RelicTemplate } from '../../../../domain/item/ItemTemplate'
-import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
-import { ItemRollConstraint } from '../../../../domain/item/roll/ItemRollConstraint'
-import { IItemStore } from './IConfigStores'
+import { IItemStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
+import { RelicTemplate, ItemTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+
 /** 物品配置存儲：管理聖物樣板、骰選配置與約束條件 */
 export class ItemStore implements IItemStore {
   private itemRollConstraints: Map<string, ItemRollConstraint> = new Map()

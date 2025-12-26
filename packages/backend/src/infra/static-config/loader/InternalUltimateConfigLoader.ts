@@ -1,8 +1,8 @@
 import {
   UltimateConfigDTO,
   IUltimateConfigLoader,
-} from '../../application/core-infrastructure/static-config/loader/IConfigLoaders'
-import { UltimateTemplateList } from '../../data/ultimate/ultimate.data'
+} from '../../../application/core-infrastructure/static-config/IConfigLoaders'
+import { UltimateTemplateList } from '../../../data/ultimate/ultimate.data'
 export class InternalUltimateConfigLoader implements IUltimateConfigLoader {
   async load(): Promise<UltimateConfigDTO> {
     const dto: UltimateConfigDTO = {

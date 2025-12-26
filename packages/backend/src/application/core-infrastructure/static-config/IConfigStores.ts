@@ -1,11 +1,12 @@
-import { AffixTemplate } from '../../../../domain/affix/AffixTemplate'
-import { AffixEffectTemplate } from '../../../../domain/affix/effect/AffixEffectTemplate'
-import { EnemySpawnInfo, EnemyTemplate } from '../../../../domain/entity/Enemy'
-import { ItemTemplate, RelicTemplate } from '../../../../domain/item/ItemTemplate'
-import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
-import { ItemRollConstraint } from '../../../../domain/item/roll/ItemRollConstraint'
-import { UltimateTemplate } from '../../../../domain/ultimate/UltimateTemplate'
-import { ChapterLevel } from '../../../../shared/models/TemplateWeightInfo'
+import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
+import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
+import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
+import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
+import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate | undefined
@@ -47,4 +48,11 @@ export interface IUltimateStore {
   getUltimate(id: string): UltimateTemplate | undefined
   hasUltimate(id: string): boolean
   setMany(ultimates: UltimateTemplate[]): void
+}
+/** 職業配置存儲介面：支援職業樣板的查詢 */
+export interface IProfessionStore {
+  getProfession(id: string): ProfessionTemplate | undefined
+  hasProfession(id: string): boolean
+  getAllProfessions(): ProfessionTemplate[]
+  setMany(professions: ProfessionTemplate[]): void
 }
