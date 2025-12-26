@@ -12,9 +12,14 @@ import {
 import { ItemFactory } from '../../item-generation/factory/ItemFactory'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RelicInstance } from '../../../domain/item/itemInstance'
+
 const INITIAL_VERSION = 1
 const CREATE_EXPECTED_VERSION = 0
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3]
+
+/**
+ * 版本衝突異常：當樂觀鎖檢查失敗時拋出
+ */
 export class VersionConflictError extends Error {
   constructor(
     message: string,
@@ -24,6 +29,8 @@ export class VersionConflictError extends Error {
     this.name = 'VersionConflictError'
   }
 }
+
+/** Run 初始化參數 */
 export interface RunInitializationParams {
   professionId: string
   relicIds?: string[]
@@ -32,12 +39,27 @@ export interface RunInitializationParams {
   seed?: number
   persist?: boolean
 }
+
+/**
+ * RUN 初始化服務：創建新遊戲進度的完整上下文
+ * 職責：生成 Run ID、初始化上下文、可選持久化
+ */
 export class RunInitializationService {
   constructor(
     private readonly configStore: IAppContext['configStore'],
     private readonly repos?: { batch?: IContextBatchRepository },
     private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
+
+  /**
+   * 初始化新 RUN，創建所有必要的上下文
+   * 流程：生成 Run ID → 建立所有上下文 → 可選持久化
+   * 邊界：
+   *   - 職業必須有效
+   *   - 初始聖物必須存在
+   *   - 如 persist=true，持久化失敗則拋 VersionConflictError
+   * 副作用：如 persist=true，修改資料庫；否則無
+   */
   async initialize(params: RunInitializationParams): Promise<IAppContext> {
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
     const runId = this.generateRunId(rng)
@@ -65,6 +87,7 @@ export class RunInitializationService {
       configStore: this.configStore,
     }
   }
+  /** 初始化各個上下文（Run、Stash、Character） */
   private buildContexts(runId: string, params: RunInitializationParams, seed: number) {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
     const chaptersLevels: ChapterLevel[] = DEFAULT_CHAPTER_LEVELS
@@ -107,6 +130,7 @@ export class RunInitializationService {
     }
     return { runContext, characterContext, stashContext }
   }
+  /** 初始化起始聖物 */
   private createInitialRelics(runId: string, startingRelicIds?: string[]): RelicInstance[] {
     if (!startingRelicIds || startingRelicIds.length === 0) {
       return []
@@ -124,6 +148,7 @@ export class RunInitializationService {
         )
       )
   }
+  /** 生成唯一的 Run ID */
   private generateRunId(rng?: RandomHelper): string {
     const randomPart = rng ? Math.floor(rng.next() * 1000) : Math.floor(Math.random() * 1000)
     return `run-${Date.now().toString(36)}-${randomPart}`

@@ -6,6 +6,8 @@ import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../../domain/item/roll/ItemRollConstraint'
 import { UltimateTemplate } from '../../../../domain/ultimate/UltimateTemplate'
 import { ChapterLevel } from '../../../../shared/models/TemplateWeightInfo'
+
+/** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate | undefined
   hasEnemy(id: string): boolean
@@ -16,6 +18,8 @@ export interface IEnemyStore {
   setMany(enemies: EnemyTemplate[]): void
   setEnemySpawnInfos(infos: EnemySpawnInfo[]): void
 }
+
+/** 物品配置存儲介面：支援聖物樣板、骰選配置與約束條件的查詢 */
 export interface IItemStore {
   getAllItemRollConstraints(): ItemRollConstraint[]
   getItemRollConstraint(id: string): ItemRollConstraint | undefined
@@ -31,6 +35,8 @@ export interface IItemStore {
   setMany(relics: RelicTemplate[]): void
   setItemRollConfigs(configs: ItemRollConfig[]): void
 }
+
+/** 詞綴配置存儲介面：支援詞綴樣板與效果樣板的查詢 */
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate | undefined
   hasAffix(id: string): boolean
@@ -39,6 +45,8 @@ export interface IAffixStore {
   setMany(affixes: AffixTemplate[]): void
   setAffixEffects(effects: AffixEffectTemplate[]): void
 }
+
+/** 大絕招配置存儲介面：支援大絕招樣板的查詢 */
 export interface IUltimateStore {
   getUltimate(id: string): UltimateTemplate | undefined
   hasUltimate(id: string): boolean

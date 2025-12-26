@@ -5,14 +5,21 @@ import { IAppContextService } from '../../core-infrastructure/context/service/Ap
 import { rollItemRarity, rollItemTemplate, rollItemType } from '../helper/itemRollHelpers'
 import { ItemConstraintService } from './ItemConstraintService'
 
-/** 執行物品骰選流程：先骰類型與稀有度，再從符合限制的樣板中骰選 */
+/**
+ * 物品骰選服務：執行物品骰選流程
+ * 流程：骰選類型 → 骰選稀有度 → 篩選符合條件的樣板 → 骰選樣板
+ */
 export class ItemRollService {
   constructor(
     private appContextService: IAppContextService,
     private constraintService: ItemConstraintService
   ) {}
 
-  /** 按順序骰選物品類型、稀有度，最後從符合限制的樣板中骰選 */
+  /**
+   * 按順序骰選物品類型、稀有度，最後從符合限制的樣板中骰選
+   * 邊界：來源配置必須存在，否則拋錯
+   * 副作用：無（純骰選邏輯）
+   */
   rollItem(
     source: string,
     modifiers: ItemRollModifier[]

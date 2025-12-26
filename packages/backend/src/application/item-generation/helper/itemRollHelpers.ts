@@ -12,7 +12,7 @@ export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRoll
   return WeightRoller.roll<ItemRollType>(seed, itemTypeWeightList)
 }
 
-/** 根據修飾符調整權重後骰選稀有度 */
+/** 根據修飾符調整權重後骰選稀有度，修飾符會乘算基礎權重 */
 export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): ItemRarity => {
   const rarityModifiers = modifiers.filter((mod) => mod.type === 'RARITY')
   const aggregatedMods = new Map<ItemRarity, number>()
@@ -26,7 +26,7 @@ export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifie
   return WeightRoller.roll<ItemRarity>(seed, rarityWeightList)
 }
 
-/** 從可用樣板中骰選物品樣板 */
+/** 從可用樣板清單中骰選物品樣板，目前所有樣板權重均等 */
 export const rollItemTemplate = (seed: number, templates: ItemTemplate[]): string => {
   const templateWeightList = templates.map((template) => ({
     id: template.id,
