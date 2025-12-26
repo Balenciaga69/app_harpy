@@ -3,7 +3,6 @@ import { UltimateInstance } from '../ultimate/UltimateInstance'
 import { UnitStats, DEFAULT_UNIT_STATS } from '../stats/models/UnitStats'
 import { UnitStatModifier } from '../stats/models/StatModifier'
 import { UnitStatAggregate } from '../stats/UnitStatAggregate'
-
 /**
  * Character interface to define the structure and behavior of a game character.
  */
@@ -26,7 +25,6 @@ export interface ICharacter {
   // Stat calculation
   calculateDefaultStats(): UnitStats
 }
-
 /** 遊戲主角，承載角色的核心屬性與無依賴的邏輯 */
 export class Character implements ICharacter {
   readonly id: string
@@ -35,7 +33,6 @@ export class Character implements ICharacter {
   readonly relics: RelicInstance[] = []
   readonly ultimate: UltimateInstance
   private _capacity: number
-
   constructor(id: string, name: string, professionId: string, ultimate: UltimateInstance, capacity: number = 5) {
     this.id = id
     this.name = name
@@ -43,11 +40,9 @@ export class Character implements ICharacter {
     this.ultimate = ultimate
     this._capacity = capacity
   }
-
   get capacity(): number {
     return this._capacity
   }
-
   /**
    * //TODO: 從多行改單行
    * 嘗試裝備遺物。
@@ -57,7 +52,6 @@ export class Character implements ICharacter {
     this.relics.push(relic)
     return true
   }
-
   /**
    * //TODO: 從多行改單行
    * 嘗試卸下遺物。
@@ -68,7 +62,6 @@ export class Character implements ICharacter {
     this.relics.splice(index, 1)
     return true
   }
-
   /**
    * //TODO: 從多行改單行
    * 檢查是否可以裝備遺物。
@@ -78,7 +71,6 @@ export class Character implements ICharacter {
     if (this.relics.some((r) => r.id === relic.id)) return false
     return true
   }
-
   /**
    * //TODO: 從多行改單行
    * 檢查角色是否超載。
@@ -86,7 +78,6 @@ export class Character implements ICharacter {
   isOverloaded(): boolean {
     return this.relics.length > this._capacity
   }
-
   /**
    * //TODO: 從多行改單行
    * 嘗試擴展背包容量。
@@ -96,7 +87,6 @@ export class Character implements ICharacter {
     this._capacity = newCapacity
     return true
   }
-
   /**
    * 計算角色在戰鬥外的默認面板數值。
    * - 基於 DEFAULT_UNIT_STATS 與現有遺物的詞綴修飾。

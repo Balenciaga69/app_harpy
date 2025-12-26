@@ -15,7 +15,6 @@ export interface CharacterRelicOperation {
   type: 'EQUIP' | 'UNEQUIP'
   relic: RelicInstance
 }
-
 /**
  * 角色服務的公開介面。
  * - 提供角色相關的業務邏輯操作。
@@ -27,43 +26,35 @@ export interface ICharacterService {
    * - 無副作用。
    */
   getCharacter(characterId: string): Promise<ICharacterContext>
-
   /**TODO: 請濃縮成單行
    * 根據操作日誌批次更新角色的遺物。
    */
   updateRelicsFromOperations(runId: string, characterId: string, operations: CharacterRelicOperation[]): Promise<void>
-
   /**TODO: 請濃縮成單行
    * 檢查角色是否可以裝備指定遺物。
    */
   canEquipRelic(characterId: string, relic: RelicInstance): Promise<boolean>
-
   /**TODO: 請濃縮成單行
    * 檢查角色是否已達負載上限。
    */
   isCharacterAtCapacity(characterId: string): Promise<boolean>
-
   /**TODO: 請濃縮成單行
    * 裝備或取代角色的大絕招。
    */
   equipUltimate(characterId: string, ultimate: UltimateInstance): Promise<void>
-
   /**TODO: 請濃縮成單行
    * 取得角色目前裝備的大絕招。
    */
   getUltimate(characterId: string): Promise<UltimateInstance>
-
   /**TODO: 請濃縮成單行
    * 取得角色目前裝備的遺物列表。
    */
   getEquippedRelics(characterId: string): Promise<RelicInstance[]>
-
   /** TODO: 請濃縮成單行
    * 計算角色在戰鬥外的默認面板數值。
    */
   calculateCharacterDefaultStats(characterId: string): Promise<UnitStats>
 }
-
 /**
  * 內部服務接口 - 只給其他服務使用。
  */
@@ -72,18 +63,15 @@ export interface IInternalCharacterService {
    * 直接新增遺物到角色。
    */
   addRelicToCharacter(characterId: string, relic: RelicInstance): Promise<void>
-
   /**TODO: 請濃縮成單行
    * 直接從角色移除遺物。
    */
   removeRelicFromCharacter(characterId: string, relicId: string): Promise<void>
-
   /**TODO: 請濃縮成單行
    * 直接擴展角色的負重容量。
    */
   expandCharacterCapacity(characterId: string, newCapacity: number): Promise<void>
 }
-
 /**
  * 角色服務實作。
  * - 負責處理角色的查詢、裝卸遺物、技能管理等業務邏輯。
@@ -93,12 +81,10 @@ export interface IInternalCharacterService {
 export class CharacterService implements ICharacterService, IInternalCharacterService {
   private readonly characterRepo: ICharacterContextRepository
   private readonly stashService: IStashService
-
   constructor(characterRepo: ICharacterContextRepository, stashService: IStashService) {
     this.characterRepo = characterRepo
     this.stashService = stashService
   }
-
   /**
    * 取得角色資訊。
    * - 無副作用。
@@ -111,7 +97,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     }
     return character
   }
-
   /**
    * 根據操作日誌批次更新角色的遺物。
    * - 邊界條件：
@@ -128,14 +113,11 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
   ): Promise<void> {
     const character = await this.getCharacter(characterId)
     const stash = await this.stashService.getStash(runId)
-
     // 驗證操作的合法性
     this.validateRelicOperations(operations, character, stash)
-
     // 應用操作
     const newRelics = [...character.relics]
     const stashOperations: StashOperation[] = []
-
     for (const op of operations) {
       if (op.type === 'EQUIP') {
         newRelics.push(op.relic)
@@ -148,13 +130,11 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
         }
       }
     }
-
     // 更新角色與倉庫
     const newCharacterCtx: ICharacterContext = { ...character, relics: newRelics }
     await this.characterRepo.update(newCharacterCtx, character.version)
     await this.stashService.updateStashFromOperations(runId, stashOperations, characterId)
   }
-
   /**
    * 檢查角色是否可以裝備指定遺物。
    */
@@ -162,7 +142,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const character = await this.getCharacter(characterId)
     return character.canEquipRelic(relic)
   }
-
   /**
    * 檢查角色是否已達負載上限。
    */
@@ -170,7 +149,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const character = await this.getCharacter(characterId)
     return character.relics.length >= character.loadCapacity
   }
-
   /**
    * 裝備或取代角色的大絕招。
    * - 副作用：更新角色的大招。
@@ -180,7 +158,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const newCharacter: ICharacterContext = { ...character, ultimate }
     await this.characterRepo.update(newCharacter, character.version)
   }
-
   /**
    * 取得角色目前裝備的大絕招。
    */
@@ -188,7 +165,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const character = await this.getCharacter(characterId)
     return character.ultimate
   }
-
   /**
    * 取得角色目前裝備的遺物列表。
    */
@@ -196,7 +172,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const character = await this.getCharacter(characterId)
     return [...character.relics]
   }
-
   /**
    * 計算角色在戰鬥外的默認面板數值。
    * - 無副作用。
@@ -206,9 +181,7 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     // TODO: 實作黑盒子邏輯，將遺物詞綴轉換為屬性修飾
     return character.calculateDefaultStats()
   }
-
   // ===== 內部服務方法 - 只給其他服務使用 =====
-
   /**
    * 直接新增遺物到角色。
    * - 副作用：更新角色的遺物清單。
@@ -223,7 +196,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const newCharacter: ICharacterContext = { ...character, relics: newRelics }
     await this.characterRepo.update(newCharacter, character.version)
   }
-
   /**
    * 直接從角色移除遺物。
    * - 副作用：更新角色的遺物清單。
@@ -239,7 +211,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const newCharacter: ICharacterContext = { ...character, relics: newRelics }
     await this.characterRepo.update(newCharacter, character.version)
   }
-
   /**
    * 直接擴展角色的負重容量。
    * - 副作用：更新角色的容量。
@@ -253,7 +224,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     const newCharacter: ICharacterContext = { ...character, loadCapacity: newCapacity }
     await this.characterRepo.update(newCharacter, character.version)
   }
-
   /**
    * 驗證操作日誌的合法性。
    * - 檢查容量限制。
@@ -267,7 +237,6 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
     // 計算最終的遺物狀態
     let relicCount = character.relics.length
     const relicIds = new Set(character.relics.map((r) => r.id))
-
     for (const op of operations) {
       if (op.type === 'EQUIP') {
         // 檢查容量

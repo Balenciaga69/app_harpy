@@ -8,10 +8,8 @@ export type UnitStatType =
   | 'evasion'
   | 'resurrectionChance'
   | 'resurrectionHpPercent'
-
 /** 單位統計值映射，描述單位的所有數值屬性 */
 export type UnitStats = Record<UnitStatType, number>
-
 // FIXME: 搬運到 DATA 層或配置文件中
 export const DEFAULT_UNIT_STATS: UnitStats = {
   attackDamage: 10,

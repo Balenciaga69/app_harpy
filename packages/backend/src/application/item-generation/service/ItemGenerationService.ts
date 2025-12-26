@@ -135,7 +135,6 @@ export class ItemInstantiationService {
     return ItemFactory.createRelic(template, characterId, difficulty, currentChapter, currentStage)
   }
 }
-
 /**
  * 物品修飾符聚合服務：將高頻標籤與高堆疊物品轉換為骰選修飾符
  * 職責：聚合未過期修飾符、識別高頻標籤、篩選高堆疊聖物
@@ -237,7 +236,6 @@ export class ItemRollService {
     return { itemTemplateId, itemType, rarity }
   }
 }
-
 //=== 骰選幫助類 ===
 /** 根據配置權重骰選物品類型 */
 export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRollType => {
@@ -247,7 +245,6 @@ export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRoll
   }))
   return WeightRoller.roll<ItemRollType>(seed, itemTypeWeightList)
 }
-
 /** 根據修飾符調整權重後骰選稀有度，修飾符會乘算基礎權重 */
 export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): ItemRarity => {
   const rarityModifiers = modifiers.filter((mod) => mod.type === 'RARITY')
@@ -261,7 +258,6 @@ export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifie
   }))
   return WeightRoller.roll<ItemRarity>(seed, rarityWeightList)
 }
-
 /** 從可用樣板清單中骰選物品樣板，目前所有樣板權重均等 */
 export const rollItemTemplate = (seed: number, templates: ItemTemplate[]): string => {
   const templateWeightList = templates.map((template) => ({

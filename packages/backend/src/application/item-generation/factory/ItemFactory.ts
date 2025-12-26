@@ -40,7 +40,6 @@ const createRelic = (
   const item = createItem({ template, ownerUnitId, difficulty, chapter, stage })
   return { ...item, currentStacks: 1 } as RelicInstance
 }
-
 /** 物品工廠：提供物品與聖物的批量實例化能力 */
 export const ItemFactory = {
   createRelic, // 創建聖物實例，初始堆疊為 1

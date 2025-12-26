@@ -12,11 +12,9 @@ import {
 import { ItemFactory } from '../../item-generation/factory/ItemFactory'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RelicInstance } from '../../../domain/item/itemInstance'
-
 const INITIAL_VERSION = 1
 const CREATE_EXPECTED_VERSION = 0
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3]
-
 /**
  * 版本衝突異常：當樂觀鎖檢查失敗時拋出
  */
@@ -29,7 +27,6 @@ export class VersionConflictError extends Error {
     this.name = 'VersionConflictError'
   }
 }
-
 /** Run 初始化參數 */
 export interface RunInitializationParams {
   professionId: string
@@ -39,7 +36,6 @@ export interface RunInitializationParams {
   seed?: number
   persist?: boolean
 }
-
 /**
  * RUN 初始化服務：創建新遊戲進度的完整上下文
  * 職責：生成 Run ID、初始化上下文、可選持久化
@@ -50,7 +46,6 @@ export class RunInitializationService {
     private readonly repos?: { batch?: IContextBatchRepository },
     private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
-
   /**
    * 初始化新 RUN，創建所有必要的上下文
    * 流程：生成 Run ID → 建立所有上下文 → 可選持久化
