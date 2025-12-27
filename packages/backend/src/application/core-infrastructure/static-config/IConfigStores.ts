@@ -34,7 +34,7 @@ export interface IItemStore {
   setMany(relics: RelicTemplate[]): void
   setItemRollConfigs(configs: ItemRollConfig[]): void
 }
-/** 詞綴配置存儲介面：支援詞綴樣板與效果樣板的查詢 */
+/** Affix配置存儲介面：支援Affix樣板與效果樣板的查詢 */
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate | undefined
   hasAffix(id: string): boolean

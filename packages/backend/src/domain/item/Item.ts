@@ -32,6 +32,14 @@ export abstract class ItemAggregate {
     public readonly template: ItemTemplate,
     public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
   ) {}
+
+  /**
+   * 計算物品裝備時帶來的單位屬性修改器集合
+   * - 遍歷所有詞綴聚合，匯聚其屬性修改器
+   */
+  getUnitStatModifiers() {
+    return this.affixAggregates.flatMap((affix) => affix.getUnitStatModifiers())
+  }
 }
 /** 遺物聚合，包含遺物記錄、樣板與詞綴快照集合 */
 export class RelicAggregate extends ItemAggregate {

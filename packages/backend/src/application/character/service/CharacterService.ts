@@ -1,16 +1,11 @@
-import { Character, ICharacter } from '../../../domain/character/Character'
-import { RelicInstance } from '../../../domain/item/Item'
 import { UnitStatModifier } from '../../../domain/stats/models/StatModifier'
 import { DEFAULT_UNIT_STATS, UnitStats } from '../../../domain/stats/models/UnitStats'
 import { UnitStatAggregate } from '../../../domain/stats/UnitStatAggregate'
-import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
-import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
 import { ICharacterContextRepository } from '../../core-infrastructure/repository/IRepositories'
 import { IStashService, StashOperation } from '../../stash/service/StashService'
 import { CharacterRelicOperation, ICharacterService, IInternalCharacterService } from './ICharacterService'
-
 /**
  * 角色服務實作。
  * - 負責處理角色的查詢、裝卸遺物、技能管理等業務邏輯。
@@ -125,38 +120,34 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
   }
   /**
    * 計算角色在戰鬥外的默認面板數值。
+   * - 從 Record 組裝成 Aggregate，再聚合所有遺物的屬性修改器
    * - 無副作用。
    */
   async calculateCharacterDefaultStats(characterId: string): Promise<UnitStats> {
     const characterContext = await this.getCharacterContext(characterId)
-    // TODO: 超級爛 code ,多層迴圈, 職責也不再這裡, 存取太多 store 也需要調製
+    const { itemStore, affixStore } = this.appContextService.GetConfig()
     const statModifiers: UnitStatModifier[] = []
-    const { affixStore } = this.appContextService.GetConfig()
-    const { relics: instances } = characterContext
-    for (const instance of instances) {
-      for (const affixInstance of instance.affixInstances) {
-        const affixTemplate = affixStore.getAffix(affixInstance.templateId)
-        if (!affixTemplate) continue
-        for (const effectId of affixTemplate.effectIds) {
-          const effectTemplate = affixStore.getAffixEffect(effectId)
-          if (!effectTemplate) continue
-          const { difficulty } = affixInstance.atCreated
-          if (effectTemplate.trigger !== 'ON_EQUIP') continue
-          const statModifyEffects = effectTemplate.actions.filter((e) => e.type === 'STAT_MODIFY')
-          for (const statModifyEffect of statModifyEffects) {
-            const computedAffixMultiplier =
-              !!statModifyEffect.affixMultiplier && statModifyEffect.affixMultiplier > 0
-                ? statModifyEffect.affixMultiplier * difficulty
-                : 1
-            const statModifier: UnitStatModifier = {
-              field: statModifyEffect.stat,
-              operation: statModifyEffect.operation,
-              value: statModifyEffect.value * computedAffixMultiplier * difficulty,
-            }
-            statModifiers.push(statModifier)
-          }
-        }
-      }
+    for (const relicRecord of characterContext.relics) {
+      const relicTemplate = itemStore.getRelic(relicRecord.templateId)
+      if (!relicTemplate) continue
+      // 從 AffixRecord[] 組裝成 AffixAggregate[]
+      const { AffixAggregate } = require('../../../domain/affix/Affix')
+      const affixAggregates = relicRecord.affixRecord
+        .map((affixRecord: any) => {
+          const affixTemplate = affixStore.getAffix(affixRecord.templateId)
+          if (!affixTemplate) return null
+          const affixEffects = affixTemplate.effectIds
+            .map((effectId) => affixStore.getAffixEffect(effectId))
+            .filter((e) => e !== undefined)
+          return new AffixAggregate(affixRecord, affixTemplate, affixEffects)
+        })
+        .filter((a: any) => a !== null)
+      // 組裝遺物聚合根
+      const { RelicAggregate } = require('../../../domain/item/Item')
+      const relicAggregate = new RelicAggregate(relicRecord as any, relicTemplate, affixAggregates)
+      // 取得遺物的屬性修改器
+      const relicModifiers = relicAggregate.getUnitStatModifiers()
+      statModifiers.push(...relicModifiers)
     }
     const unitStatAggregate = UnitStatAggregate(DEFAULT_UNIT_STATS, statModifiers)
     return unitStatAggregate
@@ -248,10 +239,9 @@ export class CharacterService implements ICharacterService, IInternalCharacterSe
       }
     }
   }
-
   private mapToCharacter(characterContext: ICharacterContext): ICharacter {
     const character = new Character(
-      characterContext.characterId,
+      characterContext.id,
       characterContext.name,
       characterContext.professionId,
       characterContext.ultimate,

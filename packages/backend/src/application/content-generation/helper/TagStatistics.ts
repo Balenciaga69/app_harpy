@@ -14,11 +14,11 @@ const countTags = (appCtx: IAppContext, items: ItemInstance[]): Partial<Record<T
   }
   return tagCntMap
 }
-/** 將統計記錄轉換為陣列格式，便於排序與篩選 */
+/** 將統計Record轉換為陣列格式，便於排序與篩選 */
 const recordToList = (record: Partial<Record<TagType, number>>) => {
   return Object.entries(record).map(([tag, count]) => ({ tag: tag as TagType, count }))
 }
-/** 物品標籤統計結果：包含記錄(映射)與轉換方法 */
+/** 物品標籤統計結果：包含Record(映射)與轉換方法 */
 type CountResult = {
   record: Partial<Record<TagType, number>>
   toList: () => { tag: TagType; count: number }[]

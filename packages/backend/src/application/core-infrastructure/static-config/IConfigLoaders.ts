@@ -6,14 +6,14 @@ import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
-/** 詞綴配置資料傳輸物件 */
+/** Affix配置資料傳輸物件 */
 export interface AffixConfigDTO {
   affixTemplates: AffixTemplate[]
   affixEffectTemplates: AffixEffect[]
 }
-/** 詞綴配置加載器介面 */
+/** Affix配置加載器介面 */
 export interface IAffixConfigLoader {
-  /** 加載詞綴配置 */
+  /** 加載Affix配置 */
   load(): Promise<AffixConfigDTO>
 }
 /** 敵人配置資料傳輸物件 */
