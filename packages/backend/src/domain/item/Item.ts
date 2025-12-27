@@ -20,7 +20,7 @@ export interface RelicTemplate extends ItemTemplate {
 }
 /** 物品記錄，包含基礎欄位與詞綴資訊 */
 export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
-  readonly affixRecord: ReadonlyArray<AffixRecord>
+  readonly affixRecords: ReadonlyArray<AffixRecord>
 }
 /** 遺物記錄，擴展物品記錄並包含當前堆疊層數 */
 export interface RelicRecord extends ItemRecord {

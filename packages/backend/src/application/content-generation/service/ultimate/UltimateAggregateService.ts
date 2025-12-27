@@ -1,7 +1,7 @@
-import { AffixAggregate } from '../../../domain/affix/Affix'
-import { UltimateAggregate, UltimateRecord } from '../../../domain/ultimate/Ultimate'
-import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
-import { IAffixAggregateService } from './AffixAggregateService'
+import { AffixAggregate } from '../../../../domain/affix/Affix'
+import { UltimateAggregate, UltimateRecord } from '../../../../domain/ultimate/Ultimate'
+import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
+import { IAffixAggregateService } from '../affix/AffixAggregateService'
 
 export interface IUltimateAggregateService {
   create(record: UltimateRecord): UltimateAggregate

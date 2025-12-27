@@ -1,7 +1,7 @@
 // ...existing code...
-import { AffixAggregate, AffixRecord, AffixTemplate } from '../../../domain/affix/Affix'
-import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
-import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
+import { AffixAggregate, AffixRecord, AffixTemplate } from '../../../../domain/affix/Affix'
+import { AffixEffect } from '../../../../domain/affix/effect/AffixEffectTemplate'
+import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
 
 export interface IAffixAggregateService {
   create(record: AffixRecord): AffixAggregate

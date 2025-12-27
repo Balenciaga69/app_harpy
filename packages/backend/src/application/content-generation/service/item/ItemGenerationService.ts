@@ -1,12 +1,13 @@
-import { ItemRarity, ItemTemplate } from '../../../domain/item/Item'
-import { ItemRollConfig, ItemRollSourceType, ItemRollType } from '../../../domain/item/roll/ItemRollConfig'
-import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
-import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
-import { WeightRoller } from '../../../shared/helpers/WeightRoller'
-import { TagStatistics } from '../../content-generation/helper/TagStatistics'
-import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
-import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
-import { ItemFactory } from '../factory/ItemFactory'
+import { ItemRarity, ItemTemplate } from '../../../../domain/item/Item'
+import { ItemRollConfig, ItemRollSourceType, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
+import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
+import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
+import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
+import { TagStatistics } from '../../helper/TagStatistics'
+import { IAppContext } from '../../../core-infrastructure/context/interface/IAppContext'
+import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
+import { RelicRecordFactory } from '../../factory/RelicFactory'
+import { AffixRecordFactory } from '../../factory/AffixFactory'
 /**
  * 物品生成服務：協調物品生成完整流程
  * 流程：約束驗證 → 修飾符聚合 → 權重骰選 → 實例化
@@ -17,7 +18,7 @@ export class ItemGenerationService {
   private modifierService: ItemModifierAggregationService
   private rollService: ItemRollService
   private instantiationService: ItemInstantiationService
-  constructor(appContextService: IAppContextService) {
+  constructor(private appContextService: IAppContextService) {
     this.constraintService = new ItemConstraintService(appContextService)
     this.modifierService = new ItemModifierAggregationService(appContextService)
     this.rollService = new ItemRollService(appContextService, this.constraintService)
@@ -34,7 +35,7 @@ export class ItemGenerationService {
     }
     const modifiers = this.modifierService.aggregateModifiers()
     const { itemTemplateId, itemType } = this.rollService.rollItem(source, modifiers)
-    return this.instantiationService.createItemInstance(itemTemplateId, itemType)
+    return this.instantiationService.createItemAggregate(itemTemplateId, itemType)
   }
   /**
    * 生成指定樣板的物品，跳過骰選步驟
@@ -45,7 +46,7 @@ export class ItemGenerationService {
     if (!this.constraintService.canGenerateItemTemplate(templateId)) {
       return null
     }
-    return this.instantiationService.createItemInstance(templateId, itemType)
+    return this.instantiationService.createItemAggregate(templateId, itemType)
   }
 }
 /**
@@ -120,19 +121,30 @@ export class ItemInstantiationService {
    *   - 樣板必須存在，否則拋錯
    * 副作用：無(實例化在記憶體中)
    */
-  createItemInstance(templateId: string, itemType: ItemRollType) {
+  createItemAggregate(templateId: string, itemType: ItemRollType) {
     const contexts = this.appContextService.GetContexts()
     const config = this.appContextService.GetConfig()
     const characterContext = contexts.characterContext
     const runContext = contexts.runContext
     const itemStore = config.itemStore
-    const { characterId } = characterContext
     const { currentChapter, currentStage } = runContext
     if (itemType !== 'RELIC') throw new Error('TODO: 拋領域錯誤,暫時沒有其他類型')
     const template = itemStore.getRelic(templateId)
     if (!template) throw new Error('TODO: 拋領域錯誤')
     const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-    return ItemFactory.createRelic(template, characterId, difficulty, currentChapter, currentStage)
+    const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
+    const affixRecords = new AffixRecordFactory().createManyRecords([...template.affixIds], {
+      atCreated,
+      difficulty,
+      sourceUnitId: characterContext.id,
+    })
+    return new RelicRecordFactory().createRecord(template.id, {
+      affixRecords: affixRecords,
+      currentStacks: 0,
+      difficulty,
+      sourceUnitId: characterContext.id,
+      atCreated,
+    })
   }
 }
 /**
@@ -193,7 +205,7 @@ export class ItemModifierAggregationService {
     const highStackRelics = relics.filter((r) => {
       const isHighStack = r.currentStacks >= threshold
       const relicTemplate = itemStore.getRelic(r.templateId)
-      const notAtMax = relicTemplate ? r.currentStacks < relicTemplate.stackLimit : false
+      const notAtMax = relicTemplate ? r.currentStacks < relicTemplate.maxStacks : false
       return isHighStack && notAtMax
     })
     return highStackRelics.map((r) => ({

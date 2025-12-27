@@ -6,7 +6,6 @@ import { ICharacterContext } from '../../core-infrastructure/context/interface/I
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IContextBatchRepository } from '../../core-infrastructure/repository/IRepositories'
-import { ItemFactory } from '../../item-generation/factory/ItemFactory'
 import {
   IStageNodeGenerationService,
   StageNodeGenerationService,

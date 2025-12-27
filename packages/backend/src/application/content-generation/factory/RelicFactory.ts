@@ -8,7 +8,7 @@ export interface RelicRecordCreateParams {
   sourceUnitId: string
   atCreated: AtCreatedInfo
   currentStacks: number
-  affixRecord: ReadonlyArray<AffixRecord>
+  affixRecords: ReadonlyArray<AffixRecord>
 }
 /** IRelicRecordFactory：RelicRecord 工廠介面 */
 export interface IRelicRecordFactory {
@@ -25,7 +25,7 @@ export class RelicRecordFactory implements IRelicRecordFactory {
     const record: RelicRecord = {
       id: 'relic-record-' + nanoid(),
       templateId,
-      affixRecord: params.affixRecord,
+      affixRecords: params.affixRecords,
       currentStacks: params.currentStacks,
       atCreated: params.atCreated,
     }

@@ -1,13 +1,13 @@
-import { AffixAggregate } from '../../../domain/affix/Affix'
-import { EnemyAggregate, EnemyRole, EnemySpawnInfo } from '../../../domain/entity/Enemy'
-import { UltimateAggregate } from '../../../domain/ultimate/Ultimate'
-import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
-import { WeightRoller } from '../../../shared/helpers/WeightRoller'
-import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
-import { AffixRecordCreateParams, AffixRecordFactory } from '../factory/AffixFactory'
-import { UltimateRecordCreateParams, UltimateRecordFactory } from '../factory/UltimateFactory'
-import { IAffixAggregateService } from './AffixAggregateService'
-import { IUltimateAggregateService } from './UltimateAggregateService'
+import { AffixAggregate } from '../../../../domain/affix/Affix'
+import { EnemyAggregate, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
+import { UltimateAggregate } from '../../../../domain/ultimate/Ultimate'
+import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
+import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
+import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
+import { AffixRecordCreateParams, AffixRecordFactory } from '../../factory/AffixFactory'
+import { UltimateRecordCreateParams, UltimateRecordFactory } from '../../factory/UltimateFactory'
+import { IAffixAggregateService } from '../affix/AffixAggregateService'
+import { IUltimateAggregateService } from '../ultimate/UltimateAggregateService'
 /**
  * IEnemyAggregateService：對外提供依據樣板 ID 與角色創建 EnemyAggregate 的純邏輯服務
  * - 無隨機性：輸入相同參數應產生相同結果（便於測試）
