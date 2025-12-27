@@ -37,9 +37,12 @@
 
 ## 技術細節
 
-- affix 為資料驅動，與物品、敵人、effect 以 id 關聯
-- 沒有稀有度或等級，僅受難度係數影響
-- affix 效果由 effect（效果）定義，包含觸發時機、條件、行為
-- effect 結構需支援多樣化，一個 affix 可有多個 effect
-- affixTemplate 來源為外部 json，遊戲內不存入上下文
-- 計算時需根據難度係數調整數值
+- AffixTemplate 由 Store 載入，定義 affix 的靜態屬性、效果 ID、觸發規則
+- AffixRecord 記錄已獲得 affix 的持久化資料，僅包含 templateId、堆疊數等
+- AffixAggregate 由 Template + Record 組合而成，包含所有運行時行為
+  - getUnitStatModifiers()：計算屬性修飾器
+  - getEffectActions()：取得效果邏輯
+  - 根據難度係數動態計算數值
+- effect 結構定義在 AffixEffectTemplate 中，支援多樣化效果與觸發時機
+- AffixAggregate 不被存入 DB，需要時由 Template + Record 動態組裝
+- 計算時需根據難度係數調整 Affix 中所有涉及數值的 effect 倍率

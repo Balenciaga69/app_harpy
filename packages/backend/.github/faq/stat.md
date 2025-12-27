@@ -34,13 +34,13 @@
 
 ## 技術細節
 
-- 所有屬性來源需先轉換成 Stat Modifier（屬性修飾器）
-- Stat Modifier 分為 Add（加法）與 Multiply（乘法）
-- Stat Calculator 負責將所有 Stat Modifier 計算成最終屬性值
+- 所有屬性來源需先轉換成 StatModifier（屬性修飾器）
+- StatModifier 分為 Add（加法）與 Multiply（乘法）
+- UnitStatsBuilder 負責收集所有來源與轉換
+- UnitStatAggregate 負責將所有 StatModifier 計算成最終屬性值
 - 主要流程：
-  - 收集所有來源（裝備、詞綴、難度等）
-  - 轉換成 Stat Modifier
-  - Stat Calculator 計算最終值
-- Affix（詞綴）上的 AffectEffect 需轉換為 Stat Modifier
-- Stat Modifier 計算順序與合併規則需明確
-- TODO：AffectEffect 轉 Stat Modifier 的詳細轉換過程
+  - 收集所有來源（基礎屬性、裝備詞綴、難度加成等）
+  - 轉換成 StatModifier
+  - UnitStatAggregate 計算最終值
+- AffixEffectAction 中的倍率需根據難度係數與 StatModifier 進行轉換
+- StatModifier 計算順序：先所有 Add 相加，再套用 Multiply
