@@ -1,11 +1,11 @@
-import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixTemplate } from '../../../domain/affix/Affix'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
-import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
+import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 /** 詞綴配置資料傳輸物件 */
 export interface AffixConfigDTO {
   affixTemplates: AffixTemplate[]

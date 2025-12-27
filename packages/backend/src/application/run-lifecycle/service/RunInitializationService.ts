@@ -1,3 +1,4 @@
+import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
@@ -5,16 +6,15 @@ import { ICharacterContext } from '../../core-infrastructure/context/interface/I
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IContextBatchRepository } from '../../core-infrastructure/repository/IRepositories'
+import { ItemFactory } from '../../item-generation/factory/ItemFactory'
 import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
 } from '../../stage-progression/service/StageNodeGenerationService'
-import { ItemFactory } from '../../item-generation/factory/ItemFactory'
-import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
-import { RelicInstance } from '../../../domain/item/Item'
-const INITIAL_VERSION = 1
-const CREATE_EXPECTED_VERSION = 0
-const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3]
+// RUN 初始化服務相關常數
+const INITIAL_VERSION = 1 // 所有上下文的初始版本
+const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
+const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3] // 預設章節列表
 /**
  * 版本衝突異常：當樂觀鎖檢查失敗時拋出
  */

@@ -1,11 +1,11 @@
-import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
+import { AffixTemplate } from '../../../domain/affix/Affix'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
-import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
+import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
