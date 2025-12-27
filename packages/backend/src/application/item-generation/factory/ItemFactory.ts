@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-import { ItemInstance, RelicInstance } from '../../../domain/item/itemInstance'
-import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemInstance, RelicInstance } from '../../../domain/item/Item'
+import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { AffixFactory } from '../../content-generation/factory/AffixFactory'
 const createItem = (params: {

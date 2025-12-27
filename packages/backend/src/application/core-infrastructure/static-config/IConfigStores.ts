@@ -1,7 +1,7 @@
 import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
-import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
+import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
-import { ItemTemplate, RelicTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
@@ -38,10 +38,10 @@ export interface IItemStore {
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate | undefined
   hasAffix(id: string): boolean
-  getAffixEffect(id: string): AffixEffectTemplate | undefined
+  getAffixEffect(id: string): AffixEffect | undefined
   hasAffixEffect(id: string): boolean
   setMany(affixes: AffixTemplate[]): void
-  setAffixEffects(effects: AffixEffectTemplate[]): void
+  setAffixEffects(effects: AffixEffect[]): void
 }
 /** 大絕招配置存儲介面：支援大絕招樣板的查詢 */
 export interface IUltimateStore {

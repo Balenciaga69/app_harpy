@@ -1,5 +1,5 @@
 import { Character, ICharacter } from '../../../domain/character/Character'
-import { RelicInstance } from '../../../domain/item/itemInstance'
+import { RelicInstance } from '../../../domain/item/Item'
 import { UnitStatModifier } from '../../../domain/stats/models/StatModifier'
 import { DEFAULT_UNIT_STATS, UnitStats } from '../../../domain/stats/models/UnitStats'
 import { UnitStatAggregate } from '../../../domain/stats/UnitStatAggregate'

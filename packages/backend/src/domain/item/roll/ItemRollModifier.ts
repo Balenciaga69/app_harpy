@@ -1,5 +1,5 @@
 import { TagType } from '../../../shared/models/TagType'
-import { ItemRarity } from '../ItemTemplate'
+import { ItemRarity } from '../Item'
 /** 物品生成修飾符，用於臨時調整生成權重與持續期限 */
 export type ItemRollModifier = ItemRollRarityModifier | ItemRollTagModifier | ItemRollIdModifier
 /** 稀有度修飾符，提升特定稀有度物品的出現機率 */

@@ -1,11 +1,11 @@
 import { IAffixStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
 import { AffixTemplate } from '../../../domain/affix/AffixTemplate'
-import { AffixEffectTemplate } from '../../../domain/affix/effect/AffixEffectTemplate'
+import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 
 /** 詞綴配置存儲：管理詞綴樣板與詞綴效果樣板 */
 export class AffixStore implements IAffixStore {
   private readonly affixes: Map<string, AffixTemplate> = new Map()
-  private readonly affixEffects: Map<string, AffixEffectTemplate> = new Map()
+  private readonly affixEffects: Map<string, AffixEffect> = new Map()
   /** 根據 ID 查詢詞綴樣板 */
   getAffix(id: string): AffixTemplate | undefined {
     return this.affixes.get(id)
@@ -15,7 +15,7 @@ export class AffixStore implements IAffixStore {
     return this.affixes.has(id)
   }
   /** 根據 ID 查詢詞綴效果樣板 */
-  getAffixEffect(id: string): AffixEffectTemplate | undefined {
+  getAffixEffect(id: string): AffixEffect | undefined {
     return this.affixEffects.get(id)
   }
   /** 檢查詞綴效果樣板是否存在 */
@@ -29,7 +29,7 @@ export class AffixStore implements IAffixStore {
     }
   }
   /** 批量存儲詞綴效果樣板 */
-  setAffixEffects(effects: AffixEffectTemplate[]): void {
+  setAffixEffects(effects: AffixEffect[]): void {
     for (const effect of effects) {
       this.affixEffects.set(effect.id, effect)
     }

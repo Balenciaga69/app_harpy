@@ -1,4 +1,4 @@
-import { RelicInstance } from '../../../domain/item/itemInstance'
+import { RelicInstance } from '../../../domain/item/Item'
 import { UnitStats } from '../../../domain/stats/models/UnitStats'
 import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
 import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'

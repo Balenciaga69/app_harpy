@@ -1,4 +1,4 @@
-import { ItemRarity } from '../ItemTemplate'
+import { ItemRarity } from '../Item'
 /** 物品生成類型，決定物品的基礎類別 */
 export type ItemRollType = 'RELIC'
 /** 物品來源類型，區分物品的獲得途徑 */

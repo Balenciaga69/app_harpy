@@ -1,4 +1,4 @@
-import { ItemRarity, ItemTemplate } from '../../../domain/item/ItemTemplate'
+import { ItemRarity, ItemTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig, ItemRollSourceType, ItemRollType } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../domain/item/roll/ItemRollModifier'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'

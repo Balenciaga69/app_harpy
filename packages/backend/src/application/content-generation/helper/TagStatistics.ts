@@ -1,4 +1,4 @@
-import { ItemInstance } from '../../../domain/item/itemInstance'
+import { ItemInstance } from '../../../domain/item/Item'
 import { TagType } from '../../../shared/models/TagType'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 // TODO: 該專案分類錯誤位置 記得更換

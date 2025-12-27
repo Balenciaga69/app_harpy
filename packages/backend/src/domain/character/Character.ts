@@ -1,69 +1,57 @@
-import { RelicInstance } from '../item/itemInstance'
-import { RelicTemplate } from '../item/ItemTemplate'
-import { UltimateInstance } from '../ultimate/UltimateInstance'
-/** 角色介面，定義遊戲主角的核心屬性與行為 */
-export interface ICharacter {
+import { RelicAggregate, RelicRecord } from '../item/Item'
+import { ProfessionAggregate } from '../profession/ProfessionTemplate'
+import { UltimateAggregate, UltimateRecord } from '../ultimate/Ultimate'
+
+/** 角色記錄，保存角色的基本信息與裝備狀態 */
+export interface CharacterRecord {
   readonly id: string
   readonly name: string
   readonly professionId: string
-  readonly relics: ReadonlyArray<RelicInstance>
-  readonly ultimate: UltimateInstance
+  readonly relics: ReadonlyArray<RelicRecord>
+  readonly ultimate: UltimateRecord
   readonly loadCapacity: number
-  // Basic operations
-  equipRelic(relicInstance: RelicInstance, relicTemplate: RelicTemplate): boolean
-  unequipRelic(relicId: string): boolean
-  // Business logic checks
-  canEquipRelic(relicInstance: RelicInstance, relicTemplate: RelicTemplate): boolean
-  // State checks
-  isOverloaded(): boolean
-  // Capacity management
-  expandCapacity(newCapacity: number): boolean
+  currentLoad: number
 }
-/** 遊戲主角，承載角色的核心屬性與無依賴的邏輯 */
-export class Character implements ICharacter {
-  readonly id: string
-  readonly name: string
-  readonly professionId: string
-  readonly relics: RelicInstance[] = []
-  readonly ultimate: UltimateInstance
-  private _loadCapacity: number
-  constructor(id: string, name: string, professionId: string, ultimate: UltimateInstance, loadCapacity: number = 5) {
-    this.id = id
-    this.name = name
-    this.professionId = professionId
-    this.ultimate = ultimate
-    this._loadCapacity = loadCapacity
-  }
-  get loadCapacity(): number {
-    return this._loadCapacity
-  }
-  // 嘗試裝備遺物。
-  equipRelic(relicInstance: RelicInstance, relicTemplate: RelicTemplate): boolean {
-    if (!this.canEquipRelic(relicInstance, relicTemplate)) return false
-    this.relics.push(relicInstance)
+/** 角色聚合，包含角色記錄、職業、大絕招與聖物實例 */
+export class CharacterAggregate {
+  constructor(
+    public record: CharacterRecord,
+    public profession: ProfessionAggregate,
+    public relics: ReadonlyArray<RelicAggregate>,
+    public ultimate: UltimateAggregate,
+    public loadCapacity: number
+  ) {}
+
+  // 裝備聖物
+  equipRelic(relic: RelicAggregate): boolean {
+    if (this.canEquipRelic(relic)) return false
+    this.relics = [...this.relics, relic]
     return true
   }
-  // 嘗試卸下遺物。
+  // 卸除聖物
   unequipRelic(relicId: string): boolean {
-    const index = this.relics.findIndex((r) => r.id === relicId)
+    const index = this.relics.findIndex((r) => r.record.id === relicId)
     if (index === -1) return false
-    this.relics.splice(index, 1)
+    this.relics = this.relics.filter((r) => r.record.id !== relicId)
     return true
   }
-  // 檢查是否可以裝備遺物。
-  canEquipRelic(relicInstance: RelicInstance, relicTemplate: RelicTemplate): boolean {
-    if (this.relics.length >= this._loadCapacity) return false
-    if (relicInstance.currentStacks > relicTemplate.stackLimit) return false
+  // 擴展負重
+  expandLoadCapacity(increaseAmount: number): boolean {
+    if (increaseAmount <= 0) return false
+    this.record = {
+      ...this.record,
+      loadCapacity: this.loadCapacity + increaseAmount,
+    }
     return true
   }
-  // 檢查角色是否超載。
+  // 檢查是否可以裝備聖物
+  canEquipRelic(relic: RelicAggregate): boolean {
+    if (this.isOverloaded()) return false
+    if (relic.template.loadCost >= this.loadCapacity) return false
+    return true
+  }
+  // 檢查是否超載
   isOverloaded(): boolean {
-    return this.relics.length > this._loadCapacity
-  }
-  // 嘗試擴展背包容量。
-  expandCapacity(newCapacity: number): boolean {
-    if (newCapacity <= this._loadCapacity) return false
-    this._loadCapacity = newCapacity
-    return true
+    return this.record.currentLoad > this.loadCapacity
   }
 }

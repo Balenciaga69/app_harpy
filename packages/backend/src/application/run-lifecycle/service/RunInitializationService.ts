@@ -11,7 +11,7 @@ import {
 } from '../../stage-progression/service/StageNodeGenerationService'
 import { ItemFactory } from '../../item-generation/factory/ItemFactory'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
-import { RelicInstance } from '../../../domain/item/itemInstance'
+import { RelicInstance } from '../../../domain/item/Item'
 const INITIAL_VERSION = 1
 const CREATE_EXPECTED_VERSION = 0
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3]

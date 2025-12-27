@@ -1,5 +1,5 @@
 import { IItemStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
-import { RelicTemplate, ItemTemplate } from '../../../domain/item/ItemTemplate'
+import { RelicTemplate, ItemTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 

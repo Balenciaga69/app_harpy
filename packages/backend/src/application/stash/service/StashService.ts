@@ -1,4 +1,4 @@
-import { ItemInstance } from '../../../domain/item/itemInstance'
+import { ItemInstance } from '../../../domain/item/Item'
 import { IStash, Stash } from '../../../domain/stash/Stash'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
@@ -61,6 +61,7 @@ export class StashService implements IStashService, IInternalStashService {
   }
   /**
    * 根據操作日誌更新玩家背包內容，並進行合法性驗證。
+   * @deprecated ai 寫的不符合業務邏輯
    * - 副作用：更新背包內容和角色遺物。
    * - 邊界條件：
    *   - 背包容量不得超過限制。
@@ -106,6 +107,7 @@ export class StashService implements IStashService, IInternalStashService {
   }
   /**
    * 驗證是否允許新增物品到背包。
+   * @deprecated ai 寫的不符合業務邏輯
    * - 業務邏輯：
    *   - 物品不得已存在於背包。
    *   - 物品必須來自角色的遺物。

@@ -9,7 +9,7 @@ export interface BaseInstanceFields {
 /**
  * 包含建立資訊的附加介面
  */
-export interface WithCreatedAt {
+export interface WithCreatedInfo {
   readonly atCreated: AtCreatedInfo
 }
 /**
