@@ -19,7 +19,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
    * 邊界：修飾符 durationStages > 0 表示未過期
    */
   aggregateModifiers(): ItemRollModifier[] {
-    const runCtx = this.appContextService.GetContexts().runContext
+    const runCtx = this.appContextService.getAllContexts().runContext
     const nextRollModifiers = [
       ...runCtx.rollModifiers.filter((mod: ItemRollModifier) => mod.durationStages !== 0),
       ...this.getHighFrequencyTagModifiers(),
@@ -35,8 +35,8 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   private getHighFrequencyTagModifiers(): ItemRollModifier[] {
     const threshold = 5
     const appCtx = {
-      contexts: this.appContextService.GetContexts(),
-      configStore: this.appContextService.GetConfig(),
+      contexts: this.appContextService.getAllContexts(),
+      configStore: this.appContextService.getConfigStore(),
     } as IAppContext
     const equippedTags = TagStatistics.countEquippedTags(appCtx).toList()
     const highFreqTags = equippedTags.filter((t) => t.count >= threshold).map((t) => t.tag)
@@ -55,8 +55,8 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
    * 副作用：無
    */
   private getHighStackRelicModifiers(): ItemRollModifier[] {
-    const contexts = this.appContextService.GetContexts()
-    const config = this.appContextService.GetConfig()
+    const contexts = this.appContextService.getAllContexts()
+    const config = this.appContextService.getConfigStore()
     const characterContext = contexts.characterContext
     const itemStore = config.itemStore
     const relics = characterContext.relics

@@ -1,4 +1,4 @@
-import { AffixTemplate } from '../../domain/affix/AffixTemplate'
+import { AffixTemplate } from '../../domain/affix/Affix'
 import { AffixEffect } from '../../domain/affix/effect/AffixEffectTemplate'
 // ZH_TW: 毒抗仿射
 const affix_chemist_poison_resist_1: AffixTemplate = {

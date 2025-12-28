@@ -32,8 +32,8 @@ export class ItemRollService implements IItemRollService {
     source: string,
     modifiers: ItemRollModifier[]
   ): { itemTemplateId: string; itemType: ItemRollType; rarity: ItemRarity } {
-    const contexts = this.appContextService.GetContexts()
-    const config = this.appContextService.GetConfig()
+    const contexts = this.appContextService.getAllContexts()
+    const config = this.appContextService.getConfigStore()
     const runContext = contexts.runContext
     const itemStore = config.itemStore
     const staticRollConfig = itemStore.getItemRollConfig(source)

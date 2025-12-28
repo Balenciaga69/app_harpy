@@ -1,10 +1,10 @@
-import { ItemInstance } from '../../../domain/item/Item'
+import { ItemRecord } from '../../../domain/item/Item'
 import { TagType } from '../../../shared/models/TagType'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 // TODO: 該專案分類錯誤位置 記得更換
 /** 統計物品標籤頻率的輔助工具，支援分類統計(所有物品、已裝備等) */
 /** 計算物品清單中各標籤的出現次數 */
-const countTags = (appCtx: IAppContext, items: ItemInstance[]): Partial<Record<TagType, number>> => {
+const countTags = (appCtx: IAppContext, items: ItemRecord[]): Partial<Record<TagType, number>> => {
   const itemStore = appCtx.configStore.itemStore
   const ids = items.map((e) => e.id)
   const tags = itemStore.getManyItems(ids).flatMap((item) => item.tags)

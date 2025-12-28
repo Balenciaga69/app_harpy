@@ -27,7 +27,7 @@ export class ItemAggregateService {
     return new RelicAggregate(record, relicTemplate, affixAggregates)
   }
   private resolveTemplate(templateId: string) {
-    const template = this.appContextService.GetConfig().itemStore.getRelic(templateId)
+    const template = this.appContextService.getConfigStore().itemStore.getRelic(templateId)
     if (!template) {
       throw new Error(`樣板不存在: ${templateId}`)
     }

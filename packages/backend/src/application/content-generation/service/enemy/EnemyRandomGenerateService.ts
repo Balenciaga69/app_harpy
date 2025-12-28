@@ -16,7 +16,7 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
   ) {}
   /** 隨機選擇並創建一個 EnemyAggregate */
   createRandomOneByTemplateUsingCurrentContext(): EnemyAggregate {
-    const runContext = this.appContextService.GetContexts().runContext
+    const runContext = this.appContextService.getAllContexts().runContext
     const { currentChapter, currentStage, chapters, seed } = runContext
     // 取得當前關卡可用的敵人生成資訊
     const availableInfos = this.getAvailableEnemySpawnInfos()
@@ -36,7 +36,7 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
   }
   /** 取得當前關卡可用的敵人生成資訊 */
   private getAvailableEnemySpawnInfos(): EnemySpawnInfo[] {
-    const { enemyStore } = this.appContextService.GetConfig()
+    const { enemyStore } = this.appContextService.getConfigStore()
     const { currentChapter, encounteredEnemyIds, currentStage } = this.appContextService.getRunContext()
     // 過濾出尚未遭遇過的敵人生成資訊
     const availableInfos = enemyStore

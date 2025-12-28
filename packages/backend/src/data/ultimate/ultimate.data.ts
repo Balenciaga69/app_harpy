@@ -1,4 +1,5 @@
-import { UltimateTemplate } from '../../domain/ultimate/UltimateTemplate'
+import { UltimateTemplate } from '../../domain/ultimate/Ultimate'
+
 // ZH_TW: 化學家毒化擴散
 const ultimate_chemist_poison_bomb: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb',

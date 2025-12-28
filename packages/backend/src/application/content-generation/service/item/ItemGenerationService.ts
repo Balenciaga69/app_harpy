@@ -1,6 +1,5 @@
 import { RelicAggregate } from '../../../../domain/item/Item'
 import { ItemRollSourceType, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
-import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
 import { IItemAggregateService } from './ItemAggregateService'
 import { IItemConstraintService } from './ItemConstraintService'
 import { IItemModifierAggregationService } from './ItemModifierAggregationService'
@@ -8,7 +7,6 @@ import { IItemRollService } from './ItemRollService'
 
 export class ItemGenerationService {
   constructor(
-    private appContextService: IAppContextService,
     private itemAggregateService: IItemAggregateService,
     private constraintService: IItemConstraintService,
     private modifierService: IItemModifierAggregationService,

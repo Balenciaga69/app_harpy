@@ -9,26 +9,50 @@ interface CommonInfoForCreateRecord extends WithCreatedInfo, WithSourceUnit {
   readonly difficulty: number
 }
 // 應用上下文服務介面
-export interface IAppContextService {
-  GetContexts(): IAppContext['contexts']
-  GetConfig(): IAppContext['configStore']
-  setRunContext(ctx: IRunContext): void
+/**
+ * 模板存取器：只暴露 ConfigStore，用於讀取所有靜態模板
+ * 依賴此介面的服務：所有 AggregateService、所有 Factory
+ */
+export interface IConfigStoreAccessor {
+  getConfigStore(): IAppContext['configStore']
+}
+
+/**
+ * 狀態快照存取器：暴露當前 Run 的上下文與快速計算欄位
+ * 依賴此介面的服務：狀態修改服務、遊戲邏輯決策服務
+ */
+export interface IContextSnapshotAccessor {
   getRunContext(): IRunContext
-  setCharacterContext(ctx: ICharacterContext): void
   getCharacterContext(): ICharacterContext
-  setStashContext(ctx: IStashContext): void
   getStashContext(): IStashContext
+  getAllContexts(): IAppContext['contexts']
   getCurrentAtCreatedInfo(): AtCreatedInfo
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
 }
+
+/**
+ * 狀態更新器：暴露 setter，用於修改上下文
+ * 依賴此介面的服務：業務邏輯執行服務（戰鬥、商店、倉庫等）
+ */
+export interface IContextMutator {
+  setRunContext(ctx: IRunContext): void
+  setCharacterContext(ctx: ICharacterContext): void
+  setStashContext(ctx: IStashContext): void
+}
+
+/**
+ * 完整應用上下文服務：結合讀、寫、快照計算
+ * 只有真正需要完整操作的地方才依賴此介面
+ */
+export interface IAppContextService extends IConfigStoreAccessor, IContextSnapshotAccessor, IContextMutator {}
 export class AppContextService implements IAppContextService {
   constructor(private appContext: IAppContext) {}
   // 取得動態上下文
-  GetContexts(): IAppContext['contexts'] {
+  getAllContexts(): IAppContext['contexts'] {
     return this.appContext.contexts
   }
   // 取得靜態資料
-  GetConfig(): IAppContext['configStore'] {
+  getConfigStore(): IAppContext['configStore'] {
     return this.appContext.configStore
   }
   // 設定 運行上下文

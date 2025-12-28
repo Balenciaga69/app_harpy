@@ -15,7 +15,7 @@ export class EnemyAggregateService implements IEnemyAggregateService {
   ) {}
   // 從樣板與當前上下文建立 EnemyAggregate
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyAggregate {
-    const { enemyStore } = this.appContextService.GetConfig()
+    const { enemyStore } = this.appContextService.getConfigStore()
     const enemyTemplate = enemyStore.getEnemy(enemyTemplateId)
     if (!enemyTemplate) {
       throw new Error(`敵人樣板不存在: ${enemyTemplateId}`)

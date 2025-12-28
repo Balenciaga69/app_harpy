@@ -13,8 +13,8 @@ export class ItemConstraintService implements IItemConstraintService {
   constructor(private appContextService: IAppContextService) {}
   // 檢查物品樣板是否符合當前進度的生成條件
   canGenerateItemTemplate(templateId: string): boolean {
-    const contexts = this.appContextService.GetContexts()
-    const config = this.appContextService.GetConfig()
+    const contexts = this.appContextService.getAllContexts()
+    const config = this.appContextService.getConfigStore()
     const characterContext = contexts.characterContext
     const runContext = contexts.runContext
     const itemStore = config.itemStore
@@ -42,7 +42,7 @@ export class ItemConstraintService implements IItemConstraintService {
    * 副作用：無
    */
   getAvailableTemplates(itemType: ItemRollType, rarity: ItemRarity): ItemTemplate[] {
-    const config = this.appContextService.GetConfig()
+    const config = this.appContextService.getConfigStore()
     if (itemType === 'RELIC') {
       return config.itemStore
         .getAllRelics()

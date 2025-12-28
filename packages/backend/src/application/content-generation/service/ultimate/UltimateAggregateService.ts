@@ -40,7 +40,7 @@ export class UltimateAggregateService implements IUltimateAggregateService {
   }
   // 取得 UltimateTemplate
   private resolveTemplate(templateId: string) {
-    const store = this.appContextService.GetConfig().ultimateStore
+    const store = this.appContextService.getConfigStore().ultimateStore
     const template = store.getUltimate(templateId)
     if (!template) {
       throw new Error(`Ultimate樣板不存在: ${templateId}`)
