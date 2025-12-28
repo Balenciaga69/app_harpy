@@ -37,18 +37,15 @@ export class StageNodeGenerationService implements IStageNodeGenerationService {
     const result: Record<number, StageType> = {}
     const rngHelper = new RandomHelper(seed)
     for (let i = 1; i <= LEVEL_COUNT; i++) {
-      const stageType = (() => {
-        switch (true) {
-          case i === ELITE_POSITION:
-            return 'ELITE'
-          case i === BOSS_POSITION:
-            return 'BOSS'
-          default:
-            return rngHelper.next() < EVENT_PROBABILITY ? 'EVENT' : 'NORMAL'
-        }
-      })() as StageType
-      result[i] = stageType
+      result[i] = this.determineStageType(i, rngHelper)
     }
     return result
+  }
+
+  /** 決定關卡類型：固定關卡優先，其他關卡隨機 */
+  private determineStageType(position: number, rng: RandomHelper): StageType {
+    if (position === ELITE_POSITION) return 'ELITE'
+    if (position === BOSS_POSITION) return 'BOSS'
+    return rng.next() < EVENT_PROBABILITY ? 'EVENT' : 'NORMAL'
   }
 }

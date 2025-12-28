@@ -17,39 +17,48 @@ export class CharacterAggregate {
     public record: CharacterRecord,
     public profession: ProfessionAggregate,
     public relics: ReadonlyArray<RelicAggregate>,
-    public ultimate: UltimateAggregate,
-    public loadCapacity: number
+    public ultimate: UltimateAggregate
   ) {}
   // 裝備聖物
   equipRelic(relic: RelicAggregate): boolean {
-    if (this.canEquipRelic(relic)) return false
+    if (!this.canEquipRelic(relic)) return false
     this.relics = [...this.relics, relic]
+    this.record = {
+      ...this.record,
+      currentLoad: this.record.currentLoad + relic.template.loadCost,
+    }
     return true
   }
   // 卸除聖物
   unequipRelic(relicId: string): boolean {
-    const index = this.relics.findIndex((r) => r.record.id === relicId)
-    if (index === -1) return false
+    const relic = this.relics.find((r) => r.record.id === relicId)
+    if (!relic) return false
     this.relics = this.relics.filter((r) => r.record.id !== relicId)
+    this.record = {
+      ...this.record,
+      currentLoad: this.record.currentLoad - relic.template.loadCost,
+    }
     return true
   }
   // 擴展負重
   expandLoadCapacity(increaseAmount: number): boolean {
     if (increaseAmount <= 0) return false
+    const updatedLoadCapacity = this.record.loadCapacity + increaseAmount
     this.record = {
       ...this.record,
-      loadCapacity: this.loadCapacity + increaseAmount,
+      loadCapacity: updatedLoadCapacity,
     }
     return true
   }
   // 檢查是否可以裝備聖物
   canEquipRelic(relic: RelicAggregate): boolean {
     if (this.isOverloaded()) return false
-    if (relic.template.loadCost >= this.loadCapacity) return false
+    const newLoad = this.record.currentLoad + relic.template.loadCost
+    if (newLoad > this.record.loadCapacity) return false
     return true
   }
   // 檢查是否超載
   isOverloaded(): boolean {
-    return this.record.currentLoad > this.loadCapacity
+    return this.record.currentLoad > this.record.loadCapacity
   }
 }

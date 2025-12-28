@@ -45,16 +45,15 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
    */
   private getHighFrequencyTagModifiers(): ItemRollModifier[] {
     const tagCounts = this.countEquippedTagOccurrences()
-    const highFreqTags = Object.entries(tagCounts)
-      .filter(([, count]) => (count ?? 0) >= HIGH_FREQUENCY_TAG_THRESHOLD)
-      .map(([tag]) => tag as TagType)
-    return highFreqTags.map((tag) => ({
-      id: `modifier-tag-${tag}`,
-      type: 'TAG',
-      tag,
-      multiplier: HIGH_FREQUENCY_TAG_MULTIPLIER,
-      durationStages: 0,
-    }))
+    return Object.entries(tagCounts)
+      .filter(([, count]) => count >= HIGH_FREQUENCY_TAG_THRESHOLD)
+      .map(([tag]) => ({
+        id: `modifier-tag-${tag}`,
+        type: 'TAG' as const,
+        tag: tag as TagType,
+        multiplier: HIGH_FREQUENCY_TAG_MULTIPLIER,
+        durationStages: 0,
+      }))
   }
   /**
    * 統計已裝備聖物的標籤出現次數
@@ -82,19 +81,21 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   private getHighStackRelicModifiers(): ItemRollModifier[] {
     const { characterContext } = this.contextSnapshot.getAllContexts()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
-    const highStackRelics = characterContext.relics.filter((r) => {
-      const relicTemplate = itemStore.getRelic(r.templateId)
-      if (!relicTemplate) return false
-      const isHighStack = r.currentStacks >= HIGH_STACK_RELIC_THRESHOLD
-      const notAtMax = r.currentStacks < relicTemplate.maxStacks
-      return isHighStack && notAtMax
-    })
-    return highStackRelics.map((r) => ({
-      id: `modifier-relic-${r.templateId}`,
-      type: 'ID',
-      templateId: r.templateId,
-      multiplier: HIGH_STACK_RELIC_MULTIPLIER,
-      durationStages: 0,
-    }))
+    return characterContext.relics
+      .filter((r) => this.isHighStackButNotMaxed(r, itemStore))
+      .map((r) => ({
+        id: `modifier-relic-${r.templateId}`,
+        type: 'ID' as const,
+        templateId: r.templateId,
+        multiplier: HIGH_STACK_RELIC_MULTIPLIER,
+        durationStages: 0,
+      }))
+  }
+
+  /** 檢查聖物是否為高堆疊且未達上限 */
+  private isHighStackButNotMaxed(relic: any, itemStore: any): boolean {
+    const template = itemStore.getRelic(relic.templateId)
+    if (!template) return false
+    return relic.currentStacks >= HIGH_STACK_RELIC_THRESHOLD && relic.currentStacks < template.maxStacks
   }
 }

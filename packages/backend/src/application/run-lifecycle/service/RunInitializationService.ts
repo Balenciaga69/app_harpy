@@ -2,6 +2,7 @@ import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+import { VersionConflictError } from '../../../shared/errors/GameErrors'
 import { AffixRecordCreateParams, AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
 import { RelicRecordFactory } from '../../content-generation/factory/RelicFactory'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
@@ -17,18 +18,6 @@ import {
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
 const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3] // 預設章節列表
-/**
- * 版本衝突異常：當樂觀鎖檢查失敗時拋出
- */
-export class VersionConflictError extends Error {
-  constructor(
-    message: string,
-    public readonly meta?: any
-  ) {
-    super(message)
-    this.name = 'VersionConflictError'
-  }
-}
 /** Run 初始化參數 */
 export interface RunInitializationParams {
   professionId: string

@@ -6,17 +6,17 @@ export class UnitStatsBuilder {
     this.stats = stats ? { ...stats } : { ...DEFAULT_UNIT_STATS }
   }
   /** 將指定統計屬性增加指定值，返回建造器以支持鏈式調用 */
-  Add(stat: keyof UnitStats, value: number): UnitStatsBuilder {
+  add(stat: keyof UnitStats, value: number): UnitStatsBuilder {
     this.stats[stat] += value
     return this
   }
   /** 將指定統計屬性乘以指定倍數，返回建造器以支持鏈式調用 */
-  Multiply(stat: keyof UnitStats, factor: number): UnitStatsBuilder {
+  multiply(stat: keyof UnitStats, factor: number): UnitStatsBuilder {
     this.stats[stat] *= factor
     return this
   }
   /** 返回構建完成的統計值映射，結束鏈式調用 */
-  Build(): UnitStats {
+  build(): UnitStats {
     return this.stats
   }
 }
