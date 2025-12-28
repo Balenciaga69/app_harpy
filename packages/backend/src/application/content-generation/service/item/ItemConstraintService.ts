@@ -4,7 +4,6 @@ import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
-
 /**
  * 物品生成限制服務：檢查物品樣板是否符合生成條件
  * 職責：檢查物品是否符合當前進度、職業、事件等限制條件；篩選符合條件的可用樣板
@@ -17,7 +16,6 @@ export interface IItemConstraintService {
   /** 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單 */
   getAvailableTemplates(itemType: ItemRollType, rarity: ItemRarity): ItemTemplate[]
 }
-
 export class ItemConstraintService implements IItemConstraintService {
   constructor(
     private configStoreAccessor: IConfigStoreAccessor,
@@ -25,42 +23,34 @@ export class ItemConstraintService implements IItemConstraintService {
   ) {}
   /** 檢查物品樣板是否符合當前進度的生成條件 */
   canGenerateItemTemplate(templateId: string): boolean {
-    const contexts = this.contextSnapshot.getAllContexts()
-    const config = this.configStoreAccessor.getConfigStore()
-    const characterContext = contexts.characterContext
-    const runContext = contexts.runContext
-    const itemStore = config.itemStore
+    const { characterContext, runContext } = this.contextSnapshot.getAllContexts()
+    const { itemStore } = this.configStoreAccessor.getConfigStore()
     const template = itemStore.getRelic(templateId)
     if (!template) return false
     const constraint = itemStore.getItemRollConstraint(templateId)
     if (!constraint) return true
+    // 檢查章節限制
     if (constraint.chapters && !constraint.chapters.includes(runContext.currentChapter)) {
       return false
     }
+    // 檢查職業限制
     if (constraint.professionIds && !constraint.professionIds.includes(characterContext.professionId)) {
       return false
     }
-    if (
-      (constraint.eventIds && constraint.eventIds.length > 0) ||
-      (constraint.enemyIds && constraint.enemyIds.length > 0)
-    ) {
+    // 檢查事件/敵人限制（有任一限制則不可生成）
+    if ((constraint.eventIds?.length ?? 0) > 0 || (constraint.enemyIds?.length ?? 0) > 0) {
       return false
     }
     return true
   }
-
   /**
    * 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單
    * 邊界：只支援聖物類型，其他類型返回空陣列
    * 副作用：無
    */
   getAvailableTemplates(itemType: ItemRollType, rarity: ItemRarity): ItemTemplate[] {
-    const config = this.configStoreAccessor.getConfigStore()
-    if (itemType === 'RELIC') {
-      return config.itemStore
-        .getAllRelics()
-        .filter((item: ItemTemplate) => item.rarity === rarity && this.canGenerateItemTemplate(item.id))
-    }
-    return []
+    if (itemType !== 'RELIC') return []
+    const { itemStore } = this.configStoreAccessor.getConfigStore()
+    return itemStore.getAllRelics().filter((item) => item.rarity === rarity && this.canGenerateItemTemplate(item.id))
   }
 }

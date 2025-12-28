@@ -4,7 +4,6 @@ import { IItemAggregateService } from './ItemAggregateService'
 import { IItemConstraintService } from './ItemConstraintService'
 import { IItemModifierAggregationService } from './ItemModifierAggregationService'
 import { IItemRollService } from './ItemRollService'
-
 export class ItemGenerationService {
   constructor(
     private itemAggregateService: IItemAggregateService,

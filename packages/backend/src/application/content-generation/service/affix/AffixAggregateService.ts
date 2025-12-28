@@ -6,7 +6,6 @@ import {
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { AffixRecordFactory } from '../../factory/AffixFactory'
-
 /**
  * 詞綴聚合根服務：負責建立 AffixAggregate
  * 職責：透過模板與當前上下文組裝完整的詞綴聚合根
@@ -23,7 +22,6 @@ export interface IAffixAggregateService {
   /** 批次從模板與當前上下文建立詞綴聚合根 */
   createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixAggregate[]
 }
-
 export class AffixAggregateService implements IAffixAggregateService {
   constructor(
     private readonly configStoreAccessor: IConfigStoreAccessor,
@@ -35,12 +33,10 @@ export class AffixAggregateService implements IAffixAggregateService {
     const effects = this.resolveEffects(template)
     return new AffixAggregate(record, template, effects)
   }
-
   /** 批次建立 AffixAggregate */
   createManyByRecord(records: AffixRecord[]): AffixAggregate[] {
     return records.map((r) => this.createOneByRecord(r))
   }
-
   /** 從當前上下文建立單一 AffixAggregate */
   createOneByTemplateUsingCurrentContext(templateId: string): AffixAggregate {
     const template = this.resolveTemplate(templateId)
@@ -49,7 +45,6 @@ export class AffixAggregateService implements IAffixAggregateService {
     const record = AffixRecordFactory.createOne(templateId, currentInfo)
     return new AffixAggregate(record, template, effects)
   }
-
   /** 從當前上下文批次建立 AffixAggregate */
   createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixAggregate[] {
     const currentInfo = this.contextSnapshot.getCurrentInfoForCreateRecord()
@@ -60,22 +55,20 @@ export class AffixAggregateService implements IAffixAggregateService {
       return new AffixAggregate(record, template, effects)
     })
   }
-
   /** 透過 templateId 取得 AffixTemplate */
   private resolveTemplate(templateId: string) {
-    const store = this.configStoreAccessor.getConfigStore().affixStore
-    const template = store.getAffix(templateId)
+    const { affixStore } = this.configStoreAccessor.getConfigStore()
+    const template = affixStore.getAffix(templateId)
     if (!template) {
       throw new Error(`樣板不存在: ${templateId}`)
     }
     return template
   }
-
   /** 從 template 取得 effects */
   private resolveEffects(template: AffixTemplate): AffixEffect[] {
-    const store = this.configStoreAccessor.getConfigStore().affixStore
+    const { affixStore } = this.configStoreAccessor.getConfigStore()
     return template.effectIds.map((effectId) => {
-      const effects = store.getAffixEffect(effectId)
+      const effects = affixStore.getAffixEffect(effectId)
       if (!effects) {
         throw new Error(`效果不存在: ${effectId}`)
       }

@@ -17,7 +17,6 @@ interface CommonInfoForCreateRecord extends WithCreatedInfo, WithSourceUnit {
 export interface IConfigStoreAccessor {
   getConfigStore(): IAppContext['configStore']
 }
-
 /**
  * 上下文快照訪問器：暴露當前運行時狀態與快速計算欄位
  * 職責：提供當前 Run 的各個上下文快照與便利計算方法
@@ -38,7 +37,6 @@ export interface IContextSnapshotAccessor {
   /** 取得建立記錄所需的當前信息（難度、來源單位、建立時機） */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
 }
-
 /**
  * 上下文更新器：暴露狀態修改操作
  * 職責：提供修改各個上下文的方法，維持狀態一致性
@@ -53,7 +51,6 @@ export interface IContextMutator {
   /** 更新倉庫上下文（如物品、容量等） */
   setStashContext(ctx: IStashContext): void
 }
-
 /**
  * 完整應用上下文服務：結合讀、寫、快照計算
  * 職責：提供對應用上下文的完整操作能力
@@ -63,22 +60,18 @@ export interface IContextMutator {
 export interface IAppContextService extends IConfigStoreAccessor, IContextSnapshotAccessor, IContextMutator {}
 export class AppContextService implements IAppContextService {
   constructor(private appContext: IAppContext) {}
-
   /** 取得配置存儲，包含所有靜態模板 */
   getConfigStore(): IAppContext['configStore'] {
     return this.appContext.configStore
   }
-
   /** 一次取得所有上下文的快照（運行、角色、倉庫） */
   getAllContexts(): IAppContext['contexts'] {
     return this.appContext.contexts
   }
-
   /** 取得當前運行上下文 */
   getRunContext(): IRunContext {
     return this.appContext.contexts.runContext
   }
-
   /** 更新運行上下文（透過不可變重建）*/
   setRunContext(ctx: IRunContext): void {
     this.appContext = {
@@ -89,12 +82,10 @@ export class AppContextService implements IAppContextService {
       },
     }
   }
-
   /** 取得當前角色上下文 */
   getCharacterContext(): ICharacterContext {
     return this.appContext.contexts.characterContext
   }
-
   /** 更新角色上下文（透過不可變重建）*/
   setCharacterContext(ctx: ICharacterContext): void {
     this.appContext = {
@@ -105,12 +96,10 @@ export class AppContextService implements IAppContextService {
       },
     }
   }
-
   /** 取得當前倉庫上下文 */
   getStashContext(): IStashContext {
     return this.appContext.contexts.stashContext
   }
-
   /** 更新倉庫上下文（透過不可變重建）*/
   setStashContext(ctx: IStashContext): void {
     this.appContext = {
@@ -121,7 +110,6 @@ export class AppContextService implements IAppContextService {
       },
     }
   }
-
   /**
    * 取得當前建立時機信息
    * 副作用：無，純計算
@@ -133,7 +121,6 @@ export class AppContextService implements IAppContextService {
     const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
     return atCreated
   }
-
   /**
    * 取得建立記錄所需的當前信息
    * 副作用：無，純計算

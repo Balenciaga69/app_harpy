@@ -6,7 +6,6 @@ import {
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { UltimateRecordFactory } from '../../factory/UltimateFactory'
 import { IAffixAggregateService } from '../affix/AffixAggregateService'
-
 /**
  * 大絕招聚合根服務：負責建立 UltimateAggregate
  * 職責：透過模板、詞綴聚合根與當前上下文組裝完整的大絕招聚合根
@@ -23,7 +22,6 @@ export interface IUltimateAggregateService {
   /** 批次從模板與當前上下文建立大絕招聚合根 */
   createManyByTemplateUsingCurrentContext(templateIds: string[]): UltimateAggregate[]
 }
-
 export class UltimateAggregateService implements IUltimateAggregateService {
   constructor(
     private affixAggregateService: IAffixAggregateService,
@@ -36,12 +34,10 @@ export class UltimateAggregateService implements IUltimateAggregateService {
     const pluginAffixes = this.resolvePluginAffixes(record)
     return new UltimateAggregate(record, template, pluginAffixes)
   }
-
   /** 批次建立 UltimateAggregate */
   public createManyByRecord(records: UltimateRecord[]) {
     return records.map((record) => this.createOneByRecord(record))
   }
-
   /** 從 templateId 與當前上下文建立一個 UltimateAggregate（自動產生 UltimateRecord） */
   public createOneByTemplateUsingCurrentContext(templateId: string) {
     const template = this.resolveTemplate(templateId)
@@ -50,22 +46,19 @@ export class UltimateAggregateService implements IUltimateAggregateService {
     const pluginAffixes = this.resolvePluginAffixes(record)
     return new UltimateAggregate(record, template, pluginAffixes)
   }
-
   /** 從多個 templateIds 與當前上下文批次建立 UltimateAggregate */
   public createManyByTemplateUsingCurrentContext(templateIds: string[]) {
     return templateIds.map((templateId) => this.createOneByTemplateUsingCurrentContext(templateId))
   }
-
   /** 取得 UltimateTemplate */
   private resolveTemplate(templateId: string) {
-    const store = this.configStoreAccessor.getConfigStore().ultimateStore
-    const template = store.getUltimate(templateId)
+    const { ultimateStore } = this.configStoreAccessor.getConfigStore()
+    const template = ultimateStore.getUltimate(templateId)
     if (!template) {
       throw new Error(`Ultimate樣板不存在: ${templateId}`)
     }
     return template
   }
-
   /** 取得 pluginAffixes */
   private resolvePluginAffixes(record: UltimateRecord): AffixAggregate[] {
     const affixRecords = [...record.pluginAffixRecord]

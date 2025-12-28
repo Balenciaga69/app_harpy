@@ -5,7 +5,6 @@ import {
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { IAffixAggregateService } from '../affix/AffixAggregateService'
 import { IUltimateAggregateService } from '../ultimate/UltimateAggregateService'
-
 /**
  * 敵人聚合根服務：負責建立 EnemyAggregate
  * 職責：透過模板、詞綴聚合根、大絕招聚合根與當前上下文組裝完整的敵人聚合根
@@ -16,7 +15,6 @@ export interface IEnemyAggregateService {
   /** 從模板與角色從當前上下文建立 EnemyAggregate（自動產生記錄、詞綴、大絕招） */
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyAggregate
 }
-
 export class EnemyAggregateService implements IEnemyAggregateService {
   constructor(
     private affixAggregateService: IAffixAggregateService,

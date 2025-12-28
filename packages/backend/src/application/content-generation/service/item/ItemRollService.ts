@@ -7,7 +7,6 @@ import {
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { IItemConstraintService } from './ItemConstraintService'
-
 /**
  * 物品骰選服務：執行物品骰選流程
  * 職責：根據來源、修飾符、限制條件骰選物品
@@ -25,7 +24,6 @@ export interface IItemRollService {
     rarity: ItemRarity
   }
 }
-
 export class ItemRollService implements IItemRollService {
   constructor(
     private configStoreAccessor: IConfigStoreAccessor,
@@ -41,14 +39,14 @@ export class ItemRollService implements IItemRollService {
     source: string,
     modifiers: ItemRollModifier[]
   ): { itemTemplateId: string; itemType: ItemRollType; rarity: ItemRarity } {
-    const runContext = this.contextSnapshot.getRunContext()
-    const itemStore = this.configStoreAccessor.getConfigStore().itemStore
+    const { seed } = this.contextSnapshot.getRunContext()
+    const { itemStore } = this.configStoreAccessor.getConfigStore()
     const staticRollConfig = itemStore.getItemRollConfig(source)
     if (!staticRollConfig) throw new Error('TODO: 拋領域錯誤')
-    const itemType = rollItemType(runContext.seed, staticRollConfig)
-    const rarity = rollItemRarity(runContext.seed, staticRollConfig, modifiers)
+    const itemType = rollItemType(seed, staticRollConfig)
+    const rarity = rollItemRarity(seed, staticRollConfig, modifiers)
     const availableTemplates = this.constraintService.getAvailableTemplates(itemType, rarity)
-    const itemTemplateId = rollItemTemplate(runContext.seed, availableTemplates)
+    const itemTemplateId = rollItemTemplate(seed, availableTemplates)
     return { itemTemplateId, itemType, rarity }
   }
 }
