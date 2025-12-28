@@ -4,7 +4,7 @@ import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 import { AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
 import { RelicRecordFactory } from '../../content-generation/factory/RelicFactory'
-import { ItemAggregateService } from '../../content-generation/service/item/ItemGenerationService'
+import { IItemAggregateService } from '../../content-generation/service/item/ItemAggregateService'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
@@ -48,18 +48,11 @@ export class RunInitializationService {
     private readonly configStore: IAppContext['configStore'],
     private readonly repos?: { batch?: IContextBatchRepository },
     private readonly stageGenerator?: IStageNodeGenerationService,
-    private readonly itemAggregateService: ItemAggregateService
+    private readonly itemAggregateService: IItemAggregateService
   ) {}
-  /**
-   * 初始化新 RUN，創建所有必要的上下文
-   * 流程：生成 Run ID → 建立所有上下文 → 可選持久化
-   * 邊界：
-   *   - 職業必須有效
-   *   - 初始聖物必須存在
-   *   - 如 persist=true，持久化失敗則拋 VersionConflictError
-   * 副作用：如 persist=true，修改資料庫；否則無
-   */
+  /** 初始化 RUN，上下文可選持久化 */
   async initialize(params: RunInitializationParams): Promise<IAppContext> {
+    // 使用指定或隨機種子初始化隨機數生成器
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
     const runId = this.generateRunId(rng)
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
@@ -116,7 +109,7 @@ export class RunInitializationService {
         id: '',
         templateId: '',
         sourceUnitId: '',
-        atCreated: { chapter: 1 as ChapterLevel, stage: 1, difficulty: 1 },
+        atCreated: { chapter: 1, stage: 1, difficulty: 1 },
         pluginIds: [],
       },
       loadCapacity: 0,

@@ -1,13 +1,11 @@
-import { ItemRarity, ItemTemplate } from '../../../../domain/item/Item'
+import { ItemRarity, ItemTemplate, RelicAggregate } from '../../../../domain/item/Item'
 import { ItemRollConfig, ItemRollSourceType, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
-import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
-import { TagStatistics } from '../../helper/TagStatistics'
 import { IAppContext } from '../../../core-infrastructure/context/interface/IAppContext'
 import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
-import { RelicRecordFactory } from '../../factory/RelicFactory'
-import { AffixRecordFactory } from '../../factory/AffixFactory'
+import { TagStatistics } from '../../helper/TagStatistics'
+import { IItemAggregateService } from './ItemAggregateService'
 /**
  * 物品生成服務：協調物品生成完整流程
  * 流程：約束驗證 → 修飾符聚合 → 權重骰選 → 實例化
@@ -17,92 +15,38 @@ export class ItemGenerationService {
   private constraintService: ItemConstraintService
   private modifierService: ItemModifierAggregationService
   private rollService: ItemRollService
-  private instantiationService: ItemAggregateService
-  constructor(private appContextService: IAppContextService) {
+  constructor(
+    private appContextService: IAppContextService,
+    private itemAggregateService: IItemAggregateService
+  ) {
     this.constraintService = new ItemConstraintService(appContextService)
     this.modifierService = new ItemModifierAggregationService(appContextService)
     this.rollService = new ItemRollService(appContextService, this.constraintService)
-    this.instantiationService = new ItemAggregateService(appContextService)
   }
-  /**
-   * 根據來源與當前修飾符生成隨機物品
-   * 邊界：來源必須有效，修飾符不得為空(使用當前聚合修飾符)
-   * 副作用：無狀態修改(實例化在記憶體中)
-   */
-  generateRandomItem(source: ItemRollSourceType) {
-    if (!this.constraintService.canGenerateItems()) {
-      return null
-    }
+  // 生成隨機物品
+  generateRandomItem(source: ItemRollSourceType): RelicAggregate | null {
+    // 聚合當前適用的骰選修飾符
     const modifiers = this.modifierService.aggregateModifiers()
     const { itemTemplateId, itemType } = this.rollService.rollItem(source, modifiers)
-    return this.instantiationService.createItemAggregate(itemTemplateId, itemType)
+    // 根據骰選結果生成物品實例
+    if (itemType === 'RELIC') return this.generateItemFromTemplate(itemTemplateId, itemType)
+    // 其他物品類型尚未實作，返回 null
+    return null
   }
-  /**
-   * 生成指定樣板的物品，跳過骰選步驟
-   * 邊界：樣板必須符合當前進度的限制條件
-   * 副作用：無
-   */
-  generateItemFromTemplate(templateId: string, itemType: 'RELIC') {
-    if (!this.constraintService.canGenerateItemTemplate(templateId)) {
-      return null
-    }
-    return this.instantiationService.createItemAggregate(templateId, itemType)
+  // 根據指定樣板生成物品
+  generateItemFromTemplate(templateId: string, itemType: ItemRollType): RelicAggregate | null {
+    if (!this.constraintService.canGenerateItemTemplate(templateId)) return null
+    if (itemType === 'RELIC') return this.itemAggregateService.createRelicByTemplateUsingCurrentContext(templateId)
+    return null
   }
 }
-/**
- * 物品實例化服務：根據當前進度背景創建物品實例
- * 職責：難度計算、樣板驗證、實例化工廠調用
- */
-export class ItemAggregateService {
-  constructor(private appContextService: IAppContextService) {}
-  /**
-   * 根據樣板與類型創建物品實例，自動計算難度因子
-   * 邊界：
-   *   - 目前只支援聖物類型，其他類型拋錯
-   *   - 樣板必須存在，否則拋錯
-   * 副作用：無(實例化在記憶體中)
-   */
-  createItemAggregate(templateId: string, itemType: ItemRollType) {
-    const contexts = this.appContextService.GetContexts()
-    const config = this.appContextService.GetConfig()
-    const characterContext = contexts.characterContext
-    const runContext = contexts.runContext
-    const itemStore = config.itemStore
-    const { currentChapter, currentStage } = runContext
-    if (itemType !== 'RELIC') throw new Error('TODO: 拋領域錯誤,暫時沒有其他類型')
-    const template = itemStore.getRelic(templateId)
-    if (!template) throw new Error('TODO: 拋領域錯誤')
-    const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-    const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
-    const affixRecords = AffixRecordFactory.createMany([...template.affixIds], {
-      atCreated,
-      difficulty,
-      sourceUnitId: characterContext.id,
-    })
-    return RelicRecordFactory.createOne(template.id, {
-      affixRecords: affixRecords,
-      currentStacks: 0,
-      difficulty,
-      sourceUnitId: characterContext.id,
-      atCreated,
-    })
-  }
-}
+
 /**
  * 物品約束驗證服務：驗證物品生成是否符合章節、職業、事件等限制條件
  * 職責：生成權限檢查、樣板可用性驗證、符合限制的樣板篩選
  */
 class ItemConstraintService {
   constructor(private appContextService: IAppContextService) {}
-  /**
-   * 檢查目前是否可以生成物品
-   * 邊界條件：未來可能加入物品池滿等限制
-   * 副作用：無
-   */
-  canGenerateItems(): boolean {
-    // TODO: 未來可能有其他限制條件(如物品池已滿)
-    return true
-  }
   /**
    * 檢查特定物品樣板是否符合當前進度的所有限制條件
    * 邊界：檢查章節、職業、事件、敵人等限制

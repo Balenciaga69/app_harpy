@@ -23,7 +23,6 @@ export interface UltimateRecord extends BaseInstanceFields, WithSourceUnit, With
 /** 大絕招聚合根，封裝大絕招的狀態與行為 */
 export class UltimateAggregate {
   constructor(
-    public readonly id: string,
     public record: UltimateRecord,
     public readonly template: UltimateTemplate,
     public pluginAffixes: ReadonlyArray<AffixAggregate> = []
