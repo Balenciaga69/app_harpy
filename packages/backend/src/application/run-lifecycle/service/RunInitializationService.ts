@@ -2,9 +2,8 @@ import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-import { AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
+import { AffixRecordCreateParams, AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
 import { RelicRecordFactory } from '../../content-generation/factory/RelicFactory'
-import { IItemAggregateService } from '../../content-generation/service/item/ItemAggregateService'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
@@ -47,8 +46,7 @@ export class RunInitializationService {
   constructor(
     private readonly configStore: IAppContext['configStore'],
     private readonly repos?: { batch?: IContextBatchRepository },
-    private readonly stageGenerator?: IStageNodeGenerationService,
-    private readonly itemAggregateService: IItemAggregateService
+    private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
   /** 初始化 RUN，上下文可選持久化 */
   async initialize(params: RunInitializationParams): Promise<IAppContext> {
@@ -57,6 +55,7 @@ export class RunInitializationService {
     const runId = this.generateRunId(rng)
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
     const contexts = this.buildContexts(runId, params, seed)
+    // 可選持久化上下文至資料庫
     if (!!params.persist && this.repos && this.repos.batch) {
       const updates = {
         run: { context: contexts.runContext, expectedVersion: CREATE_EXPECTED_VERSION },
@@ -98,21 +97,23 @@ export class RunInitializationService {
       chapters: chapters,
       rollModifiers: [],
     }
+    const characterId = `${runId}-char`
     const characterContext: ICharacterContext = {
       runId,
       version: INITIAL_VERSION,
-      characterId: `${runId}-char`,
+      id: characterId,
       name: params.characterName ?? 'Player',
       professionId: params.professionId,
-      relics: this.createRelicRecord(runId, params.startingRelicIds),
+      relics: this.createRelicRecord(params.startingRelicIds, characterId),
       ultimate: {
         id: '',
         templateId: '',
         sourceUnitId: '',
         atCreated: { chapter: 1, stage: 1, difficulty: 1 },
-        pluginIds: [],
+        pluginAffixRecord: [],
       },
       loadCapacity: 0,
+      currentLoad: 2,
     }
     const stashContext: IStashContext = {
       runId,
@@ -123,24 +124,31 @@ export class RunInitializationService {
     return { runContext, characterContext, stashContext }
   }
   /** 初始化起始聖物 */
-  private createRelicRecord(runId: string, startingRelicIds?: string[]): RelicRecord[] {
+  private createRelicRecord(startingRelicIds: string[] = [], characterId: string): RelicRecord[] {
     if (!startingRelicIds || startingRelicIds.length === 0) {
       return []
     }
-    AffixRecordFactory.createMany()
-    RelicRecordFactory.createMany(startingRelicIds, {})
-    return startingRelicIds
-      .map((id) => this.configStore.itemStore.getRelic(id))
+    const { itemStore } = this.configStore
+    const relicTemplates = startingRelicIds
+      .map((id) => itemStore.getRelic(id))
       .filter((template): template is NonNullable<typeof template> => template !== undefined)
-      .map((template) =>
-        RelicRecordFactory.createOne(
-          template,
-          `${runId}-char`,
-          DifficultyHelper.getDifficultyFactor(1, 1),
-          1 as ChapterLevel,
-          1
-        )
-      )
+    const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
+    const initialAffixData: AffixRecordCreateParams = {
+      atCreated: {
+        chapter: 1,
+        stage: 1,
+        difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
+      },
+      difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
+      sourceUnitId: characterId,
+    }
+    const affixRecords = AffixRecordFactory.createMany(affixIds, initialAffixData)
+    const relicRecords = RelicRecordFactory.createMany(startingRelicIds, {
+      ...initialAffixData,
+      currentStacks: 0,
+      affixRecords: affixRecords,
+    })
+    return relicRecords
   }
   /** 生成唯一的 Run ID */
   private generateRunId(rng?: RandomHelper): string {

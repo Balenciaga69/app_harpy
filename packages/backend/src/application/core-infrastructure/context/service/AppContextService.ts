@@ -22,10 +22,7 @@ export interface IAppContextService {
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
 }
 export class AppContextService implements IAppContextService {
-  private appContext: IAppContext
-  constructor(appContext: IAppContext) {
-    this.appContext = appContext
-  }
+  constructor(private appContext: IAppContext) {}
   // 取得動態上下文
   GetContexts(): IAppContext['contexts'] {
     return this.appContext.contexts
