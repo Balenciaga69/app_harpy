@@ -1,6 +1,10 @@
+import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+import { AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
+import { RelicRecordFactory } from '../../content-generation/factory/RelicFactory'
+import { ItemAggregateService } from '../../content-generation/service/item/ItemGenerationService'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
@@ -43,7 +47,8 @@ export class RunInitializationService {
   constructor(
     private readonly configStore: IAppContext['configStore'],
     private readonly repos?: { batch?: IContextBatchRepository },
-    private readonly stageGenerator?: IStageNodeGenerationService
+    private readonly stageGenerator?: IStageNodeGenerationService,
+    private readonly itemAggregateService: ItemAggregateService
   ) {}
   /**
    * 初始化新 RUN，創建所有必要的上下文
@@ -106,7 +111,7 @@ export class RunInitializationService {
       characterId: `${runId}-char`,
       name: params.characterName ?? 'Player',
       professionId: params.professionId,
-      relics: this.createInitialRelics(runId, params.startingRelicIds),
+      relics: this.createRelicRecord(runId, params.startingRelicIds),
       ultimate: {
         id: '',
         templateId: '',
@@ -125,15 +130,17 @@ export class RunInitializationService {
     return { runContext, characterContext, stashContext }
   }
   /** 初始化起始聖物 */
-  private createInitialRelics(runId: string, startingRelicIds?: string[]): RelicInstance[] {
+  private createRelicRecord(runId: string, startingRelicIds?: string[]): RelicRecord[] {
     if (!startingRelicIds || startingRelicIds.length === 0) {
       return []
     }
+    AffixRecordFactory.createMany()
+    RelicRecordFactory.createMany(startingRelicIds, {})
     return startingRelicIds
       .map((id) => this.configStore.itemStore.getRelic(id))
       .filter((template): template is NonNullable<typeof template> => template !== undefined)
       .map((template) =>
-        ItemFactory.createRelic(
+        RelicRecordFactory.createOne(
           template,
           `${runId}-char`,
           DifficultyHelper.getDifficultyFactor(1, 1),

@@ -1,6 +1,5 @@
 import { IUltimateStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
 import { UltimateTemplate } from '../../../domain/ultimate/UltimateTemplate'
-
 /** 大絕招配置存儲：管理大絕招樣板 */
 export class UltimateStore implements IUltimateStore {
   private ultimates: Map<string, UltimateTemplate> = new Map()

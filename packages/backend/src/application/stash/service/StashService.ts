@@ -1,5 +1,5 @@
-import { ItemInstance } from '../../../domain/item/Item'
-import { IStash, Stash } from '../../../domain/stash/Stash'
+import { ItemRecord, RelicAggregate } from '../../../domain/item/Item'
+import { Stash } from '../../../domain/stash/Stash'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
 import {
@@ -8,7 +8,7 @@ import {
 } from '../../core-infrastructure/repository/IRepositories'
 export interface StashOperation {
   type: 'ADD' | 'REMOVE'
-  item: ItemInstance
+  item: ItemRecord
   // 可加上操作序號、來源、時間戳等
 }
 export interface IStashService {
@@ -25,7 +25,7 @@ export interface IStashService {
 // 內部服務接口 - 只給其他服務使用
 interface IInternalStashService {
   /** 直接新增物品到倉庫 */
-  addItemToStash(runId: string, item: ItemInstance): Promise<void>
+  addItemToStash(runId: string, item: ItemRecord): Promise<void>
   /** 直接從倉庫移除物品 */
   removeItemFromStash(runId: string, itemId: string): Promise<void>
   /** 擴充倉庫容量 */
@@ -37,18 +37,12 @@ interface IInternalStashService {
  * - 確保背包操作的合法性，並維護與角色 (Character) 的一致性。
  */
 export class StashService implements IStashService, IInternalStashService {
-  private readonly stashRepo: IStashContextRepository
-  private readonly characterRepo: ICharacterContextRepository
-  private readonly appContextService: IAppContextService
   constructor(
-    stashRepo: IStashContextRepository,
-    characterRepo: ICharacterContextRepository,
-    appContextService: IAppContextService
-  ) {
-    this.stashRepo = stashRepo
-    this.characterRepo = characterRepo
-    this.appContextService = appContextService
-  }
+    private readonly stashRepo: IStashContextRepository,
+    private readonly characterRepo: ICharacterContextRepository,
+    private readonly appContextService: IAppContextService
+    private readonly item:iitem
+  ) {}
   /**
    * 取得玩家背包內容。
    * - 無副作用。
@@ -129,7 +123,7 @@ export class StashService implements IStashService, IInternalStashService {
    * - 副作用：更新背包內容。
    * - 邊界條件：物品必須合法且不超過容量限制。
    */
-  async addItemToStash(runId: string, item: ItemInstance): Promise<void> {
+  async addItemToStash(runId: string, item: ItemRecord): Promise<void> {
     const ctx = await this.getStash(runId)
     const stash = this.createStashFromContext(ctx)
     if (!stash.addItem(item)) {
@@ -183,7 +177,9 @@ export class StashService implements IStashService, IInternalStashService {
    * - 無副作用。
    * - 邊界條件：ctx 必須包含有效的 items 和 capacity。
    */
-  private createStashFromContext(ctx: IStashContext): IStash {
-    return new Stash([...ctx.items], ctx.capacity)
+  private createStashFromContext(): Stash {
+    this.appContextService.GetConfig()
+    const itemAggregates = ctx.items.map((itemRecord) => RelicAggregate.toAggregate(itemRecord))
+    return new Stash(ctx.items)
   }
 }

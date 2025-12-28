@@ -1,7 +1,6 @@
 import { RelicAggregate, RelicRecord } from '../item/Item'
 import { ProfessionAggregate } from '../profession/ProfessionTemplate'
 import { UltimateAggregate, UltimateRecord } from '../ultimate/Ultimate'
-
 /** 角色記錄，保存角色的基本信息與裝備狀態 */
 export interface CharacterRecord {
   readonly id: string
@@ -21,7 +20,6 @@ export class CharacterAggregate {
     public ultimate: UltimateAggregate,
     public loadCapacity: number
   ) {}
-
   // 裝備聖物
   equipRelic(relic: RelicAggregate): boolean {
     if (this.canEquipRelic(relic)) return false

@@ -1,5 +1,4 @@
 import { ItemAggregate, ItemRecord } from '../item/Item'
-
 const INITIAL_CAPACITY = 20
 export interface StashRecord {
   readonly items: ReadonlyArray<ItemRecord>

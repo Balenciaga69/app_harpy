@@ -17,12 +17,12 @@ export class ItemGenerationService {
   private constraintService: ItemConstraintService
   private modifierService: ItemModifierAggregationService
   private rollService: ItemRollService
-  private instantiationService: ItemInstantiationService
+  private instantiationService: ItemAggregateService
   constructor(private appContextService: IAppContextService) {
     this.constraintService = new ItemConstraintService(appContextService)
     this.modifierService = new ItemModifierAggregationService(appContextService)
     this.rollService = new ItemRollService(appContextService, this.constraintService)
-    this.instantiationService = new ItemInstantiationService(appContextService)
+    this.instantiationService = new ItemAggregateService(appContextService)
   }
   /**
    * 根據來源與當前修飾符生成隨機物品
@@ -50,10 +50,49 @@ export class ItemGenerationService {
   }
 }
 /**
+ * 物品實例化服務：根據當前進度背景創建物品實例
+ * 職責：難度計算、樣板驗證、實例化工廠調用
+ */
+export class ItemAggregateService {
+  constructor(private appContextService: IAppContextService) {}
+  /**
+   * 根據樣板與類型創建物品實例，自動計算難度因子
+   * 邊界：
+   *   - 目前只支援聖物類型，其他類型拋錯
+   *   - 樣板必須存在，否則拋錯
+   * 副作用：無(實例化在記憶體中)
+   */
+  createItemAggregate(templateId: string, itemType: ItemRollType) {
+    const contexts = this.appContextService.GetContexts()
+    const config = this.appContextService.GetConfig()
+    const characterContext = contexts.characterContext
+    const runContext = contexts.runContext
+    const itemStore = config.itemStore
+    const { currentChapter, currentStage } = runContext
+    if (itemType !== 'RELIC') throw new Error('TODO: 拋領域錯誤,暫時沒有其他類型')
+    const template = itemStore.getRelic(templateId)
+    if (!template) throw new Error('TODO: 拋領域錯誤')
+    const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
+    const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
+    const affixRecords = AffixRecordFactory.createMany([...template.affixIds], {
+      atCreated,
+      difficulty,
+      sourceUnitId: characterContext.id,
+    })
+    return RelicRecordFactory.createOne(template.id, {
+      affixRecords: affixRecords,
+      currentStacks: 0,
+      difficulty,
+      sourceUnitId: characterContext.id,
+      atCreated,
+    })
+  }
+}
+/**
  * 物品約束驗證服務：驗證物品生成是否符合章節、職業、事件等限制條件
  * 職責：生成權限檢查、樣板可用性驗證、符合限制的樣板篩選
  */
-export class ItemConstraintService {
+class ItemConstraintService {
   constructor(private appContextService: IAppContextService) {}
   /**
    * 檢查目前是否可以生成物品
@@ -106,45 +145,6 @@ export class ItemConstraintService {
         .filter((item: ItemTemplate) => item.rarity === rarity && this.canGenerateItemTemplate(item.id))
     }
     return []
-  }
-}
-/**
- * 物品實例化服務：根據當前進度背景創建物品實例
- * 職責：難度計算、樣板驗證、實例化工廠調用
- */
-export class ItemInstantiationService {
-  constructor(private appContextService: IAppContextService) {}
-  /**
-   * 根據樣板與類型創建物品實例，自動計算難度因子
-   * 邊界：
-   *   - 目前只支援聖物類型，其他類型拋錯
-   *   - 樣板必須存在，否則拋錯
-   * 副作用：無(實例化在記憶體中)
-   */
-  createItemAggregate(templateId: string, itemType: ItemRollType) {
-    const contexts = this.appContextService.GetContexts()
-    const config = this.appContextService.GetConfig()
-    const characterContext = contexts.characterContext
-    const runContext = contexts.runContext
-    const itemStore = config.itemStore
-    const { currentChapter, currentStage } = runContext
-    if (itemType !== 'RELIC') throw new Error('TODO: 拋領域錯誤,暫時沒有其他類型')
-    const template = itemStore.getRelic(templateId)
-    if (!template) throw new Error('TODO: 拋領域錯誤')
-    const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-    const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
-    const affixRecords = new AffixRecordFactory().createManyRecords([...template.affixIds], {
-      atCreated,
-      difficulty,
-      sourceUnitId: characterContext.id,
-    })
-    return new RelicRecordFactory().createRecord(template.id, {
-      affixRecords: affixRecords,
-      currentStacks: 0,
-      difficulty,
-      sourceUnitId: characterContext.id,
-      atCreated,
-    })
   }
 }
 /**
@@ -221,7 +221,7 @@ export class ItemModifierAggregationService {
  * 物品骰選服務：執行物品骰選流程
  * 流程：骰選類型 → 骰選稀有度 → 篩選符合條件的樣板 → 骰選樣板
  */
-export class ItemRollService {
+class ItemRollService {
   constructor(
     private appContextService: IAppContextService,
     private constraintService: ItemConstraintService
@@ -250,7 +250,7 @@ export class ItemRollService {
 }
 //=== 骰選幫助類 ===
 /** 根據配置權重骰選物品類型 */
-export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRollType => {
+const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRollType => {
   const itemTypeWeightList = Object.entries(rollConfig.itemTypeWeights).map(([itemType, weight]) => ({
     id: itemType as ItemRollType,
     weight,
@@ -258,7 +258,7 @@ export const rollItemType = (seed: number, rollConfig: ItemRollConfig): ItemRoll
   return WeightRoller.roll<ItemRollType>(seed, itemTypeWeightList)
 }
 /** 根據修飾符調整權重後骰選稀有度，修飾符會乘算基礎權重 */
-export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): ItemRarity => {
+const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): ItemRarity => {
   const rarityModifiers = modifiers.filter((mod) => mod.type === 'RARITY')
   const aggregatedMods = new Map<ItemRarity, number>()
   for (const mod of rarityModifiers) {
@@ -271,7 +271,7 @@ export const rollItemRarity = (seed: number, rollConfig: ItemRollConfig, modifie
   return WeightRoller.roll<ItemRarity>(seed, rarityWeightList)
 }
 /** 從可用樣板清單中骰選物品樣板，目前所有樣板權重均等 */
-export const rollItemTemplate = (seed: number, templates: ItemTemplate[]): string => {
+const rollItemTemplate = (seed: number, templates: ItemTemplate[]): string => {
   const templateWeightList = templates.map((template) => ({
     id: template.id,
     weight: 1, // TODO: 未來可能會有不同權重

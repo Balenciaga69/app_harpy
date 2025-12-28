@@ -20,7 +20,6 @@ export interface UltimateTemplate {
 export interface UltimateRecord extends BaseInstanceFields, WithSourceUnit, WithCreatedInfo {
   readonly pluginAffixRecord: ReadonlyArray<AffixRecord>
 }
-
 /** 大絕招聚合根，封裝大絕招的狀態與行為 */
 export class UltimateAggregate {
   constructor(

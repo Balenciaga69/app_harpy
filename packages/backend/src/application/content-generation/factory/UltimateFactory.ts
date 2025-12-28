@@ -23,6 +23,6 @@ function createManyUltimateRecords(templateIds: string[], params: UltimateRecord
 }
 /** UltimateRecordFactory：負責UltimateRecord的創建 */
 export const UltimateRecordFactory = {
-  createRecord: createUltimateRecord,
-  createManyRecords: createManyUltimateRecords,
+  createOne: createUltimateRecord,
+  createMany: createManyUltimateRecords,
 }

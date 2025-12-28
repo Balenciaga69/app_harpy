@@ -2,7 +2,6 @@ import { RelicInstance } from '../../../domain/item/Item'
 import { UnitStats } from '../../../domain/stats/models/UnitStats'
 import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
 import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'
-
 /**
  * 角色與遺物的操作日誌。
  * - type: 'EQUIP' 表示裝備遺物，'UNEQUIP' 表示卸下遺物。

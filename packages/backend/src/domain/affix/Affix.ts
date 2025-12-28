@@ -3,7 +3,6 @@ import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
 import { UnitStatModifier } from '../stats/models/StatModifier'
 import { AffixEffect } from './effect/AffixEffectTemplate'
-
 /** 詞綴記錄，包含詞綴的基本識別資訊與創建資訊 */
 export interface AffixRecord extends BaseInstanceFields, WithSourceUnit, WithCreatedInfo {}
 /** 詞綴樣板，定義詞綴的靜態屬性與綁定的效果集合 */

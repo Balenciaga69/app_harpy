@@ -2,12 +2,10 @@ import { AffixAggregate } from '../../../../domain/affix/Affix'
 import { UltimateAggregate, UltimateRecord } from '../../../../domain/ultimate/Ultimate'
 import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
 import { IAffixAggregateService } from '../affix/AffixAggregateService'
-
 export interface IUltimateAggregateService {
   create(record: UltimateRecord): UltimateAggregate
   createMany(records: UltimateRecord[]): UltimateAggregate[]
 }
-
 export class UltimateAggregateService implements IUltimateAggregateService {
   constructor(
     private affixAggregateService: IAffixAggregateService,

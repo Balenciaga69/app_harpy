@@ -1,6 +1,5 @@
 import { IProfessionStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
 import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
-
 /** 職業配置存儲：管理職業樣板 */
 export class ProfessionStore implements IProfessionStore {
   private professions: Map<string, ProfessionTemplate> = new Map()

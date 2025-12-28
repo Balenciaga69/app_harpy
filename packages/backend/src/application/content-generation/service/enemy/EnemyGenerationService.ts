@@ -1,5 +1,4 @@
-import { EnemyAggregate, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
-import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
+import { EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
 import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
 import { IEnemyAggregateService } from './EnemyAggregateService'

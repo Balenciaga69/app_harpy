@@ -7,26 +7,23 @@ export interface AffixRecordCreateParams {
   sourceUnitId: string
   atCreated: AtCreatedInfo
 }
-/** IAffixRecordFactory：AffixRecord工廠介面 */
-export interface IAffixRecordFactory {
-  createRecord(templateId: string, params: AffixRecordCreateParams): AffixRecord
-  createManyRecords(templateIds: string[], params: AffixRecordCreateParams): AffixRecord[]
+function createRecord(templateId: string, params: AffixRecordCreateParams): AffixRecord {
+  return {
+    id: 'affix-record-' + nanoid(),
+    templateId,
+    sourceUnitId: params.sourceUnitId,
+    atCreated: params.atCreated,
+  }
+}
+function createManyRecords(templateIds: string[], params: AffixRecordCreateParams): AffixRecord[] {
+  return templateIds.map((templateId) => createRecord(templateId, params))
 }
 /**
  * AffixRecordFactory：負責AffixRecord的創建
  * - 單一職責：生成帶有唯一 ID 與創建背景的AffixRecord
  * - 無副作用：純粹的資料構建
  */
-export class AffixRecordFactory implements IAffixRecordFactory {
-  createRecord(templateId: string, params: AffixRecordCreateParams): AffixRecord {
-    return {
-      id: 'affix-record-' + nanoid(),
-      templateId,
-      sourceUnitId: params.sourceUnitId,
-      atCreated: params.atCreated,
-    }
-  }
-  createManyRecords(templateIds: string[], params: AffixRecordCreateParams): AffixRecord[] {
-    return templateIds.map((templateId) => this.createRecord(templateId, params))
-  }
+export const AffixRecordFactory = {
+  createOne: createRecord,
+  createMany: createManyRecords,
 }

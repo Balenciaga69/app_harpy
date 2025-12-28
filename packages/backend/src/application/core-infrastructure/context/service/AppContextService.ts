@@ -1,3 +1,5 @@
+import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
+import { AtCreatedInfo } from '../../../../shared/models/BaseInstanceFields'
 import { IAppContext } from '../interface/IAppContext'
 import { ICharacterContext } from '../interface/ICharacterContext'
 import { IRunContext } from '../interface/IRunContext'
@@ -11,6 +13,7 @@ export interface IAppContextService {
   getCharacterContext(): ICharacterContext
   setStashContext(ctx: IStashContext): void
   getStashContext(): IStashContext
+  getCurrentAtCreatedInfo(): AtCreatedInfo
 }
 export class AppContextService implements IAppContextService {
   private appContext: IAppContext
@@ -58,5 +61,11 @@ export class AppContextService implements IAppContextService {
   }
   getStashContext(): IStashContext {
     return this.appContext.contexts.stashContext
+  }
+  getCurrentAtCreatedInfo(): AtCreatedInfo {
+    const { currentChapter, currentStage } = this.getRunContext()
+    const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
+    const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
+    return atCreated
   }
 }
