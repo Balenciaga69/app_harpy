@@ -8,7 +8,6 @@ import {
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { IItemConstraintService } from './ItemConstraintService'
-
 /**
  * 物品骰選服務：執行物品骰選流程
  * 職責：根據來源、修飾符、限制條件骰選物品
@@ -53,7 +52,6 @@ export class ItemRollService implements IItemRollService {
     const itemTemplateId = this.rollTemplate(seed, availableTemplates)
     return { itemTemplateId, itemType, rarity }
   }
-
   /** 通用權重骰選：從權重映射中骰選結果 */
   private rollFromWeights<T extends string>(seed: number, weights: Record<T, number>): T {
     const weightList = Object.entries(weights).map(([key, weight]) => ({
@@ -62,7 +60,6 @@ export class ItemRollService implements IItemRollService {
     }))
     return WeightRoller.roll<T>(seed, weightList)
   }
-
   /** 骰選稀有度：根據修飾符調整權重後骰選 */
   private rollRarity(seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): ItemRarity {
     const rarityMods = this.aggregateRarityModifiers(modifiers)
@@ -72,7 +69,6 @@ export class ItemRollService implements IItemRollService {
     }))
     return WeightRoller.roll<ItemRarity>(seed, adjustedWeights)
   }
-
   /** 聚合稀有度修飾符：將多個修飾符合併為單一權重映射 */
   private aggregateRarityModifiers(modifiers: ItemRollModifier[]): Map<ItemRarity, number> {
     const rarityMods = modifiers.filter((mod) => mod.type === 'RARITY')
@@ -83,7 +79,6 @@ export class ItemRollService implements IItemRollService {
     }
     return result
   }
-
   /** 骰選物品樣板：從可用樣板清單中均等骰選 */
   private rollTemplate(seed: number, templates: ItemTemplate[]): string {
     const weightList = templates.map((template) => ({ id: template.id, weight: 1 }))

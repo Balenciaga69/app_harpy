@@ -23,14 +23,21 @@ export interface UltimateRecord extends BaseInstanceFields, WithSourceUnit, With
 /** 大絕招聚合根，封裝大絕招的狀態與行為 */
 export class UltimateAggregate {
   constructor(
-    public record: UltimateRecord,
+    public readonly record: UltimateRecord,
     public readonly template: UltimateTemplate,
-    public pluginAffixes: ReadonlyArray<AffixAggregate> = []
+    public readonly pluginAffixes: ReadonlyArray<AffixAggregate> = []
   ) {}
-  /** 新增插件詞綴 */
-  addPluginAffix(affix: AffixAggregate) {
-    this.pluginAffixes = [...this.pluginAffixes, affix]
-    const pluginAffixRecord = this.pluginAffixes.map((a) => a.record)
-    this.record = { ...this.record, pluginAffixRecord }
+
+  /**
+   * 新增插件詞綴，返回新的大絕招聚合實例
+   */
+  addPluginAffix(affix: AffixAggregate): UltimateAggregate {
+    const newPluginAffixes = [...this.pluginAffixes, affix]
+    const pluginAffixRecord = newPluginAffixes.map((a) => a.record)
+    const newRecord: UltimateRecord = {
+      ...this.record,
+      pluginAffixRecord,
+    }
+    return new UltimateAggregate(newRecord, this.template, newPluginAffixes)
   }
 }

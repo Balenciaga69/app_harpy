@@ -91,7 +91,6 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
         durationStages: 0,
       }))
   }
-
   /** 檢查聖物是否為高堆疊且未達上限 */
   private isHighStackButNotMaxed(relic: any, itemStore: any): boolean {
     const template = itemStore.getRelic(relic.templateId)

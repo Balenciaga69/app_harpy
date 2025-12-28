@@ -43,19 +43,36 @@ export abstract class ItemAggregate {
 /** 遺物聚合，包含遺物記錄、樣板與詞綴快照集合 */
 export class RelicAggregate extends ItemAggregate {
   constructor(
-    public record: RelicRecord,
+    public readonly record: RelicRecord,
     public readonly template: RelicTemplate,
     public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
   ) {
     super(record, template, affixAggregates)
   }
+  /**
+   * 增加堆疊，返回新的遺物聚合實例
+   */
+  addStack(): RelicAggregate | null {
+    if (this.isMaxStacks()) return null
+    const newRecord: RelicRecord = {
+      ...this.record,
+      currentStacks: this.record.currentStacks + 1,
+    }
+    return new RelicAggregate(newRecord, this.template, this.affixAggregates)
+  }
+  /**
+   * 減少堆疊，返回新的遺物聚合實例
+   */
+  removeStack(): RelicAggregate | null {
+    if (this.record.currentStacks <= 1) return null
+    const newRecord: RelicRecord = {
+      ...this.record,
+      currentStacks: this.record.currentStacks - 1,
+    }
+    return new RelicAggregate(newRecord, this.template, this.affixAggregates)
+  }
   isMaxStacks(): boolean {
     return this.record.currentStacks >= this.template.maxStacks
-  }
-  addStack(): boolean {
-    if (this.isMaxStacks()) return false
-    this.record = { ...this.record, currentStacks: this.record.currentStacks + 1 }
-    return true
   }
   get currentStacks(): number {
     return this.record.currentStacks
