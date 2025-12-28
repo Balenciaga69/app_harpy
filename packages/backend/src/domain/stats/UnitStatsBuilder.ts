@@ -1,28 +1,22 @@
-import { UnitStats } from './models/UnitStats'
-const BaseUnitStats: UnitStats = {
-  attackDamage: 25,
-  currentEnergy: 0,
-  currentHp: 1000,
-  evasion: 0,
-  maxEnergy: 100,
-  maxHp: 1000,
-  resurrectionChance: 0.05,
-  resurrectionHpPercent: 20,
-}
+import { DEFAULT_UNIT_STATS, UnitStats } from './models/UnitStats'
+/** 單位統計值建造器，提供流暢的鏈式 API 用於構建自訂統計值 */
 export class UnitStatsBuilder {
   private stats: UnitStats
-  constructor() {
-    this.stats = { ...BaseUnitStats }
+  constructor(stats?: UnitStats) {
+    this.stats = stats ? { ...stats } : { ...DEFAULT_UNIT_STATS }
   }
-  Add(stat: keyof UnitStats, value: number): UnitStatsBuilder {
+  /** 將指定統計屬性增加指定值，返回建造器以支持鏈式調用 */
+  add(stat: keyof UnitStats, value: number): UnitStatsBuilder {
     this.stats[stat] += value
     return this
   }
-  Multiply(stat: keyof UnitStats, factor: number): UnitStatsBuilder {
+  /** 將指定統計屬性乘以指定倍數，返回建造器以支持鏈式調用 */
+  multiply(stat: keyof UnitStats, factor: number): UnitStatsBuilder {
     this.stats[stat] *= factor
     return this
   }
-  Build(): UnitStats {
+  /** 返回構建完成的統計值映射，結束鏈式調用 */
+  build(): UnitStats {
     return this.stats
   }
 }

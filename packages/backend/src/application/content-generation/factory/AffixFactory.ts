@@ -1,41 +1,29 @@
 import { nanoid } from 'nanoid'
-import { AffixInstance } from '../../../domain/affix/AffixInstance'
-import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-type CreateManyParams = {
-  templateIds: string[]
+import { AffixRecord } from '../../../domain/affix/Affix'
+import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
+/** AffixRecord 創建參數 */
+export interface AffixRecordCreateParams {
   difficulty: number
-  chapter: ChapterLevel
-  stage: number
   sourceUnitId: string
+  atCreated: AtCreatedInfo
 }
-type CreateOneParams = {
-  templateId: string
-  difficulty: number
-  chapter: ChapterLevel
-  stage: number
-  sourceUnitId: string
-}
-const createMany = (params: CreateManyParams) => {
-  const { templateIds, difficulty, chapter, stage, sourceUnitId } = params
-  const templates: AffixInstance[] = templateIds.map((templateId) =>
-    createOne({ templateId, difficulty, chapter, stage, sourceUnitId })
-  )
-  return templates
-}
-const createOne = (params: CreateOneParams) => {
-  const { templateId, difficulty, chapter, stage, sourceUnitId } = params
+function createRecord(templateId: string, params: AffixRecordCreateParams): AffixRecord {
   return {
-    id: `affix-instance-${nanoid()}`,
+    id: 'affix-record-' + nanoid(),
     templateId,
-    sourceUnitId,
-    atCreated: {
-      chapter,
-      stage,
-      difficulty,
-    },
+    sourceUnitId: params.sourceUnitId,
+    atCreated: params.atCreated,
   }
 }
-export const AffixFactory = {
-  createMany,
-  createOne,
+function createManyRecords(templateIds: string[], params: AffixRecordCreateParams): AffixRecord[] {
+  return templateIds.map((templateId) => createRecord(templateId, params))
+}
+/**
+ * AffixRecordFactory：負責AffixRecord的創建
+ * - 單一職責：生成帶有唯一 ID 與創建背景的AffixRecord
+ * - 無副作用：純粹的資料構建
+ */
+export const AffixRecordFactory = {
+  createOne: createRecord,
+  createMany: createManyRecords,
 }

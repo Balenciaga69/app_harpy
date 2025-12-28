@@ -59,10 +59,15 @@
 
 ## 技術細節
 
-- ItemTemplate（物品模板）定義物品靜態資料，包括名稱、稀有度、詞綴
-- ItemInstance（物品實例）代表生成後的物品，包含難度係數計算結果
+- RelicTemplate（遺物模板）定義遺物靜態資料，包括名稱、稀有度、詞綴、負載值等
+- RelicRecord（遺物紀錄）代表已獲得遺物的持久化資料，包含 templateId、堆疊數等
+- RelicAggregate（遺物聚合根）由 Template + Record 組合而成，包含所有運行時行為
+  - addStack()：增加堆疊數
+  - removeStack()：減少堆疊數
+  - 根據難度係數動態計算屬性與詞綴效果
 - Relic（遺物）為唯一物品類型，支援堆疊與堆疊上限
 - 物品生成時，根據 RunContext 動態調整權重
+- RelicAggregate 不被存入 DB，需要時由 Template + Record 動態組裝
 - 生成流程需檢查排他條件與堆疊上限
 - 靜態哈希表記錄生成限制條件，未列入者無限制
 
@@ -70,7 +75,7 @@
 
 - 依據靜態概率表決定物品類型與稀有度
 - 依據動態權重調整最終選擇
-- 生成 ItemInstance，套用難度係數
+- 生成 RelicAggregate，套用難度係數
 - 檢查重複、堆疊上限、排他條件
 - 返回最終物品資料
 

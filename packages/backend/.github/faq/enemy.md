@@ -28,8 +28,14 @@
 
 ## 技術細節
 
-- Store 從外部載入所有 enemyTemplate（敵人模板）與 spawn info（生成資訊）
-- 由權重隨機選出符合條件的 enemyTemplate
-- 根據當前難度係數生成 enemyInstance（敵人實例），套用屬性、詞綴、大絕招
-- 戰鬥時將 enemyInstance 轉為單位進行互動
+- EnemyTemplate（敵人模板）由 Store 載入，定義敵人的靜態屬性、詞綴、大絕招配置
+- EnemyRecord（敵人紀錄）代表已生成敵人的持久化資料，包含 templateId、難度係數等
+- EnemyAggregate（敵人聚合根）由 Template + Record 組合而成，包含所有運行時行為
+  - getUnitStats()：計算最終屬性
+  - getAffixes()：取得詞綴
+  - getUltimate()：取得大絕招
+  - 根據難度係數動態計算所有數值
+- EnemyAggregate 不被存入 DB，需要時由 Template + Record 動態組裝
+- 由權重隨機選出符合條件的 EnemyTemplate
+- 根據當前難度係數生成 EnemyAggregate，套用屬性、詞綴、大絕招
 - 需支援章節過濾、重複排除等生成規則

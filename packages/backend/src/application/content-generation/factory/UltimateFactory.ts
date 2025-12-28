@@ -1,27 +1,28 @@
 import { nanoid } from 'nanoid'
-import { UltimateInstance } from '../../../domain/ultimate/UltimateInstance'
-import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-const create = (params: {
-  templateIds: string[]
+import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
+import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
+/** UltimateRecord 創建參數 */
+export interface UltimateRecordCreateParams {
   difficulty: number
-  chapter: ChapterLevel
-  stage: number
   sourceUnitId: string
-}) => {
-  const { templateIds, difficulty, chapter, stage, sourceUnitId } = params
-  const instances: UltimateInstance[] = templateIds.map((templateId) => ({
-    id: `ultimate-instance-${nanoid()}`,
-    templateId,
-    sourceUnitId,
-    pluginIds: [],
-    atCreated: {
-      chapter,
-      stage,
-      difficulty,
-    },
-  }))
-  return instances
+  atCreated: AtCreatedInfo
 }
-export const UltimateFactory = {
-  create,
+/** 建立 UltimateRecord */
+function createUltimateRecord(templateId: string, params: UltimateRecordCreateParams): UltimateRecord {
+  return {
+    id: 'ultimate-record-' + nanoid(),
+    templateId,
+    sourceUnitId: params.sourceUnitId,
+    pluginAffixRecord: [],
+    atCreated: params.atCreated,
+  }
+}
+/** 批次建立 UltimateRecord */
+function createManyUltimateRecords(templateIds: string[], params: UltimateRecordCreateParams): UltimateRecord[] {
+  return templateIds.map((templateId) => createUltimateRecord(templateId, params))
+}
+/** UltimateRecordFactory：負責UltimateRecord的創建 */
+export const UltimateRecordFactory = {
+  createOne: createUltimateRecord,
+  createMany: createManyUltimateRecords,
 }

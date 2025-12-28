@@ -12,7 +12,9 @@ const roll = <T = string>(seed: number, weightInfo: RollInfo<T>[]) => {
     cumWeight += info.weight
     validInfos.push({ id: info.id, cumWeight })
   })
-  // if (validInfos.length === 0) return null // TODO: 改成 Error
+  if (validInfos.length === 0) {
+    throw new Error('WeightRoller: no valid weight entries')
+  }
   return getRolledId(seed, validInfos, cumWeight)
 }
 const getRolledId = <T = string>(seed: number, validInfos: ValidInfo<T>[], cumWeight: number): T => {

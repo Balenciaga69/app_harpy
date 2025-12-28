@@ -1,6 +1,3 @@
-import { ItemInstance } from '../../../../domain/item/itemInstance'
+import { StashRecord } from '../../../../domain/stash/Stash'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
-export interface IStashContext extends WithRunIdAndVersion {
-  readonly items: readonly ItemInstance[]
-  readonly capacity: number
-}
+export interface IStashContext extends WithRunIdAndVersion, StashRecord {}

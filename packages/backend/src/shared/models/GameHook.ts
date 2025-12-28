@@ -1,0 +1,11 @@
+/** 遊戲事件掛勾類型，定義各種遊戲內觸發的事件 */
+export type GameHook =
+  | 'ON_BEFORE_DAMAGE'
+  | 'ON_COMBAT_START'
+  | 'ON_EQUIP'
+  | 'ON_UNEQUIP'
+  | 'ON_CAST'
+  | 'ON_DRAW'
+  | 'ON_REDRAW'
+  | 'ON_BATTLE_START'
+  | 'ON_BATTLE_END'

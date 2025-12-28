@@ -54,9 +54,13 @@
 
 ## 技術細節
 
-- 帳戶資料長期儲存，包含解鎖、成就、升級、統計等
-- Run Context 為臨時資料，包含角色、倉庫、進度、金幣、種子
-- 帳戶與 Run Context 分離，資料結構獨立
+- PlayerTemplate：定義玩家帳戶的靜態設定
+- PlayerRecord：記錄玩家帳戶的持久化資料，包含解鎖狀態、成就進度、統計數據等
+- PlayerAggregate：由 Template + Record 組合而成，包含所有運行時行為
+  - getUnlockedContent()：取得已解鎖的內容
+  - getAchievementProgress()：取得成就進度
+  - updateUnlocked()：更新解鎖狀態
+- PlayerAggregate 不被存入 DB，需要時由 Template + Record 動態組裝
 - 帳戶層 Repository：IPlayerAccountRepository
   - getById(accountId)
   - update(account, expectedVersion)
@@ -77,17 +81,3 @@
 - Repository 介面需支援原子性批次更新
 - 版本衝突需優雅處理，非 bug
 - Store 僅用於靜態資源，Repository 用於動態資料
-
-## 技術選型
-
-- 相較於 Run 高頻更新中等數據 Player 則低頻少量更新
-- [TODO:]等待補充
-
-## Player 該有哪些行為?
-
-- 提供已完成成就、已解鎖內容
-- [TODO:]等待補充
-
-## 安全性設計
-
-- 尚未說明，建議補充帳戶安全、資料一致性等設計

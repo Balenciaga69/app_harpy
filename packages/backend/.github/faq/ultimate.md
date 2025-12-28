@@ -42,8 +42,14 @@
 
 ## 技術細節
 
-- ultimate 由 UltimateTemplate（大絕招模板）定義，包含技能效果、目標、難度係數加成等欄位
-- ultimate 插槽為 affix effect，可關聯 affix id
-- 插件與 ultimate 關聯，影響技能效果
+- UltimateTemplate（大絕招模板）由 Store 載入，定義技能靜態屬性、效果、難度係數加成等欄位
+- UltimateRecord（大絕招紀錄）代表已獲得大絕招的持久化資料，包含 templateId、插件（affix）列表等
+- UltimateAggregate（大絕招聚合根）由 Template + Record 組合而成，包含所有運行時行為
+  - addPluginAffix()：裝備插件詞綴
+  - removePluginAffix()：移除插件詞綴
+  - getEffectActions()：取得技能效果邏輯
+  - 根據難度係數與插件動態計算最終效果
+- UltimateAggregate 不被存入 DB，需要時由 Template + Record 動態組裝
+- 插件為 affix effect，與 ultimate 關聯，影響技能行為
 - ultimate 取得時需處理遺物消耗與 ultimate 替換
-- 替換 ultimate 時需清空插件槽
+- 替換 ultimate 時需清空所有插件槽
