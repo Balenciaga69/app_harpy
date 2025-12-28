@@ -2,9 +2,20 @@ import { ItemRarity, ItemTemplate } from '../../../../domain/item/Item'
 import { ItemRollConfig, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
-import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
+import {
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+} from '../../../core-infrastructure/context/service/AppContextService'
 import { IItemConstraintService } from './ItemConstraintService'
+
+/**
+ * 物品骰選服務：執行物品骰選流程
+ * 職責：根據來源、修飾符、限制條件骰選物品
+ * 依賴：IConfigStoreAccessor（讀骰選配置）、IContextSnapshotAccessor（讀種子）、IItemConstraintService（檢查生成限制）
+ * 流程：骰選類型 → 骰選稀有度 → 篩選符合條件的樣板 → 骰選樣板
+ */
 export interface IItemRollService {
+  /** 根據來源與修飾符骰選物品，返回樣板ID、類型、稀有度 */
   rollItem(
     source: string,
     modifiers: ItemRollModifier[]
@@ -14,28 +25,24 @@ export interface IItemRollService {
     rarity: ItemRarity
   }
 }
-/**
- * 物品骰選服務：執行物品骰選流程
- * 流程：骰選類型 → 骰選稀有度 → 篩選符合條件的樣板 → 骰選樣板
- */
+
 export class ItemRollService implements IItemRollService {
   constructor(
-    private appContextService: IAppContextService,
+    private configStoreAccessor: IConfigStoreAccessor,
+    private contextSnapshot: IContextSnapshotAccessor,
     private constraintService: IItemConstraintService
   ) {}
   /**
    * 按順序骰選物品類型、稀有度，最後從符合限制的樣板中骰選
    * 邊界：來源配置必須存在，否則拋錯
-   * 副作用：無(純骰選邏輯)
+   * 副作用：無（純骰選邏輯）
    */
   rollItem(
     source: string,
     modifiers: ItemRollModifier[]
   ): { itemTemplateId: string; itemType: ItemRollType; rarity: ItemRarity } {
-    const contexts = this.appContextService.getAllContexts()
-    const config = this.appContextService.getConfigStore()
-    const runContext = contexts.runContext
-    const itemStore = config.itemStore
+    const runContext = this.contextSnapshot.getRunContext()
+    const itemStore = this.configStoreAccessor.getConfigStore().itemStore
     const staticRollConfig = itemStore.getItemRollConfig(source)
     if (!staticRollConfig) throw new Error('TODO: 拋領域錯誤')
     const itemType = rollItemType(runContext.seed, staticRollConfig)

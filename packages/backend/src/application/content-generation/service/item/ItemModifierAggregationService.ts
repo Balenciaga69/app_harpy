@@ -1,25 +1,34 @@
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { IAppContext } from '../../../core-infrastructure/context/interface/IAppContext'
-import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
+import {
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+} from '../../../core-infrastructure/context/service/AppContextService'
 import { TagStatistics } from '../../helper/TagStatistics'
 
-export interface IItemModifierAggregationService {
-  aggregateModifiers(): ItemRollModifier[]
-}
 /**
  * 物品修飾符聚合服務：將高頻標籤與高堆疊物品轉換為骰選修飾符
  * 職責：聚合未過期修飾符、識別高頻標籤、篩選高堆疊聖物
- * 邊界：標籤與堆疊計數閾值為常數 5
+ * 依賴：IConfigStoreAccessor（讀物品模板）、IContextSnapshotAccessor（讀角色與運行狀態）
+ * 邊界：標籤與堆疊計數閾值為常數 5；純聚合邏輯，不修改任何狀態
  */
+export interface IItemModifierAggregationService {
+  /** 聚合所有適用的骰選修飾符：未過期修飾符 + 高頻標籤 + 高堆疊聖物 */
+  aggregateModifiers(): ItemRollModifier[]
+}
+
 export class ItemModifierAggregationService implements IItemModifierAggregationService {
-  constructor(private appContextService: IAppContextService) {}
+  constructor(
+    private configStoreAccessor: IConfigStoreAccessor,
+    private contextSnapshot: IContextSnapshotAccessor
+  ) {}
   /**
    * 聚合所有適用的骰選修飾符：未過期修飾符 + 高頻標籤 + 高堆疊聖物
-   * 副作用：無(純聚合邏輯)
+   * 副作用：無（純聚合邏輯）
    * 邊界：修飾符 durationStages > 0 表示未過期
    */
   aggregateModifiers(): ItemRollModifier[] {
-    const runCtx = this.appContextService.getAllContexts().runContext
+    const runCtx = this.contextSnapshot.getRunContext()
     const nextRollModifiers = [
       ...runCtx.rollModifiers.filter((mod: ItemRollModifier) => mod.durationStages !== 0),
       ...this.getHighFrequencyTagModifiers(),
@@ -27,16 +36,17 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
     ]
     return nextRollModifiers
   }
+
   /**
    * 統計已裝備物品標籤頻率，將高頻標籤(計數 >= 5)轉換為骰選修飾符
-   * 業務規則：高頻標籤增加相同標籤物品的骰選權重 (乘數 0.5)
+   * 業務規則：高頻標籤增加相同標籤物品的骰選權重（乘數 0.5）
    * 副作用：無
    */
   private getHighFrequencyTagModifiers(): ItemRollModifier[] {
     const threshold = 5
     const appCtx = {
-      contexts: this.appContextService.getAllContexts(),
-      configStore: this.appContextService.getConfigStore(),
+      contexts: this.contextSnapshot.getAllContexts(),
+      configStore: this.configStoreAccessor.getConfigStore(),
     } as IAppContext
     const equippedTags = TagStatistics.countEquippedTags(appCtx).toList()
     const highFreqTags = equippedTags.filter((t) => t.count >= threshold).map((t) => t.tag)
@@ -48,6 +58,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
       durationStages: 0,
     }))
   }
+
   /**
    * 篩選未達堆疊上限但已達閾值(計數 >= 5)的聖物，轉換為骰選修飾符
    * 業務規則：高堆疊聖物增加其再獲得的骰選權重，鼓勵高層級聖物升級
@@ -55,8 +66,8 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
    * 副作用：無
    */
   private getHighStackRelicModifiers(): ItemRollModifier[] {
-    const contexts = this.appContextService.getAllContexts()
-    const config = this.appContextService.getConfigStore()
+    const contexts = this.contextSnapshot.getAllContexts()
+    const config = this.configStoreAccessor.getConfigStore()
     const characterContext = contexts.characterContext
     const itemStore = config.itemStore
     const relics = characterContext.relics
