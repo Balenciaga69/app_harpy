@@ -1,18 +1,20 @@
 import { IUltimateStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
+import { ConfigNotFoundError } from '../../../shared/errors/GameErrors'
 /** 大絕招配置存儲：管理大絕招樣板 */
 export class UltimateStore implements IUltimateStore {
   private ultimates: Map<string, UltimateTemplate> = new Map()
   /** 根據 ID 查詢大絕招樣板 */
-  getUltimate(id: string): UltimateTemplate | undefined {
-    return this.ultimates.get(id)
+  getUltimate(id: string): UltimateTemplate {
+    const ultimate = this.ultimates.get(id)
+    if (!ultimate) {
+      throw new ConfigNotFoundError('UltimateTemplate', id)
+    }
+    return ultimate
   }
   /** 根據多個 ID 查詢大絕招樣板 */
   getUltimates(ids: string[]): UltimateTemplate[] {
-    const ultimates: UltimateTemplate[] = ids
-      .map((id) => this.ultimates.get(id))
-      .filter((u): u is UltimateTemplate => u !== undefined)
-    return ultimates
+    return ids.map((id) => this.getUltimate(id))
   }
   /** 檢查大絕招樣板是否存在 */
   hasUltimate(id: string): boolean {

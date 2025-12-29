@@ -2,7 +2,6 @@ import { CharacterAggregate, CharacterRecord } from '../../../../domain/characte
 import { IItemAggregateService } from '../item/ItemAggregateService'
 import { IProfessionAggregateService } from '../profession/ProfessionAggregateService'
 import { IUltimateAggregateService } from '../ultimate/UltimateAggregateService'
-
 /** 角色聚合根服務介面 */
 export interface ICharacterAggregateService {
   /** 從 CharacterRecord 與職業聚合根建立單一角色聚合根( 組裝現有記錄 ) */
@@ -15,7 +14,6 @@ export class CharacterAggregateService implements ICharacterAggregateService {
     private itemAggregateService: IItemAggregateService,
     private ultimateAggregateService: IUltimateAggregateService
   ) {}
-
   /** 從 CharacterRecord 與職業聚合根建立 CharacterAggregate */
   createOneByRecord(record: CharacterRecord): CharacterAggregate {
     const profession = this.professionAggregateService.createOneByTemplateUsingCurrentContext(record.professionId)

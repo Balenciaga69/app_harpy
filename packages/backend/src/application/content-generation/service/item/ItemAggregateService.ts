@@ -1,4 +1,4 @@
-import { RelicAggregate, RelicRecord } from '../../../../domain/item/Item'
+import { RelicAggregate, RelicRecord, RelicTemplate } from '../../../../domain/item/Item'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
@@ -52,12 +52,9 @@ export class ItemAggregateService implements IItemAggregateService {
     return templateIds.map((templateId) => this.createRelicByTemplateUsingCurrentContext(templateId))
   }
   /** 透過 templateId 取得 RelicTemplate */
-  private resolveTemplate(templateId: string) {
+  private resolveTemplate(templateId: string): RelicTemplate {
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const template = itemStore.getRelic(templateId)
-    if (!template) {
-      throw new Error(`樣板不存在: ${templateId}`)
-    }
     return template
   }
 }

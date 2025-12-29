@@ -1,5 +1,5 @@
 import { AffixAggregate } from '../../../../domain/affix/Affix'
-import { UltimateAggregate, UltimateRecord } from '../../../../domain/ultimate/Ultimate'
+import { UltimateAggregate, UltimateRecord, UltimateTemplate } from '../../../../domain/ultimate/Ultimate'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
@@ -51,12 +51,9 @@ export class UltimateAggregateService implements IUltimateAggregateService {
     return templateIds.map((templateId) => this.createOneByTemplateUsingCurrentContext(templateId))
   }
   /** 取得 UltimateTemplate */
-  private resolveTemplate(templateId: string) {
+  private resolveTemplate(templateId: string): UltimateTemplate {
     const { ultimateStore } = this.configStoreAccessor.getConfigStore()
     const template = ultimateStore.getUltimate(templateId)
-    if (!template) {
-      throw new Error(`Ultimate樣板不存在: ${templateId}`)
-    }
     return template
   }
   /** 取得 pluginAffixes */

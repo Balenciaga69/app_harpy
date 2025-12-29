@@ -3,7 +3,6 @@ import { CharacterRecord } from '../../../domain/character/Character'
 import { RelicRecord } from '../../../domain/item/Item'
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
-
 /** CharacterRecord 創建參數 */
 export interface CharacterRecordCreateParams {
   difficulty: number
@@ -16,7 +15,6 @@ export interface CharacterRecordCreateParams {
   loadCapacity: number
   currentLoad: number
 }
-
 /**
  * CharacterRecordFactory：負責 CharacterRecord 的創建
  * - 單一職責：生成帶有唯一 ID 與創建背景的 CharacterRecord
@@ -34,7 +32,6 @@ function createCharacterRecord(professionId: string, params: CharacterRecordCrea
   }
   return record
 }
-
 export const CharacterRecordFactory = {
   createOne: createCharacterRecord,
 }

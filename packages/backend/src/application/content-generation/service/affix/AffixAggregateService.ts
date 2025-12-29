@@ -56,12 +56,9 @@ export class AffixAggregateService implements IAffixAggregateService {
     })
   }
   /** 透過 templateId 取得 AffixTemplate */
-  private resolveTemplate(templateId: string) {
+  private resolveTemplate(templateId: string): AffixTemplate {
     const { affixStore } = this.configStoreAccessor.getConfigStore()
     const template = affixStore.getAffix(templateId)
-    if (!template) {
-      throw new Error(`樣板不存在: ${templateId}`)
-    }
     return template
   }
   /** 從 template 取得 effects */
@@ -69,9 +66,6 @@ export class AffixAggregateService implements IAffixAggregateService {
     const { affixStore } = this.configStoreAccessor.getConfigStore()
     return template.effectIds.map((effectId) => {
       const effects = affixStore.getAffixEffect(effectId)
-      if (!effects) {
-        throw new Error(`效果不存在: ${effectId}`)
-      }
       return effects
     })
   }

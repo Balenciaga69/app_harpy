@@ -26,13 +26,7 @@ export class EnemyAggregateService implements IEnemyAggregateService {
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyAggregate {
     const { enemyStore } = this.configStoreAccessor.getConfigStore()
     const enemyTemplate = enemyStore.getEnemy(enemyTemplateId)
-    if (!enemyTemplate) {
-      throw new Error(`敵人樣板不存在: ${enemyTemplateId}`)
-    }
     const roleConfig = enemyTemplate.roleConfigs[role]
-    if (!roleConfig) {
-      throw new Error(`敵人缺少角色配置: ${enemyTemplateId} - ${role}`)
-    }
     const affixAggregates = this.affixAggregateService.createManyByTemplateUsingCurrentContext(roleConfig.affixIds)
     const ultimateAggregate = this.ultimateAggregateService.createOneByTemplateUsingCurrentContext(
       roleConfig.ultimateId
