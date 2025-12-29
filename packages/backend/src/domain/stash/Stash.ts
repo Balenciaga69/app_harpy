@@ -1,3 +1,4 @@
+import { Result } from '../../shared/result/Result'
 import { ItemAggregate, ItemRecord } from '../item/Item'
 const INITIAL_CAPACITY = 20
 export interface StashRecord {
@@ -23,15 +24,20 @@ export class Stash {
     return this._capacity
   }
   /** 嘗試新增物品到倉庫。*/
-  public addItem(item: ItemAggregate): Stash | null {
-    if (this.isAtCapacity()) return null
-    return new Stash([...this.items, item], this.capacity)
+  public addItem(item: ItemAggregate): Result<Stash, 'StashFull'> {
+    if (this.isAtCapacity()) {
+      return Result.fail('StashFull')
+    }
+    return Result.success(new Stash([...this.items, item], this.capacity))
   }
+
   /** 嘗試從倉庫移除物品。*/
-  public removeItem(itemId: string): Stash | null {
+  public removeItem(itemId: string): Result<Stash, 'ItemNotFound'> {
     const newItems = this.items.filter((i) => i.record.id !== itemId)
-    if (newItems.length === this.items.length) return null // 未找到
-    return new Stash(newItems, this.capacity)
+    if (newItems.length === this.items.length) {
+      return Result.fail('ItemNotFound')
+    }
+    return Result.success(new Stash(newItems, this.capacity))
   }
   /** 嘗試從倉庫中取出物品。*/
 
@@ -49,9 +55,11 @@ export class Stash {
     return this._items.length
   }
   /** 嘗試擴展倉庫容量。*/
-  public expandCapacity(newCapacity: number): Stash | null {
-    if (newCapacity <= this.items.length) return null
-    return new Stash(this.items, newCapacity)
+  public expandCapacity(newCapacity: number): Result<Stash, 'InvalidCapacity'> {
+    if (newCapacity <= this.items.length) {
+      return Result.fail('InvalidCapacity')
+    }
+    return Result.success(new Stash(this.items, newCapacity))
   }
   /** 檢查倉庫中是否包含指定物品。*/
   public hasItem(itemId: string): boolean {
