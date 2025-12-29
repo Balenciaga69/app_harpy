@@ -134,7 +134,6 @@ export class RunInitializationService {
     const affixRecords = AffixRecordFactory.createMany(affixIds, initialAffixData)
     const relicRecords = RelicRecordFactory.createMany(startingRelicIds, {
       ...initialAffixData,
-      currentStacks: 0,
       affixRecords: affixRecords,
     })
     return relicRecords

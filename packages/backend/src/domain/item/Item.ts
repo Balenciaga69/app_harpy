@@ -26,9 +26,8 @@ export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
   readonly affixRecords: ReadonlyArray<AffixRecord>
   readonly itemType: ItemType
 }
-/** 遺物記錄，擴展物品記錄並包含當前堆疊層數 */
+/** 遺物記錄，擴展物品記錄並指定類型為遺物 */
 export interface RelicRecord extends ItemRecord {
-  readonly currentStacks: number
   readonly itemType: 'RELIC'
 }
 export abstract class ItemAggregate {
@@ -37,10 +36,7 @@ export abstract class ItemAggregate {
     public readonly template: ItemTemplate,
     public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
   ) {}
-  /**
-   * 計算物品裝備時帶來的單位屬性修改器集合
-   * - 遍歷所有詞綴聚合，匯聚其屬性修改器
-   */
+  /** 獲取物品的所有單位屬性修飾器 */
   getUnitStatModifiers() {
     return this.affixAggregates.flatMap((affix) => affix.getUnitStatModifiers())
   }
@@ -53,34 +49,6 @@ export class RelicAggregate extends ItemAggregate {
     public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
   ) {
     super(record, template, affixAggregates)
-  }
-  /**
-   * 增加堆疊，返回新的遺物聚合實例
-   */
-  addStack(): RelicAggregate | null {
-    if (this.isMaxStacks()) return null
-    const newRecord: RelicRecord = {
-      ...this.record,
-      currentStacks: this.record.currentStacks + 1,
-    }
-    return new RelicAggregate(newRecord, this.template, this.affixAggregates)
-  }
-  /**
-   * 減少堆疊，返回新的遺物聚合實例
-   */
-  removeStack(): RelicAggregate | null {
-    if (this.record.currentStacks <= 1) return null
-    const newRecord: RelicRecord = {
-      ...this.record,
-      currentStacks: this.record.currentStacks - 1,
-    }
-    return new RelicAggregate(newRecord, this.template, this.affixAggregates)
-  }
-  isMaxStacks(): boolean {
-    return this.record.currentStacks >= this.template.maxStacks
-  }
-  get currentStacks(): number {
-    return this.record.currentStacks
   }
   get maxStacks(): number {
     return this.template.maxStacks

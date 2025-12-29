@@ -41,7 +41,6 @@ export class ItemAggregateService implements IItemAggregateService {
       ...relicTemplate.affixIds,
     ])
     const record = RelicRecordFactory.createOne(templateId, {
-      currentStacks: 0,
       affixRecords: affixAggregates.map((a) => a.record),
       ...currentInfo,
     })

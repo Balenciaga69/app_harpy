@@ -1,4 +1,7 @@
+import { CharacterRecordHelper } from '../../../../domain/character/Character'
+import { RelicRecord } from '../../../../domain/item/Item'
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
+import { TagType } from '../../../../shared/models/TagType'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
@@ -9,7 +12,6 @@ import {
   HIGH_STACK_RELIC_MULTIPLIER,
   HIGH_STACK_RELIC_THRESHOLD,
 } from '../../constants/ItemGenerationConstants'
-import { TagType } from '../../../../shared/models/TagType'
 /**
  * 物品修飾符聚合服務：將高頻標籤與高堆疊物品轉換為骰選修飾符
  * 職責：聚合未過期修飾符、識別高頻標籤、篩選高堆疊聖物
@@ -62,8 +64,11 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   private countEquippedTagOccurrences(): Partial<Record<TagType, number>> {
     const { characterContext } = this.contextSnapshot.getAllContexts()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
+    // 取得已裝備聖物的樣板
     const equippedRelicIds = characterContext.relics.filter(Boolean).map((relic) => relic.templateId)
+    // 取得樣板資訊
     const relicTemplates = itemStore.getManyItems(equippedRelicIds)
+    // 統計標籤出現次數
     const tagCounts: Partial<Record<TagType, number>> = {}
     for (const relic of relicTemplates) {
       for (const tag of relic.tags) {
@@ -80,21 +85,30 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
    */
   private getHighStackRelicModifiers(): ItemRollModifier[] {
     const { characterContext } = this.contextSnapshot.getAllContexts()
-    const { itemStore } = this.configStoreAccessor.getConfigStore()
-    return characterContext.relics
-      .filter((r) => this.isHighStackButNotMaxed(r, itemStore))
-      .map((r) => ({
-        id: `modifier-relic-${r.templateId}`,
-        type: 'ID' as const,
-        templateId: r.templateId,
-        multiplier: HIGH_STACK_RELIC_MULTIPLIER,
-        durationStages: 0,
-      }))
+    // 取得角色聖物堆疊數映射
+    const relicStackMap = CharacterRecordHelper.getRelicStackCount({ ...characterContext })
+    return (
+      characterContext.relics
+        // 篩選高堆疊但未達上限的聖物
+        .filter((r) => this.isHighStackButNotMaxed(r, relicStackMap))
+        // 轉換為骰選修飾符
+        .map((r) => ({
+          id: `modifier-relic-${r.templateId}`,
+          type: 'ID' as const,
+          templateId: r.templateId,
+          multiplier: HIGH_STACK_RELIC_MULTIPLIER,
+          durationStages: 0,
+        }))
+    )
   }
   /** 檢查聖物是否為高堆疊且未達上限 */
-  private isHighStackButNotMaxed(relic: any, itemStore: any): boolean {
-    const template = itemStore.getRelic(relic.templateId)
+  private isHighStackButNotMaxed(record: RelicRecord, map: Map<string, number>): boolean {
+    const { itemStore } = this.configStoreAccessor.getConfigStore()
+    const template = itemStore.getRelic(record.templateId)
     if (!template) return false
-    return relic.currentStacks >= HIGH_STACK_RELIC_THRESHOLD && relic.currentStacks < template.maxStacks
+    // 檢查是否達到高堆疊閾值且未達最大堆疊
+    const currentStacks = map.get(record.templateId) ?? 0
+    // 當前堆疊必須大於等於閾值，且小於最大堆疊數
+    return currentStacks >= HIGH_STACK_RELIC_THRESHOLD && currentStacks < template.maxStacks
   }
 }

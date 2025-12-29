@@ -1,6 +1,7 @@
 import { RelicAggregate, RelicRecord } from '../item/Item'
 import { ProfessionAggregate } from '../profession/Profession'
 import { UltimateAggregate, UltimateRecord } from '../ultimate/Ultimate'
+// === Record ===
 /** 角色記錄，保存角色的基本信息與裝備狀態 */
 export interface CharacterRecord {
   readonly id: string
@@ -11,6 +12,19 @@ export interface CharacterRecord {
   readonly loadCapacity: number
   currentLoad: number
 }
+
+const getRelicStackCount = (record: CharacterRecord): Map<string, number> => {
+  const relics = record.relics
+  const map = new Map<string, number>()
+  for (const r of relics) {
+    map.set(r.templateId, (map.get(r.templateId) ?? 0) + 1)
+  }
+  return map
+}
+export const CharacterRecordHelper = {
+  getRelicStackCount,
+}
+// === Aggregate ===
 /** 角色聚合，包含角色記錄、職業、大絕招與聖物實例 */
 export class CharacterAggregate {
   constructor(
@@ -19,44 +33,15 @@ export class CharacterAggregate {
     public readonly relics: ReadonlyArray<RelicAggregate>,
     public readonly ultimate: UltimateAggregate
   ) {}
-  /** 裝備聖物，返回新的角色聚合實例 如果是同樣 id 的聖物則自動調用 addStack() 增加堆疊，而非塞入新的 */
+  /** 裝備聖物，返回新的角色聚合實例 */
   public equipRelic(relic: RelicAggregate): CharacterAggregate | null {
     // 檢查是否可裝備（負重與容量限制）
     if (!this.canEquipRelic(relic)) return null
-    // 查找是否已有同 id 的聖物
-    const existingRelicIndex = this.relics.findIndex((r) => r.record.id === relic.record.id)
-    // 若已存在，嘗試堆疊
-    if (existingRelicIndex !== -1) {
-      const existingRelic = this.relics[existingRelicIndex]
-      const stackedRelic = existingRelic.addStack()
-      // 堆疊已達上限則失敗
-      if (!stackedRelic) return null
-      // 替換陣列中的該聖物為堆疊後的新實例
-      const newRelics = [...this.relics]
-      newRelics[existingRelicIndex] = stackedRelic
-      return this.createWithRelics(newRelics)
-    }
     // 新聖物直接加入陣列
     return this.createWithRelics([...this.relics, relic])
   }
-  /** 卸除聖物，返回新的角色聚合實例 如果是堆疊的聖物( currentStacks > 1 )則自動調用 removeStack() 減少堆疊，而非完全移除 */
+  /** 卸下聖物，返回新的角色聚合實例 */
   public unequipRelic(relicId: string): CharacterAggregate | null {
-    // 查找指定 id 的聖物索引
-    const relicIndex = this.relics.findIndex((r) => r.record.id === relicId)
-    if (relicIndex === -1) return null
-    // 取得目標聖物
-    const relic = this.relics[relicIndex]
-    // 若有堆疊，僅減少堆疊層數
-    if (relic.currentStacks > 1) {
-      const unstackedRelic = relic.removeStack()
-      // 理論上不會發生，保險檢查
-      if (!unstackedRelic) return null
-      // 替換為減少堆疊後的新實例
-      const newRelics = [...this.relics]
-      newRelics[relicIndex] = unstackedRelic
-      return this.createWithRelics(newRelics)
-    }
-    // 堆疊為 1，直接移除該聖物
     return this.createWithRelics(this.relics.filter((r) => r.record.id !== relicId))
   }
   /** 擴展負重容量，返回新的角色聚合實例 */
@@ -72,13 +57,29 @@ export class CharacterAggregate {
   }
   /** 檢查是否可以裝備聖物 */
   public canEquipRelic(relic: RelicAggregate): boolean {
-    if (this.isOverloaded()) return false
+    // 檢查容量限制
+    if (this.isOverloaded(relic.template.loadCost)) return false
+    // 檢查最大堆疊限制
+    if (this.isMaxStacks(relic.template.id)) return false
+    // 通過所有檢查，允許裝備
     const newLoad = this.record.currentLoad + relic.template.loadCost
     return newLoad <= this.record.loadCapacity
   }
   /** 檢查是否超載 */
-  public isOverloaded(): boolean {
-    return this.record.currentLoad > this.record.loadCapacity
+  public isOverloaded(loadCost: number): boolean {
+    return this.record.currentLoad + loadCost > this.record.loadCapacity
+  }
+  /** 獲取指定聖物的當前堆疊數 */
+  public getCurrentStack(relicId: string): number {
+    const stacksMap = CharacterRecordHelper.getRelicStackCount(this.record)
+    const currentStacks = stacksMap.get(relicId) ?? 0
+    return currentStacks
+  }
+  /** 檢查指定聖物是否達到最大堆疊 */
+  private isMaxStacks(relicId: string): boolean {
+    const targetRelic = this.relics.find((r) => r.record.id === relicId)
+    if (!targetRelic) throw new Error('Relic not found')
+    return this.getCurrentStack(relicId) >= targetRelic.maxStacks
   }
   /** 獲取當前負重 */
   public get currentLoad(): number {
@@ -95,6 +96,6 @@ export class CharacterAggregate {
   }
   /** 計算遺物集合負重 */
   private calculateRelicsLoad(relics: RelicAggregate[]): number {
-    return relics.reduce((total, relic) => total + relic.template.loadCost * relic.currentStacks, 0)
+    return relics.reduce((total, relic) => total + relic.template.loadCost, 0)
   }
 }
