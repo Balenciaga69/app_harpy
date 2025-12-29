@@ -2,7 +2,7 @@ import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-import { VersionConflictError } from '../../../shared/errors/GameErrors'
+import { Result } from '../../../shared/result/Result'
 import { AffixRecordCreateParams, AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
 import { RelicRecordFactory } from '../../content-generation/factory/RelicFactory'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
@@ -14,6 +14,13 @@ import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
 } from '../../stage-progression/service/StageNodeGenerationService'
+/**
+ * Run 初始化錯誤類型
+ * - ProfessionNotFound: 指定的職業不存在
+ * - InvalidStartingRelics: 起始聖物ID無效或不存在
+ * - VersionConflict: 並發寫入衝突（資料庫層面）
+ */
+export type RunInitializationError = 'ProfessionNotFound' | 'InvalidStartingRelics' | 'VersionConflict'
 // RUN 初始化服務相關常數
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
 const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
@@ -37,14 +44,38 @@ export class RunInitializationService {
     private readonly repos?: { batch?: IContextBatchRepository },
     private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
-  /** 初始化 RUN，上下文可選持久化 */
-  async initialize(params: RunInitializationParams): Promise<IAppContext> {
-    // 使用指定或隨機種子初始化隨機數生成器
+  /**
+   * 初始化 RUN，上下文可選持久化
+   *
+   * 流程：
+   * 1. 驗證職業存在性
+   * 2. 生成 Run ID 與種子
+   * 3. 建立所有 Context（Run, Character, Stash）
+   * 4. 驗證起始聖物有效性
+   * 5. 若 persist=true，批次更新至資料庫
+   *
+   * 失敗情況：
+   * - ProfessionNotFound: 指定的職業不存在
+   * - InvalidStartingRelics: 起始聖物ID無效
+   * - VersionConflict: 資料庫並發寫入衝突
+   */
+  async initialize(params: RunInitializationParams): Promise<Result<IAppContext, RunInitializationError>> {
+    // 步驟 1: 驗證職業存在性
+    const profession = this.configStore.professionStore.getProfession(params.professionId)
+    if (!profession) {
+      return Result.fail('ProfessionNotFound')
+    }
+    // 步驟 2: 使用指定或隨機種子初始化隨機數生成器
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
     const runId = this.generateRunId(rng)
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
-    const contexts = this.buildContexts(runId, params, seed)
-    // 可選持久化上下文至資料庫
+    // 步驟 3: 建立所有 Context
+    const contextsResult = this.buildContexts(runId, params, seed)
+    if (contextsResult.isFailure) {
+      return Result.fail(contextsResult.error as RunInitializationError)
+    }
+    const contexts = contextsResult.value!
+    // 步驟 4: 可選持久化上下文至資料庫
     if (!!params.persist && this.repos && this.repos.batch) {
       const updates = {
         run: { context: contexts.runContext, expectedVersion: CREATE_EXPECTED_VERSION },
@@ -52,23 +83,45 @@ export class RunInitializationService {
         character: { context: contexts.characterContext, expectedVersion: CREATE_EXPECTED_VERSION },
       }
       const result = await this.repos.batch.updateBatch(updates)
-      if (result === null) throw new VersionConflictError('version conflict while creating contexts', { runId })
-      return {
+      // 並發衝突檢查
+      if (result === null) {
+        return Result.fail('VersionConflict')
+      }
+      return Result.success({
         contexts: {
           runContext: result.runContext ?? contexts.runContext,
           stashContext: result.stashContext ?? contexts.stashContext,
           characterContext: result.characterContext ?? contexts.characterContext,
         },
         configStore: this.configStore,
-      }
+      })
     }
-    return {
+    return Result.success({
       contexts,
       configStore: this.configStore,
-    }
+    })
   }
-  /** 初始化各個上下文(Run、Stash、Character) */
-  private buildContexts(runId: string, params: RunInitializationParams, seed: number) {
+  /**
+   * 初始化各個上下文(Run、Stash、Character)
+   *
+   * 流程：
+   * 1. 生成所有章節的關卡節點
+   * 2. 建立 RunContext
+   * 3. 建立 CharacterContext（包含起始聖物）
+   * 4. 建立 StashContext
+   * 5. 驗證起始聖物有效性
+   *
+   * 失敗情況：
+   * - InvalidStartingRelics: 起始聖物ID無效或全部不存在
+   */
+  private buildContexts(
+    runId: string,
+    params: RunInitializationParams,
+    seed: number
+  ): Result<
+    { runContext: IRunContext; characterContext: ICharacterContext; stashContext: IStashContext },
+    'InvalidStartingRelics'
+  > {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
     const chaptersLevels: ChapterLevel[] = DEFAULT_CHAPTER_LEVELS
     const chapters: Record<ChapterLevel, ChapterInfo> = {} as Record<ChapterLevel, ChapterInfo>
@@ -87,13 +140,18 @@ export class RunInitializationService {
       rollModifiers: [],
     }
     const characterId = `${runId}-char`
+    // 驗證起始聖物（如有指定）
+    const relicRecordsResult = this.createRelicRecord(params.startingRelicIds, characterId)
+    if (relicRecordsResult.isFailure) {
+      return Result.fail(relicRecordsResult.error as 'InvalidStartingRelics')
+    }
     const characterContext: ICharacterContext = {
       runId,
       version: INITIAL_VERSION,
       id: characterId,
       name: params.characterName ?? 'Player',
       professionId: params.professionId,
-      relics: this.createRelicRecord(params.startingRelicIds, characterId),
+      relics: relicRecordsResult.value!,
       ultimate: {
         id: '',
         templateId: '',
@@ -110,17 +168,39 @@ export class RunInitializationService {
       capacity: 20,
       items: [],
     }
-    return { runContext, characterContext, stashContext }
+    return Result.success({ runContext, characterContext, stashContext })
   }
-  /** 初始化起始聖物 */
-  private createRelicRecord(startingRelicIds: string[] = [], characterId: string): RelicRecord[] {
+  /**
+   * 初始化起始聖物
+   *
+   * 流程：
+   * 1. 若未指定起始聖物，返回空陣列
+   * 2. 從 itemStore 載入聖物樣板
+   * 3. 驗證至少有一個聖物有效
+   * 4. 建立詞綴記錄
+   * 5. 建立聖物記錄
+   *
+   * 失敗情況：
+   * - InvalidStartingRelics: 所有指定的聖物ID都無效
+   */
+  private createRelicRecord(
+    startingRelicIds: string[] = [],
+    characterId: string
+  ): Result<RelicRecord[], 'InvalidStartingRelics'> {
+    // 步驟 1: 若未指定起始聖物，返回空陣列（成功）
     if (!startingRelicIds || startingRelicIds.length === 0) {
-      return []
+      return Result.success([])
     }
+    // 步驟 2: 從 itemStore 載入聖物樣板
     const { itemStore } = this.configStore
     const relicTemplates = startingRelicIds
       .map((id) => itemStore.getRelic(id))
       .filter((template): template is NonNullable<typeof template> => template !== undefined)
+    // 步驟 3: 驗證至少有一個聖物有效
+    if (relicTemplates.length === 0) {
+      return Result.fail('InvalidStartingRelics')
+    }
+    // 步驟 4: 建立詞綴記錄
     const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
     const initialAffixData: AffixRecordCreateParams = {
       atCreated: {
@@ -132,11 +212,12 @@ export class RunInitializationService {
       sourceUnitId: characterId,
     }
     const affixRecords = AffixRecordFactory.createMany(affixIds, initialAffixData)
+    // 步驟 5: 建立聖物記錄
     const relicRecords = RelicRecordFactory.createMany(startingRelicIds, {
       ...initialAffixData,
       affixRecords: affixRecords,
     })
-    return relicRecords
+    return Result.success(relicRecords)
   }
   /** 生成唯一的 Run ID */
   private generateRunId(rng?: RandomHelper): string {

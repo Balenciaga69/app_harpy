@@ -2,7 +2,6 @@ import { ICharacterContext } from '../interface/ICharacterContext'
 import { IContextMutator } from './AppContextService'
 import { IRunContext } from '../interface/IRunContext'
 import { IStashContext } from '../interface/IStashContext'
-
 /**
  * 上下文單位工作（Context Unit of Work）
  *
@@ -23,9 +22,7 @@ export class ContextUnitOfWork {
   private stashContextUpdate: IStashContext | null = null
   private runContextUpdate: IRunContext | null = null
   private hasChanges = false
-
   constructor(private contextMutator: IContextMutator) {}
-
   /**
    * 更新角色上下文（不立即應用，等待 commit）
    */
@@ -34,7 +31,6 @@ export class ContextUnitOfWork {
     this.hasChanges = true
     return this // 支援鏈式調用
   }
-
   /**
    * 更新倉庫上下文（不立即應用，等待 commit）
    */
@@ -43,7 +39,6 @@ export class ContextUnitOfWork {
     this.hasChanges = true
     return this // 支援鏈式調用
   }
-
   /**
    * 更新運行上下文（不立即應用，等待 commit）
    */
@@ -52,7 +47,6 @@ export class ContextUnitOfWork {
     this.hasChanges = true
     return this // 支援鏈式調用
   }
-
   /**
    * 一次性提交所有待變更的 Context
    *
@@ -65,7 +59,6 @@ export class ContextUnitOfWork {
     if (!this.hasChanges) {
       return // 沒有變更，無需操作
     }
-
     // 按固定順序提交（確保一致性）
     if (this.runContextUpdate !== null) {
       this.contextMutator.setRunContext(this.runContextUpdate)
@@ -76,18 +69,15 @@ export class ContextUnitOfWork {
     if (this.stashContextUpdate !== null) {
       this.contextMutator.setStashContext(this.stashContextUpdate)
     }
-
     // 重置狀態
     this.reset()
   }
-
   /**
    * 放棄所有待變更的內容
    */
   rollback(): void {
     this.reset()
   }
-
   /**
    * 重置內部狀態
    */
@@ -97,18 +87,15 @@ export class ContextUnitOfWork {
     this.runContextUpdate = null
     this.hasChanges = false
   }
-
   /**
    * 檢查是否有待變更的內容
    */
   hasCharacterChanges(): boolean {
     return this.characterContextUpdate !== null
   }
-
   hasStashChanges(): boolean {
     return this.stashContextUpdate !== null
   }
-
   hasRunChanges(): boolean {
     return this.runContextUpdate !== null
   }

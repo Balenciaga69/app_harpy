@@ -30,7 +30,6 @@ export class Stash {
     }
     return Result.success(new Stash([...this.items, item], this.capacity))
   }
-
   /** 嘗試從倉庫移除物品。*/
   public removeItem(itemId: string): Result<Stash, 'ItemNotFound'> {
     const newItems = this.items.filter((i) => i.record.id !== itemId)
@@ -40,7 +39,6 @@ export class Stash {
     return Result.success(new Stash(newItems, this.capacity))
   }
   /** 嘗試從倉庫中取出物品。*/
-
   public getItem(itemId: string): ItemAggregate | null {
     const item = this._items.find((i) => i.record.id === itemId) || null
     if (!item) return null

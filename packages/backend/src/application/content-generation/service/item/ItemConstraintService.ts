@@ -1,8 +1,18 @@
+import { Result } from '../../../../shared/result/Result'
 import { ItemRarity, ItemTemplate, ItemType } from '../../../../domain/item/Item'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
+/**
+ * 物品限制檢查錯誤類型
+ */
+export type ItemConstraintError =
+  | 'TemplateNotFound' // 模板未找到
+  | 'ChapterNotAllowed' // 當前章節不允許此物品
+  | 'ProfessionNotAllowed' // 當前職業不允許此物品
+  | 'EventLimited' // 此物品有事件限制
+  | 'EnemyLimited' // 此物品有敵人限制
 /**
  * 物品生成限制服務：檢查物品樣板是否符合生成條件
  * 職責：檢查物品是否符合當前進度、職業、事件等限制條件；篩選符合條件的可用樣板
@@ -11,7 +21,7 @@ import {
  */
 export interface IItemConstraintService {
   /** 檢查物品樣板是否符合當前進度的生成條件 */
-  canGenerateItemTemplate(templateId: string): boolean
+  canGenerateItemTemplate(templateId: string): Result<void, ItemConstraintError>
   /** 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單 */
   getAvailableTemplates(itemType: ItemType, rarity: ItemRarity): ItemTemplate[]
 }
@@ -21,26 +31,33 @@ export class ItemConstraintService implements IItemConstraintService {
     private contextSnapshot: IContextSnapshotAccessor
   ) {}
   /** 檢查物品樣板是否符合當前進度的生成條件 */
-  canGenerateItemTemplate(templateId: string): boolean {
+  canGenerateItemTemplate(templateId: string): Result<void, ItemConstraintError> {
     const { characterContext, runContext } = this.contextSnapshot.getAllContexts()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const template = itemStore.getRelic(templateId)
-    if (!template) return false
+    if (!template) {
+      return Result.fail('TemplateNotFound')
+    }
     const constraint = itemStore.getItemRollConstraint(templateId)
-    if (!constraint) return true
+    if (!constraint) {
+      return Result.success(undefined)
+    }
     // 檢查章節限制
     if (constraint.chapters && !constraint.chapters.includes(runContext.currentChapter)) {
-      return false
+      return Result.fail('ChapterNotAllowed')
     }
     // 檢查職業限制
     if (constraint.professionIds && !constraint.professionIds.includes(characterContext.professionId)) {
-      return false
+      return Result.fail('ProfessionNotAllowed')
     }
     // 檢查事件/敵人限制( 有任一限制則不可生成 )
-    if ((constraint.eventIds?.length ?? 0) > 0 || (constraint.enemyIds?.length ?? 0) > 0) {
-      return false
+    if ((constraint.eventIds?.length ?? 0) > 0) {
+      return Result.fail('EventLimited')
     }
-    return true
+    if ((constraint.enemyIds?.length ?? 0) > 0) {
+      return Result.fail('EnemyLimited')
+    }
+    return Result.success(undefined)
   }
   /**
    * 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單
@@ -50,6 +67,10 @@ export class ItemConstraintService implements IItemConstraintService {
   getAvailableTemplates(itemType: ItemType, rarity: ItemRarity): ItemTemplate[] {
     if (itemType !== 'RELIC') return []
     const { itemStore } = this.configStoreAccessor.getConfigStore()
-    return itemStore.getAllRelics().filter((item) => item.rarity === rarity && this.canGenerateItemTemplate(item.id))
+    return itemStore.getAllRelics().filter((item) => {
+      if (item.rarity !== rarity) return false
+      const result = this.canGenerateItemTemplate(item.id)
+      return result.isSuccess
+    })
   }
 }

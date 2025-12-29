@@ -13,7 +13,6 @@ export interface CharacterRecord {
   readonly loadCapacity: number
   currentLoad: number
 }
-
 const getRelicStackCount = (record: CharacterRecord): Map<string, number> => {
   const relics = record.relics
   const map = new Map<string, number>()
@@ -47,7 +46,6 @@ export class CharacterAggregate {
     // 新聖物直接加入陣列
     return Result.success(this.createWithRelics([...this.relics, relic]))
   }
-
   /** 卸下聖物，返回新的角色聚合實例或失敗原因 */
   public unequipRelic(relicId: string): Result<CharacterAggregate, 'RelicNotFound'> {
     const targetRelic = this.relics.find((r) => r.record.id === relicId)
