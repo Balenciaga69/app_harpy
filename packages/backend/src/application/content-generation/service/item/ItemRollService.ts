@@ -1,5 +1,5 @@
-import { ItemRarity, ItemTemplate } from '../../../../domain/item/Item'
-import { ItemRollConfig, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
+import { ItemRarity, ItemTemplate, ItemType } from '../../../../domain/item/Item'
+import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
 import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
 import { ConfigNotFoundError } from '../../../../shared/errors/GameErrors'
@@ -11,7 +11,7 @@ import { IItemConstraintService } from './ItemConstraintService'
 /**
  * 物品骰選服務：執行物品骰選流程
  * 職責：根據來源、修飾符、限制條件骰選物品
- * 依賴：IConfigStoreAccessor（讀骰選配置）、IContextSnapshotAccessor（讀種子）、IItemConstraintService（檢查生成限制）
+ * 依賴：IConfigStoreAccessor( 讀骰選配置 )、IContextSnapshotAccessor( 讀種子 )、IItemConstraintService( 檢查生成限制 )
  * 流程：骰選類型 → 骰選稀有度 → 篩選符合條件的樣板 → 骰選樣板
  */
 export interface IItemRollService {
@@ -21,7 +21,7 @@ export interface IItemRollService {
     modifiers: ItemRollModifier[]
   ): {
     itemTemplateId: string
-    itemType: ItemRollType
+    itemType: ItemType
     rarity: ItemRarity
   }
 }
@@ -34,12 +34,12 @@ export class ItemRollService implements IItemRollService {
   /**
    * 按順序骰選物品類型、稀有度，最後從符合限制的樣板中骰選
    * 邊界：來源配置必須存在，否則拋錯
-   * 副作用：無（純骰選邏輯）
+   * 副作用：無( 純骰選邏輯 )
    */
   rollItem(
     source: string,
     modifiers: ItemRollModifier[]
-  ): { itemTemplateId: string; itemType: ItemRollType; rarity: ItemRarity } {
+  ): { itemTemplateId: string; itemType: ItemType; rarity: ItemRarity } {
     const { seed } = this.contextSnapshot.getRunContext()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const staticRollConfig = itemStore.getItemRollConfig(source)

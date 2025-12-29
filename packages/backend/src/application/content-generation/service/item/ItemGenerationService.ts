@@ -1,5 +1,5 @@
-import { RelicAggregate } from '../../../../domain/item/Item'
-import { ItemRollSourceType, ItemRollType } from '../../../../domain/item/roll/ItemRollConfig'
+import { ItemType, RelicAggregate } from '../../../../domain/item/Item'
+import { ItemRollSourceType } from '../../../../domain/item/roll/ItemRollConfig'
 import { IItemAggregateService } from './ItemAggregateService'
 import { IItemConstraintService } from './ItemConstraintService'
 import { IItemModifierAggregationService } from './ItemModifierAggregationService'
@@ -22,7 +22,7 @@ export class ItemGenerationService {
     return null
   }
   // 根據指定樣板生成物品
-  generateItemFromTemplate(templateId: string, itemType: ItemRollType): RelicAggregate | null {
+  generateItemFromTemplate(templateId: string, itemType: ItemType): RelicAggregate | null {
     if (!this.constraintService.canGenerateItemTemplate(templateId)) return null
     if (itemType === 'RELIC') return this.itemAggregateService.createRelicByTemplateUsingCurrentContext(templateId)
     return null

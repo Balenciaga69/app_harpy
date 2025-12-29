@@ -1,18 +1,17 @@
-import { RelicAggregate } from '../../../../domain/item/Item'
+import { RelicAggregate, RelicRecord } from '../../../../domain/item/Item'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { RelicRecordFactory } from '../../factory/RelicFactory'
 import { IAffixAggregateService } from '../affix/AffixAggregateService'
-/**
- * 物品聚合根服務：負責建立 RelicAggregate
- * 職責：透過模板、詞綴聚合根與當前上下文組裝完整的遺物聚合根
- * 依賴：IConfigStoreAccessor（讀模板）、IContextSnapshotAccessor（讀難度資訊）、IAffixAggregateService
- * 邊界：純建立邏輯，不涉及狀態修改
- */
+/** 遺物相關的聚合功能服務 */
 export interface IItemAggregateService {
-  /** 從模板與當前上下文建立 RelicAggregate（自動產生記錄與詞綴） */
+  /** 從多個 RelicRecord 建立遺物聚合根 */
+  createRelicsByRecords(records: ReadonlyArray<RelicRecord>): ReadonlyArray<RelicAggregate>
+  /** 從 RelicRecord 建立單一遺物聚合根 */
+  createRelicByRecord(record: RelicRecord): RelicAggregate
+  /** 從模板與當前上下文建立 RelicAggregate( 自動產生記錄與詞綴 ) */
   createRelicByTemplateUsingCurrentContext(templateId: string): RelicAggregate
 }
 export class ItemAggregateService implements IItemAggregateService {
@@ -21,6 +20,17 @@ export class ItemAggregateService implements IItemAggregateService {
     private contextSnapshot: IContextSnapshotAccessor,
     private affixAggregateService: IAffixAggregateService
   ) {}
+  /** 從 RelicRecord 建立 RelicAggregate */
+  createRelicByRecord(record: RelicRecord): RelicAggregate {
+    const relicTemplate = this.resolveTemplate(record.templateId)
+    const affixAggregates = this.affixAggregateService.createManyByRecords([...record.affixRecords])
+    const relicAggregate = new RelicAggregate(record, relicTemplate, affixAggregates)
+    return relicAggregate
+  }
+  /** 從多個 RelicRecord 建立 RelicAggregate */
+  createRelicsByRecords(records: ReadonlyArray<RelicRecord>): ReadonlyArray<RelicAggregate> {
+    return records.map((record) => this.createRelicByRecord(record))
+  }
   /** 從遺物模板與當前上下文建立 RelicAggregate */
   createRelicByTemplateUsingCurrentContext(templateId: string) {
     const relicTemplate = this.resolveTemplate(templateId)

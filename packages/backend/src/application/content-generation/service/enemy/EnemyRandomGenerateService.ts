@@ -6,7 +6,7 @@ export interface IEnemyRandomGenerateService {
   createRandomOneByTemplateUsingCurrentContext(): EnemyAggregate
 }
 /**
- * EnemyRandomGenerateService：負責真正的隨機選擇與封裝流程（createRandomOne）
+ * EnemyRandomGenerateService：負責真正的隨機選擇與封裝流程( createRandomOne )
  * - 僅負責選取哪個樣板、如何決策，組裝則委派給 IEnemyAggregateService
  */
 export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {

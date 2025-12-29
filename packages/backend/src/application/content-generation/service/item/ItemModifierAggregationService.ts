@@ -13,7 +13,7 @@ import { TagType } from '../../../../shared/models/TagType'
 /**
  * 物品修飾符聚合服務：將高頻標籤與高堆疊物品轉換為骰選修飾符
  * 職責：聚合未過期修飾符、識別高頻標籤、篩選高堆疊聖物
- * 依賴：IConfigStoreAccessor（讀物品模板）、IContextSnapshotAccessor（讀角色與運行狀態）
+ * 依賴：IConfigStoreAccessor( 讀物品模板 )、IContextSnapshotAccessor( 讀角色與運行狀態 )
  * 邊界：純聚合邏輯，不修改任何狀態
  */
 export interface IItemModifierAggregationService {
@@ -27,7 +27,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   ) {}
   /**
    * 聚合所有適用的骰選修飾符：未過期修飾符 + 高頻標籤 + 高堆疊聖物
-   * 副作用：無（純聚合邏輯）
+   * 副作用：無( 純聚合邏輯 )
    * 邊界：修飾符 durationStages !== 0 表示未過期
    */
   aggregateModifiers(): ItemRollModifier[] {

@@ -19,93 +19,81 @@ export class CharacterAggregate {
     public readonly relics: ReadonlyArray<RelicAggregate>,
     public readonly ultimate: UltimateAggregate
   ) {}
-  /**
-   * 裝備聖物，返回新的角色聚合實例
-   * 如果是同樣 id 的聖物則自動調用 addStack() 增加堆疊，而非塞入新的
-   */
-  equipRelic(relic: RelicAggregate): CharacterAggregate | null {
+  /** 裝備聖物，返回新的角色聚合實例 如果是同樣 id 的聖物則自動調用 addStack() 增加堆疊，而非塞入新的 */
+  public equipRelic(relic: RelicAggregate): CharacterAggregate | null {
+    // 檢查是否可裝備（負重與容量限制）
     if (!this.canEquipRelic(relic)) return null
-    // 檢查是否已有同 id 的聖物
+    // 查找是否已有同 id 的聖物
     const existingRelicIndex = this.relics.findIndex((r) => r.record.id === relic.record.id)
+    // 若已存在，嘗試堆疊
     if (existingRelicIndex !== -1) {
-      // 已存在，嘗試增加堆疊
       const existingRelic = this.relics[existingRelicIndex]
       const stackedRelic = existingRelic.addStack()
-      if (!stackedRelic) return null // 堆疊已滿
-      // 替換陣列中的該聖物
+      // 堆疊已達上限則失敗
+      if (!stackedRelic) return null
+      // 替換陣列中的該聖物為堆疊後的新實例
       const newRelics = [...this.relics]
       newRelics[existingRelicIndex] = stackedRelic
-      const newRecord: CharacterRecord = {
-        ...this.record,
-        relics: this.record.relics.map((r) => (r.id === existingRelic.record.id ? stackedRelic.record : r)),
-      }
-      return new CharacterAggregate(newRecord, this.profession, newRelics, this.ultimate)
+      return this.createWithRelics(newRelics)
     }
-    // 新聖物，直接加入
-    const newRecord: CharacterRecord = {
-      ...this.record,
-      relics: [...this.record.relics, relic.record],
-      currentLoad: this.record.currentLoad + relic.template.loadCost,
-    }
-    return new CharacterAggregate(newRecord, this.profession, [...this.relics, relic], this.ultimate)
+    // 新聖物直接加入陣列
+    return this.createWithRelics([...this.relics, relic])
   }
-  /**
-   * 卸除聖物，返回新的角色聚合實例
-   * 如果是堆疊的聖物（currentStacks > 1）則自動調用 removeStack() 減少堆疊，而非完全移除
-   */
-  unequipRelic(relicId: string): CharacterAggregate | null {
+  /** 卸除聖物，返回新的角色聚合實例 如果是堆疊的聖物( currentStacks > 1 )則自動調用 removeStack() 減少堆疊，而非完全移除 */
+  public unequipRelic(relicId: string): CharacterAggregate | null {
+    // 查找指定 id 的聖物索引
     const relicIndex = this.relics.findIndex((r) => r.record.id === relicId)
     if (relicIndex === -1) return null
+    // 取得目標聖物
     const relic = this.relics[relicIndex]
-    // 如果有堆疊，減少堆疊而不是完全移除
+    // 若有堆疊，僅減少堆疊層數
     if (relic.currentStacks > 1) {
       const unstackedRelic = relic.removeStack()
-      if (!unstackedRelic) return null // 不應該發生，因為 currentStacks > 1
-      // 替換陣列中的該聖物
+      // 理論上不會發生，保險檢查
+      if (!unstackedRelic) return null
+      // 替換為減少堆疊後的新實例
       const newRelics = [...this.relics]
       newRelics[relicIndex] = unstackedRelic
-      const newRecord: CharacterRecord = {
-        ...this.record,
-        relics: this.record.relics.map((r) => (r.id === relic.record.id ? unstackedRelic.record : r)),
-      }
-      return new CharacterAggregate(newRecord, this.profession, newRelics, this.ultimate)
+      return this.createWithRelics(newRelics)
     }
-    // 堆疊為 1，完全移除
-    const newRecord: CharacterRecord = {
-      ...this.record,
-      relics: this.record.relics.filter((r) => r.id !== relicId),
-      currentLoad: this.record.currentLoad - relic.template.loadCost,
-    }
-    return new CharacterAggregate(
-      newRecord,
-      this.profession,
-      this.relics.filter((r) => r.record.id !== relicId),
-      this.ultimate
-    )
+    // 堆疊為 1，直接移除該聖物
+    return this.createWithRelics(this.relics.filter((r) => r.record.id !== relicId))
   }
-  /**
-   * 擴展負重容量，返回新的角色聚合實例
-   */
-  expandLoadCapacity(increaseAmount: number): CharacterAggregate | null {
+  /** 擴展負重容量，返回新的角色聚合實例 */
+  public expandLoadCapacity(increaseAmount: number): CharacterAggregate | null {
+    // 檢查擴展數值是否合法
     if (increaseAmount <= 0) return null
+    // 建立新的角色記錄，增加負重上限
     const newRecord: CharacterRecord = {
       ...this.record,
       loadCapacity: this.record.loadCapacity + increaseAmount,
     }
     return new CharacterAggregate(newRecord, this.profession, this.relics, this.ultimate)
   }
-  /**
-   * 檢查是否可以裝備聖物
-   */
-  canEquipRelic(relic: RelicAggregate): boolean {
+  /** 檢查是否可以裝備聖物 */
+  public canEquipRelic(relic: RelicAggregate): boolean {
     if (this.isOverloaded()) return false
     const newLoad = this.record.currentLoad + relic.template.loadCost
     return newLoad <= this.record.loadCapacity
   }
-  /**
-   * 檢查是否超載
-   */
-  isOverloaded(): boolean {
+  /** 檢查是否超載 */
+  public isOverloaded(): boolean {
     return this.record.currentLoad > this.record.loadCapacity
+  }
+  public get currentLoad(): number {
+    return this.record.currentLoad
+  }
+  /** 產生新的角色聚合根( 根據新 relics 陣列 ) */
+  private createWithRelics(newRelics: ReadonlyArray<RelicAggregate>): CharacterAggregate {
+    const newRecord: CharacterRecord = {
+      ...this.record,
+      relics: newRelics.map((r) => r.record),
+      currentLoad: this.calculateRelicsLoad(newRelics as RelicAggregate[]),
+    }
+    return new CharacterAggregate(newRecord, this.profession, newRelics, this.ultimate)
+  }
+  /** 計算遺物集合負重 */
+  private calculateRelicsLoad(relics: RelicAggregate[]): number {
+    return relics.reduce((total, relic) => total + relic.template.loadCost * relic.currentStacks, 0)
   }
 }

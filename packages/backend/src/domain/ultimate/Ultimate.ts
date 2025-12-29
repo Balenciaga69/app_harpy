@@ -27,7 +27,6 @@ export class UltimateAggregate {
     public readonly template: UltimateTemplate,
     public readonly pluginAffixes: ReadonlyArray<AffixAggregate> = []
   ) {}
-
   /**
    * 新增插件詞綴，返回新的大絕招聚合實例
    */
