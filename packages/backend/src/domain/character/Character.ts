@@ -55,6 +55,12 @@ export class CharacterAggregate {
     }
     return new CharacterAggregate(newRecord, this.profession, this.relics, this.ultimate)
   }
+  /** 取得某一聖物 */
+  public getRelic(relicId: string): RelicAggregate {
+    const relic = this.relics.find((r) => r.record.id === relicId)
+    if (!relic) throw new Error('Relic not found')
+    return relic
+  }
   /** 檢查是否可以裝備聖物 */
   public canEquipRelic(relic: RelicAggregate): boolean {
     // 檢查容量限制

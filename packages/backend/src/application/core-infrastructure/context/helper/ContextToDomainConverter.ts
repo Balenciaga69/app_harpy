@@ -8,8 +8,8 @@ import { IContextSnapshotAccessor } from '../service/AppContextService'
  * 上下文轉換為領域模型的幫助器介面
  */
 export interface IContextToDomainConverter {
-  convertStashContextToDomain(contextAccessor: IContextSnapshotAccessor): Stash
-  convertCharacterContextToDomain(contextAccessor: IContextSnapshotAccessor): CharacterAggregate
+  convertStashContextToDomain(): Stash
+  convertCharacterContextToDomain(): CharacterAggregate
 }
 /**
  * 上下文轉換為領域模型的幫助器
@@ -17,16 +17,17 @@ export interface IContextToDomainConverter {
 export class ContextToDomainConverter implements IContextToDomainConverter {
   constructor(
     private itemAggregateService: ItemAggregateService,
-    private characterAggregateService: ICharacterAggregateService
+    private characterAggregateService: ICharacterAggregateService,
+    private contextAccessor: IContextSnapshotAccessor
   ) {}
-  convertStashContextToDomain(contextAccessor: IContextSnapshotAccessor): Stash {
-    const stashContext = contextAccessor.getStashContext()
+  convertStashContextToDomain(): Stash {
+    const stashContext = this.contextAccessor.getStashContext()
     const relicRecords = stashContext.items.filter((s) => s.itemType === 'RELIC') as RelicRecord[]
     const itemAggregates = this.itemAggregateService.createRelicsByRecords(relicRecords)
     return new Stash(itemAggregates, stashContext.capacity)
   }
-  convertCharacterContextToDomain(contextAccessor: IContextSnapshotAccessor): CharacterAggregate {
-    const characterContext = contextAccessor.getCharacterContext()
+  convertCharacterContextToDomain(): CharacterAggregate {
+    const characterContext = this.contextAccessor.getCharacterContext()
     const characterRecord: CharacterRecord = { ...characterContext }
     return this.characterAggregateService.createOneByRecord(characterRecord)
   }

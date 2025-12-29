@@ -33,7 +33,7 @@ function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[])
  * 彙總所有統計修飾符，為每個統計字段計算最終值
  * 步驟：1. 按字段分組修飾符；2. 對每個字段應用優先級計算；3. 返回最終統計值映射
  */
-const aggregateStats = (baseStats: UnitStats, modifiers: readonly UnitStatModifier[]): UnitStats => {
+export const UnitStatAggregate = (baseStats: UnitStats, modifiers: readonly UnitStatModifier[]): UnitStats => {
   const byField: ByField = {}
   for (const m of modifiers) {
     const f = m.field as keyof UnitStats
@@ -50,5 +50,3 @@ const aggregateStats = (baseStats: UnitStats, modifiers: readonly UnitStatModifi
   }
   return result
 }
-/** 暴露彙總函數供外部使用，作為統計值計算的唯一入口 */
-export const UnitStatAggregate = aggregateStats

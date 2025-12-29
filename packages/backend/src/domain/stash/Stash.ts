@@ -23,23 +23,21 @@ export class Stash {
     return this._capacity
   }
   /** 嘗試新增物品到倉庫。*/
-  public addItem(item: ItemAggregate): boolean {
-    if (this.isAtCapacity()) return false
-    this._items = [...this._items, item]
-    return true
+  public addItem(item: ItemAggregate): Stash | null {
+    if (this.isAtCapacity()) return null
+    return new Stash([...this.items, item], this.capacity)
   }
   /** 嘗試從倉庫移除物品。*/
-  public removeItem(itemId: string): boolean {
-    const hasItem = this._items.some((i) => i.record.id === itemId)
-    if (!hasItem) return false
-    this._items = this._items.filter((i) => i.record.id !== itemId)
-    return true
+  public removeItem(itemId: string): Stash | null {
+    const newItems = this.items.filter((i) => i.record.id !== itemId)
+    if (newItems.length === this.items.length) return null // 未找到
+    return new Stash(newItems, this.capacity)
   }
   /** 嘗試從倉庫中取出物品。*/
-  public takeItem(itemId: string): ItemAggregate | null {
+
+  public getItem(itemId: string): ItemAggregate | null {
     const item = this._items.find((i) => i.record.id === itemId) || null
     if (!item) return null
-    this._items = this._items.filter((i) => i.record.id !== itemId)
     return item
   }
   /** 列出倉庫中的所有物品。*/
@@ -51,10 +49,9 @@ export class Stash {
     return this._items.length
   }
   /** 嘗試擴展倉庫容量。*/
-  public expandCapacity(newCapacity: number): boolean {
-    if (newCapacity <= 0 || newCapacity < this._items.length) return false
-    this._capacity = newCapacity
-    return true
+  public expandCapacity(newCapacity: number): Stash | null {
+    if (newCapacity <= this.items.length) return null
+    return new Stash(this.items, newCapacity)
   }
   /** 檢查倉庫中是否包含指定物品。*/
   public hasItem(itemId: string): boolean {
