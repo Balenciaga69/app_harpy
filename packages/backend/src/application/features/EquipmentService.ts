@@ -3,7 +3,8 @@ import { IContextToDomainConverter } from '../core-infrastructure/context/helper
 import { IAppContextService } from '../core-infrastructure/context/service/AppContextService'
 // 裝備服務 與 裝備服務介面
 export interface IEquipmentService {
-  /** 裝備物品到角色 */
+  equipRelicAndUpdateContexts(relicId: string): void
+  unequipRelicAndUpdateContexts(relicId: string): void
 }
 export class EquipmentService implements IEquipmentService {
   constructor(
