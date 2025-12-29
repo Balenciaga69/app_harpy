@@ -5,6 +5,14 @@ import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 export class AffixStore implements IAffixStore {
   private readonly affixes: Map<string, AffixTemplate> = new Map()
   private readonly affixEffects: Map<string, AffixEffect> = new Map()
+  /** 根據多個 ID 查詢詞綴樣板 */
+  getAffixes(ids: string[]): AffixTemplate[] {
+    return ids.map((e) => this.getAffix(e)).filter((a): a is AffixTemplate => !!a)
+  }
+  /** 根據多個 ID 查詢詞綴效果樣板 */
+  getAffixEffects(ids: string[]): AffixEffect[] {
+    return ids.map((e) => this.getAffixEffect(e)).filter((a): a is AffixEffect => !!a)
+  }
   /** 根據 ID 查詢詞綴樣板 */
   getAffix(id: string): AffixTemplate | undefined {
     return this.affixes.get(id)

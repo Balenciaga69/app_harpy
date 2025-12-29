@@ -13,6 +13,8 @@ export interface IItemAggregateService {
   createRelicByRecord(record: RelicRecord): RelicAggregate
   /** 從模板與當前上下文建立 RelicAggregate( 自動產生記錄與詞綴 ) */
   createRelicByTemplateUsingCurrentContext(templateId: string): RelicAggregate
+  /** 批次從模板與當前上下文建立遺物聚合根 */
+  createRelicsByTemplateUsingCurrentContext(templateIds: string[]): RelicAggregate[]
 }
 export class ItemAggregateService implements IItemAggregateService {
   constructor(
@@ -44,6 +46,10 @@ export class ItemAggregateService implements IItemAggregateService {
       ...currentInfo,
     })
     return new RelicAggregate(record, relicTemplate, affixAggregates)
+  }
+  /** 從多個遺物模板與當前上下文建立 RelicAggregate */
+  createRelicsByTemplateUsingCurrentContext(templateIds: string[]): RelicAggregate[] {
+    return templateIds.map((templateId) => this.createRelicByTemplateUsingCurrentContext(templateId))
   }
   /** 透過 templateId 取得 RelicTemplate */
   private resolveTemplate(templateId: string) {

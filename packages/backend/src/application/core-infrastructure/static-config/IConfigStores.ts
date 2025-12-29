@@ -4,7 +4,7 @@ import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
-import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
+import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
@@ -37,8 +37,10 @@ export interface IItemStore {
 /** Affix配置存儲介面：支援Affix樣板與效果樣板的查詢 */
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate | undefined
+  getAffixes(ids: string[]): AffixTemplate[]
   hasAffix(id: string): boolean
   getAffixEffect(id: string): AffixEffect | undefined
+  getAffixEffects(ids: string[]): AffixEffect[]
   hasAffixEffect(id: string): boolean
   setMany(affixes: AffixTemplate[]): void
   setAffixEffects(effects: AffixEffect[]): void
@@ -46,6 +48,7 @@ export interface IAffixStore {
 /** 大絕招配置存儲介面：支援大絕招樣板的查詢 */
 export interface IUltimateStore {
   getUltimate(id: string): UltimateTemplate | undefined
+  getUltimates(ids: string[]): UltimateTemplate[]
   hasUltimate(id: string): boolean
   setMany(ultimates: UltimateTemplate[]): void
 }

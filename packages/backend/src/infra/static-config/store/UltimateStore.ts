@@ -7,6 +7,13 @@ export class UltimateStore implements IUltimateStore {
   getUltimate(id: string): UltimateTemplate | undefined {
     return this.ultimates.get(id)
   }
+  /** 根據多個 ID 查詢大絕招樣板 */
+  getUltimates(ids: string[]): UltimateTemplate[] {
+    const ultimates: UltimateTemplate[] = ids
+      .map((id) => this.ultimates.get(id))
+      .filter((u): u is UltimateTemplate => u !== undefined)
+    return ultimates
+  }
   /** 檢查大絕招樣板是否存在 */
   hasUltimate(id: string): boolean {
     return this.ultimates.has(id)

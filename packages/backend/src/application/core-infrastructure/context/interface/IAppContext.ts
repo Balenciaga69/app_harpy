@@ -1,4 +1,10 @@
-import { IAffixStore, IEnemyStore, IItemStore, IUltimateStore } from '../../static-config/IConfigStores'
+import {
+  IAffixStore,
+  IEnemyStore,
+  IItemStore,
+  IProfessionStore,
+  IUltimateStore,
+} from '../../static-config/IConfigStores'
 import { ICharacterContext } from './ICharacterContext'
 import { IRunContext } from './IRunContext'
 import { IStashContext } from './IStashContext'
@@ -14,6 +20,7 @@ interface IConfigStore {
   readonly itemStore: IItemStore
   readonly affixStore: IAffixStore
   readonly ultimateStore: IUltimateStore
+  readonly professionStore: IProfessionStore
 }
 /**
  * 應用上下文：包含遊戲運行時所需的所有上下文與配置

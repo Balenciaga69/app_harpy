@@ -4,7 +4,7 @@ import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
-import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
+import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 /** Affix配置資料傳輸物件 */
 export interface AffixConfigDTO {

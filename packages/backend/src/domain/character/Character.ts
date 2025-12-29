@@ -1,5 +1,5 @@
 import { RelicAggregate, RelicRecord } from '../item/Item'
-import { ProfessionAggregate } from '../profession/ProfessionTemplate'
+import { ProfessionAggregate } from '../profession/Profession'
 import { UltimateAggregate, UltimateRecord } from '../ultimate/Ultimate'
 /** 角色記錄，保存角色的基本信息與裝備狀態 */
 export interface CharacterRecord {
@@ -80,15 +80,16 @@ export class CharacterAggregate {
   public isOverloaded(): boolean {
     return this.record.currentLoad > this.record.loadCapacity
   }
+  /** 獲取當前負重 */
   public get currentLoad(): number {
-    return this.record.currentLoad
+    return this.calculateRelicsLoad([...this.relics])
   }
   /** 產生新的角色聚合根( 根據新 relics 陣列 ) */
   private createWithRelics(newRelics: ReadonlyArray<RelicAggregate>): CharacterAggregate {
     const newRecord: CharacterRecord = {
       ...this.record,
       relics: newRelics.map((r) => r.record),
-      currentLoad: this.calculateRelicsLoad(newRelics as RelicAggregate[]),
+      currentLoad: this.calculateRelicsLoad([...newRelics]),
     }
     return new CharacterAggregate(newRecord, this.profession, newRelics, this.ultimate)
   }

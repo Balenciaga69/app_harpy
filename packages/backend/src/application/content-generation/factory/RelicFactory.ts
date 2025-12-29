@@ -22,6 +22,7 @@ function createRecord(templateId: string, params: RelicRecordCreateParams): Reli
     affixRecords: params.affixRecords,
     currentStacks: params.currentStacks,
     atCreated: params.atCreated,
+    itemType: 'RELIC',
   }
   return record
 }
