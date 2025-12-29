@@ -2,7 +2,7 @@ import { Result } from '../../shared/result/Result'
 import { RelicAggregate } from '../../domain/item/Item'
 import { IContextToDomainConverter } from '../core-infrastructure/context/helper/ContextToDomainConverter'
 import { IAppContextService } from '../core-infrastructure/context/service/AppContextService'
-import { ContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
+import { IContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
 /**
  * 裝備服務錯誤類型
  */
@@ -30,7 +30,8 @@ export interface IEquipmentService {
 export class EquipmentService implements IEquipmentService {
   constructor(
     private appContextService: IAppContextService,
-    private contextToDomainConverter: IContextToDomainConverter
+    private contextToDomainConverter: IContextToDomainConverter,
+    private unitOfWorkFactory: IContextUnitOfWork
   ) {}
   /**
    * 卸下角色聖物至倉庫
@@ -47,11 +48,10 @@ export class EquipmentService implements IEquipmentService {
     // 步驟 1: 取得當前 Domain 實體
     const stash = this.contextToDomainConverter.convertStashContextToDomain()
     const character = this.contextToDomainConverter.convertCharacterContextToDomain()
-    // 步驟 2: 驗證聖物存在
-    let targetRelicAggregate: RelicAggregate
-    try {
-      targetRelicAggregate = character.getRelic(relicId)
-    } catch {
+
+    // 步驟 2: 驗證聖物存在（提前驗證而不是try-catch）
+    const targetRelicAggregate = character.relics.find((r) => r.record.id === relicId)
+    if (!targetRelicAggregate) {
       return Result.fail('RelicNotFound')
     }
     // 步驟 3: 執行卸下操作
@@ -67,10 +67,9 @@ export class EquipmentService implements IEquipmentService {
     }
     const newStash = addItemResult.getOrThrow()
     // 步驟 5 & 6: 所有操作成功，透過 UnitOfWork 提交變更
-    const unitOfWork = new ContextUnitOfWork(this.appContextService)
     const currentCharacterContext = this.appContextService.getCharacterContext()
     const currentStashContext = this.appContextService.getStashContext()
-    unitOfWork
+    this.unitOfWorkFactory
       .updateCharacterContext({
         ...currentCharacterContext,
         ...newCharacter.record,
@@ -115,10 +114,9 @@ export class EquipmentService implements IEquipmentService {
     }
     const newCharacter = equipResult.getOrThrow()
     // 步驟 5 & 6: 所有操作成功，透過 UnitOfWork 提交變更
-    const unitOfWork = new ContextUnitOfWork(this.appContextService)
     const currentCharacterContext = this.appContextService.getCharacterContext()
     const currentStashContext = this.appContextService.getStashContext()
-    unitOfWork
+    this.unitOfWorkFactory
       .updateCharacterContext({
         ...currentCharacterContext,
         ...newCharacter.record,

@@ -19,15 +19,3 @@ export class ConfigNotFoundError extends GameError {
     super(`${resourceType} 配置不存在: ${resourceId}`, 'CONFIG_NOT_FOUND', { resourceType, resourceId })
   }
 }
-/** 版本衝突錯誤：當樂觀鎖檢查失敗時拋出 */
-export class VersionConflictError extends GameError {
-  constructor(message: string, meta?: any) {
-    super(message, 'VERSION_CONFLICT', meta)
-  }
-}
-/** 業務規則違反錯誤：當違反遊戲業務邏輯時拋出 */
-export class BusinessRuleViolationError extends GameError {
-  constructor(rule: string, details?: string) {
-    super(`違反業務規則: ${rule}${details ? ` - ${details}` : ''}`, 'BUSINESS_RULE_VIOLATION', { rule, details })
-  }
-}

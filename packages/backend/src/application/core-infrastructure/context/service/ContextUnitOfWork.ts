@@ -3,6 +3,27 @@ import { IContextMutator } from './AppContextService'
 import { IRunContext } from '../interface/IRunContext'
 import { IStashContext } from '../interface/IStashContext'
 /**
+ * 上下文單位工作介面
+ *
+ * 職責：定義 UnitOfWork 模式的抽象，確保多個 Context 的變更作為一個原子性事務進行提交
+ */
+export interface IContextUnitOfWork {
+  /** 更新角色上下文（不立即應用，等待 commit） */
+  updateCharacterContext(ctx: ICharacterContext): IContextUnitOfWork
+  /** 更新倉庫上下文（不立即應用，等待 commit） */
+  updateStashContext(ctx: IStashContext): IContextUnitOfWork
+  /** 更新運行上下文（不立即應用，等待 commit） */
+  updateRunContext(ctx: IRunContext): IContextUnitOfWork
+  /** 一次性提交所有待變更的 Context */
+  commit(): void
+  /** 放棄所有待變更的內容 */
+  rollback(): void
+  /** 檢查是否有待變更的內容 */
+  hasCharacterChanges(): boolean
+  hasStashChanges(): boolean
+  hasRunChanges(): boolean
+}
+/**
  * 上下文單位工作（Context Unit of Work）
  *
  * 職責：將多個 Context 的變更作為一個原子性的事務進行提交
@@ -17,7 +38,7 @@ import { IStashContext } from '../interface/IStashContext'
  * unitOfWork.updateStashContext(newStash.record)
  * unitOfWork.commit() // 一次性提交所有變更
  */
-export class ContextUnitOfWork {
+export class ContextUnitOfWork implements IContextUnitOfWork {
   private characterContextUpdate: ICharacterContext | null = null
   private stashContextUpdate: IStashContext | null = null
   private runContextUpdate: IRunContext | null = null
