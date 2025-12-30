@@ -1,9 +1,11 @@
 import { CharacterRecord } from '../../domain/character/Character'
+import { ItemAggregate } from '../../domain/item/Item'
 import { ApplicationErrorCode, DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { Result } from '../../shared/result/Result'
+import { IItemGenerationService } from '../content-generation/service/item/ItemGenerationService'
 import { IContextToDomainConverter } from '../core-infrastructure/context/helper/ContextToDomainConverter'
-import { IContextMutator, IContextSnapshotAccessor } from '../core-infrastructure/context/service/AppContextService'
-import { ContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
+import { IContextSnapshotAccessor } from '../core-infrastructure/context/service/AppContextService'
+import { IContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
 /**
  * 商店服務介面
  * 職責：協調商店、角色、倉庫間的複雜交互
@@ -15,21 +17,20 @@ export interface IShopService {
   /** 出售倉庫中的物品，自動增加金錢、移出倉庫 */
   sellItem(itemId: string): Result<void, DomainErrorCode | ApplicationErrorCode>
   /** 根據當前難度與配置生成新商店物品 */
-  generateShopItems(count: number): Result<void, DomainErrorCode | ApplicationErrorCode>
+  generateShopItems(): Result<void, DomainErrorCode | ApplicationErrorCode>
   /** 刷新商店，清空現有物品並生成新物品（扣除刷新費用） */
   refreshShopItems(): Result<void, DomainErrorCode | ApplicationErrorCode>
   // 取得商品清單 (透過 轉換成 view Object 等DTO)
 }
 /**
- * 商店服務：管理購買、出售、生成與刷新邏輯
- * TODO: 實現物品生成邏輯（應委託給內容生成服務）
- * TODO: 實現刷新邏輯（需要計算刷新費用）
+ * 商店服務：管理購買、出售、生成與刷新
  */
 export class ShopService implements IShopService {
   constructor(
     private contextAccessor: IContextSnapshotAccessor,
-    private contextMutator: IContextMutator,
-    private contextToDomainConverter: IContextToDomainConverter
+    private contextToDomainConverter: IContextToDomainConverter,
+    private itemGenerationService: IItemGenerationService,
+    private unitOfWork: IContextUnitOfWork
   ) {}
   /** 購買 */
   buyItem(itemId: string): Result<void, DomainErrorCode | ApplicationErrorCode> {
@@ -63,8 +64,7 @@ export class ShopService implements IShopService {
       gold: goldAfterPurchase,
     }
     // 使用 Unit of Work 原子提交所有變更
-    const unitOfWork = new ContextUnitOfWork(this.contextMutator)
-    unitOfWork
+    this.unitOfWork
       .updateCharacterContext({
         ...this.contextAccessor.getCharacterContext(),
         ...updatedCharacterRecord,
@@ -80,9 +80,7 @@ export class ShopService implements IShopService {
       .commit()
     return Result.success(undefined)
   }
-  /**
-   * 出售
-   */
+  /** 出售 */
   sellItem(itemId: string): Result<void, DomainErrorCode | ApplicationErrorCode> {
     // 轉換 Context → Domain
     const shop = this.contextToDomainConverter.convertShopContextToDomain()
@@ -104,8 +102,7 @@ export class ShopService implements IShopService {
       gold: character.record.gold + shop.getSellPrice(itemToSell),
     }
     // 原子提交變更
-    const unitOfWork = new ContextUnitOfWork(this.contextMutator)
-    unitOfWork
+    this.unitOfWork
       .updateCharacterContext({
         ...this.contextAccessor.getCharacterContext(),
         ...updatedCharacterRecord,
@@ -117,21 +114,65 @@ export class ShopService implements IShopService {
       .commit()
     return Result.success(undefined)
   }
-  generateShopItems(_count: number): Result<void, DomainErrorCode | ApplicationErrorCode> {
-    // TODO: 實現物品生成邏輯
-    // 1. 從 configStore 取得物品生成服務
-    // 2. 基於當前難度與配置生成物品
-    // 3. 添加到商店（通過 addManyItems）
-    // 4. 更新 shopContext
+  generateShopItems(): Result<void, DomainErrorCode | ApplicationErrorCode> {
+    const shop = this.contextToDomainConverter.convertShopContextToDomain()
+    const start = shop.items.length
+    const end = shop.config.shopSlotCount
+    const items: ItemAggregate[] = []
+    // 生成新物品
+    for (let i = start; i < end; i++) {
+      const result = this.itemGenerationService.generateRandomItem('SHOP_REFRESH')
+      if (result.isFailure) {
+        return Result.fail(result.error as DomainErrorCode | ApplicationErrorCode)
+      }
+      items.push(result.value!)
+    }
+    // 添加到商店
+    const addResult = shop.addManyItems(items)
+    if (addResult.isFailure) {
+      return Result.fail(addResult.error as DomainErrorCode | ApplicationErrorCode)
+    }
+    // 將最稀有的第一個物品設為折扣
+    const discountResult = shop.setRarestItemAsDiscount()
+    if (discountResult.isFailure) {
+      return Result.fail(discountResult.error as DomainErrorCode | ApplicationErrorCode)
+    }
+    // 更新 shopContext
+    this.unitOfWork
+      .updateShopContext({
+        ...this.contextAccessor.getShopContext(),
+        items: addResult.value!.items.map((shopAgg) => shopAgg.itemAggregate.record),
+      })
+      .commit()
     return Result.success(undefined)
   }
   refreshShopItems(): Result<void, DomainErrorCode | ApplicationErrorCode> {
-    // TODO: 實現商店刷新邏輯
-    // 1. 檢查金錢是否足夠支付刷新費用
-    // 2. 清空現有商店物品
-    // 3. 生成新商店物品
-    // 4. 扣除金錢
-    // 5. 原子提交
+    const shop = this.contextToDomainConverter.convertShopContextToDomain()
+    const character = this.contextToDomainConverter.convertCharacterContextToDomain()
+    const { difficulty } = this.contextAccessor.getCurrentAtCreatedInfo()
+    const refreshCost = shop.config.baseRefreshCost * difficulty
+    // 檢查金錢是否足夠
+    const goldAfterRefresh = character.record.gold - refreshCost
+    if (goldAfterRefresh < 0) {
+      return Result.fail(ApplicationErrorCode.商店_金錢不足)
+    }
+    // 提交金錢變更與刷新商店
+    const result = this.generateShopItems()
+    if (result.isFailure) {
+      return Result.fail(result.error as DomainErrorCode | ApplicationErrorCode)
+    }
+    // 更新角色金錢記錄
+    const updatedCharacterRecord: CharacterRecord = {
+      ...character.record,
+      gold: goldAfterRefresh,
+    }
+    // 使用 Unit of Work 原子提交所有變更
+    this.unitOfWork
+      .updateCharacterContext({
+        ...this.contextAccessor.getCharacterContext(),
+        ...updatedCharacterRecord,
+      })
+      .commit()
     return Result.success(undefined)
   }
 }

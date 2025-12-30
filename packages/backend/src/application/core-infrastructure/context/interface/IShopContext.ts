@@ -1,4 +1,4 @@
-import { ShopRecord } from '../../../../domain/shop/Shop'
+import { ShopConfigId, ShopRecord } from '../../../../domain/shop/Shop'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 
 /**
@@ -8,5 +8,5 @@ import { WithRunIdAndVersion } from './WithRunIdAndVersion'
  */
 export interface IShopContext extends WithRunIdAndVersion, ShopRecord {
   /** 商店配置ID */
-  shopConfigId: string
+  shopConfigId: ShopConfigId
 }

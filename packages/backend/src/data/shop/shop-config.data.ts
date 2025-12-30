@@ -6,7 +6,7 @@ import { ShopConfig } from '../../domain/shop/Shop'
  */
 export const ShopConfigList: ShopConfig[] = [
   {
-    id: 'default-shop',
+    id: 'DEFAULT',
     discountRate: 0.1, // 10% 折扣
     baseRefreshPrice: 50, // 基礎刷新價格
     shopSlotCount: 6, // 商店格子數量
@@ -18,9 +18,10 @@ export const ShopConfigList: ShopConfig[] = [
     },
     difficultyMultiplier: 0.1, // 難度係數
     salePriceDepreciationRate: 0.5, // 出售價格折舊率 50%
+    baseRefreshCost: 400,
   },
   {
-    id: 'premium-shop',
+    id: 'PREMIUM',
     discountRate: 0.2, // 20% 折扣
     baseRefreshPrice: 100, // 更高的刷新價格
     shopSlotCount: 7, // 更多格子
@@ -32,5 +33,6 @@ export const ShopConfigList: ShopConfig[] = [
     },
     difficultyMultiplier: 0.15, // 更高的難度係數
     salePriceDepreciationRate: 0.6, // 出售價格折舊率 60%
+    baseRefreshCost: 320,
   },
 ]

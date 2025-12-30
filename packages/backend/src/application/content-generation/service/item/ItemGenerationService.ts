@@ -9,10 +9,14 @@ import { IItemRollService } from './ItemRollService'
 /**
  * 物品生成錯誤類型
  */
-export type ItemGenerationError =
-  | ItemConstraintError // 來自限制檢查的所有錯誤
-  | ApplicationErrorCode.物品_物品類型未支援 // 物品類型暫未實作
-export class ItemGenerationService {
+export type ItemGenerationError = ItemConstraintError | ApplicationErrorCode.物品_物品類型未支援
+export interface IItemGenerationService {
+  /** 生成隨機物品 */
+  generateRandomItem(source: ItemRollSourceType): Result<RelicAggregate, ItemGenerationError>
+  /** 根據指定樣板生成物品 */
+  generateItemFromTemplate(templateId: string, itemType: ItemType): Result<RelicAggregate, ItemGenerationError>
+}
+export class ItemGenerationService implements IItemGenerationService {
   constructor(
     private itemAggregateService: IItemAggregateService,
     private constraintService: IItemConstraintService,

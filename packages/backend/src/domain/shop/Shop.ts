@@ -2,9 +2,11 @@ import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { ItemAggregate, ItemRarity, ItemRecord } from '../item/Item'
 /** 商店配置介面 */
+export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 export interface ShopConfig {
-  readonly id: string // 商店配置ID
+  readonly id: ShopConfigId // 商店配置ID
   readonly discountRate: number // 折扣率
+  readonly baseRefreshCost: number // 基礎刷新費用
   readonly baseRefreshPrice: number // 基礎刷新價格
   readonly shopSlotCount: number // 商店格子數量
   readonly rarityPriceTable: Record<ItemRarity, number> // 稀有度價格表
@@ -22,31 +24,26 @@ export interface ShopRecord {
 }
 /** 商店類，管理商店物品與操作 */
 export class Shop {
-  public items: ReadonlyArray<ShopItemAggregate> = []
-  private config: ShopConfig
-  constructor(items: ReadonlyArray<ShopItemAggregate>, config: ShopConfig) {
-    this.items = items
-    this.config = config
-  }
+  constructor(
+    public items: ReadonlyArray<ShopItemAggregate> = [],
+    public config: ShopConfig
+  ) {}
   /** 添加物品 */
-  addItem(item: ItemAggregate, difficulty: number): Result<Shop, DomainErrorCode.商店_商店格子已滿> {
+  addItem(item: ItemAggregate): Result<Shop, DomainErrorCode.商店_商店格子已滿> {
     const { shopSlotCount } = this.config
     if (this.items.length >= shopSlotCount) {
       return Result.fail(DomainErrorCode.商店_商店格子已滿)
     }
-    const shopItem = this.convertToShopItemAggregate(item, difficulty)
+    const shopItem = this.convertToShopItemAggregate(item)
     return Result.success(new Shop([...this.items, shopItem], this.config))
   }
   /** 批量添加物品 */
-  addManyItems(
-    items: ReadonlyArray<ItemAggregate>,
-    difficulty: number
-  ): Result<Shop, DomainErrorCode.商店_商店格子已滿> {
+  addManyItems(items: ReadonlyArray<ItemAggregate>): Result<Shop, DomainErrorCode.商店_商店格子已滿> {
     const { shopSlotCount } = this.config
     if (this.items.length + items.length > shopSlotCount) {
       return Result.fail(DomainErrorCode.商店_商店格子已滿)
     }
-    const shopItems = items.map((item) => this.convertToShopItemAggregate(item, difficulty))
+    const shopItems = items.map((item) => this.convertToShopItemAggregate(item))
     return Result.success(new Shop([...this.items, ...shopItems], this.config))
   }
   /** 移除物品 */
@@ -60,6 +57,18 @@ export class Shop {
   /** 清空 */
   clearItems(): Shop {
     return new Shop([], this.config)
+  }
+  /** 將店內最稀有的物品設為折扣 */
+  setRarestItemAsDiscount(): Result<Shop, DomainErrorCode.商店_商店物品不存在> {
+    if (this.items.length === 0) {
+      return Result.fail(DomainErrorCode.商店_商店物品不存在)
+    }
+    // 找出最稀有的物品
+    const rarestItem = this.items.reduce((prev, current) => {
+      return current.itemAggregate.template.rarity > prev.itemAggregate.template.rarity ? current : prev
+    })
+    // 折扣該物品
+    return this.discountItem(rarestItem.itemAggregate.record.id)
   }
   /** 折扣某一件物品 */
   discountItem(itemId: string): Result<Shop, DomainErrorCode.商店_商店物品不存在> {
@@ -96,10 +105,10 @@ export class Shop {
     })
   }
   /** 將"物品"轉換為"商店物品"，包含價格計算 */
-  private convertToShopItemAggregate(itemAggregate: ItemAggregate, difficulty: number): ShopItemAggregate {
+  private convertToShopItemAggregate(itemAggregate: ItemAggregate): ShopItemAggregate {
     const price = ShopHelper.calculateItemPrice({
       config: this.config,
-      difficulty: difficulty,
+      difficulty: itemAggregate.record.atCreated.difficulty,
       rarity: itemAggregate.template.rarity,
       isBuying: true,
       isDiscounted: false,
@@ -124,9 +133,13 @@ export const ShopHelper = {
   /** 計算物品價格 */
   calculateItemPrice(params: PriceCalculationParams): number {
     const { config, difficulty, rarity, isBuying, isDiscounted } = params
+    // 基礎價格
     const basePrice = config.rarityPriceTable[rarity]
+    // 根據難度與折扣計算最終價格
     const discountFactor = isDiscounted ? 1 - config.discountRate : 1
+    // 透過難度與折扣計算最終價格
     const priceWithDifficulty = Math.floor(basePrice * (1 + difficulty * config.difficultyMultiplier)) * discountFactor
+    // 購買價格或出售價格
     return isBuying ? priceWithDifficulty : Math.floor(priceWithDifficulty * 1 - config.salePriceDepreciationRate)
   },
 }

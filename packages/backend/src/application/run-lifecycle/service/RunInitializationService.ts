@@ -178,7 +178,7 @@ export class RunInitializationService {
     const shopContext: IShopContext = {
       runId,
       version: INITIAL_VERSION,
-      shopConfigId: 'default-shop', // 使用預設商店配置
+      shopConfigId: 'DEFAULT', // 使用預設商店配置
       items: [], // 初始化為空商店
     }
     return Result.success({ runContext, characterContext, stashContext, shopContext })

@@ -30,7 +30,12 @@ export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
 export interface RelicRecord extends ItemRecord {
   readonly itemType: 'RELIC'
 }
-export abstract class ItemAggregate {
+export interface IItemAggregate {
+  readonly record: ItemRecord
+  readonly template: ItemTemplate
+  readonly affixAggregates: ReadonlyArray<AffixAggregate>
+}
+export abstract class ItemAggregate implements IItemAggregate {
   constructor(
     public record: ItemRecord,
     public readonly template: ItemTemplate,
