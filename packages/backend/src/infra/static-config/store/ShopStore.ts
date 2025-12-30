@@ -1,5 +1,5 @@
 import { IShopStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
-import { ShopConfig } from '../../../domain/shop/Shop'
+import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { ConfigNotFoundError } from '../../../shared/errors/GameErrors'
 /** 商店配置存儲：管理商店配置樣板 */
 export class ShopStore implements IShopStore {

@@ -5,8 +5,8 @@ import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
+import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
-import { ShopConfig } from '../../../domain/shop/Shop'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {

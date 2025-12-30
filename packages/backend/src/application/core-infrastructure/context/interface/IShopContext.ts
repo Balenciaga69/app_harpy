@@ -1,4 +1,5 @@
-import { ShopConfigId, ShopRecord } from '../../../../domain/shop/Shop'
+import { ShopRecord } from '../../../../domain/shop/Shop'
+import { ShopConfigId } from '../../../../domain/shop/ShopConfig'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 /**
  * 商店上下文介面

@@ -5,8 +5,8 @@ import { RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
+import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
-import { ShopConfig } from '../../../domain/shop/Shop'
 /** Affix配置資料傳輸物件 */
 export interface AffixConfigDTO {
   affixTemplates: AffixTemplate[]
