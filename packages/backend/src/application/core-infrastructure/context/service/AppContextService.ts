@@ -4,6 +4,8 @@ import { IAppContext } from '../interface/IAppContext'
 import { ICharacterContext } from '../interface/ICharacterContext'
 import { IRunContext } from '../interface/IRunContext'
 import { IStashContext } from '../interface/IStashContext'
+//TODO: 添加跟 Shop 相關功能
+
 // 用於創建 Record 的共通資訊
 interface CommonInfoForCreateRecord extends WithCreatedInfo, WithSourceUnit {
   readonly difficulty: number

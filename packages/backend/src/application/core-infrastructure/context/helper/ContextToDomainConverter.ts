@@ -31,4 +31,5 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
     const characterRecord: CharacterRecord = { ...characterContext }
     return this.characterAggregateService.createOneByRecord(characterRecord)
   }
+  //TODO: 添加跟 Shop 相關功能
 }

@@ -2,6 +2,8 @@ import { ICharacterContext } from '../interface/ICharacterContext'
 import { IContextMutator } from './AppContextService'
 import { IRunContext } from '../interface/IRunContext'
 import { IStashContext } from '../interface/IStashContext'
+//TODO: 添加跟 Shop 相關功能
+
 /**
  * 上下文單位工作介面
  *

@@ -16,6 +16,8 @@ import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
 } from '../../stage-progression/service/StageNodeGenerationService'
+//TODO: 添加跟 Shop 相關功能
+
 /**
  * Run 初始化錯誤類型
  * - 職業不存在: 指定的職業不存在

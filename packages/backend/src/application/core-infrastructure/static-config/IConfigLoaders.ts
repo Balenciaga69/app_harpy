@@ -6,6 +6,8 @@ import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
+import { ShopConfig } from '../../../domain/shop/Shop'
+
 /** Affix配置資料傳輸物件 */
 export interface AffixConfigDTO {
   affixTemplates: AffixTemplate[]
@@ -54,4 +56,13 @@ export interface UltimateConfigDTO {
 export interface IUltimateConfigLoader {
   /** 加載大絕招配置 */
   load(): Promise<UltimateConfigDTO>
+}
+/** 商店配置資料傳輸物件 */
+export interface ShopConfigDTO {
+  shopConfigs: ShopConfig[]
+}
+/** 商店配置加載器介面 */
+export interface IShopConfigLoader {
+  /** 加載商店配置 */
+  load(): Promise<ShopConfigDTO>
 }

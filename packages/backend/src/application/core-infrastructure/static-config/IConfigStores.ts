@@ -6,7 +6,9 @@ import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
+import { ShopConfig } from '../../../domain/shop/Shop'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
+
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate
@@ -58,4 +60,11 @@ export interface IProfessionStore {
   hasProfession(id: string): boolean
   getAllProfessions(): ProfessionTemplate[]
   setMany(professions: ProfessionTemplate[]): void
+}
+/** 商店配置存儲介面：支援商店配置的查詢 */
+export interface IShopStore {
+  getShopConfig(id: string): ShopConfig
+  hasShopConfig(id: string): boolean
+  getAllShopConfigs(): ShopConfig[]
+  setMany(shopConfigs: ShopConfig[]): void
 }
