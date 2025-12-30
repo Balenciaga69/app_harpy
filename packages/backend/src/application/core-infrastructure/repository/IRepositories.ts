@@ -1,5 +1,6 @@
 import { ICharacterContext } from '../context/interface/ICharacterContext'
 import { IRunContext } from '../context/interface/IRunContext'
+import { IShopContext } from '../context/interface/IShopContext'
 import { IStashContext } from '../context/interface/IStashContext'
 import { WithRunIdAndVersion } from '../context/interface/WithRunIdAndVersion'
 /** 單一上下文更新的請求 */
@@ -8,7 +9,7 @@ interface ISingleContextUpdate<T> {
   expectedVersion: number
 }
 /** 可更新的上下文類型 */
-type ContextKey = 'RUN' | 'STASH' | 'CHARACTER'
+type ContextKey = 'RUN' | 'STASH' | 'CHARACTER' | 'SHOP'
 /**
  * 通用持久化存儲介面：支援上下文的 CRUD 操作
  * 版本控制策略：樂觀鎖(expectedVersion)確保並發安全
@@ -29,6 +30,7 @@ interface IContextUpdateResult {
   runContext?: IRunContext
   stashContext?: IStashContext
   characterContext?: ICharacterContext
+  shopContext?: IShopContext
   failedKeys?: ContextKey[]
   globalVersion?: number // 成功時回傳新的全域版本
 }
@@ -54,6 +56,7 @@ export interface IContextBatchRepository {
       run?: ISingleContextUpdate<IRunContext>
       stash?: ISingleContextUpdate<IStashContext>
       character?: ISingleContextUpdate<ICharacterContext>
+      shop?: ISingleContextUpdate<IShopContext>
     },
     globalVersion?: number
   ): Promise<IContextUpdateResult | null>

@@ -1,9 +1,3 @@
-/*
-與 infra/app 的 static-config 有關
-商店配置介面 這是設計師定義商店行為的地方(或者說外部配置來的 所以需要載入與聚合 store)
-record 是要存入資料庫的結構
-*/
-
 import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { ItemAggregate, ItemRarity, ItemRecord } from '../item/Item'

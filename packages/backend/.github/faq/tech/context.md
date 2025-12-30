@@ -29,3 +29,18 @@
 - 支援批次更新，確保多個 context 要麼全部成功，要麼全部失敗，維護遊戲邏輯正確
 - App 層負責讀取 context 與版本號、計算新 context、傳遞 expectedVersion 並根據結果決定後續動作
 - Infra 層負責驗證 expectedVersion、遞增版本號、提交或回滾所有更新，以及處理資料庫交易與並發控制
+
+## Context 新增的時候往往會改動很多東西(以新增Shop領域上下文為例)
+
+1. IShopContext 介面定義
+2. IAppContext.IContexts 添加 shopContext
+3. IAppContext.IConfigStore 添加 shopStore
+4. IContextSnapshotAccessor 添加 getShopContext()
+5. IContextMutator 添加 setShopContext()
+6. AppContextService 實現 (get/set)
+7. ContextUnitOfWork 添加 updateShopContext() + hasShopChanges()
+8. ContextToDomainConverter 添加 convertShopContextToDomain()
+9. IRepositories.IContextUpdateResult 添加 shopContext?
+10. IRepositories.IContextBatchRepository.updateBatch() 簽名更新
+11. ContextKey 類型添加 'SHOP'
+12. RunInitializationService 初始化邏輯

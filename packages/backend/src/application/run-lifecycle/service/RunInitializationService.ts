@@ -10,6 +10,7 @@ import { RelicRecordFactory } from '../../content-generation/factory/RelicFactor
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
 import { ICharacterContext } from '../../core-infrastructure/context/interface/ICharacterContext'
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
+import { IShopContext } from '../../core-infrastructure/context/interface/IShopContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IContextBatchRepository } from '../../core-infrastructure/repository/IRepositories'
 import {
@@ -88,6 +89,7 @@ export class RunInitializationService {
         run: { context: contexts.runContext, expectedVersion: CREATE_EXPECTED_VERSION },
         stash: { context: contexts.stashContext, expectedVersion: CREATE_EXPECTED_VERSION },
         character: { context: contexts.characterContext, expectedVersion: CREATE_EXPECTED_VERSION },
+        shop: { context: contexts.shopContext, expectedVersion: CREATE_EXPECTED_VERSION },
       }
       const result = await this.repos.batch.updateBatch(updates)
       // 並發衝突檢查
@@ -99,6 +101,7 @@ export class RunInitializationService {
           runContext: result.runContext ?? contexts.runContext,
           stashContext: result.stashContext ?? contexts.stashContext,
           characterContext: result.characterContext ?? contexts.characterContext,
+          shopContext: result.shopContext ?? contexts.shopContext,
         },
         configStore: this.configStore,
       })
@@ -116,7 +119,12 @@ export class RunInitializationService {
     params: RunInitializationParams,
     seed: number
   ): Result<
-    { runContext: IRunContext; characterContext: ICharacterContext; stashContext: IStashContext },
+    {
+      runContext: IRunContext
+      characterContext: ICharacterContext
+      stashContext: IStashContext
+      shopContext: IShopContext
+    },
     ApplicationErrorCode.起始聖物無效
   > {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
@@ -167,7 +175,13 @@ export class RunInitializationService {
       capacity: 20,
       items: [],
     }
-    return Result.success({ runContext, characterContext, stashContext })
+    const shopContext: IShopContext = {
+      runId,
+      version: INITIAL_VERSION,
+      shopConfigId: 'default-shop', // 使用預設商店配置
+      items: [], // 初始化為空商店
+    }
+    return Result.success({ runContext, characterContext, stashContext, shopContext })
   }
   /**
    * 初始化起始聖物

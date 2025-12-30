@@ -3,8 +3,8 @@ import { AtCreatedInfo, WithCreatedInfo, WithSourceUnit } from '../../../../shar
 import { IAppContext } from '../interface/IAppContext'
 import { ICharacterContext } from '../interface/ICharacterContext'
 import { IRunContext } from '../interface/IRunContext'
+import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
-//TODO: 添加跟 Shop 相關功能
 
 // 用於創建 Record 的共通資訊
 interface CommonInfoForCreateRecord extends WithCreatedInfo, WithSourceUnit {
@@ -32,6 +32,8 @@ export interface IContextSnapshotAccessor {
   getCharacterContext(): ICharacterContext
   /** 取得當前倉庫上下文( 物品、容量等 ) */
   getStashContext(): IStashContext
+  /** 取得當前商店上下文( 商店物品、刷新狀態等 ) */
+  getShopContext(): IShopContext
   /** 一次取得所有上下文的快照 */
   getAllContexts(): IAppContext['contexts']
   /** 取得當前建立時機信息( 章節、關卡、難度係數 ) */
@@ -52,6 +54,8 @@ export interface IContextMutator {
   setCharacterContext(ctx: ICharacterContext): void
   /** 更新倉庫上下文( 如物品、容量等 ) */
   setStashContext(ctx: IStashContext): void
+  /** 更新商店上下文( 如商店物品、刷新狀態等 ) */
+  setShopContext(ctx: IShopContext): void
 }
 /**
  * 完整應用上下文服務：結合讀、寫、快照計算
@@ -109,6 +113,20 @@ export class AppContextService implements IAppContextService {
       contexts: {
         ...this.appContext.contexts,
         stashContext: ctx,
+      },
+    }
+  }
+  /** 取得當前商店上下文 */
+  getShopContext(): IShopContext {
+    return this.appContext.contexts.shopContext
+  }
+  /** 更新商店上下文( 透過不可變重建 )*/
+  setShopContext(ctx: IShopContext): void {
+    this.appContext = {
+      ...this.appContext,
+      contexts: {
+        ...this.appContext.contexts,
+        shopContext: ctx,
       },
     }
   }
