@@ -26,9 +26,9 @@ import {
  * - 版本衝突: 並發寫入衝突（資料庫層面）
  */
 export type RunInitializationError =
-  | ApplicationErrorCode.職業不存在
-  | ApplicationErrorCode.起始聖物無效
-  | ApplicationErrorCode.版本衝突
+  | ApplicationErrorCode.初始化_職業不存在
+  | ApplicationErrorCode.初始化_起始聖物無效
+  | ApplicationErrorCode.初始化_版本衝突
 // RUN 初始化服務相關常數
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
 const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
@@ -71,7 +71,7 @@ export class RunInitializationService {
     // 驗證職業存在性
     const profession = this.configStore.professionStore.getProfession(params.professionId)
     if (!profession) {
-      return Result.fail(ApplicationErrorCode.職業不存在)
+      return Result.fail(ApplicationErrorCode.初始化_職業不存在)
     }
     // 使用指定或隨機種子初始化隨機數生成器
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
@@ -94,7 +94,7 @@ export class RunInitializationService {
       const result = await this.repos.batch.updateBatch(updates)
       // 並發衝突檢查
       if (result === null) {
-        return Result.fail(ApplicationErrorCode.版本衝突)
+        return Result.fail(ApplicationErrorCode.初始化_版本衝突)
       }
       return Result.success({
         contexts: {
@@ -125,7 +125,7 @@ export class RunInitializationService {
       stashContext: IStashContext
       shopContext: IShopContext
     },
-    ApplicationErrorCode.起始聖物無效
+    ApplicationErrorCode.初始化_起始聖物無效
   > {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
     const chaptersLevels: ChapterLevel[] = DEFAULT_CHAPTER_LEVELS
@@ -147,7 +147,7 @@ export class RunInitializationService {
     // 驗證起始聖物（如有指定）
     const relicRecordsResult = this.createRelicRecord(params.startingRelicIds, characterId)
     if (relicRecordsResult.isFailure) {
-      return Result.fail(relicRecordsResult.error as ApplicationErrorCode.起始聖物無效)
+      return Result.fail(relicRecordsResult.error as ApplicationErrorCode.初始化_起始聖物無效)
     }
     const characterContext: ICharacterContext = {
       runId,
@@ -190,7 +190,7 @@ export class RunInitializationService {
   private createRelicRecord(
     startingRelicIds: string[] = [],
     characterId: string
-  ): Result<RelicRecord[], ApplicationErrorCode.起始聖物無效> {
+  ): Result<RelicRecord[], ApplicationErrorCode.初始化_起始聖物無效> {
     // 若未指定起始聖物，返回空陣列（成功）
     if (!startingRelicIds || startingRelicIds.length === 0) {
       return Result.success([])
@@ -202,7 +202,7 @@ export class RunInitializationService {
       .filter((template): template is NonNullable<typeof template> => template !== undefined)
     // 驗證至少有一個聖物有效
     if (relicTemplates.length === 0) {
-      return Result.fail(ApplicationErrorCode.起始聖物無效)
+      return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
     }
     // 建立詞綴記錄
     const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])

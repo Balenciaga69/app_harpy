@@ -9,7 +9,7 @@ export const ShopConfigList: ShopConfig[] = [
     id: 'default-shop',
     discountRate: 0.1, // 10% 折扣
     baseRefreshPrice: 50, // 基礎刷新價格
-    shopSlotCount: 5, // 商店格子數量
+    shopSlotCount: 6, // 商店格子數量
     rarityPriceTable: {
       COMMON: 100,
       RARE: 400,

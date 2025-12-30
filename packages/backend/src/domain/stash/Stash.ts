@@ -25,17 +25,17 @@ export class Stash {
     return this._capacity
   }
   /** 試試新增物品到倉庫。*/
-  public addItem(item: ItemAggregate): Result<Stash, DomainErrorCode.倉庫已滿> {
+  public addItem(item: ItemAggregate): Result<Stash, DomainErrorCode.倉庫_倉庫已滿> {
     if (this.isAtCapacity()) {
-      return Result.fail(DomainErrorCode.倉庫已滿)
+      return Result.fail(DomainErrorCode.倉庫_倉庫已滿)
     }
     return Result.success(new Stash([...this.items, item], this.capacity))
   }
   /** 試試從倉庫移除物品。*/
-  public removeItem(itemId: string): Result<Stash, DomainErrorCode.物品不存在> {
+  public removeItem(itemId: string): Result<Stash, DomainErrorCode.倉庫_物品不存在> {
     const newItems = this.items.filter((i) => i.record.id !== itemId)
     if (newItems.length === this.items.length) {
-      return Result.fail(DomainErrorCode.物品不存在)
+      return Result.fail(DomainErrorCode.倉庫_物品不存在)
     }
     return Result.success(new Stash(newItems, this.capacity))
   }
@@ -54,9 +54,9 @@ export class Stash {
     return this._items.length
   }
   /** 試試擴展倉庫容量。*/
-  public expandCapacity(newCapacity: number): Result<Stash, DomainErrorCode.容量設定無效> {
+  public expandCapacity(newCapacity: number): Result<Stash, DomainErrorCode.倉庫_容量設定無效> {
     if (newCapacity <= this.items.length) {
-      return Result.fail(DomainErrorCode.容量設定無效)
+      return Result.fail(DomainErrorCode.倉庫_容量設定無效)
     }
     return Result.success(new Stash(this.items, newCapacity))
   }

@@ -29,28 +29,31 @@ export class Shop {
     this.config = config
   }
   /** 添加物品 */
-  addItem(item: ItemAggregate, difficulty: number): Result<Shop, DomainErrorCode.商店格子已滿> {
+  addItem(item: ItemAggregate, difficulty: number): Result<Shop, DomainErrorCode.商店_商店格子已滿> {
     const { shopSlotCount } = this.config
     if (this.items.length >= shopSlotCount) {
-      return Result.fail(DomainErrorCode.商店格子已滿)
+      return Result.fail(DomainErrorCode.商店_商店格子已滿)
     }
     const shopItem = this.convertToShopItemAggregate(item, difficulty)
     return Result.success(new Shop([...this.items, shopItem], this.config))
   }
   /** 批量添加物品 */
-  addManyItems(items: ReadonlyArray<ItemAggregate>, difficulty: number): Result<Shop, DomainErrorCode.商店格子已滿> {
+  addManyItems(
+    items: ReadonlyArray<ItemAggregate>,
+    difficulty: number
+  ): Result<Shop, DomainErrorCode.商店_商店格子已滿> {
     const { shopSlotCount } = this.config
     if (this.items.length + items.length > shopSlotCount) {
-      return Result.fail(DomainErrorCode.商店格子已滿)
+      return Result.fail(DomainErrorCode.商店_商店格子已滿)
     }
     const shopItems = items.map((item) => this.convertToShopItemAggregate(item, difficulty))
     return Result.success(new Shop([...this.items, ...shopItems], this.config))
   }
   /** 移除物品 */
-  removeItem(itemId: string): Result<Shop, DomainErrorCode.商店物品不存在> {
+  removeItem(itemId: string): Result<Shop, DomainErrorCode.商店_商店物品不存在> {
     const newItems = this.items.filter((i) => i.itemAggregate.record.id !== itemId)
     if (newItems.length === this.items.length) {
-      return Result.fail(DomainErrorCode.商店物品不存在)
+      return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }
     return Result.success(new Shop(newItems, this.config))
   }
@@ -59,10 +62,10 @@ export class Shop {
     return new Shop([], this.config)
   }
   /** 折扣某一件物品 */
-  discountItem(itemId: string): Result<Shop, DomainErrorCode.商店物品不存在> {
+  discountItem(itemId: string): Result<Shop, DomainErrorCode.商店_商店物品不存在> {
     const itemIndex = this.items.findIndex((i) => i.itemAggregate.record.id === itemId)
     if (itemIndex === -1) {
-      return Result.fail(DomainErrorCode.商店物品不存在)
+      return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }
     const targetItem = this.items[itemIndex]
     const difficulty = targetItem.itemAggregate.record.atCreated.difficulty
@@ -81,6 +84,16 @@ export class Shop {
     const newItems = [...this.items]
     newItems[itemIndex] = newShopItem
     return Result.success(new Shop(newItems, this.config))
+  }
+  /** 取得出售報價 */
+  public getSellPrice(item: ItemAggregate): number {
+    return ShopHelper.calculateItemPrice({
+      config: this.config,
+      difficulty: item.record.atCreated.difficulty,
+      rarity: item.template.rarity,
+      isBuying: false,
+      isDiscounted: false,
+    })
   }
   /** 將"物品"轉換為"商店物品"，包含價格計算 */
   private convertToShopItemAggregate(itemAggregate: ItemAggregate, difficulty: number): ShopItemAggregate {
