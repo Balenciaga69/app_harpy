@@ -44,7 +44,7 @@ export class ShopService implements IShopService {
       return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }
     // 檢查玩家金錢是否足夠
-    const goldAfterPurchase = character.record.gold - shopItem.price
+    const goldAfterPurchase = character.record.gold - shopItem.record.price
     if (goldAfterPurchase < 0) {
       return Result.fail(ApplicationErrorCode.商店_金錢不足)
     }
@@ -75,7 +75,7 @@ export class ShopService implements IShopService {
       })
       .updateShopContext({
         ...this.contextAccessor.getShopContext(),
-        items: shopResult.value!.items.map((shopAgg) => shopAgg.itemAggregate.record),
+        items: shopResult.value!.items.map((shopAgg) => shopAgg.record),
       })
       .commit()
     return Result.success(undefined)
@@ -141,7 +141,7 @@ export class ShopService implements IShopService {
     this.unitOfWork
       .updateShopContext({
         ...this.contextAccessor.getShopContext(),
-        items: addResult.value!.items.map((shopAgg) => shopAgg.itemAggregate.record),
+        items: addResult.value!.items.map((shopAgg) => shopAgg.record),
       })
       .commit()
     return Result.success(undefined)

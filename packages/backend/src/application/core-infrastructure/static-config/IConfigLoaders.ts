@@ -7,7 +7,6 @@ import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ShopConfig } from '../../../domain/shop/Shop'
-
 /** Affix配置資料傳輸物件 */
 export interface AffixConfigDTO {
   affixTemplates: AffixTemplate[]

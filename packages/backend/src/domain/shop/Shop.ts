@@ -1,6 +1,7 @@
 import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { ItemAggregate, ItemRarity, ItemRecord } from '../item/Item'
+// === Config ===
 /** 商店配置介面 */
 export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 export interface ShopConfig {
@@ -13,14 +14,20 @@ export interface ShopConfig {
   readonly difficultyMultiplier: number // 難度係數
   readonly salePriceDepreciationRate: number // 出售價格折舊率
 }
-/** 商店物品聚合，包含物品聚合與價格資訊 */
-export interface ShopItemAggregate {
-  readonly itemAggregate: ItemAggregate // 物品聚合
-  readonly price: number // 物品價格
+// === Record ===
+export interface ShopItemRecord extends ItemRecord {
+  readonly price: number
+  readonly isDiscounted: boolean
 }
 /** 商店 Record 介面 */
 export interface ShopRecord {
-  readonly items: ReadonlyArray<ItemRecord>
+  readonly items: ReadonlyArray<ShopItemRecord>
+}
+// === Domain ===
+/** 商店物品聚合，包含物品聚合與價格資訊 */
+export interface ShopItemAggregate {
+  readonly itemAggregate: ItemAggregate // 物品聚合
+  readonly record: ShopItemRecord
 }
 /** 商店類，管理商店物品與操作 */
 export class Shop {
@@ -88,7 +95,11 @@ export class Shop {
     })
     const newShopItem: ShopItemAggregate = {
       itemAggregate: targetItem.itemAggregate,
-      price: discountedPrice,
+      record: {
+        ...targetItem.record,
+        price: discountedPrice,
+        isDiscounted: true,
+      },
     }
     const newItems = [...this.items]
     newItems[itemIndex] = newShopItem
@@ -115,11 +126,14 @@ export class Shop {
     })
     return {
       itemAggregate,
-      price,
+      record: {
+        ...itemAggregate.record,
+        price,
+        isDiscounted: false,
+      },
     }
   }
 }
-
 interface PriceCalculationParams {
   readonly config: ShopConfig
   readonly difficulty: number
@@ -127,7 +141,6 @@ interface PriceCalculationParams {
   readonly isBuying: boolean
   readonly isDiscounted: boolean
 }
-
 /** 商店相關輔助函數 */
 export const ShopHelper = {
   /** 計算物品價格 */

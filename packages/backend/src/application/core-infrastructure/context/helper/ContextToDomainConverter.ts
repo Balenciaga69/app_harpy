@@ -1,6 +1,6 @@
 import { CharacterAggregate, CharacterRecord } from '../../../../domain/character/Character'
 import { RelicRecord } from '../../../../domain/item/Item'
-import { Shop, ShopItemAggregate, ShopHelper } from '../../../../domain/shop/Shop'
+import { Shop, ShopItemAggregate } from '../../../../domain/shop/Shop'
 import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
 import { ItemAggregateService } from '../../../content-generation/service/item/ItemAggregateService'
@@ -36,25 +36,19 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
   }
   convertShopContextToDomain(): Shop {
     const shopContext = this.contextAccessor.getShopContext()
-    const relicRecords = shopContext.items.filter((record) => record.itemType === 'RELIC') as RelicRecord[]
-    const itemAggregates = this.itemAggregateService.createRelicsByRecords(relicRecords)
+    // 取得商店配置
     const shopConfig = this.configStoreAccessor.getConfigStore().shopStore.getShopConfig(shopContext.shopConfigId)
-
-    // 重建 ShopItemAggregate，使用 ShopHelper 計算價格
+    // 透過物品記錄建立物品聚合
+    const shopItemRecords = shopContext.items.filter((record) => record.itemType === 'RELIC')
+    const itemAggregates = this.itemAggregateService.createRelicsByRecords(shopItemRecords)
+    // 組合成商店物品聚合
     const shopItemAggregates: ShopItemAggregate[] = itemAggregates.map((aggregate) => {
-      const price = ShopHelper.calculateItemPrice({
-        config: shopConfig,
-        difficulty: aggregate.record.atCreated.difficulty,
-        rarity: aggregate.template.rarity,
-        isBuying: true,
-        isDiscounted: false,
-      })
+      const record = shopItemRecords.find((r) => r.id === aggregate.record.id)!
       return {
         itemAggregate: aggregate,
-        price,
+        record: record,
       }
     })
-
     return new Shop(shopItemAggregates, shopConfig)
   }
 }

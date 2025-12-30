@@ -5,7 +5,6 @@ import { ICharacterContext } from '../interface/ICharacterContext'
 import { IRunContext } from '../interface/IRunContext'
 import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
-
 // 用於創建 Record 的共通資訊
 interface CommonInfoForCreateRecord extends WithCreatedInfo, WithSourceUnit {
   readonly difficulty: number

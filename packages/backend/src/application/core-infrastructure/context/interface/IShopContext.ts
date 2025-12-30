@@ -1,6 +1,5 @@
 import { ShopConfigId, ShopRecord } from '../../../../domain/shop/Shop'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
-
 /**
  * 商店上下文介面
  * 職責：定義商店的運行時狀態

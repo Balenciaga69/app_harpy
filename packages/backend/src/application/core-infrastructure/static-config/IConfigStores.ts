@@ -8,7 +8,6 @@ import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ShopConfig } from '../../../domain/shop/Shop'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate
