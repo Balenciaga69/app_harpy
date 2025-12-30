@@ -1,3 +1,4 @@
+// TODO: 這份代碼由 ai 生成, 需要人工審核, 但暫時先保留
 import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
@@ -60,22 +61,22 @@ export class RunInitializationService {
    * - VersionConflict: 資料庫並發寫入衝突
    */
   async initialize(params: RunInitializationParams): Promise<Result<IAppContext, RunInitializationError>> {
-    // 步驟 1: 驗證職業存在性
+    // 驗證職業存在性
     const profession = this.configStore.professionStore.getProfession(params.professionId)
     if (!profession) {
       return Result.fail('ProfessionNotFound')
     }
-    // 步驟 2: 使用指定或隨機種子初始化隨機數生成器
+    // 使用指定或隨機種子初始化隨機數生成器
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
     const runId = this.generateRunId(rng)
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
-    // 步驟 3: 建立所有 Context
+    // 建立所有 Context
     const contextsResult = this.buildContexts(runId, params, seed)
     if (contextsResult.isFailure) {
       return Result.fail(contextsResult.error as RunInitializationError)
     }
     const contexts = contextsResult.value!
-    // 步驟 4: 可選持久化上下文至資料庫
+    // 可選持久化上下文至資料庫
     if (!!params.persist && this.repos && this.repos.batch) {
       const updates = {
         run: { context: contexts.runContext, expectedVersion: CREATE_EXPECTED_VERSION },
@@ -103,16 +104,6 @@ export class RunInitializationService {
   }
   /**
    * 初始化各個上下文(Run、Stash、Character)
-   *
-   * 流程：
-   * 1. 生成所有章節的關卡節點
-   * 2. 建立 RunContext
-   * 3. 建立 CharacterContext（包含起始聖物）
-   * 4. 建立 StashContext
-   * 5. 驗證起始聖物有效性
-   *
-   * 失敗情況：
-   * - InvalidStartingRelics: 起始聖物ID無效或全部不存在
    */
   private buildContexts(
     runId: string,
@@ -132,7 +123,6 @@ export class RunInitializationService {
       runId,
       version: INITIAL_VERSION,
       seed,
-      gold: 0,
       currentChapter: 1 as ChapterLevel,
       currentStage: 1,
       encounteredEnemyIds: [],
@@ -152,15 +142,18 @@ export class RunInitializationService {
       name: params.characterName ?? 'Player',
       professionId: params.professionId,
       relics: relicRecordsResult.value!,
+      gold: 0,
       ultimate: {
+        //TODO: 無技能先留空
+        // FIXME: 缺一個取 UltimateTemplate 的方法在下方
+        pluginAffixRecord: [],
         id: '',
         templateId: '',
         sourceUnitId: '',
         atCreated: { chapter: 1, stage: 1, difficulty: 1 },
-        pluginAffixRecord: [],
       },
-      loadCapacity: 0,
-      currentLoad: 2,
+      loadCapacity: 2,
+      currentLoad: 0,
     }
     const stashContext: IStashContext = {
       runId,
@@ -172,35 +165,26 @@ export class RunInitializationService {
   }
   /**
    * 初始化起始聖物
-   *
-   * 流程：
-   * 1. 若未指定起始聖物，返回空陣列
-   * 2. 從 itemStore 載入聖物樣板
-   * 3. 驗證至少有一個聖物有效
-   * 4. 建立詞綴記錄
-   * 5. 建立聖物記錄
-   *
-   * 失敗情況：
-   * - InvalidStartingRelics: 所有指定的聖物ID都無效
+   * FIXME: 簡化此方法，避免重複代碼
    */
   private createRelicRecord(
     startingRelicIds: string[] = [],
     characterId: string
   ): Result<RelicRecord[], 'InvalidStartingRelics'> {
-    // 步驟 1: 若未指定起始聖物，返回空陣列（成功）
+    // 若未指定起始聖物，返回空陣列（成功）
     if (!startingRelicIds || startingRelicIds.length === 0) {
       return Result.success([])
     }
-    // 步驟 2: 從 itemStore 載入聖物樣板
+    // 從 itemStore 載入聖物樣板
     const { itemStore } = this.configStore
     const relicTemplates = startingRelicIds
       .map((id) => itemStore.getRelic(id))
       .filter((template): template is NonNullable<typeof template> => template !== undefined)
-    // 步驟 3: 驗證至少有一個聖物有效
+    // 驗證至少有一個聖物有效
     if (relicTemplates.length === 0) {
       return Result.fail('InvalidStartingRelics')
     }
-    // 步驟 4: 建立詞綴記錄
+    // 建立詞綴記錄
     const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
     const initialAffixData: AffixRecordCreateParams = {
       atCreated: {
@@ -212,7 +196,7 @@ export class RunInitializationService {
       sourceUnitId: characterId,
     }
     const affixRecords = AffixRecordFactory.createMany(affixIds, initialAffixData)
-    // 步驟 5: 建立聖物記錄
+    // 建立聖物記錄
     const relicRecords = RelicRecordFactory.createMany(startingRelicIds, {
       ...initialAffixData,
       affixRecords: affixRecords,

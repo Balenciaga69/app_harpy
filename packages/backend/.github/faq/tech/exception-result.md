@@ -12,3 +12,9 @@
     - 玩家的背包滿了、選擇了不存在的關卡、找不到大絕招的模板
     - 這是預期內的, 將不會拋出錯誤, 而是採用軌道設計來處理
     - Result<T,E> 這個型別就是用來處理這種情況的
+
+## 誰是最終的捕獲者?
+
+- API 層的全局錯誤處理
+- 會有映射表 Record<Error,{Message,StatusCode}>
+- api 會 Mapper to Response

@@ -8,6 +8,7 @@ export interface CharacterRecord {
   readonly id: string
   readonly name: string
   readonly professionId: string
+  readonly gold: number
   readonly relics: ReadonlyArray<RelicRecord>
   readonly ultimate: UltimateRecord
   readonly loadCapacity: number

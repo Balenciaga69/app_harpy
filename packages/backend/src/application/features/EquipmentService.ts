@@ -3,21 +3,14 @@ import { RelicAggregate } from '../../domain/item/Item'
 import { IContextToDomainConverter } from '../core-infrastructure/context/helper/ContextToDomainConverter'
 import { IAppContextService } from '../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
-/**
- * 裝備服務錯誤類型
- */
-export type EquipmentServiceError =
-  | 'EquipmentOperationFailed' // 通用失敗
-  | 'RelicNotFound' // 聖物未找到
-  | 'Overweight' // 負重超過上限
-  | 'SlotOccupied' // 堆疊槽位已滿
-  | 'StashFull' // 倉庫滿了
+import { CharacterAggregate } from '../../domain/character/Character'
+import { Stash } from '../../domain/stash/Stash'
 /**
  * 裝備服務介面
  */
 export interface IEquipmentService {
-  equipRelicAndUpdateContexts(relicId: string): Result<void, EquipmentServiceError>
-  unequipRelicAndUpdateContexts(relicId: string): Result<void, EquipmentServiceError>
+  equipRelicAndUpdateContexts(relicId: string): Result<void, string>
+  unequipRelicAndUpdateContexts(relicId: string): Result<void, string>
 }
 /**
  * 裝備服務實作
@@ -33,89 +26,63 @@ export class EquipmentService implements IEquipmentService {
     private contextToDomainConverter: IContextToDomainConverter,
     private unitOfWorkFactory: IContextUnitOfWork
   ) {}
-  /**
-   * 卸下角色聖物至倉庫
-   *
-   * 流程：
-   * 1. 取得當前 Domain 實體（Character、Stash）
-   * 2. 驗證聖物存在 (Character.getRelic)
-   * 3. 執行卸下操作 (Character.unequipRelic)
-   * 4. 執行加入倉庫操作 (Stash.addItem)
-   * 5. 如果任何步驟失敗，返回對應錯誤
-   * 6. 如果全部成功，透過 UnitOfWork 一次性更新 Context
-   */
-  public unequipRelicAndUpdateContexts(relicId: string): Result<void, EquipmentServiceError> {
-    // 步驟 1: 取得當前 Domain 實體
+  /** 卸下角色聖物至倉庫 */
+  public unequipRelicAndUpdateContexts(relicId: string): Result<void, string> {
+    // 取得倉庫與角色的 Domain 物件
     const stash = this.contextToDomainConverter.convertStashContextToDomain()
     const character = this.contextToDomainConverter.convertCharacterContextToDomain()
-
-    // 步驟 2: 驗證聖物存在（提前驗證而不是try-catch）
+    // 從角色身上找到指定的聖物
     const targetRelicAggregate = character.relics.find((r) => r.record.id === relicId)
     if (!targetRelicAggregate) {
       return Result.fail('RelicNotFound')
     }
-    // 步驟 3: 執行卸下操作
+    // 執行卸下聖物的邏輯
     const unequipResult = character.unequipRelic(relicId)
     if (unequipResult.isFailure) {
-      return Result.fail(unequipResult.error as EquipmentServiceError)
+      return Result.fail(unequipResult.error as string)
     }
-    const newCharacter = unequipResult.getOrThrow()
-    // 步驟 4: 執行加入倉庫操作
+    // 將卸下的聖物加入倉庫
     const addItemResult = stash.addItem(targetRelicAggregate)
     if (addItemResult.isFailure) {
-      return Result.fail(addItemResult.error as EquipmentServiceError)
+      return Result.fail(addItemResult.error as string)
     }
+    const newCharacter = unequipResult.getOrThrow()
     const newStash = addItemResult.getOrThrow()
-    // 步驟 5 & 6: 所有操作成功，透過 UnitOfWork 提交變更
-    const currentCharacterContext = this.appContextService.getCharacterContext()
-    const currentStashContext = this.appContextService.getStashContext()
-    this.unitOfWorkFactory
-      .updateCharacterContext({
-        ...currentCharacterContext,
-        ...newCharacter.record,
-      })
-      .updateStashContext({
-        ...currentStashContext,
-        items: newStash.listItems().map((i) => i.record),
-      })
-      .commit()
+    this.commitUnitOfWork(newCharacter, newStash)
     return Result.success(undefined)
   }
-  /**
-   * 從倉庫裝備聖物到角色
-   *
-   * 流程：
-   * 1. 取得當前 Domain 實體（Character、Stash）
-   * 2. 驗證聖物在倉庫中存在
-   * 3. 執行從倉庫移除操作 (Stash.removeItem)
-   * 4. 執行裝備操作 (Character.equipRelic)
-   * 5. 如果任何步驟失敗，返回對應錯誤
-   * 6. 如果全部成功，透過 UnitOfWork 一次性更新 Context
-   */
-  public equipRelicAndUpdateContexts(relicId: string): Result<void, EquipmentServiceError> {
-    // 步驟 1: 取得當前 Domain 實體
+  /** 裝備角色聖物 */
+  public equipRelicAndUpdateContexts(relicId: string): Result<void, string> {
+    // 取得倉庫與角色的 Domain 物件
     const stash = this.contextToDomainConverter.convertStashContextToDomain()
     const character = this.contextToDomainConverter.convertCharacterContextToDomain()
-    // 步驟 2: 驗證聖物在倉庫中存在
+    // 從倉庫取得指定的聖物
     const targetRelicAggregate = stash.getItem(relicId)
     if (!targetRelicAggregate) {
       return Result.fail('RelicNotFound')
     }
-    // 步驟 3: 執行從倉庫移除操作
+    // 從倉庫移除該聖物
     const removeItemResult = stash.removeItem(relicId)
     if (removeItemResult.isFailure) {
-      return Result.fail(removeItemResult.error as EquipmentServiceError)
+      return Result.fail(removeItemResult.error as string)
     }
-    const newStash = removeItemResult.getOrThrow()
-    // 步驟 4: 執行裝備操作
+    // 執行裝備聖物的邏輯
     const equipResult = character.equipRelic(targetRelicAggregate as RelicAggregate)
     if (equipResult.isFailure) {
-      return Result.fail(equipResult.error as EquipmentServiceError)
+      return Result.fail(equipResult.error as string)
     }
+    // 提交變更
+    const newStash = removeItemResult.getOrThrow()
     const newCharacter = equipResult.getOrThrow()
-    // 步驟 5 & 6: 所有操作成功，透過 UnitOfWork 提交變更
+    this.commitUnitOfWork(newCharacter, newStash)
+    return Result.success(undefined)
+  }
+  /** 使用 UnitOfWork 同步提交角色與倉庫的 Context 變更 */
+  private commitUnitOfWork(newCharacter: CharacterAggregate, newStash: Stash): void {
+    // 取得目前的 Context 狀態
     const currentCharacterContext = this.appContextService.getCharacterContext()
     const currentStashContext = this.appContextService.getStashContext()
+    // 使用 UnitOfWork 同步更新角色與倉庫 Context
     this.unitOfWorkFactory
       .updateCharacterContext({
         ...currentCharacterContext,
@@ -126,6 +93,5 @@ export class EquipmentService implements IEquipmentService {
         items: newStash.listItems().map((i) => i.record),
       })
       .commit()
-    return Result.success(undefined)
   }
 }

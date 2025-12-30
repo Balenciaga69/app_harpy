@@ -14,6 +14,7 @@ export interface CharacterRecordCreateParams {
   ultimate: UltimateRecord
   loadCapacity: number
   currentLoad: number
+  gold: number
 }
 /**
  * CharacterRecordFactory：負責 CharacterRecord 的創建
@@ -27,6 +28,7 @@ function createCharacterRecord(professionId: string, params: CharacterRecordCrea
     professionId,
     relics: params.relics,
     ultimate: params.ultimate,
+    gold: params.gold,
     loadCapacity: params.loadCapacity,
     currentLoad: params.currentLoad,
   }
