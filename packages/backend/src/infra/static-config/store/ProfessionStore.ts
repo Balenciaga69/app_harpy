@@ -1,11 +1,16 @@
 import { IProfessionStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
-import { ProfessionTemplate } from '../../../domain/profession/ProfessionTemplate'
+import { ProfessionTemplate } from '../../../domain/profession/Profession'
+import { ConfigNotFoundError } from '../../../shared/errors/GameErrors'
 /** 職業配置存儲：管理職業樣板 */
 export class ProfessionStore implements IProfessionStore {
   private professions: Map<string, ProfessionTemplate> = new Map()
   /** 根據 ID 查詢職業樣板 */
-  getProfession(id: string): ProfessionTemplate | undefined {
-    return this.professions.get(id)
+  getProfession(id: string): ProfessionTemplate {
+    const profession = this.professions.get(id)
+    if (!profession) {
+      throw new ConfigNotFoundError('ProfessionTemplate', id)
+    }
+    return profession
   }
   /** 檢查職業樣板是否存在 */
   hasProfession(id: string): boolean {

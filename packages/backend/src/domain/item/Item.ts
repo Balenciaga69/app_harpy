@@ -2,6 +2,7 @@ import { BaseInstanceFields, WithCreatedInfo } from '../../shared/models/BaseIns
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
 import { AffixRecord, AffixAggregate } from '../affix/Affix'
+export type ItemType = 'RELIC'
 /** 物品稀有度等級，決定物品的品質與掉落概率 */
 export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
 /** 物品樣板，定義物品的靜態屬性、詞綴與標籤 */
@@ -9,6 +10,7 @@ export interface ItemTemplate {
   readonly id: string
   readonly name: I18nField
   readonly desc: I18nField
+  readonly itemType: ItemType
   readonly rarity: ItemRarity
   readonly affixIds: ReadonlyArray<string>
   readonly tags: ReadonlyArray<TagType>
@@ -17,14 +19,16 @@ export interface ItemTemplate {
 /** 遺物樣板，擴展物品樣板並定義最大堆疊層數 */
 export interface RelicTemplate extends ItemTemplate {
   readonly maxStacks: number
+  readonly itemType: 'RELIC'
 }
 /** 物品記錄，包含基礎欄位與詞綴資訊 */
 export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
   readonly affixRecords: ReadonlyArray<AffixRecord>
+  readonly itemType: ItemType
 }
-/** 遺物記錄，擴展物品記錄並包含當前堆疊層數 */
+/** 遺物記錄，擴展物品記錄並指定類型為遺物 */
 export interface RelicRecord extends ItemRecord {
-  readonly currentStacks: number
+  readonly itemType: 'RELIC'
 }
 export abstract class ItemAggregate {
   constructor(
@@ -32,10 +36,7 @@ export abstract class ItemAggregate {
     public readonly template: ItemTemplate,
     public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
   ) {}
-  /**
-   * 計算物品裝備時帶來的單位屬性修改器集合
-   * - 遍歷所有詞綴聚合，匯聚其屬性修改器
-   */
+  /** 獲取物品的所有單位屬性修飾器 */
   getUnitStatModifiers() {
     return this.affixAggregates.flatMap((affix) => affix.getUnitStatModifiers())
   }
@@ -43,22 +44,11 @@ export abstract class ItemAggregate {
 /** 遺物聚合，包含遺物記錄、樣板與詞綴快照集合 */
 export class RelicAggregate extends ItemAggregate {
   constructor(
-    public record: RelicRecord,
+    public readonly record: RelicRecord,
     public readonly template: RelicTemplate,
     public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
   ) {
     super(record, template, affixAggregates)
-  }
-  isMaxStacks(): boolean {
-    return this.record.currentStacks >= this.template.maxStacks
-  }
-  addStack(): boolean {
-    if (this.isMaxStacks()) return false
-    this.record = { ...this.record, currentStacks: this.record.currentStacks + 1 }
-    return true
-  }
-  get currentStacks(): number {
-    return this.record.currentStacks
   }
   get maxStacks(): number {
     return this.template.maxStacks

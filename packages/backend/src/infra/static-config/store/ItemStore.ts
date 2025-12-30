@@ -2,6 +2,7 @@ import { IItemStore } from '../../../application/core-infrastructure/static-conf
 import { RelicTemplate, ItemTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+import { ConfigNotFoundError } from '../../../shared/errors/GameErrors'
 /** 物品配置存儲：管理聖物樣板、骰選配置與約束條件 */
 export class ItemStore implements IItemStore {
   private itemRollConstraints: Map<string, ItemRollConstraint> = new Map()
@@ -12,24 +13,36 @@ export class ItemStore implements IItemStore {
     return Array.from(this.itemRollConstraints.values())
   }
   /** 根據樣板 ID 查詢約束條件 */
-  getItemRollConstraint(id: string): ItemRollConstraint | undefined {
-    return this.itemRollConstraints.get(id)
+  getItemRollConstraint(id: string): ItemRollConstraint {
+    const constraint = this.itemRollConstraints.get(id)
+    if (!constraint) {
+      throw new ConfigNotFoundError('ItemRollConstraint', id)
+    }
+    return constraint
   }
   /** 檢查約束條件是否存在 */
   hasItemRollConstraint(id: string): boolean {
     return this.itemRollConstraints.has(id)
   }
   /** 根據來源類型查詢骰選配置 */
-  getItemRollConfig(id: string): ItemRollConfig | undefined {
-    return this.itemRollConfigs.get(id)
+  getItemRollConfig(id: string): ItemRollConfig {
+    const config = this.itemRollConfigs.get(id)
+    if (!config) {
+      throw new ConfigNotFoundError('ItemRollConfig', id)
+    }
+    return config
   }
   /** 檢查骰選配置是否存在 */
   hasItemRollConfig(id: string): boolean {
     return this.itemRollConfigs.has(id)
   }
   /** 根據 ID 查詢聖物樣板 */
-  getRelic(id: string): RelicTemplate | undefined {
-    return this.relics.get(id)
+  getRelic(id: string): RelicTemplate {
+    const relic = this.relics.get(id)
+    if (!relic) {
+      throw new ConfigNotFoundError('RelicTemplate', id)
+    }
+    return relic
   }
   /** 檢查聖物樣板是否存在 */
   hasRelic(id: string): boolean {
@@ -50,14 +63,7 @@ export class ItemStore implements IItemStore {
   }
   /** 根據 ID 列表批量查詢聖物樣板 */
   getManyRelics(ids: string[]): RelicTemplate[] {
-    const relics: RelicTemplate[] = []
-    for (const id of ids) {
-      const found = this.getRelic(id)
-      if (found) {
-        relics.push(found)
-      }
-    }
-    return relics
+    return ids.map((id) => this.getRelic(id))
   }
   /** 批量存儲聖物樣板 */
   setMany(relics: RelicTemplate[]): void {

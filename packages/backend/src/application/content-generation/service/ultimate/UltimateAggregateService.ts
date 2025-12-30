@@ -1,5 +1,5 @@
 import { AffixAggregate } from '../../../../domain/affix/Affix'
-import { UltimateAggregate, UltimateRecord } from '../../../../domain/ultimate/Ultimate'
+import { UltimateAggregate, UltimateRecord, UltimateTemplate } from '../../../../domain/ultimate/Ultimate'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
@@ -9,15 +9,15 @@ import { IAffixAggregateService } from '../affix/AffixAggregateService'
 /**
  * 大絕招聚合根服務：負責建立 UltimateAggregate
  * 職責：透過模板、詞綴聚合根與當前上下文組裝完整的大絕招聚合根
- * 依賴：IConfigStoreAccessor（讀模板）、IContextSnapshotAccessor（讀難度資訊）、IAffixAggregateService
+ * 依賴：IConfigStoreAccessor( 讀模板 )、IContextSnapshotAccessor( 讀難度資訊 )、IAffixAggregateService
  * 邊界：純建立邏輯，不涉及狀態修改
  */
 export interface IUltimateAggregateService {
-  /** 從 UltimateRecord 建立單一大絕招聚合根（組裝現有記錄） */
+  /** 從 UltimateRecord 建立單一大絕招聚合根( 組裝現有記錄 ) */
   createOneByRecord(record: UltimateRecord): UltimateAggregate
   /** 批次從 UltimateRecord 建立大絕招聚合根 */
-  createManyByRecord(records: UltimateRecord[]): UltimateAggregate[]
-  /** 從模板與當前上下文建立單一大絕招聚合根（自動產生記錄） */
+  createManyByRecords(records: UltimateRecord[]): UltimateAggregate[]
+  /** 從模板與當前上下文建立單一大絕招聚合根( 自動產生記錄 ) */
   createOneByTemplateUsingCurrentContext(templateId: string): UltimateAggregate
   /** 批次從模板與當前上下文建立大絕招聚合根 */
   createManyByTemplateUsingCurrentContext(templateIds: string[]): UltimateAggregate[]
@@ -35,10 +35,10 @@ export class UltimateAggregateService implements IUltimateAggregateService {
     return new UltimateAggregate(record, template, pluginAffixes)
   }
   /** 批次建立 UltimateAggregate */
-  public createManyByRecord(records: UltimateRecord[]) {
+  public createManyByRecords(records: UltimateRecord[]) {
     return records.map((record) => this.createOneByRecord(record))
   }
-  /** 從 templateId 與當前上下文建立一個 UltimateAggregate（自動產生 UltimateRecord） */
+  /** 從 templateId 與當前上下文建立一個 UltimateAggregate( 自動產生 UltimateRecord ) */
   public createOneByTemplateUsingCurrentContext(templateId: string) {
     const template = this.resolveTemplate(templateId)
     const currentInfo = this.contextSnapshot.getCurrentInfoForCreateRecord()
@@ -51,17 +51,14 @@ export class UltimateAggregateService implements IUltimateAggregateService {
     return templateIds.map((templateId) => this.createOneByTemplateUsingCurrentContext(templateId))
   }
   /** 取得 UltimateTemplate */
-  private resolveTemplate(templateId: string) {
+  private resolveTemplate(templateId: string): UltimateTemplate {
     const { ultimateStore } = this.configStoreAccessor.getConfigStore()
     const template = ultimateStore.getUltimate(templateId)
-    if (!template) {
-      throw new Error(`Ultimate樣板不存在: ${templateId}`)
-    }
     return template
   }
   /** 取得 pluginAffixes */
   private resolvePluginAffixes(record: UltimateRecord): AffixAggregate[] {
     const affixRecords = [...record.pluginAffixRecord]
-    return this.affixAggregateService.createManyByRecord(affixRecords)
+    return this.affixAggregateService.createManyByRecords(affixRecords)
   }
 }

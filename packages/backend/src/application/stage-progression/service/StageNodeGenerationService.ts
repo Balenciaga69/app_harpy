@@ -41,7 +41,6 @@ export class StageNodeGenerationService implements IStageNodeGenerationService {
     }
     return result
   }
-
   /** 決定關卡類型：固定關卡優先，其他關卡隨機 */
   private determineStageType(position: number, rng: RandomHelper): StageType {
     if (position === ELITE_POSITION) return 'ELITE'

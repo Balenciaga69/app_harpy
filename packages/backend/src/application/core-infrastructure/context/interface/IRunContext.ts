@@ -4,7 +4,6 @@ import { StageType } from '../../../../domain/stage/StageType'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 export interface IRunContext extends WithRunIdAndVersion {
   readonly seed: number
-  readonly gold: number
   readonly currentChapter: ChapterLevel
   readonly currentStage: number
   readonly encounteredEnemyIds: string[]

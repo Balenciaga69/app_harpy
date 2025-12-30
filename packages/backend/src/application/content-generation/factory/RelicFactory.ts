@@ -7,7 +7,6 @@ export interface RelicRecordCreateParams {
   difficulty: number
   sourceUnitId: string
   atCreated: AtCreatedInfo
-  currentStacks: number
   affixRecords: ReadonlyArray<AffixRecord>
 }
 /**
@@ -20,8 +19,8 @@ function createRecord(templateId: string, params: RelicRecordCreateParams): Reli
     id: 'relic-record-' + nanoid(),
     templateId,
     affixRecords: params.affixRecords,
-    currentStacks: params.currentStacks,
     atCreated: params.atCreated,
+    itemType: 'RELIC',
   }
   return record
 }

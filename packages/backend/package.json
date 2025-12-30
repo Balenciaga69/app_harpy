@@ -9,6 +9,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "check": "tsc --noEmit -p tsconfig.json",
+    "check:cic": "madge --circular --extensions ts,tsx src",
     "check:folders": "node ./scripts/check-folder-size.cjs --root src --limit 10",
     "check:folders:verbose": "node ./scripts/check-folder-size.cjs --root src --limit 10 --verbose",
     "test": "jest",

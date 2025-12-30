@@ -8,11 +8,11 @@ import { IUltimateAggregateService } from '../ultimate/UltimateAggregateService'
 /**
  * 敵人聚合根服務：負責建立 EnemyAggregate
  * 職責：透過模板、詞綴聚合根、大絕招聚合根與當前上下文組裝完整的敵人聚合根
- * 依賴：IConfigStoreAccessor（讀模板）、IContextSnapshotAccessor（讀難度資訊）、IAffixAggregateService、IUltimateAggregateService
+ * 依賴：IConfigStoreAccessor( 讀模板 )、IContextSnapshotAccessor( 讀難度資訊 )、IAffixAggregateService、IUltimateAggregateService
  * 邊界：純建立邏輯，不涉及狀態修改
  */
 export interface IEnemyAggregateService {
-  /** 從模板與角色從當前上下文建立 EnemyAggregate（自動產生記錄、詞綴、大絕招） */
+  /** 從模板與角色從當前上下文建立 EnemyAggregate( 自動產生記錄、詞綴、大絕招 ) */
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyAggregate
 }
 export class EnemyAggregateService implements IEnemyAggregateService {
@@ -26,13 +26,7 @@ export class EnemyAggregateService implements IEnemyAggregateService {
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyAggregate {
     const { enemyStore } = this.configStoreAccessor.getConfigStore()
     const enemyTemplate = enemyStore.getEnemy(enemyTemplateId)
-    if (!enemyTemplate) {
-      throw new Error(`敵人樣板不存在: ${enemyTemplateId}`)
-    }
     const roleConfig = enemyTemplate.roleConfigs[role]
-    if (!roleConfig) {
-      throw new Error(`敵人缺少角色配置: ${enemyTemplateId} - ${role}`)
-    }
     const affixAggregates = this.affixAggregateService.createManyByTemplateUsingCurrentContext(roleConfig.affixIds)
     const ultimateAggregate = this.ultimateAggregateService.createOneByTemplateUsingCurrentContext(
       roleConfig.ultimateId

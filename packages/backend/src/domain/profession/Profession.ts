@@ -1,6 +1,6 @@
 import { I18nField } from '../../shared/models/I18nField'
-import { RelicAggregate } from '../item/Item'
-import { UltimateAggregate } from '../ultimate/Ultimate'
+import { RelicTemplate } from '../item/Item'
+import { UltimateTemplate } from '../ultimate/Ultimate'
 /** 職業樣板，定義玩家職業的起始大絕招與遺物 */
 export interface ProfessionTemplate {
   id: string
@@ -14,7 +14,7 @@ export class ProfessionAggregate {
   constructor(
     public readonly id: string,
     public readonly template: ProfessionTemplate,
-    public readonly ultimateAggregates: ReadonlyArray<UltimateAggregate>,
-    public readonly relicAggregates: ReadonlyArray<RelicAggregate>
+    public readonly ultimateTemplates: ReadonlyArray<UltimateTemplate>,
+    public readonly relicTemplates: ReadonlyArray<RelicTemplate>
   ) {}
 }
