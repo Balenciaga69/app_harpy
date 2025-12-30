@@ -32,6 +32,7 @@ export type RunInitializationError =
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
 const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3] // 預設章節列表
+const DEFAULT_REMAINING_FAIL_RETRIES = 3
 /** Run 初始化參數 */
 export interface RunInitializationParams {
   professionId: string
@@ -140,6 +141,7 @@ export class RunInitializationService {
       currentStage: 1,
       encounteredEnemyIds: [],
       chapters: chapters,
+      remainingFailRetries: DEFAULT_REMAINING_FAIL_RETRIES,
       rollModifiers: [],
     }
     const characterId = `${runId}-char`
