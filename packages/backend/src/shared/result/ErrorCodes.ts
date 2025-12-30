@@ -19,6 +19,9 @@ export enum DomainErrorCode {
   // Shop (商店)
   商店_商店格子已滿 = '商店格子已滿',
   商店_商店物品不存在 = '商店物品不存在',
+  // Run (遊戲進程)
+  Run_狀態不符 = 'Run 狀態不符',
+  Run_非法狀態轉換 = '非法的狀態轉換',
 }
 // ===== Application 層錯誤 =====
 export enum ApplicationErrorCode {
@@ -48,6 +51,8 @@ export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, strin
   [DomainErrorCode.倉庫_容量設定無效]: '倉庫容量設定無效',
   [DomainErrorCode.商店_商店格子已滿]: '商店格子已滿',
   [DomainErrorCode.商店_商店物品不存在]: '商店中找不到此物品',
+  [DomainErrorCode.Run_狀態不符]: '當前狀態不允許此操作',
+  [DomainErrorCode.Run_非法狀態轉換]: '非法的狀態轉換',
   [ApplicationErrorCode.敵人_無可用敵人]: '當前關卡無可用敵人',
   [ApplicationErrorCode.敵人_關卡資訊無效]: '關卡資訊無效或不完整',
   [ApplicationErrorCode.物品_物品模板不存在]: '物品模板不存在',

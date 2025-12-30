@@ -3,8 +3,8 @@ import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { StageType } from '../../../../domain/stage/StageType'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 import { PostCombatContext } from '../../../../domain/post-combat/PostCombat'
-// 幫我想想有哪些狀態
-type RunStatus = ''
+import { RunStatus } from './RunStatus'
+
 export interface IRunContext extends WithRunIdAndVersion {
   readonly seed: number
   readonly currentChapter: ChapterLevel
@@ -14,7 +14,7 @@ export interface IRunContext extends WithRunIdAndVersion {
   readonly rollModifiers: ItemRollModifier[]
   readonly remainingFailRetries: number
   readonly status: RunStatus
-  readonly 暫時性狀態物件: {
+  readonly temporaryContext: {
     postCombat?: PostCombatContext
   }
 }
