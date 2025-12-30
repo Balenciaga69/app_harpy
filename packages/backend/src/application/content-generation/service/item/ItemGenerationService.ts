@@ -1,4 +1,5 @@
 import { Result } from '../../../../shared/result/Result'
+import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { ItemType, RelicAggregate } from '../../../../domain/item/Item'
 import { ItemRollSourceType } from '../../../../domain/item/roll/ItemRollConfig'
 import { IItemAggregateService } from './ItemAggregateService'
@@ -10,7 +11,7 @@ import { IItemRollService } from './ItemRollService'
  */
 export type ItemGenerationError =
   | ItemConstraintError // 來自限制檢查的所有錯誤
-  | 'ItemTypeNotSupported' // 物品類型暫未實作
+  | ApplicationErrorCode.物品類型未支援 // 物品類型暫未實作
 export class ItemGenerationService {
   constructor(
     private itemAggregateService: IItemAggregateService,
@@ -49,7 +50,7 @@ export class ItemGenerationService {
     }
     // 步驟 2: 檢查物品類型是否支援
     if (itemType !== 'RELIC') {
-      return Result.fail('ItemTypeNotSupported')
+      return Result.fail(ApplicationErrorCode.物品類型未支援)
     }
     // 步驟 3: 生成物品實例
     const relic = this.itemAggregateService.createRelicByTemplateUsingCurrentContext(templateId)

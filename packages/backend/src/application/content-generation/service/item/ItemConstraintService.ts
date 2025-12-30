@@ -1,4 +1,5 @@
 import { Result } from '../../../../shared/result/Result'
+import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { ItemRarity, ItemTemplate, ItemType } from '../../../../domain/item/Item'
 import {
   IConfigStoreAccessor,
@@ -8,11 +9,11 @@ import {
  * 物品限制檢查錯誤類型
  */
 export type ItemConstraintError =
-  | 'TemplateNotFound' // 模板未找到
-  | 'ChapterNotAllowed' // 當前章節不允許此物品
-  | 'ProfessionNotAllowed' // 當前職業不允許此物品
-  | 'EventLimited' // 此物品有事件限制
-  | 'EnemyLimited' // 此物品有敵人限制
+  | ApplicationErrorCode.物品模板不存在 // 模板未找到
+  | ApplicationErrorCode.章節不允許此物品 // 當前章節不允許此物品
+  | ApplicationErrorCode.職業不允許此物品 // 當前職業不允許此物品
+  | ApplicationErrorCode.物品受事件限制 // 此物品有事件限制
+  | ApplicationErrorCode.物品受敵人限制 // 此物品有敵人限制
 /**
  * 物品生成限制服務：檢查物品樣板是否符合生成條件
  * 職責：檢查物品是否符合當前進度、職業、事件等限制條件；篩選符合條件的可用樣板
@@ -36,7 +37,7 @@ export class ItemConstraintService implements IItemConstraintService {
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const template = itemStore.getRelic(templateId)
     if (!template) {
-      return Result.fail('TemplateNotFound')
+      return Result.fail(ApplicationErrorCode.物品模板不存在)
     }
     const constraint = itemStore.getItemRollConstraint(templateId)
     if (!constraint) {
@@ -44,18 +45,18 @@ export class ItemConstraintService implements IItemConstraintService {
     }
     // 檢查章節限制
     if (constraint.chapters && !constraint.chapters.includes(runContext.currentChapter)) {
-      return Result.fail('ChapterNotAllowed')
+      return Result.fail(ApplicationErrorCode.章節不允許此物品)
     }
     // 檢查職業限制
     if (constraint.professionIds && !constraint.professionIds.includes(characterContext.professionId)) {
-      return Result.fail('ProfessionNotAllowed')
+      return Result.fail(ApplicationErrorCode.職業不允許此物品)
     }
     // 檢查事件/敵人限制( 有任一限制則不可生成 )
     if ((constraint.eventIds?.length ?? 0) > 0) {
-      return Result.fail('EventLimited')
+      return Result.fail(ApplicationErrorCode.物品受事件限制)
     }
     if ((constraint.enemyIds?.length ?? 0) > 0) {
-      return Result.fail('EnemyLimited')
+      return Result.fail(ApplicationErrorCode.物品受敵人限制)
     }
     return Result.success(undefined)
   }

@@ -1,4 +1,5 @@
 import { Result } from '../../shared/result/Result'
+import { ApplicationErrorCode } from '../../shared/result/ErrorCodes'
 import { RelicAggregate } from '../../domain/item/Item'
 import { IContextToDomainConverter } from '../core-infrastructure/context/helper/ContextToDomainConverter'
 import { IAppContextService } from '../core-infrastructure/context/service/AppContextService'
@@ -34,7 +35,7 @@ export class EquipmentService implements IEquipmentService {
     // 從角色身上找到指定的聖物
     const targetRelicAggregate = character.relics.find((r) => r.record.id === relicId)
     if (!targetRelicAggregate) {
-      return Result.fail('RelicNotFound')
+      return Result.fail(ApplicationErrorCode.裝備聖物不存在)
     }
     // 執行卸下聖物的邏輯
     const unequipResult = character.unequipRelic(relicId)
@@ -59,7 +60,7 @@ export class EquipmentService implements IEquipmentService {
     // 從倉庫取得指定的聖物
     const targetRelicAggregate = stash.getItem(relicId)
     if (!targetRelicAggregate) {
-      return Result.fail('RelicNotFound')
+      return Result.fail(ApplicationErrorCode.裝備聖物不存在)
     }
     // 從倉庫移除該聖物
     const removeItemResult = stash.removeItem(relicId)

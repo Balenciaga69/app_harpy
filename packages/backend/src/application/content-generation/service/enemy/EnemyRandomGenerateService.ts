@@ -1,14 +1,15 @@
 import { EnemyAggregate, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
 import { Result } from '../../../../shared/result/Result'
+import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
 import { IEnemyAggregateService } from './EnemyAggregateService'
 /**
  * 敵人生成錯誤類型
- * - NoAvailableEnemies: 關卡無可用敵人（已全部遭遇過）
- * - InvalidStageInfo: 關卡資訊不完整或無效
+ * - 無可用敵人: 關卡無可用敵人（已全部遭遇過）
+ * - 關卡資訊無效: 關卡資訊不完整或無效
  */
-export type EnemyGenerationError = 'NoAvailableEnemies' | 'InvalidStageInfo'
+export type EnemyGenerationError = ApplicationErrorCode.無可用敵人 | ApplicationErrorCode.關卡資訊無效
 export interface IEnemyRandomGenerateService {
   /** 隨機選擇並創建一個 EnemyAggregate */
   createRandomOneByTemplateUsingCurrentContext(): Result<EnemyAggregate, EnemyGenerationError>
@@ -52,7 +53,7 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
     // 步驟 3: 取得敵人角色設定
     const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage]
     if (!stageEnemyRole) {
-      return Result.fail('InvalidStageInfo')
+      return Result.fail(ApplicationErrorCode.關卡資訊無效)
     }
     // 步驟 4: 使用 EnemyAggregateService 建立敵人聚合體
     const enemy = this.enemyAggregateService.createOneByTemplateUsingCurrentContext(
@@ -70,9 +71,9 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
    * 3. 驗證至少有一個可用敵人
    *
    * 失敗情況：
-   * - NoAvailableEnemies: 當前關卡已無可用敵人（全部遭遇過）
+   * - 無可用敵人: 當前關卡已無可用敵人（全部遭遇過）
    */
-  private getAvailableEnemySpawnInfos(): Result<EnemySpawnInfo[], 'NoAvailableEnemies'> {
+  private getAvailableEnemySpawnInfos(): Result<EnemySpawnInfo[], ApplicationErrorCode.無可用敵人> {
     const { enemyStore } = this.appContextService.getConfigStore()
     const { currentChapter, encounteredEnemyIds } = this.appContextService.getRunContext()
     // 過濾出尚未遭遇過的敵人生成資訊
@@ -81,7 +82,7 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
       .filter((info) => !encounteredEnemyIds.includes(info.templateId))
     // 確保至少有一個可用敵人
     if (availableInfos.length === 0) {
-      return Result.fail('NoAvailableEnemies')
+      return Result.fail(ApplicationErrorCode.無可用敵人)
     }
     // 回傳可用敵人生成資訊
     return Result.success(availableInfos)
