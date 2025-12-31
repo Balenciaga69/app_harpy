@@ -38,31 +38,21 @@ export class ShopService implements IShopService {
   buyItem(itemId: string): Result<void, string> {
     // 驗證當前 Run 狀態
     const validateResult = this.validateCurrentRunStatus()
-    if (validateResult.isFailure) {
-      return Result.fail(validateResult.error ?? '')
-    }
+    if (validateResult.isFailure) return Result.fail(validateResult.error ?? '')
     // 轉換 Context → Domain
     const { shop, character, stash } = this.loadDomainContexts()
     // 從商店找到指定的物品
     const shopItem = shop.items.find((item) => item.itemAggregate.record.id === itemId)
-    if (!shopItem) {
-      return Result.fail(DomainErrorCode.商店_商店物品不存在)
-    }
+    if (!shopItem) return Result.fail(DomainErrorCode.商店_商店物品不存在)
     // 檢查玩家金錢是否足夠
     const goldAfterPurchase = character.record.gold - shopItem.record.price
-    if (goldAfterPurchase < 0) {
-      return Result.fail(ApplicationErrorCode.商店_金錢不足)
-    }
+    if (goldAfterPurchase < 0) return Result.fail(ApplicationErrorCode.商店_金錢不足)
     // 嘗試加入倉庫
     const stashResult = stash.addItem(shopItem.itemAggregate)
-    if (stashResult.isFailure) {
-      return Result.fail(stashResult.error ?? '')
-    }
+    if (stashResult.isFailure) return Result.fail(stashResult.error ?? '')
     // 從商店移除物品
     const shopResult = shop.removeItem(itemId)
-    if (shopResult.isFailure) {
-      return Result.fail(shopResult.error ?? '')
-    }
+    if (shopResult.isFailure) return Result.fail(shopResult.error ?? '')
     // 更新角色金錢記錄
     const updatedCharacterRecord: CharacterRecord = {
       ...character.record,
@@ -88,21 +78,15 @@ export class ShopService implements IShopService {
   /** 出售 */
   sellItem(itemId: string): Result<void, string> {
     const validateResult = this.validateCurrentRunStatus()
-    if (validateResult.isFailure) {
-      return Result.fail(validateResult.error ?? '')
-    }
+    if (validateResult.isFailure) return Result.fail(validateResult.error ?? '')
     // 轉換 Context → Domain
     const { shop, character, stash } = this.loadDomainContexts()
     // 從倉庫取出要出售的物品
     const itemToSell = stash.getItem(itemId)
-    if (!itemToSell) {
-      return Result.fail(DomainErrorCode.倉庫_物品不存在)
-    }
+    if (!itemToSell) return Result.fail(DomainErrorCode.倉庫_物品不存在)
     // 從倉庫移除物品
     const stashRemoveResult = stash.removeItem(itemId)
-    if (stashRemoveResult.isFailure) {
-      return Result.fail(DomainErrorCode.商店_商店物品不存在)
-    }
+    if (stashRemoveResult.isFailure) return Result.fail(DomainErrorCode.商店_商店物品不存在)
     // 更新角色金錢
     const updatedCharacterRecord: CharacterRecord = {
       ...character.record,
@@ -129,21 +113,15 @@ export class ShopService implements IShopService {
     // 生成新物品
     for (let i = start; i < end; i++) {
       const result = this.itemGenerationService.generateRandomItem('SHOP_REFRESH')
-      if (result.isFailure) {
-        return Result.fail(result.error ?? '')
-      }
+      if (result.isFailure) return Result.fail(result.error ?? '')
       items.push(result.value!)
     }
     // 添加到商店
     const addResult = shop.addManyItems(items)
-    if (addResult.isFailure) {
-      return Result.fail(addResult.error ?? '')
-    }
+    if (addResult.isFailure) return Result.fail(addResult.error ?? '')
     // 將最稀有的第一個物品設為折扣
     const discountResult = shop.setRarestItemAsDiscount()
-    if (discountResult.isFailure) {
-      return Result.fail(discountResult.error ?? '')
-    }
+    if (discountResult.isFailure) return Result.fail(discountResult.error ?? '')
     // 更新 shopContext
     this.unitOfWork
       .updateShopContext({
@@ -157,22 +135,16 @@ export class ShopService implements IShopService {
   refreshShopItems(): Result<void, string> {
     // 驗證當前 Run 狀態
     const validateResult = this.validateCurrentRunStatus()
-    if (validateResult.isFailure) {
-      return Result.fail(validateResult.error ?? '')
-    }
+    if (validateResult.isFailure) return Result.fail(validateResult.error ?? '')
     // 玩家主動刷新，需扣除金錢
     const { shop, character } = this.loadDomainContexts()
     const { difficulty } = this.contextAccessor.getCurrentAtCreatedInfo()
     const refreshCost = shop.config.baseRefreshCost * difficulty
     const goldAfterRefresh = character.record.gold - refreshCost
-    if (goldAfterRefresh < 0) {
-      return Result.fail(ApplicationErrorCode.商店_金錢不足)
-    }
+    if (goldAfterRefresh < 0) return Result.fail(ApplicationErrorCode.商店_金錢不足)
     // 執行刷新
     const result = this.refreshShopItemsBySystem()
-    if (result.isFailure) {
-      return Result.fail(result.error ?? '')
-    }
+    if (result.isFailure) return Result.fail(result.error ?? '')
     // 更新角色金錢記錄
     const updatedCharacterRecord: CharacterRecord = {
       ...character.record,
@@ -186,14 +158,11 @@ export class ShopService implements IShopService {
       .commit()
     return Result.success(undefined)
   }
-
   /** 系統觸發刷新商店（不花錢） */
   refreshShopItemsBySystem(): Result<void, string> {
     // 只刷新商店內容，不動用金錢
     const result = this.generateShopItems()
-    if (result.isFailure) {
-      return Result.fail(result.error ?? '')
-    }
+    if (result.isFailure) return Result.fail(result.error ?? '')
     return Result.success(undefined)
   }
   /** 載入領域上下文 */
