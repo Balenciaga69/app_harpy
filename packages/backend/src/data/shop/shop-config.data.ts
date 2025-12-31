@@ -1,5 +1,4 @@
 import { ShopConfig } from '../../domain/shop/ShopConfig'
-
 /**
  * 商店配置資料
  * 定義不同商店的行為參數

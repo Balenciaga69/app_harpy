@@ -3,7 +3,6 @@ import { Result } from '../../shared/result/Result'
 import { ItemAggregate, ItemRecord } from '../item/Item'
 import { ShopConfig } from './ShopConfig'
 import { ShopHelper } from './ShopHelper'
-
 // === Record ===
 export interface ShopItemRecord extends ItemRecord {
   readonly price: number

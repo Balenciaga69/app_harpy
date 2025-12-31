@@ -1,6 +1,5 @@
 import { ItemRarity } from '../item/Item'
 import { ShopConfig } from './ShopConfig'
-
 export interface PriceCalculationParams {
   readonly config: ShopConfig
   readonly difficulty: number

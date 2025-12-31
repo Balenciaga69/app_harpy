@@ -1,5 +1,4 @@
 import { ItemRarity } from '../item/Item'
-
 /** 商店配置ID 類型 */
 export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 /** 商店配置介面 */

@@ -1,6 +1,5 @@
 import { CharacterRecord } from '../../domain/character/Character'
 import { ItemAggregate } from '../../domain/item/Item'
-import { ShopItemRecord } from '../../domain/shop/Shop'
 import { ApplicationErrorCode, DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { Result } from '../../shared/result/Result'
 import { IItemGenerationService } from '../content-generation/service/item/ItemGenerationService'

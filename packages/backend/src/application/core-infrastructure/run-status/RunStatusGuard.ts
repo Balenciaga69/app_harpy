@@ -3,7 +3,6 @@ import { DomainErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
 import { IRunContext } from '../context/interface/IRunContext'
 import { RunStatus } from './RunStatus'
-
 /** 用於管理 Run 狀態轉換的規則 */
 const ALLOWED_TRANSITIONS: Record<RunStatus, RunStatus[]> = {
   IDLE: ['PRE_COMBAT'],
@@ -11,7 +10,6 @@ const ALLOWED_TRANSITIONS: Record<RunStatus, RunStatus[]> = {
   IN_COMBAT: ['POST_COMBAT'],
   POST_COMBAT: ['IDLE'],
 }
-
 /** 驗證 Run 狀態轉換是否合法 */
 const validateTransition = (current: RunStatus, next: RunStatus): Result<void, string> => {
   const allowedNextStates = ALLOWED_TRANSITIONS[current]
