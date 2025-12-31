@@ -1,7 +1,6 @@
 // TODO: AI 自動生成的內容 待觀察是否可用
 import { DomainErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
-import { IRunContext } from '../context/interface/IRunContext'
 import { RunStatus } from './RunStatus'
 /** 用於管理 Run 狀態轉換的規則 */
 const ALLOWED_TRANSITIONS: Record<RunStatus, RunStatus[]> = {
