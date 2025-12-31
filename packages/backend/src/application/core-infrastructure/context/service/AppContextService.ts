@@ -39,6 +39,8 @@ export interface IContextSnapshotAccessor {
   getCurrentAtCreatedInfo(): AtCreatedInfo
   /** 取得建立記錄所需的當前信息( 難度、來源單位、建立時機 ) */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
+  /** 取得當前 Run 狀態 */
+  getRunStatus(): IRunContext['status']
 }
 /**
  * 上下文更新器：暴露狀態修改操作
@@ -152,5 +154,9 @@ export class AppContextService implements IAppContextService {
     const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
     const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
     return { difficulty, sourceUnitId: characterContext.id, atCreated }
+  }
+  /** 取得當前 Run 狀態 */
+  getRunStatus(): IRunContext['status'] {
+    return this.appContext.contexts.runContext.status
   }
 }

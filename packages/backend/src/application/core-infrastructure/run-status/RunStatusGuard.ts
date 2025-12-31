@@ -21,13 +21,13 @@ const validateTransition = (current: RunStatus, next: RunStatus): Result<void, s
   return Result.success(undefined)
 }
 /** 要求 Run 必須處於指定狀態 */
-const requireStatus = (run: IRunContext, expectedStatus: RunStatus | RunStatus[]): Result<void, string> => {
+const requireStatus = (current: RunStatus, expectedStatus: RunStatus | RunStatus[]): Result<void, string> => {
   if (Array.isArray(expectedStatus)) {
-    if (!expectedStatus.includes(run.status)) {
+    if (!expectedStatus.includes(current)) {
       return Result.fail(DomainErrorCode.Run_狀態不符)
     }
   } else {
-    if (run.status !== expectedStatus) {
+    if (current !== expectedStatus) {
       return Result.fail(DomainErrorCode.Run_狀態不符)
     }
   }

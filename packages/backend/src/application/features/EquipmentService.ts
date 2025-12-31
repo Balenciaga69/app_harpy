@@ -6,6 +6,7 @@ import { IAppContextService } from '../core-infrastructure/context/service/AppCo
 import { IContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
 import { CharacterAggregate } from '../../domain/character/Character'
 import { Stash } from '../../domain/stash/Stash'
+import { RunStatusGuard } from '../core-infrastructure/run-status/RunStatusGuard'
 /**
  * 裝備服務介面
  */
@@ -29,9 +30,13 @@ export class EquipmentService implements IEquipmentService {
   ) {}
   /** 卸下角色聖物至倉庫 */
   public unequipRelicAndUpdateContexts(relicId: string): Result<void, string> {
+    // 驗證當前 Run 狀態
+    const validateResult = this.validateCurrentRunStatus()
+    if (validateResult.isFailure) {
+      return Result.fail(validateResult.error ?? '')
+    }
     // 取得倉庫與角色的 Domain 物件
-    const stash = this.contextToDomainConverter.convertStashContextToDomain()
-    const character = this.contextToDomainConverter.convertCharacterContextToDomain()
+    const { stash, character } = this.loadDomainContexts()
     // 從角色身上找到指定的聖物
     const targetRelicAggregate = character.relics.find((r) => r.record.id === relicId)
     if (!targetRelicAggregate) {
@@ -40,12 +45,12 @@ export class EquipmentService implements IEquipmentService {
     // 執行卸下聖物的邏輯
     const unequipResult = character.unequipRelic(relicId)
     if (unequipResult.isFailure) {
-      return Result.fail(unequipResult.error as string)
+      return Result.fail(unequipResult.error ?? '')
     }
     // 將卸下的聖物加入倉庫
     const addItemResult = stash.addItem(targetRelicAggregate)
     if (addItemResult.isFailure) {
-      return Result.fail(addItemResult.error as string)
+      return Result.fail(addItemResult.error ?? '')
     }
     const newCharacter = unequipResult.value!
     const newStash = addItemResult.value!
@@ -54,9 +59,13 @@ export class EquipmentService implements IEquipmentService {
   }
   /** 裝備角色聖物 */
   public equipRelicAndUpdateContexts(relicId: string): Result<void, string> {
+    // 驗證當前 Run 狀態
+    const validateResult = this.validateCurrentRunStatus()
+    if (validateResult.isFailure) {
+      return Result.fail(validateResult.error ?? '')
+    }
     // 取得倉庫與角色的 Domain 物件
-    const stash = this.contextToDomainConverter.convertStashContextToDomain()
-    const character = this.contextToDomainConverter.convertCharacterContextToDomain()
+    const { stash, character } = this.loadDomainContexts()
     // 從倉庫取得指定的聖物
     const targetRelicAggregate = stash.getItem(relicId)
     if (!targetRelicAggregate) {
@@ -65,12 +74,12 @@ export class EquipmentService implements IEquipmentService {
     // 從倉庫移除該聖物
     const removeItemResult = stash.removeItem(relicId)
     if (removeItemResult.isFailure) {
-      return Result.fail(removeItemResult.error as string)
+      return Result.fail(removeItemResult.error ?? '')
     }
     // 執行裝備聖物的邏輯
     const equipResult = character.equipRelic(targetRelicAggregate as RelicAggregate)
     if (equipResult.isFailure) {
-      return Result.fail(equipResult.error as string)
+      return Result.fail(equipResult.error ?? '')
     }
     // 提交變更
     const newStash = removeItemResult.value!
@@ -94,5 +103,19 @@ export class EquipmentService implements IEquipmentService {
         items: newStash.listItems().map((i) => i.record),
       })
       .commit()
+  }
+  /** 載入領域上下文 */
+  private loadDomainContexts() {
+    const character = this.contextToDomainConverter.convertCharacterContextToDomain()
+    const stash = this.contextToDomainConverter.convertStashContextToDomain()
+    return { character, stash }
+  }
+  /** 驗證當前 Run 狀態是否允許裝備操作 */
+  private validateCurrentRunStatus(): Result<void, string> {
+    {
+      const status = this.appContextService.getRunStatus()
+      const result = RunStatusGuard.requireStatus(status, 'IDLE')
+      return result
+    }
   }
 }
