@@ -40,18 +40,18 @@ export interface PostCombatSharedContext {
 /**
  * 戰鬥勝利結果
  */
-export interface PostCombatWinContext {
+export type PostCombatWinContext = {
   readonly result: 'WIN'
   readonly detail: CombatWinDetail
-}
+} & PostCombatSharedContext
 /**
  * 戰鬥失敗結果
  */
-export interface PostCombatLoseContext {
+export type PostCombatLoseContext = {
   readonly result: 'LOSE'
   readonly detail: CombatLoseDetail
-}
+} & PostCombatSharedContext
 /**
  * 賽後記錄類型
  */
-export type PostCombatContext = PostCombatWinContext | PostCombatLoseContext | PostCombatSharedContext
+export type PostCombatContext = PostCombatWinContext | PostCombatLoseContext

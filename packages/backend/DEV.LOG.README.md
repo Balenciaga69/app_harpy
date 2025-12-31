@@ -1,5 +1,9 @@
 # 摘要
 
+## _2025/01/01_
+
+- 發現自己需要一套價格系統來支援商店系統與獎勵價值生成派發系統
+
 ## _2025/12/31_
 
 - 研究與探討 ResultPattern, Either Pattern, Exception Handling 的優缺點

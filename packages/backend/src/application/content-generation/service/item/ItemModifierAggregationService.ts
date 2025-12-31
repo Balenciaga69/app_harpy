@@ -41,6 +41,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   aggregateModifiers(): ItemRollModifier[] {
     const runCtx = this.contextSnapshot.getRunContext()
     return [
+      //TODO: 改造成可調節變動的策略
       ...runCtx.rollModifiers.filter((mod) => mod.durationStages !== 0),
       ...this.getHighFrequencyTagModifiers(),
       ...this.getHighStackRelicModifiers(),
