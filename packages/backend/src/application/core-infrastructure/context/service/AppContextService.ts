@@ -3,6 +3,7 @@ import { AtCreatedInfo, WithCreatedInfo, WithSourceUnit } from '../../../../shar
 import { IAppContext } from '../interface/IAppContext'
 import { ICharacterContext } from '../interface/ICharacterContext'
 import { IRunContext } from '../interface/IRunContext'
+import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
 // 用於創建 Record 的共通資訊
 interface CommonInfoForCreateRecord extends WithCreatedInfo, WithSourceUnit {
@@ -30,12 +31,16 @@ export interface IContextSnapshotAccessor {
   getCharacterContext(): ICharacterContext
   /** 取得當前倉庫上下文( 物品、容量等 ) */
   getStashContext(): IStashContext
+  /** 取得當前商店上下文( 商店物品、刷新狀態等 ) */
+  getShopContext(): IShopContext
   /** 一次取得所有上下文的快照 */
   getAllContexts(): IAppContext['contexts']
   /** 取得當前建立時機信息( 章節、關卡、難度係數 ) */
   getCurrentAtCreatedInfo(): AtCreatedInfo
   /** 取得建立記錄所需的當前信息( 難度、來源單位、建立時機 ) */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
+  /** 取得當前 Run 狀態 */
+  getRunStatus(): IRunContext['status']
 }
 /**
  * 上下文更新器：暴露狀態修改操作
@@ -50,6 +55,8 @@ export interface IContextMutator {
   setCharacterContext(ctx: ICharacterContext): void
   /** 更新倉庫上下文( 如物品、容量等 ) */
   setStashContext(ctx: IStashContext): void
+  /** 更新商店上下文( 如商店物品、刷新狀態等 ) */
+  setShopContext(ctx: IShopContext): void
 }
 /**
  * 完整應用上下文服務：結合讀、寫、快照計算
@@ -110,6 +117,20 @@ export class AppContextService implements IAppContextService {
       },
     }
   }
+  /** 取得當前商店上下文 */
+  getShopContext(): IShopContext {
+    return this.appContext.contexts.shopContext
+  }
+  /** 更新商店上下文( 透過不可變重建 )*/
+  setShopContext(ctx: IShopContext): void {
+    this.appContext = {
+      ...this.appContext,
+      contexts: {
+        ...this.appContext.contexts,
+        shopContext: ctx,
+      },
+    }
+  }
   /**
    * 取得當前建立時機信息
    * 副作用：無，純計算
@@ -133,5 +154,9 @@ export class AppContextService implements IAppContextService {
     const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
     const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
     return { difficulty, sourceUnitId: characterContext.id, atCreated }
+  }
+  /** 取得當前 Run 狀態 */
+  getRunStatus(): IRunContext['status'] {
+    return this.appContext.contexts.runContext.status
   }
 }

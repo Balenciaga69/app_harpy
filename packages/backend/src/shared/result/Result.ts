@@ -29,6 +29,7 @@ export class Result<T, E = string> {
   get isFailure(): boolean {
     return !this.isSuccess
   }
+  // === TODO: 以下功能非必要, 屬於 ai 生成, 但似乎滿好用的 可以試試看 ===
   /** 映射成功值，保持失敗狀態不變*/
   map<U>(fn: (value: T) => U): Result<U, E> {
     if (this.isFailure) {

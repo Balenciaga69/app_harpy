@@ -1,4 +1,5 @@
 import { Result } from '../../shared/result/Result'
+import { DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { ItemAggregate, ItemRecord } from '../item/Item'
 const INITIAL_CAPACITY = 20
 export interface StashRecord {
@@ -23,18 +24,18 @@ export class Stash {
   public get capacity(): number {
     return this._capacity
   }
-  /** 嘗試新增物品到倉庫。*/
-  public addItem(item: ItemAggregate): Result<Stash, 'StashFull'> {
+  /** 試試新增物品到倉庫。*/
+  public addItem(item: ItemAggregate): Result<Stash, DomainErrorCode.倉庫_倉庫已滿> {
     if (this.isAtCapacity()) {
-      return Result.fail('StashFull')
+      return Result.fail(DomainErrorCode.倉庫_倉庫已滿)
     }
     return Result.success(new Stash([...this.items, item], this.capacity))
   }
-  /** 嘗試從倉庫移除物品。*/
-  public removeItem(itemId: string): Result<Stash, 'ItemNotFound'> {
+  /** 試試從倉庫移除物品。*/
+  public removeItem(itemId: string): Result<Stash, DomainErrorCode.倉庫_物品不存在> {
     const newItems = this.items.filter((i) => i.record.id !== itemId)
     if (newItems.length === this.items.length) {
-      return Result.fail('ItemNotFound')
+      return Result.fail(DomainErrorCode.倉庫_物品不存在)
     }
     return Result.success(new Stash(newItems, this.capacity))
   }
@@ -52,10 +53,10 @@ export class Stash {
   public getUsedCapacity(): number {
     return this._items.length
   }
-  /** 嘗試擴展倉庫容量。*/
-  public expandCapacity(newCapacity: number): Result<Stash, 'InvalidCapacity'> {
+  /** 試試擴展倉庫容量。*/
+  public expandCapacity(newCapacity: number): Result<Stash, DomainErrorCode.倉庫_容量設定無效> {
     if (newCapacity <= this.items.length) {
-      return Result.fail('InvalidCapacity')
+      return Result.fail(DomainErrorCode.倉庫_容量設定無效)
     }
     return Result.success(new Stash(this.items, newCapacity))
   }

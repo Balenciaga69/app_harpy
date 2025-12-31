@@ -1,6 +1,7 @@
 import { ICharacterContext } from '../interface/ICharacterContext'
 import { IContextMutator } from './AppContextService'
 import { IRunContext } from '../interface/IRunContext'
+import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
 /**
  * 上下文單位工作介面
@@ -14,6 +15,8 @@ export interface IContextUnitOfWork {
   updateStashContext(ctx: IStashContext): IContextUnitOfWork
   /** 更新運行上下文（不立即應用，等待 commit） */
   updateRunContext(ctx: IRunContext): IContextUnitOfWork
+  /** 更新商店上下文（不立即應用，等待 commit） */
+  updateShopContext(ctx: IShopContext): IContextUnitOfWork
   /** 一次性提交所有待變更的 Context */
   commit(): void
   /** 放棄所有待變更的內容 */
@@ -22,6 +25,7 @@ export interface IContextUnitOfWork {
   hasCharacterChanges(): boolean
   hasStashChanges(): boolean
   hasRunChanges(): boolean
+  hasShopChanges(): boolean
 }
 /**
  * 上下文單位工作（Context Unit of Work）
@@ -42,6 +46,7 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
   private characterContextUpdate: ICharacterContext | null = null
   private stashContextUpdate: IStashContext | null = null
   private runContextUpdate: IRunContext | null = null
+  private shopContextUpdate: IShopContext | null = null
   private hasChanges = false
   constructor(private contextMutator: IContextMutator) {}
   /**
@@ -69,6 +74,14 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
     return this // 支援鏈式調用
   }
   /**
+   * 更新商店上下文（不立即應用，等待 commit）
+   */
+  updateShopContext(ctx: IShopContext): this {
+    this.shopContextUpdate = ctx
+    this.hasChanges = true
+    return this // 支援鏈式調用
+  }
+  /**
    * 一次性提交所有待變更的 Context
    *
    * 邏輯：
@@ -90,6 +103,9 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
     if (this.stashContextUpdate !== null) {
       this.contextMutator.setStashContext(this.stashContextUpdate)
     }
+    if (this.shopContextUpdate !== null) {
+      this.contextMutator.setShopContext(this.shopContextUpdate)
+    }
     // 重置狀態
     this.reset()
   }
@@ -106,6 +122,7 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
     this.characterContextUpdate = null
     this.stashContextUpdate = null
     this.runContextUpdate = null
+    this.shopContextUpdate = null
     this.hasChanges = false
   }
   /**
@@ -119,5 +136,8 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
   }
   hasRunChanges(): boolean {
     return this.runContextUpdate !== null
+  }
+  hasShopChanges(): boolean {
+    return this.shopContextUpdate !== null
   }
 }

@@ -3,16 +3,19 @@ import {
   IEnemyStore,
   IItemStore,
   IProfessionStore,
+  IShopStore,
   IUltimateStore,
 } from '../../static-config/IConfigStores'
 import { ICharacterContext } from './ICharacterContext'
 import { IRunContext } from './IRunContext'
+import { IShopContext } from './IShopContext'
 import { IStashContext } from './IStashContext'
 /** 所有上下文容器 */
 interface IContexts {
   readonly runContext: IRunContext
   readonly stashContext: IStashContext
   readonly characterContext: ICharacterContext
+  readonly shopContext: IShopContext
 }
 /** 配置存儲容器 */
 interface IConfigStore {
@@ -21,6 +24,7 @@ interface IConfigStore {
   readonly affixStore: IAffixStore
   readonly ultimateStore: IUltimateStore
   readonly professionStore: IProfessionStore
+  readonly shopStore: IShopStore
 }
 /**
  * 應用上下文：包含遊戲運行時所需的所有上下文與配置

@@ -5,6 +5,7 @@ import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
+import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
@@ -58,4 +59,11 @@ export interface IProfessionStore {
   hasProfession(id: string): boolean
   getAllProfessions(): ProfessionTemplate[]
   setMany(professions: ProfessionTemplate[]): void
+}
+/** 商店配置存儲介面：支援商店配置的查詢 */
+export interface IShopStore {
+  getShopConfig(id: string): ShopConfig
+  hasShopConfig(id: string): boolean
+  getAllShopConfigs(): ShopConfig[]
+  setMany(shopConfigs: ShopConfig[]): void
 }

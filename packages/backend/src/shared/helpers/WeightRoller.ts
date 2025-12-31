@@ -1,3 +1,4 @@
+import { Result } from '../result/Result'
 import { RandomHelper } from './RandomHelper'
 type ValidInfo<T = string> = { id: T; cumWeight: number }
 export interface RollInfo<T = string> {
@@ -13,9 +14,9 @@ const roll = <T = string>(seed: number, weightInfo: RollInfo<T>[]) => {
     validInfos.push({ id: info.id, cumWeight })
   })
   if (validInfos.length === 0) {
-    throw new Error('WeightRoller: no valid weight entries')
+    return Result.fail<T>('無可用選項可供骰選')
   }
-  return getRolledId(seed, validInfos, cumWeight)
+  return Result.success<T>(getRolledId(seed, validInfos, cumWeight))
 }
 const getRolledId = <T = string>(seed: number, validInfos: ValidInfo<T>[], cumWeight: number): T => {
   const randomValue = new RandomHelper(seed).next() * cumWeight
