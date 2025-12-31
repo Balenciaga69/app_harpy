@@ -47,8 +47,8 @@ export class EquipmentService implements IEquipmentService {
     if (addItemResult.isFailure) {
       return Result.fail(addItemResult.error as string)
     }
-    const newCharacter = unequipResult.getOrThrow()
-    const newStash = addItemResult.getOrThrow()
+    const newCharacter = unequipResult.value!
+    const newStash = addItemResult.value!
     this.commitUnitOfWork(newCharacter, newStash)
     return Result.success(undefined)
   }
@@ -73,8 +73,8 @@ export class EquipmentService implements IEquipmentService {
       return Result.fail(equipResult.error as string)
     }
     // 提交變更
-    const newStash = removeItemResult.getOrThrow()
-    const newCharacter = equipResult.getOrThrow()
+    const newStash = removeItemResult.value!
+    const newCharacter = equipResult.value!
     this.commitUnitOfWork(newCharacter, newStash)
     return Result.success(undefined)
   }

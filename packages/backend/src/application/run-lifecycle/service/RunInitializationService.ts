@@ -143,6 +143,8 @@ export class RunInitializationService {
       chapters: chapters,
       remainingFailRetries: DEFAULT_REMAINING_FAIL_RETRIES,
       rollModifiers: [],
+      status: 'STAGE_SELECTION', // TODO: 要改
+      temporaryContext: {},
     }
     const characterId = `${runId}-char`
     // 驗證起始聖物（如有指定）

@@ -2,6 +2,7 @@
  * Run 狀態類型
  * 定義 Run 的生命週期階段
  */
+// TODO: AI 生成的內容, 我個人不是很贊同
 export type RunStatus =
   | 'STAGE_SELECTION' // 選擇關卡階段
   | 'PRE_COMBAT' // 戰前準備（可選，例如下注系統）
