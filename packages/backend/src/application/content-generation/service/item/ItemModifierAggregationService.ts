@@ -39,10 +39,10 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
    * 邊界：修飾符 durationStages !== 0 表示未過期
    */
   aggregateModifiers(): ItemRollModifier[] {
-    const runCtx = this.contextSnapshot.getRunContext()
+    const { rollModifiers } = this.contextSnapshot.getRunContext()
     return [
       //TODO: 改造成可調節變動的策略
-      ...runCtx.rollModifiers.filter((mod) => mod.durationStages !== 0),
+      ...rollModifiers.filter((mod) => mod.durationStages !== 0),
       ...this.getHighFrequencyTagModifiers(),
       ...this.getHighStackRelicModifiers(),
     ]
@@ -119,3 +119,4 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
     return currentStacks >= HIGH_STACK_RELIC_THRESHOLD && currentStacks < template.maxStacks
   }
 }
+// TODO:@Copilot 策略 與 id 匹配目前直接寫死 record 在這裡就好 不用刻意動態化

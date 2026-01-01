@@ -13,8 +13,8 @@ const ShopRefresh: ItemRollConfig = {
   },
 }
 // 賽後獎勵物品生成配置
-const PostGameReward: ItemRollConfig = {
-  sourceType: 'POST_GAME_REWARD',
+const PostCombatReward: ItemRollConfig = {
+  sourceType: 'POST_COMBAT_REWARD',
   itemTypeWeights: {
     RELIC: 1,
   },
@@ -25,4 +25,4 @@ const PostGameReward: ItemRollConfig = {
     LEGENDARY: 1,
   },
 }
-export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, PostGameReward]
+export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, PostCombatReward]
