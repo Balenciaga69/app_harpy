@@ -52,3 +52,22 @@ ItemRollService.rollTemplate 而是平均的骰出來 沒有用到任何修飾�
 會有盲點嗎?還是可行?
 
 ## 上述已經討論完畢
+
+修飾符如何影響 rollTemplate？
+請參考 ItemRollService ItemRollModifier rollRarity aggregateRarityModifiers 怎麼做的
+
+策略鏈的順序
+SHOP_REFRESH 可能同時有「最常出現TAG」+ 「高堆疊ID」修飾符，如何組合？ 當然 aggregateModifiers(): ItemRollModifier[] {
+const { rollModifiers } = this.contextSnapshot.getRunContext()
+return [
+//TODO: 改造成可調節變動的策略
+...rollModifiers.filter((mod) => mod.durationStages !== 0),
+...this.getHighFrequencyTagModifiers(),
+...this.getHighStackRelicModifiers(),
+]
+} 類似這種
+權重是相加還是相乘？ 一律 相乘
+RewardGenerationContext 已有 type: CombatRewardType，修飾符聚合時直接透過它判斷？
+是的
+
+ItemRollConfig.策略 欄位是否該改為清晰的結構？ 是的 幫我修成 read only array

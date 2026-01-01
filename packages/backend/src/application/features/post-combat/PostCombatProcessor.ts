@@ -1,7 +1,5 @@
 import { PostCombatContext } from '../../../domain/post-combat/PostCombat'
 import { Result } from '../../../shared/result/Result'
-import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
-
 export class PostCombatProcessor {
   constructor() {}
   /** @Copilot 給我中文註解 */
@@ -16,8 +14,7 @@ export class PostCombatProcessor {
     return Result.success(undefined)
   }
 }
-
 /** 獎勵工廠 */
 export class RewardFactory {
-  constructor(private readonly appCtxService: IAppContextService) {}
+  constructor() {}
 }

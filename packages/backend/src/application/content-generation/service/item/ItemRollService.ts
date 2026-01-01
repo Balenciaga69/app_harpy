@@ -21,7 +21,6 @@ export interface IItemRollService {
   /** 根據來源與修飾符骰選物品，返回樣板ID、類型、稀有度 */
   rollItem(source: string, modifiers: ItemRollModifier[]): Result<RollResult>
 }
-
 export class ItemRollService implements IItemRollService {
   constructor(
     private configStoreAccessor: IConfigStoreAccessor,
@@ -45,7 +44,7 @@ export class ItemRollService implements IItemRollService {
     const rarity = rarityResult.value!
     // 根據類型與稀有度篩選樣板，並骰選最終樣板
     const availableTemplates = this.constraintService.getAvailableTemplates(itemType, rarity)
-    const itemTemplateIdResult = this.rollTemplate(seed, availableTemplates)
+    const itemTemplateIdResult = this.rollTemplate(seed, availableTemplates, modifiers)
     if (itemTemplateIdResult.isFailure) return Result.fail(itemTemplateIdResult.error!)
     // 返回結果
     const itemTemplateId = itemTemplateIdResult.value!
@@ -61,27 +60,94 @@ export class ItemRollService implements IItemRollService {
   }
   /** 骰選稀有度：根據修飾符調整權重後骰選 */
   private rollRarity(seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): Result<ItemRarity> {
-    const rarityMods = this.aggregateRarityModifiers(modifiers)
+    const rarityMultipliers = this.aggregateModifiersByType(modifiers, 'RARITY')
     const adjustedWeights = Object.entries(rollConfig.rarityWeights).map(([rarity, weight]) => ({
       id: rarity as ItemRarity,
-      weight: weight * (rarityMods.get(rarity as ItemRarity) ?? 1),
+      weight: weight * (rarityMultipliers.get(rarity as ItemRarity) ?? 1),
     }))
-    const rollResult = WeightRoller.roll<ItemRarity>(seed, adjustedWeights)
-    return rollResult
+    return WeightRoller.roll<ItemRarity>(seed, adjustedWeights)
   }
-  /** 聚合稀有度修飾符：將多個修飾符合併為單一權重映射 */
-  private aggregateRarityModifiers(modifiers: ItemRollModifier[]): Map<ItemRarity, number> {
-    const rarityMods = modifiers.filter((mod) => mod.type === 'RARITY')
-    const result = new Map<ItemRarity, number>()
-    for (const mod of rarityMods) {
-      const current = result.get(mod.rarity) ?? 1
-      result.set(mod.rarity, current + mod.multiplier)
+  /** 骰選物品樣板：根據修飾符調整樣板權重後骰選 */
+  private rollTemplate(seed: number, templates: ItemTemplate[], modifiers: ItemRollModifier[]): Result<string> {
+    // 聚合所有修飾符類型
+    const modifierMap = this.aggregateTemplateModifiers(modifiers)
+    // 根據修飾符調整樣板權重
+    const weightList = templates.map((template) => ({
+      id: template.id,
+      weight: this.calculateTemplateWeight(template, modifierMap),
+    }))
+    return WeightRoller.roll<string>(seed, weightList)
+  }
+  /**
+   * 聚合修飾符：按修飾符類型分組，相同目標的權重相乘
+   * 支援類型：RARITY、TAG、ID
+   * 返回：Map<修飾符鍵, 累積權重倍率>
+   * 範例：
+   *   - RARITY 修飾符：鍵為稀有度字符串（如 "EPIC"），值為權重倍率
+   *   - TAG 修飾符：鍵為TAG字符串，值為權重倍率
+   *   - ID 修飾符：鍵為樣板ID，值為權重倍率
+   */
+  private aggregateModifiersByType(modifiers: ItemRollModifier[], type: 'RARITY' | 'TAG' | 'ID'): Map<string, number> {
+    const result = new Map<string, number>()
+    const filtered = modifiers.filter((mod) => mod.type === type)
+    for (const mod of filtered) {
+      let key: string
+      switch (type) {
+        case 'RARITY':
+          key = (mod as any).rarity
+          break
+        case 'TAG':
+          key = (mod as any).tag
+          break
+        case 'ID':
+          key = (mod as any).templateId
+          break
+      }
+      const current = result.get(key) ?? 1
+      result.set(key, current * mod.multiplier)
     }
     return result
   }
-  /** 骰選物品樣板：從可用樣板清單中均等骰選 */
-  private rollTemplate(seed: number, templates: ItemTemplate[]): Result<string> {
-    const weightList = templates.map((template) => ({ id: template.id, weight: 1 }))
-    return WeightRoller.roll<string>(seed, weightList)
+  /**
+   * 聚合樣板修飾符：支援 RARITY、TAG、ID 三種類型
+   * 返回聚合後的修飾符映射，便於計算樣板權重
+   */
+  private aggregateTemplateModifiers(modifiers: ItemRollModifier[]): {
+    rarityMultipliers: Map<string, number>
+    tagMultipliers: Map<string, number>
+    idMultipliers: Map<string, number>
+  } {
+    return {
+      rarityMultipliers: this.aggregateModifiersByType(modifiers, 'RARITY'),
+      tagMultipliers: this.aggregateModifiersByType(modifiers, 'TAG'),
+      idMultipliers: this.aggregateModifiersByType(modifiers, 'ID'),
+    }
+  }
+  /**
+   * 計算樣板的調整後權重
+   * 邏輯：基礎權重乘以 ID 修飾符、TAG 修飾符、RARITY 修飾符的乘積
+   * 注：RARITY 修飾符在骰選稀有度階段已應用，此處提供額外調整支援
+   */
+  private calculateTemplateWeight(
+    template: ItemTemplate,
+    modifierMap: {
+      rarityMultipliers: Map<string, number>
+      tagMultipliers: Map<string, number>
+      idMultipliers: Map<string, number>
+    }
+  ): number {
+    let weight = 1
+    // 應用 ID 修飾符
+    const idMod = modifierMap.idMultipliers.get(template.id)
+    if (idMod !== undefined) {
+      weight *= idMod
+    }
+    // 應用 TAG 修飾符：樣板擁有任何修飾符中的TAG時應用
+    for (const [tag, multiplier] of modifierMap.tagMultipliers.entries()) {
+      if (template.tags.includes(tag as any)) {
+        weight *= multiplier
+      }
+    }
+    return weight
   }
 }
