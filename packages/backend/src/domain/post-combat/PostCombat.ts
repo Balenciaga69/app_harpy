@@ -6,9 +6,15 @@
 import { ItemRecord } from '../item/Item'
 /**
  * 獎勵類型
- * 包含: 高稀有度遺物、高親合度遺物、低親合度遺物、金幣、頭目擊殺獎勵
+ * 包含: 高稀有度遺物、高親合度遺物、低親合度遺物、金幣、頭目擊殺獎勵、精英擊殺獎勵
  */
-export type CombatRewardType = 'HIGH_RARITY_RELIC' | 'HIGH_AFFINITY' | 'LOW_AFFINITY' | 'GOLD' | 'BOSS_REWARD'
+export type CombatRewardType =
+  | 'HIGH_RARITY_RELIC'
+  | 'HIGH_AFFINITY'
+  | 'LOW_AFFINITY'
+  | 'GOLD'
+  | 'BOSS_REWARD'
+  | 'ELITE_REWARD'
 /**
  * 獎勵資料結構
  */
