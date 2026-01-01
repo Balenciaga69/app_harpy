@@ -14,7 +14,6 @@ export interface ItemRollConfig {
   /** 此來源使用的修飾符策略清單，多個策略權重相乘 */
   readonly modifierStrategies: readonly ItemRollModifierStrategy[]
 }
-
 /** 獎勵 item 的配置 */
 export interface RewardRollConfig extends ItemRollConfig {
   readonly rewardType: string

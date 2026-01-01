@@ -22,7 +22,6 @@ const ShopRefresh: ItemRollConfig = {
     },
   ],
 }
-
 /**
  * 賽後獎勵物品生成配置集合
  * 職責：定義各獎勵類型的物品生成配置，包含稀有度權重與修飾符策略
@@ -134,12 +133,9 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
     ],
   },
 }
-
 export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, ...Object.values(RewardRollConfigs)]
-
 /** 獲取所有獎勵配置列表 */
 export const RewardRollConfigList: RewardRollConfig[] = Object.values(RewardRollConfigs)
-
 /** 根據獎勵類型取得對應的骰選配置 */
 export function getRewardRollConfig(rewardType: string): RewardRollConfig | undefined {
   return RewardRollConfigs[rewardType]
