@@ -7,6 +7,7 @@ import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
+import { CombatRewardType } from '../../../domain/post-combat/PostCombat'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
@@ -28,7 +29,7 @@ export interface IItemStore {
   getItemRollConfig(id: ItemRollConfigId): ItemRollConfig
   hasItemRollConfig(id: ItemRollConfigId): boolean
   /** 根據獎勵類型取得獎勵骰選配置 */
-  getRewardRollConfig(rewardType: string): RewardRollConfig | undefined
+  getRewardRollConfig(rewardType: CombatRewardType): RewardRollConfig | undefined
   getRelic(id: string): RelicTemplate
   hasRelic(id: string): boolean
   getManyItems(ids: string[]): ItemTemplate[]

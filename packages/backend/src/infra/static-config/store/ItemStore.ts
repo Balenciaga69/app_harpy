@@ -2,6 +2,7 @@ import { IItemStore } from '../../../application/core-infrastructure/static-conf
 import { RelicTemplate, ItemTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+import { CombatRewardType } from '../../../domain/post-combat/PostCombat'
 import { ConfigNotFoundError } from '../../../shared/errors/GameErrors'
 /** 物品配置存儲：管理聖物樣板、骰選配置、獎勵配置與約束條件 */
 export class ItemStore implements IItemStore {
@@ -38,7 +39,7 @@ export class ItemStore implements IItemStore {
     return this.itemRollConfigs.has(id)
   }
   /** 根據獎勵類型查詢獎勵骰選配置 */
-  getRewardRollConfig(rewardType: string): RewardRollConfig | undefined {
+  getRewardRollConfig(rewardType: CombatRewardType): RewardRollConfig | undefined {
     return this.rewardRollConfigs.get(rewardType)
   }
   /** 根據 ID 查詢聖物樣板 */

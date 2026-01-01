@@ -1,7 +1,9 @@
 import { EffectTarget } from '../../shared/models/EffectTarget'
+/** 大絕招效果類型 */
+export type UltimateEffectType = 'polluteCards' | 'polluteRanks'
 /** 大絕招效果的基礎配置，定義效果的目標與倍率 */
 interface BaseUltimateEffect {
-  readonly type: string
+  readonly type: UltimateEffectType
   readonly target: EffectTarget
   readonly ultimateMultiplier?: number
 }
