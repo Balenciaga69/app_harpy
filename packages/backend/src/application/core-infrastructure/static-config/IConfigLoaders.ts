@@ -2,7 +2,7 @@ import { AffixTemplate } from '../../../domain/affix/Affix'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { RelicTemplate } from '../../../domain/item/Item'
-import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
@@ -32,6 +32,7 @@ export interface ItemConfigDTO {
   relicTemplate: RelicTemplate[]
   itemRollConfigs: ItemRollConfig[]
   itemRollConstraints: ItemRollConstraint[]
+  rewardRollConfigs: RewardRollConfig[]
 }
 /** 物品配置加載器介面 */
 export interface IItemConfigLoader {

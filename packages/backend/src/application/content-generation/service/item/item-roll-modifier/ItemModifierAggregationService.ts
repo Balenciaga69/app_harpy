@@ -4,6 +4,8 @@ import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../../core-infrastructure/context/service/AppContextService'
+import { Result } from '../../../../../shared/result/Result'
+import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
 import { IItemRollModifierStrategy } from './strategy/ItemRollModifierStrategy'
 import { ItemRollModifierStrategyFactory } from './strategy/ItemRollModifierStrategyFactory'
 /**
@@ -13,14 +15,14 @@ import { ItemRollModifierStrategyFactory } from './strategy/ItemRollModifierStra
 export interface IItemModifierAggregationService {
   /**
    * 聚合商店骰選修飾符
-   * 根據配置的策略清單聚合所有適用修飾符
+   * 返回 Result 型別，包含修飾符陣列或錯誤訊息
    */
-  aggregateShopModifiers(): ItemRollModifier[]
+  aggregateShopModifiers(): Result<ItemRollModifier[], string>
   /**
    * 聚合獎勵骰選修飾符
-   * 根據獎勵類型選擇對應的策略集合並聚合
+   * 返回 Result 型別，包含修飾符陣列或錯誤訊息
    */
-  aggregateRewardModifiers(rewardType: CombatRewardType): ItemRollModifier[]
+  aggregateRewardModifiers(rewardType: CombatRewardType): Result<ItemRollModifier[], string>
 }
 export class ItemModifierAggregationService implements IItemModifierAggregationService {
   private strategyFactory: ItemRollModifierStrategyFactory
@@ -33,7 +35,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   /**
    * Aggregate shop roll modifiers
    */
-  aggregateShopModifiers(): ItemRollModifier[] {
+  aggregateShopModifiers(): Result<ItemRollModifier[], string> {
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const itemConfig = itemStore.getItemRollConfig('SHOP_REFRESH')
     // 取得配置中定義的修飾符策略
@@ -46,7 +48,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   /**
    * Aggregate reward roll modifiers
    */
-  aggregateRewardModifiers(rewardType: CombatRewardType): ItemRollModifier[] {
+  aggregateRewardModifiers(rewardType: CombatRewardType): Result<ItemRollModifier[], string> {
     // 建立對應獎勵類型的策略
     const strategies = this.strategyFactory.createRewardStrategies(rewardType)
     // 聚合所有策略的修飾符
@@ -54,13 +56,18 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
   }
   /**
    * Merge modifiers from multiple strategies
+   * 返回 Result 以确保边界安全
    */
-  private mergeModifiers(strategies: IItemRollModifierStrategy[]): ItemRollModifier[] {
+  private mergeModifiers(strategies: IItemRollModifierStrategy[]): Result<ItemRollModifier[], string> {
     const modifierMap = new Map<string, ItemRollModifier>()
     for (const strategy of strategies) {
       const modifiers = strategy.aggregateModifiers()
       for (const modifier of modifiers) {
-        const key = this.getModifierKey(modifier)
+        const keyResult = this.getModifierKey(modifier)
+        if (keyResult.isFailure) {
+          return Result.fail(keyResult.error!)
+        }
+        const key = keyResult.value!
         // 將所有同類型修飾符合併 例如: 稀有度:RARE, TAG: FIRE 會合併成一個修飾符
         const existing = modifierMap.get(key)
         if (existing) {
@@ -70,22 +77,23 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
         }
       }
     }
-    return Array.from(modifierMap.values())
+    return Result.success(Array.from(modifierMap.values()))
   }
   /**
    * 拿到修飾符的唯一鍵值，用於合併判斷
+   * 返回 Result 確保邊界安全，若修飾符型別未知則返回錯誤
    */
-  private getModifierKey(modifier: ItemRollModifier): string {
+  private getModifierKey(modifier: ItemRollModifier): Result<string, string> {
     if (modifier.type === 'RARITY') {
-      return `RARITY:${modifier.rarity}`
+      return Result.success(`RARITY:${modifier.rarity}`)
     }
     if (modifier.type === 'TAG') {
-      return `TAG:${modifier.tag}`
+      return Result.success(`TAG:${modifier.tag}`)
     }
     if (modifier.type === 'ID') {
-      return `ID:${modifier.templateId}`
+      return Result.success(`ID:${modifier.templateId}`)
     }
     // 如果到這裡，說明有新的修飾符類型被新增但沒有處理
-    throw new Error(`Unknown modifier type: ${(modifier as any).type}`)
+    return Result.fail(ApplicationErrorCode.物品_物品模板不存在)
   }
 }

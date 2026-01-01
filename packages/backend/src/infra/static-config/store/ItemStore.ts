@@ -1,12 +1,13 @@
 import { IItemStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
 import { RelicTemplate, ItemTemplate } from '../../../domain/item/Item'
-import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ConfigNotFoundError } from '../../../shared/errors/GameErrors'
-/** 物品配置存儲：管理聖物樣板、骰選配置與約束條件 */
+/** 物品配置存儲：管理聖物樣板、骰選配置、獎勵配置與約束條件 */
 export class ItemStore implements IItemStore {
   private itemRollConstraints: Map<string, ItemRollConstraint> = new Map()
   private itemRollConfigs: Map<string, ItemRollConfig> = new Map()
+  private rewardRollConfigs: Map<string, RewardRollConfig> = new Map()
   private relics: Map<string, RelicTemplate> = new Map()
   /** 取得所有物品骰選約束條件 */
   getAllItemRollConstraints(): ItemRollConstraint[] {
@@ -35,6 +36,10 @@ export class ItemStore implements IItemStore {
   /** 檢查骰選配置是否存在 */
   hasItemRollConfig(id: string): boolean {
     return this.itemRollConfigs.has(id)
+  }
+  /** 根據獎勵類型查詢獎勵骰選配置 */
+  getRewardRollConfig(rewardType: string): RewardRollConfig | undefined {
+    return this.rewardRollConfigs.get(rewardType)
   }
   /** 根據 ID 查詢聖物樣板 */
   getRelic(id: string): RelicTemplate {
@@ -75,6 +80,12 @@ export class ItemStore implements IItemStore {
   setItemRollConfigs(configs: ItemRollConfig[]): void {
     for (const config of configs) {
       this.itemRollConfigs.set(config.sourceType, config)
+    }
+  }
+  /** 批量存儲獎勵骰選配置 */
+  setRewardRollConfigs(configs: RewardRollConfig[]): void {
+    for (const config of configs) {
+      this.rewardRollConfigs.set(config.rewardType, config)
     }
   }
   /** 批量存儲約束條件 */

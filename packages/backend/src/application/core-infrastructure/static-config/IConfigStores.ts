@@ -2,7 +2,7 @@ import { AffixTemplate } from '../../../domain/affix/Affix'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
-import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
@@ -27,6 +27,8 @@ export interface IItemStore {
   hasItemRollConstraint(id: string): boolean
   getItemRollConfig(id: ItemRollConfigId): ItemRollConfig
   hasItemRollConfig(id: ItemRollConfigId): boolean
+  /** 根據獎勵類型取得獎勵骰選配置 */
+  getRewardRollConfig(rewardType: string): RewardRollConfig | undefined
   getRelic(id: string): RelicTemplate
   hasRelic(id: string): boolean
   getManyItems(ids: string[]): ItemTemplate[]
@@ -35,6 +37,8 @@ export interface IItemStore {
   getAllRelics(): RelicTemplate[]
   setMany(relics: RelicTemplate[]): void
   setItemRollConfigs(configs: ItemRollConfig[]): void
+  /** 設置獎勵骰選配置 */
+  setRewardRollConfigs(configs: RewardRollConfig[]): void
 }
 /** Affix配置存儲介面：支援Affix樣板與效果樣板的查詢 */
 export interface IAffixStore {

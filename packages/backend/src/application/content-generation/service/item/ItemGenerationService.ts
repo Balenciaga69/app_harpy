@@ -31,7 +31,9 @@ export class ItemGenerationService implements IItemGenerationService {
    */
   generateRandomItemFromShop(): Result<RelicAggregate> {
     // 聚合商店特定的修飾符
-    const modifiers = this.modifierService.aggregateShopModifiers()
+    const modifiersResult = this.modifierService.aggregateShopModifiers()
+    if (modifiersResult.isFailure) return Result.fail(modifiersResult.error!)
+    const modifiers = modifiersResult.value!
     const rollResult = this.rollService.rollItem('SHOP_REFRESH', modifiers)
     if (rollResult.isFailure) return Result.fail(rollResult.error!)
     const { itemTemplateId, itemType } = rollResult.value!
@@ -42,7 +44,9 @@ export class ItemGenerationService implements IItemGenerationService {
    */
   generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicAggregate> {
     // 聚合獎勵特定的修飾符
-    const modifiers = this.modifierService.aggregateRewardModifiers(rewardType)
+    const modifiersResult = this.modifierService.aggregateRewardModifiers(rewardType)
+    if (modifiersResult.isFailure) return Result.fail(modifiersResult.error!)
+    const modifiers = modifiersResult.value!
     const rollResult = this.rollService.rollItem('POST_COMBAT_REWARD', modifiers)
     if (rollResult.isFailure) return Result.fail(rollResult.error!)
     const { itemTemplateId, itemType } = rollResult.value!
