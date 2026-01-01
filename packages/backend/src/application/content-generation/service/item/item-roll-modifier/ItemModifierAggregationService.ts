@@ -64,9 +64,7 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
       const modifiers = strategy.aggregateModifiers()
       for (const modifier of modifiers) {
         const keyResult = this.getModifierKey(modifier)
-        if (keyResult.isFailure) {
-          return Result.fail(keyResult.error!)
-        }
+        if (keyResult.isFailure) return Result.fail(keyResult.error!)
         const key = keyResult.value!
         // 將所有同類型修飾符合併 例如: 稀有度:RARE, TAG: FIRE 會合併成一個修飾符
         const existing = modifierMap.get(key)

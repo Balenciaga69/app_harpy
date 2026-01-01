@@ -135,7 +135,7 @@ export class MostFrequentTagRewardModifierStrategy implements IItemRollModifierS
  * 業務規則：調整不同稀有度的生成權重
  * 適用獎勵類型：HIGH_RARITY_RELIC
  */
-export class RarityPreferenceRewardModifierStrategy implements IItemRollModifierStrategy {
+export class RarityRewardModifierStrategy implements IItemRollModifierStrategy {
   private readonly rarityMultipliers: Map<ItemRarity, number>
   constructor(rarityMultipliers: Partial<Record<ItemRarity, number>>) {
     this.rarityMultipliers = new Map(Object.entries(rarityMultipliers) as [ItemRarity, number][])

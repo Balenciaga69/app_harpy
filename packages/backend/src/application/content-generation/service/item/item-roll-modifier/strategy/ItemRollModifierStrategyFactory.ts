@@ -1,14 +1,15 @@
+import { ItemRollModifierStrategyType } from '../../../../../../domain/item/roll/ItemRollConfig'
 import { CombatRewardType } from '../../../../../../domain/post-combat/PostCombat'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../../../core-infrastructure/context/service/AppContextService'
-import { IItemRollModifierStrategy } from './ItemRollModifierStrategy'
 import {
+  IItemRollModifierStrategy,
   MostFrequentTagModifierStrategy,
-  RarityPreferenceRewardModifierStrategy,
-  ReverseFrequentTagRewardModifierStrategy,
   MostFrequentTagRewardModifierStrategy,
+  RarityRewardModifierStrategy,
+  ReverseFrequentTagRewardModifierStrategy,
 } from './ItemRollModifierStrategy'
 /**
  * 物品骰選修飾符策略工廠
@@ -26,23 +27,17 @@ export class ItemRollModifierStrategyFactory {
    * 根據商店配置的策略清單來組裝具體的策略實現
    */
   createShopStrategies(
-    strategyConfigs: Array<{ strategyId: string; multiplier: number }>
+    strategyConfigs: Array<{ strategyId: ItemRollModifierStrategyType; multiplier: number }>
   ): IItemRollModifierStrategy[] {
     const strategies: IItemRollModifierStrategy[] = []
     for (const config of strategyConfigs) {
-      switch (config.strategyId) {
-        case 'MOST_FREQUENT_TAG':
-          strategies.push(
-            new MostFrequentTagModifierStrategy(this.configStoreAccessor, this.contextSnapshot, config.multiplier)
-          )
-          break
-        case 'HIGH_STACK_RELIC':
-          // 注：高堆疊策略需要額外的 templateId 與 stackThreshold，這裡需要從配置中取得
-          // 為簡化起見，此處留待進一步擴展
-          break
-        default:
-          // 未知策略，跳過
-          break
+      if (config.strategyId === 'MOST_FREQUENT_TAG') {
+        const mostFrequentTagModifier = new MostFrequentTagModifierStrategy(
+          this.configStoreAccessor,
+          this.contextSnapshot,
+          config.multiplier
+        )
+        strategies.push(mostFrequentTagModifier)
       }
     }
     return strategies
@@ -73,13 +68,13 @@ export class ItemRollModifierStrategyFactory {
           break
         case 'RARITY_PREFERENCE':
           // 直接從配置中讀取稀有度倍率，無需額外計算或硬編碼
-          const rarityMultipliers = rewardConfig.rarityPreferenceMultipliers || {
+          const rarityMultipliers = rewardConfig.rarityMultipliers || {
             COMMON: 1,
             RARE: 1,
             EPIC: 1,
             LEGENDARY: 1,
           }
-          strategies.push(new RarityPreferenceRewardModifierStrategy(rarityMultipliers))
+          strategies.push(new RarityRewardModifierStrategy(rarityMultipliers))
           break
         case 'REVERSE_FREQUENT_TAG':
           strategies.push(new ReverseFrequentTagRewardModifierStrategy(this.configStoreAccessor, this.contextSnapshot))
