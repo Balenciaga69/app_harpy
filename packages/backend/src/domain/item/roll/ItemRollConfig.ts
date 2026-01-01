@@ -17,4 +17,6 @@ export interface ItemRollConfig {
 /** 獎勵 item 的配置 */
 export interface RewardRollConfig extends ItemRollConfig {
   readonly rewardType: string
+  /** RARITY_PREFERENCE 策略的稀有度倍率配置（可選） */
+  readonly rarityPreferenceMultipliers?: Record<ItemRarity, number>
 }

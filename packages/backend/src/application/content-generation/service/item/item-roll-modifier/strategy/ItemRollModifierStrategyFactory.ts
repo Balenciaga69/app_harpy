@@ -10,7 +10,6 @@ import {
   ReverseFrequentTagRewardModifierStrategy,
   MostFrequentTagRewardModifierStrategy,
 } from './ItemRollModifierStrategy'
-import { ItemRarity } from '../../../../../../domain/item/Item'
 /**
  * 物品骰選修飾符策略工廠
  * 責任：根據來源（商店/獎勵）與配置，選擇並組裝相應的修飾符策略
@@ -73,8 +72,13 @@ export class ItemRollModifierStrategyFactory {
           )
           break
         case 'RARITY_PREFERENCE':
-          // 從配置中提取稀有度倍率，根據獎勵類型決定具體值
-          const rarityMultipliers = this.extractRarityMultipliers(rewardType)
+          // 直接從配置中讀取稀有度倍率，無需額外計算或硬編碼
+          const rarityMultipliers = rewardConfig.rarityPreferenceMultipliers || {
+            COMMON: 1,
+            RARE: 1,
+            EPIC: 1,
+            LEGENDARY: 1,
+          }
           strategies.push(new RarityPreferenceRewardModifierStrategy(rarityMultipliers))
           break
         case 'REVERSE_FREQUENT_TAG':
@@ -86,37 +90,5 @@ export class ItemRollModifierStrategyFactory {
       }
     }
     return strategies
-  }
-  /**
-   * 根據獎勵類型提取稀有度倍率
-   * 私有方法：根據業務規則決定每個稀有度的加成倍率
-   */
-  private extractRarityMultipliers(rewardType: CombatRewardType): Record<ItemRarity, number> {
-    // 根據奖励类型返回对应的稀有度倍率
-    // 这些值来自原始代码中的硬编码，现在集中管理
-    switch (rewardType) {
-      case 'HIGH_RARITY_RELIC':
-        return {
-          COMMON: 0,
-          RARE: 0.5,
-          EPIC: 2,
-          LEGENDARY: 3,
-        }
-      case 'BOSS_REWARD':
-        return {
-          COMMON: 0,
-          RARE: 0.3,
-          EPIC: 1.5,
-          LEGENDARY: 4,
-        }
-      default:
-        // 其他獎勵類型使用預設倍率（全 1）
-        return {
-          COMMON: 1,
-          RARE: 1,
-          EPIC: 1,
-          LEGENDARY: 1,
-        }
-    }
   }
 }

@@ -1,4 +1,5 @@
 import { ItemRollConfig, RewardRollConfig } from '../../domain/item/roll/ItemRollConfig'
+import { ItemRarity } from '../../domain/item/Item'
 /**
  * 商店刷新物品生成配置
  * 職責：定義商店骰選時的物品類型、稀有度與修飾符策略
@@ -23,8 +24,36 @@ const ShopRefresh: ItemRollConfig = {
   ],
 }
 /**
+ * 稀有度偏好修飾符策略的倍率配置
+ * 用於 RARITY_PREFERENCE 策略，定義不同獎勵類型對各稀有度的加成倍數
+ * 設計：集中管理所有稀有度倍率，便於調整業務規則
+ */
+const RarityPreferenceMultipliers: Record<string, Record<ItemRarity, number>> = {
+  /** 高稀有度聖物：平衡稀有品與史詩品 */
+  HIGH_RARITY_RELIC: {
+    COMMON: 0,
+    RARE: 0.5,
+    EPIC: 2,
+    LEGENDARY: 3,
+  },
+  /** 精英獎勵：適度增加稀有度，比BOSS獎勵溫和 */
+  ELITE_REWARD: {
+    COMMON: 0,
+    RARE: 0.3, // 稍微增加稀有品
+    EPIC: 1.2, // 適度增加史詩品
+    LEGENDARY: 2.5, // 中等概率的傳奇
+  },
+  /** BOSS獎勵：大幅偏好高稀有度 */
+  BOSS_REWARD: {
+    COMMON: 0,
+    RARE: 0, // 完全不選稀有品
+    EPIC: 1.5,
+    LEGENDARY: 4, // 大幅增加傳奇概率
+  },
+}
+/**
  * 賽後獎勵物品生成配置集合
- * 職責：定義各獎勵類型的物品生成配置，包含稀有度權重與修飾符策略
+ * 職責：定義各獎勵類型的物品生成配置，包含稀有度權重、修飾符策略與稀有度倍率
  * 設計：每個獎勵類型獨立配置，易於調整業務規則
  */
 const RewardRollConfigs: Record<string, RewardRollConfig> = {
@@ -51,6 +80,7 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
         multiplier: 1,
       },
     ],
+    rarityPreferenceMultipliers: RarityPreferenceMultipliers.HIGH_RARITY_RELIC,
   },
   /** 高親合度聖物：優先選擇玩家已有TAG的物品 */
   HIGH_AFFINITY: {
@@ -112,6 +142,27 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
       },
     ],
   },
+  /** 精英獎勵：適度增加稀有度，為一般與BOSS獎勵間的中間選項 */
+  ELITE_REWARD: {
+    rewardType: 'ELITE_REWARD',
+    sourceType: 'POST_COMBAT_REWARD',
+    itemTypeWeights: {
+      RELIC: 1,
+    },
+    rarityWeights: {
+      COMMON: 0,
+      RARE: 16,
+      EPIC: 4,
+      LEGENDARY: 1,
+    },
+    modifierStrategies: [
+      {
+        strategyId: 'RARITY_PREFERENCE',
+        multiplier: 1,
+      },
+    ],
+    rarityPreferenceMultipliers: RarityPreferenceMultipliers.ELITE_REWARD,
+  },
   /** BOSS獎勵：提供更高稀有度的物品 */
   BOSS_REWARD: {
     rewardType: 'BOSS_REWARD',
@@ -131,6 +182,7 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
         multiplier: 1,
       },
     ],
+    rarityPreferenceMultipliers: RarityPreferenceMultipliers.BOSS_REWARD,
   },
 }
 export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, ...Object.values(RewardRollConfigs)]
