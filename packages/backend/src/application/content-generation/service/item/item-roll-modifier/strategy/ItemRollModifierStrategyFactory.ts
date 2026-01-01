@@ -1,15 +1,15 @@
-import { CombatRewardType } from '../../../../../domain/post-combat/PostCombat'
+import { CombatRewardType } from '../../../../../../domain/post-combat/PostCombat'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
-} from '../../../../core-infrastructure/context/service/AppContextService'
-import { IItemRollModifierStrategy } from './IItemRollModifierStrategy'
+} from '../../../../../core-infrastructure/context/service/AppContextService'
+import { IItemRollModifierStrategy } from './ItemRollModifierStrategy'
 import {
   MostFrequentTagModifierStrategy,
   RarityPreferenceRewardModifierStrategy,
   ReverseFrequentTagRewardModifierStrategy,
   MostFrequentTagRewardModifierStrategy,
-} from './ModifierStrategy'
+} from './ItemRollModifierStrategy'
 /**
  * 物品骰選修飾符策略工廠
  * 責任：根據來源（商店/獎勵）與配置，選擇並組裝相應的修飾符策略

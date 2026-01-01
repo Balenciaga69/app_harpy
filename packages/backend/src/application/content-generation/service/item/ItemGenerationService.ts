@@ -2,9 +2,9 @@ import { ItemType, RelicAggregate } from '../../../../domain/item/Item'
 import { CombatRewardType } from '../../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
+import { IItemModifierAggregationService } from './item-roll-modifier/ItemModifierAggregationService'
 import { IItemAggregateService } from './ItemAggregateService'
 import { IItemConstraintService } from './ItemConstraintService'
-import { IItemModifierAggregationService } from './ItemModifierAggregationService'
 import { IItemRollService } from './ItemRollService'
 /**
  * 物品生成服務

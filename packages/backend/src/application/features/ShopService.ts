@@ -110,22 +110,18 @@ export class ShopService implements IShopService {
     const start = shop.items.length
     const end = shop.config.shopSlotCount
     const items: ItemAggregate[] = []
-
     // 生成新物品
     for (let i = start; i < end; i++) {
       const result = this.itemGenerationService.generateRandomItemFromShop()
       if (result.isFailure) return Result.fail(result.error!)
       items.push(result.value!)
     }
-
     // 添加到商店
     const addResult = shop.addManyItems(items)
     if (addResult.isFailure) return Result.fail(addResult.error!)
-
     // 將最稀有的第一個物品設為折扣
     const discountResult = shop.setRarestItemAsDiscount()
     if (discountResult.isFailure) return Result.fail(discountResult.error!)
-
     // 更新 shopContext
     this.unitOfWork
       .updateShopContext({

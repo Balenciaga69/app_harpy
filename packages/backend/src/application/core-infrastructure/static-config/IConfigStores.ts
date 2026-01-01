@@ -20,12 +20,13 @@ export interface IEnemyStore {
   setEnemySpawnInfos(infos: EnemySpawnInfo[]): void
 }
 /** 物品配置存儲介面：支援聖物樣板、骰選配置與約束條件的查詢 */
+export type ItemRollConfigId = 'SHOP_REFRESH' | 'POST_COMBAT_REWARD'
 export interface IItemStore {
   getAllItemRollConstraints(): ItemRollConstraint[]
   getItemRollConstraint(id: string): ItemRollConstraint
   hasItemRollConstraint(id: string): boolean
-  getItemRollConfig(id: string): ItemRollConfig
-  hasItemRollConfig(id: string): boolean
+  getItemRollConfig(id: ItemRollConfigId): ItemRollConfig
+  hasItemRollConfig(id: ItemRollConfigId): boolean
   getRelic(id: string): RelicTemplate
   hasRelic(id: string): boolean
   getManyItems(ids: string[]): ItemTemplate[]

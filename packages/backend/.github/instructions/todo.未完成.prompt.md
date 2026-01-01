@@ -71,3 +71,28 @@ RewardGenerationContext 已有 type: CombatRewardType，修飾符聚合時直接
 是的
 
 ItemRollConfig.策略 欄位是否該改為清晰的結構？ 是的 幫我修成 read only array
+
+## 上述已經討論完畢( 已經開發完畢)
+
+---
+
+你的 src\data\shop\shop-config.data.ts ShopConfigList 為何要 modifierStrategies 包含策略? 而非在
+src\data\item\item-roll-config.data.ts ItemRollConfigList 統一管理?
+我其實比較偏好原本做法 ShopConfig 的 modifierStrategies 不該存在
+
+---
+
+src\application\content-generation\service\item\strategy\ShopModifierStrategy.ts
+src\application\content-generation\service\item\strategy\RewardModifierStrategy.ts
+能幫我放同一個檔案嗎? ModifierStrategy.ts 就好 我不需要拆分兩個
+
+---
+
+src\application\content-generation\service\item\ItemRollService.ts
+你能幫我 按照 ItemRollModifier 的不同 type aggregateTemplateModifiers 聚合嗎?
+aggregateRarityModifiers 也整併進去 還是不可行?
+
+---
+
+先完成這些處理
+然後 npm run check
