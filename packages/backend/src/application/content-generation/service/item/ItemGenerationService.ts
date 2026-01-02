@@ -4,8 +4,8 @@ import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
 import { IItemModifierAggregationService } from './item-roll-modifier/ItemModifierAggregationService'
 import { IItemAggregateService } from './ItemAggregateService'
-import { IItemConstraintService } from './ItemConstraintService'
-import { IItemRollService } from './ItemRollService'
+import { IItemConstraintService } from './sub-service/ItemConstraintService'
+import { IItemRollService } from './sub-service/ItemRollService'
 /**
  * 物品生成服務
  * 職責：根據不同來源（商店/獎勵）生成物品

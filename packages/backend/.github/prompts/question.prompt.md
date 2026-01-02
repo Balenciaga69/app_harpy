@@ -1,4 +1,4 @@
-## Title: 項目問答幫手
+## Title: Project Question Assistant
 
 ## Your role
 

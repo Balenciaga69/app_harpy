@@ -39,6 +39,7 @@ export enum ApplicationErrorCode {
   初始化_版本衝突 = '版本衝突',
   商店_金錢不足 = '金錢不足',
   骰選_無可用選項 = '無可用選項',
+  遊戲_獎勵類型不支援 = '獎勵類型不支援',
 }
 // ===== 錯誤敘述對應表 =====
 export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, string> = {
@@ -68,6 +69,7 @@ export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, strin
   [ApplicationErrorCode.初始化_版本衝突]: '資料衝突，請重試',
   [ApplicationErrorCode.商店_金錢不足]: '金錢不足，無法完成交易',
   [ApplicationErrorCode.骰選_無可用選項]: '無可用選項可供骰選',
+  [ApplicationErrorCode.遊戲_獎勵類型不支援]: '不支援的獎勵類型',
 }
 /**
  * 取得錯誤的中文敘述

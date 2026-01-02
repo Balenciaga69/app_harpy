@@ -1,25 +1,27 @@
-import { ItemRarity, ItemTemplate, ItemType } from '../../../../domain/item/Item'
-import { ItemRollConfig } from '../../../../domain/item/roll/ItemRollConfig'
-import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
-import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
-import { Result } from '../../../../shared/result/Result'
+import { ItemRarity, ItemTemplate, ItemType } from '../../../../../domain/item/Item'
+import { ItemRollConfig } from '../../../../../domain/item/roll/ItemRollConfig'
+import { ItemRollModifier } from '../../../../../domain/item/roll/ItemRollModifier'
+import { WeightRoller } from '../../../../../shared/helpers/WeightRoller'
+import { Result } from '../../../../../shared/result/Result'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
-} from '../../../core-infrastructure/context/service/AppContextService'
-import { ItemRollConfigId } from '../../../core-infrastructure/static-config/IConfigStores'
+} from '../../../../core-infrastructure/context/service/AppContextService'
+import { ItemRollConfigId } from '../../../../core-infrastructure/static-config/IConfigStores'
 import { IItemConstraintService } from './ItemConstraintService'
 import {
   aggregateTemplateModifiers,
   calculateTemplateWeight,
   aggregateModifiersByType,
-} from './item-roll-modifier/ModifierAggregationHelper'
+} from '../item-roll-modifier/ModifierAggregationHelper'
 /** 骰選結果類型 */
 type RollResult = {
   itemTemplateId: string
   itemType: ItemType
   rarity: ItemRarity
 }
+/** 物品骰選來源類型別名 */
+type ItemTypeAndRarityResult = { itemType: ItemType; rarity: ItemRarity }
 /**
  * 物品骰選服務：執行物品骰選流程
  * 職責：協調物品類型、稀有度、樣板的骰選，應用修飾符並選出最終物品
@@ -41,22 +43,46 @@ export class ItemRollService implements IItemRollService {
   rollItem(source: ItemRollConfigId, modifiers: ItemRollModifier[]): Result<RollResult> {
     const { seed } = this.contextSnapshot.getRunContext()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
-    // 取得骰選配置
-    const staticRollConfig = itemStore.getItemRollConfig(source)
     // 骰選物品類型與稀有度
-    const itemTypeResult = this.rollFromWeights(seed, staticRollConfig.itemTypeWeights)
-    const rarityResult = this.rollRarity(seed, staticRollConfig, modifiers)
-    const combinedResult = Result.combine([itemTypeResult, rarityResult])
-    if (combinedResult.isFailure) return Result.fail(combinedResult.error!)
-    const itemType = itemTypeResult.value!
-    const rarity = rarityResult.value!
-    // 根據類型與稀有度篩選樣板，並骰選最終樣板
+    const typeAndRarityResult = this.rollItemTypeAndRarity(seed, itemStore.getItemRollConfig(source), modifiers)
+    if (typeAndRarityResult.isFailure) {
+      return Result.fail(typeAndRarityResult.error!)
+    }
+    const { itemType, rarity } = typeAndRarityResult.value!
+    // 取得可用樣板
     const availableTemplates = this.constraintService.getAvailableTemplates(itemType, rarity)
-    const itemTemplateIdResult = this.rollTemplate(seed, availableTemplates, modifiers)
-    if (itemTemplateIdResult.isFailure) return Result.fail(itemTemplateIdResult.error!)
-    // 返回結果
-    const itemTemplateId = itemTemplateIdResult.value!
-    return Result.success({ itemTemplateId, itemType, rarity })
+    // 骰選最終樣板
+    const templateIdResult = this.rollTemplate(seed, availableTemplates, modifiers)
+    if (templateIdResult.isFailure) {
+      return Result.fail(templateIdResult.error!)
+    }
+    // 組裝結果
+    return Result.success({
+      itemTemplateId: templateIdResult.value!,
+      itemType,
+      rarity,
+    })
+  }
+  /**
+   * 骰選物品類型與稀有度
+   */
+  private rollItemTypeAndRarity(
+    seed: number,
+    rollConfig: ItemRollConfig,
+    modifiers: ItemRollModifier[]
+  ): Result<ItemTypeAndRarityResult> {
+    const itemTypeResult = this.rollFromWeights(seed, rollConfig.itemTypeWeights)
+    if (itemTypeResult.isFailure) {
+      return Result.fail(itemTypeResult.error!)
+    }
+    const rarityResult = this.rollRarity(seed, rollConfig, modifiers)
+    if (rarityResult.isFailure) {
+      return Result.fail(rarityResult.error!)
+    }
+    return Result.success({
+      itemType: itemTypeResult.value!,
+      rarity: rarityResult.value!,
+    })
   }
   /** 通用權重骰選：從權重映射中骰選結果 */
   private rollFromWeights<T extends string>(seed: number, weights: Record<T, number>): Result<T> {

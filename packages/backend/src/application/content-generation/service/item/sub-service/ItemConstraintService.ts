@@ -1,10 +1,10 @@
-import { Result } from '../../../../shared/result/Result'
-import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
-import { ItemRarity, ItemTemplate, ItemType } from '../../../../domain/item/Item'
+import { Result } from '../../../../../shared/result/Result'
+import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
+import { ItemRarity, ItemTemplate, ItemType } from '../../../../../domain/item/Item'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
-} from '../../../core-infrastructure/context/service/AppContextService'
+} from '../../../../core-infrastructure/context/service/AppContextService'
 /**
  * 物品生成限制服務：檢查物品樣板是否符合生成條件
  * 職責：檢查物品是否符合當前進度、職業、事件等限制條件；篩選符合條件的可用樣板
@@ -53,8 +53,6 @@ export class ItemConstraintService implements IItemConstraintService {
   }
   /**
    * 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單
-   * 邊界：只支援聖物類型，其他類型返回空陣列
-   * 副作用：無
    */
   getAvailableTemplates(itemType: ItemType, rarity: ItemRarity): ItemTemplate[] {
     if (itemType !== 'RELIC') return []
