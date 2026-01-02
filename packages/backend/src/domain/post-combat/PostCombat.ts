@@ -22,7 +22,8 @@ export interface CombatReward {
  * 戰鬥勝利詳情
  */
 export interface CombatWinDetail {
-  readonly selectedRewardIndex: number
+  readonly selectedRewardIndexes: number[]
+  readonly maxSelectableCount: number
   readonly availableRewards: ReadonlyArray<CombatReward>
 }
 /**

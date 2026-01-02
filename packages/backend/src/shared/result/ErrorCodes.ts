@@ -26,6 +26,14 @@ export enum DomainErrorCode {
   Run_重試次數不足 = '重試次數不足',
   Run_無法前進到相同或較早關卡 = '無法前進到相同或較早關卡',
   Run_敵人已遭遇過 = '敵人已遭遇過',
+  // PostCombat (戰鬥後)
+  PostCombat_上下文不存在 = '戰鬥後上下文不存在',
+  PostCombat_非勝利狀態 = '非勝利狀態，無法進行此操作',
+  PostCombat_獎勵數量不符 = '選擇的獎勵與可選擇數量不符',
+  PostCombat_無效獎勵索引 = '存在無效的獎勵索引',
+  PostCombat_重複獎勵索引 = '存在重複的獎勵索引',
+  PostCombat_派發金幣失敗 = '派發金幣失敗',
+  PostCombat_派發物品失敗 = '派發物品失敗',
 }
 // ===== Application 層錯誤 =====
 export enum ApplicationErrorCode {
@@ -63,6 +71,13 @@ export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, strin
   [DomainErrorCode.Run_重試次數不足]: '重試次數不足，無法繼續',
   [DomainErrorCode.Run_無法前進到相同或較早關卡]: '無法前進到相同或較早關卡',
   [DomainErrorCode.Run_敵人已遭遇過]: '此敵人已遭遇過',
+  [DomainErrorCode.PostCombat_上下文不存在]: '戰鬥後上下文不存在',
+  [DomainErrorCode.PostCombat_非勝利狀態]: '非勝利狀態，無法進行此操作',
+  [DomainErrorCode.PostCombat_獎勵數量不符]: '選擇的獎勵與可選擇數量不符',
+  [DomainErrorCode.PostCombat_無效獎勵索引]: '存在無效的獎勵索引',
+  [DomainErrorCode.PostCombat_重複獎勵索引]: '存在重複的獎勵索引',
+  [DomainErrorCode.PostCombat_派發金幣失敗]: '派發金幣失敗',
+  [DomainErrorCode.PostCombat_派發物品失敗]: '派發物品失敗',
   [ApplicationErrorCode.敵人_無可用敵人]: '當前關卡無可用敵人',
   [ApplicationErrorCode.敵人_關卡資訊無效]: '關卡資訊無效或不完整',
   [ApplicationErrorCode.物品_物品模板不存在]: '物品模板不存在',
