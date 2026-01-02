@@ -87,6 +87,7 @@ export class GameConfigAssembler implements IGameConfigAssembler {
   private assembleItemStore(itemConfig: ItemConfigDTO): void {
     this.itemStore.setMany(itemConfig.relicTemplate)
     this.itemStore.setItemRollConfigs(itemConfig.itemRollConfigs)
+    this.itemStore.setRewardRollConfigs(itemConfig.rewardRollConfigs)
     this.itemStore.setItemRollConstraints(itemConfig.itemRollConstraints)
   }
   /** 職業 assemble 職業 store */

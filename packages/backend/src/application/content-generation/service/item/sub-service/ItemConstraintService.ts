@@ -1,19 +1,10 @@
-import { Result } from '../../../../shared/result/Result'
-import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
-import { ItemRarity, ItemTemplate, ItemType } from '../../../../domain/item/Item'
+import { Result } from '../../../../../shared/result/Result'
+import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
+import { ItemRarity, ItemTemplate, ItemType } from '../../../../../domain/item/Item'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
-} from '../../../core-infrastructure/context/service/AppContextService'
-/**
- * 物品限制檢查錯誤類型
- */
-export type ItemConstraintError =
-  | ApplicationErrorCode.物品_物品模板不存在 // 模板未找到
-  | ApplicationErrorCode.物品_章節不允許此物品 // 當前章節不允許此物品
-  | ApplicationErrorCode.物品_職業不允許此物品 // 當前職業不允許此物品
-  | ApplicationErrorCode.物品_物品受事件限制 // 此物品有事件限制
-  | ApplicationErrorCode.物品_物品受敵人限制 // 此物品有敵人限制
+} from '../../../../core-infrastructure/context/service/AppContextService'
 /**
  * 物品生成限制服務：檢查物品樣板是否符合生成條件
  * 職責：檢查物品是否符合當前進度、職業、事件等限制條件；篩選符合條件的可用樣板
@@ -22,7 +13,7 @@ export type ItemConstraintError =
  */
 export interface IItemConstraintService {
   /** 檢查物品樣板是否符合當前進度的生成條件 */
-  canGenerateItemTemplate(templateId: string): Result<void, ItemConstraintError>
+  canGenerateItemTemplate(templateId: string): Result<void>
   /** 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單 */
   getAvailableTemplates(itemType: ItemType, rarity: ItemRarity): ItemTemplate[]
 }
@@ -32,7 +23,7 @@ export class ItemConstraintService implements IItemConstraintService {
     private contextSnapshot: IContextSnapshotAccessor
   ) {}
   /** 檢查物品樣板是否符合當前進度的生成條件 */
-  canGenerateItemTemplate(templateId: string): Result<void, ItemConstraintError> {
+  canGenerateItemTemplate(templateId: string): Result<void> {
     const { characterContext, runContext } = this.contextSnapshot.getAllContexts()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const template = itemStore.getRelic(templateId)
@@ -62,8 +53,6 @@ export class ItemConstraintService implements IItemConstraintService {
   }
   /**
    * 根據物品類型與稀有度取得符合當前限制條件的可用樣板清單
-   * 邊界：只支援聖物類型，其他類型返回空陣列
-   * 副作用：無
    */
   getAvailableTemplates(itemType: ItemType, rarity: ItemRarity): ItemTemplate[] {
     if (itemType !== 'RELIC') return []

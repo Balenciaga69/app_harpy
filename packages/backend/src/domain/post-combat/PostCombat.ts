@@ -6,9 +6,15 @@
 import { ItemRecord } from '../item/Item'
 /**
  * 獎勵類型
- * 包含: 高稀有度遺物、高親合度遺物、低親合度遺物、金幣、頭目擊殺獎勵
+ * 包含: 高稀有度遺物、高親合度遺物、低親合度遺物、金幣、頭目擊殺獎勵、精英擊殺獎勵
  */
-export type CombatRewardType = 'HIGH_RARITY_RELIC' | 'HIGH_AFFINITY' | 'LOW_AFFINITY' | 'GOLD' | 'BOSS_REWARD'
+export type CombatRewardType =
+  | 'HIGH_RARITY_RELIC'
+  | 'HIGH_AFFINITY'
+  | 'LOW_AFFINITY'
+  | 'GOLD'
+  | 'BOSS_REWARD'
+  | 'ELITE_REWARD'
 /**
  * 獎勵資料結構
  */
@@ -33,25 +39,26 @@ export interface CombatLoseDetail {
 /**
  * 賽後共用結果
  */
+export type CombatDifficultyType = 'NORMAL' | 'ELITE' | 'BOSS' | 'ENDLESS'
 export interface PostCombatSharedContext {
   isPlayerConfirmed: boolean
-  combatDifficulty: 'NORMAL' | 'ELITE' | 'BOSS' | 'ENDLESS'
+  combatDifficulty: CombatDifficultyType
 }
 /**
  * 戰鬥勝利結果
  */
-export interface PostCombatWinContext {
+export type PostCombatWinContext = {
   readonly result: 'WIN'
   readonly detail: CombatWinDetail
-}
+} & PostCombatSharedContext
 /**
  * 戰鬥失敗結果
  */
-export interface PostCombatLoseContext {
+export type PostCombatLoseContext = {
   readonly result: 'LOSE'
   readonly detail: CombatLoseDetail
-}
+} & PostCombatSharedContext
 /**
  * 賽後記錄類型
  */
-export type PostCombatContext = PostCombatWinContext | PostCombatLoseContext | PostCombatSharedContext
+export type PostCombatContext = PostCombatWinContext | PostCombatLoseContext

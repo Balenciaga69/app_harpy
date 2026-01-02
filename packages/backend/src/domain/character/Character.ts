@@ -69,6 +69,25 @@ export class CharacterAggregate {
     }
     return Result.success(new CharacterAggregate(newRecord, this.profession, this.relics, this.ultimate))
   }
+  /** 扣除金錢，返回新的角色聚合實例或失敗原因 */
+  public deductGold(amount: number): Result<CharacterAggregate, string> {
+    if (this.record.gold < amount) {
+      return Result.fail(DomainErrorCode.角色_金錢不足)
+    }
+    const newRecord: CharacterRecord = {
+      ...this.record,
+      gold: this.record.gold - amount,
+    }
+    return Result.success(new CharacterAggregate(newRecord, this.profession, this.relics, this.ultimate))
+  }
+  /** 增加金錢，返回新的角色聚合實例 */
+  public addGold(amount: number): Result<CharacterAggregate, string> {
+    const newRecord: CharacterRecord = {
+      ...this.record,
+      gold: this.record.gold + amount,
+    }
+    return Result.success(new CharacterAggregate(newRecord, this.profession, this.relics, this.ultimate))
+  }
   /** 取得某一聖物 */
   public getRelic(relicId: string): Result<RelicAggregate, string> {
     const relic = this.relics.find((r) => r.record.id === relicId)

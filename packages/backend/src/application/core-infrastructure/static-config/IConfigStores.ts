@@ -2,11 +2,12 @@ import { AffixTemplate } from '../../../domain/affix/Affix'
 import { AffixEffect } from '../../../domain/affix/effect/AffixEffectTemplate'
 import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
-import { ItemRollConfig } from '../../../domain/item/roll/ItemRollConfig'
+import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
+import { CombatRewardType } from '../../../domain/post-combat/PostCombat'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
@@ -20,12 +21,15 @@ export interface IEnemyStore {
   setEnemySpawnInfos(infos: EnemySpawnInfo[]): void
 }
 /** 物品配置存儲介面：支援聖物樣板、骰選配置與約束條件的查詢 */
+export type ItemRollConfigId = 'SHOP_REFRESH' | 'POST_COMBAT_REWARD'
 export interface IItemStore {
   getAllItemRollConstraints(): ItemRollConstraint[]
   getItemRollConstraint(id: string): ItemRollConstraint
   hasItemRollConstraint(id: string): boolean
-  getItemRollConfig(id: string): ItemRollConfig
-  hasItemRollConfig(id: string): boolean
+  getItemRollConfig(id: ItemRollConfigId): ItemRollConfig
+  hasItemRollConfig(id: ItemRollConfigId): boolean
+  /** 根據獎勵類型取得獎勵骰選配置 */
+  getRewardRollConfig(rewardType: CombatRewardType): RewardRollConfig | undefined
   getRelic(id: string): RelicTemplate
   hasRelic(id: string): boolean
   getManyItems(ids: string[]): ItemTemplate[]
@@ -34,6 +38,8 @@ export interface IItemStore {
   getAllRelics(): RelicTemplate[]
   setMany(relics: RelicTemplate[]): void
   setItemRollConfigs(configs: ItemRollConfig[]): void
+  /** 設置獎勵骰選配置 */
+  setRewardRollConfigs(configs: RewardRollConfig[]): void
 }
 /** Affix配置存儲介面：支援Affix樣板與效果樣板的查詢 */
 export interface IAffixStore {
@@ -61,9 +67,10 @@ export interface IProfessionStore {
   setMany(professions: ProfessionTemplate[]): void
 }
 /** 商店配置存儲介面：支援商店配置的查詢 */
+export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 export interface IShopStore {
-  getShopConfig(id: string): ShopConfig
-  hasShopConfig(id: string): boolean
+  getShopConfig(id: ShopConfigId): ShopConfig
+  hasShopConfig(id: ShopConfigId): boolean
   getAllShopConfigs(): ShopConfig[]
   setMany(shopConfigs: ShopConfig[]): void
 }

@@ -133,8 +133,6 @@ export class AppContextService implements IAppContextService {
   }
   /**
    * 取得當前建立時機信息
-   * 副作用：無，純計算
-   * 用途：為新建立的聚合根提供時機上下文( 章節、關卡、難度係數 )
    */
   getCurrentAtCreatedInfo(): AtCreatedInfo {
     const { currentChapter, currentStage } = this.getRunContext()
@@ -144,9 +142,6 @@ export class AppContextService implements IAppContextService {
   }
   /**
    * 取得建立記錄所需的當前信息
-   * 副作用：無，純計算
-   * 返回：難度係數、來源單位ID、建立時機( 章節、關卡、難度 )
-   * 用途：工廠與聚合根服務使用此方法為新建立的記錄設定共通欄位
    */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord {
     const characterContext = this.getCharacterContext()
@@ -155,8 +150,14 @@ export class AppContextService implements IAppContextService {
     const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
     return { difficulty, sourceUnitId: characterContext.id, atCreated }
   }
-  /** 取得當前 Run 狀態 */
+  /**
+   * 取得當前 Run 狀態
+   */
   getRunStatus(): IRunContext['status'] {
     return this.appContext.contexts.runContext.status
+  }
+  /** 取得 Run 的臨時上下文 */
+  getTemporaryContext() {
+    return this.appContext.contexts.runContext.temporaryContext
   }
 }

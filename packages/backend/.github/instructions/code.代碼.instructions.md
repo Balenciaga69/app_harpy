@@ -2,6 +2,11 @@
 applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
 ---
 
+### 關於 Markdown
+
+- 繁體中文優先, 只使用 Bullet Points 與 Heading 結構
+- 不會有任何代碼, 只有文字且易讀而非過度學術技術派
+
 ### 關於代碼
 
 - 堅守原則
@@ -147,4 +152,5 @@ applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
 
 - .github\faq: 放了一些常見問題解答
 - src: 主要程式碼
-  AI 如果 token 足夠, 請多閱讀相關檔案.
+- src\shared\result\Result.ts 這是 Result<T,E>
+- src\data: 放了遊戲設定的靜態配置資料(給設計師調整的地方)

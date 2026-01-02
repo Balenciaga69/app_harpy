@@ -36,10 +36,13 @@ export class ItemAggregateService implements IItemAggregateService {
   /** 從遺物模板與當前上下文建立 RelicAggregate */
   createRelicByTemplateUsingCurrentContext(templateId: string) {
     const relicTemplate = this.resolveTemplate(templateId)
+    // 取得 currentInfo
     const currentInfo = this.contextSnapshot.getCurrentInfoForCreateRecord()
+    // 建立 affix aggregates
     const affixAggregates = this.affixAggregateService.createManyByTemplateUsingCurrentContext([
       ...relicTemplate.affixIds,
     ])
+    // 建立 relic record
     const record = RelicRecordFactory.createOne(templateId, {
       affixRecords: affixAggregates.map((a) => a.record),
       ...currentInfo,

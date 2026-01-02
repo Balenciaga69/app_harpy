@@ -1,17 +1,21 @@
 import { ItemType, RelicAggregate } from '../../../../domain/item/Item'
-import { ItemRollSourceType } from '../../../../domain/item/roll/ItemRollConfig'
+import { CombatRewardType } from '../../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
+import { IItemModifierAggregationService } from './item-roll-modifier/ItemModifierAggregationService'
 import { IItemAggregateService } from './ItemAggregateService'
-import { IItemConstraintService } from './ItemConstraintService'
-import { IItemModifierAggregationService } from './ItemModifierAggregationService'
-import { IItemRollService } from './ItemRollService'
+import { IItemConstraintService } from './sub-service/ItemConstraintService'
+import { IItemRollService } from './sub-service/ItemRollService'
 /**
- * 物品生成錯誤類型
+ * 物品生成服務
+ * 職責：根據不同來源（商店/獎勵）生成物品
+ * 依賴：聚合服務、限制檢查、骰選服務
  */
 export interface IItemGenerationService {
-  /** 生成隨機物品 */
-  generateRandomItem(source: ItemRollSourceType): Result<RelicAggregate>
+  /** 根據商店來源生成隨機物品 */
+  generateRandomItemFromShop(): Result<RelicAggregate>
+  /** 根據獎勵類型生成隨機物品 */
+  generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicAggregate>
   /** 根據指定樣板生成物品 */
   generateItemFromTemplate(templateId: string, itemType: ItemType): Result<RelicAggregate>
 }
@@ -23,15 +27,31 @@ export class ItemGenerationService implements IItemGenerationService {
     private rollService: IItemRollService
   ) {}
   /**
-   * 生成隨機物品
+   * 根據商店來源生成隨機物品
    */
-  generateRandomItem(source: ItemRollSourceType): Result<RelicAggregate> {
-    // 聚合當前適用的骰選修飾符
-    const modifiers = this.modifierService.aggregateModifiers()
-    const rollResult = this.rollService.rollItem(source, modifiers)
+  generateRandomItemFromShop(): Result<RelicAggregate> {
+    // 取得 modifiers
+    const modifiersResult = this.modifierService.aggregateShopModifiers()
+    if (modifiersResult.isFailure) return Result.fail(modifiersResult.error!)
+    const modifiers = modifiersResult.value!
+    // 取得 rolled template
+    const rollResult = this.rollService.rollItem('SHOP_REFRESH', modifiers)
     if (rollResult.isFailure) return Result.fail(rollResult.error!)
     const { itemTemplateId, itemType } = rollResult.value!
-    // 根據骰選結果生成物品實例
+    return this.generateItemFromTemplate(itemTemplateId, itemType)
+  }
+  /**
+   * 根據獎勵類型生成隨機物品
+   */
+  generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicAggregate> {
+    // 取得 modifiers
+    const modifiersResult = this.modifierService.aggregateRewardModifiers(rewardType)
+    if (modifiersResult.isFailure) return Result.fail(modifiersResult.error!)
+    const modifiers = modifiersResult.value!
+    // 取得 rolled template
+    const rollResult = this.rollService.rollItem('POST_COMBAT_REWARD', modifiers)
+    if (rollResult.isFailure) return Result.fail(rollResult.error!)
+    const { itemTemplateId, itemType } = rollResult.value!
     return this.generateItemFromTemplate(itemTemplateId, itemType)
   }
   /**

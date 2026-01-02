@@ -2,9 +2,11 @@ import { EffectTarget } from '../../../shared/models/EffectTarget'
 import { AilmentId } from '../../ailment/AilmentId'
 import { UnitStatModifierOperation } from '../../stats/models/StatModifier'
 import { UnitStats } from '../../stats/models/UnitStats'
+/** 詞綴效果行動類型 */
+export type AffixEffectActionType = 'STAT_MODIFY' | 'APPLY_STATUS'
 /** 詞綴效果的基礎配置，定義效果的觸發倍率 */
 interface BaseAffixEffectAction {
-  readonly type: string
+  readonly type: AffixEffectActionType
   readonly affixMultiplier?: number
 }
 /** 統計值修改效果，對目標單位的特定統計屬性應用操作 */
