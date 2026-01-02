@@ -1,16 +1,18 @@
-import { CharacterAggregate, CharacterRecord } from '../../../../domain/character/Character'
+import { Character, CharacterRecord } from '../../../../domain/character/Character'
 import { RelicRecord } from '../../../../domain/item/Item'
-import { Shop, ShopItemAggregate } from '../../../../domain/shop/Shop'
+import { Run } from '../../../../domain/run/Run'
+import { Shop, ShopItemEntity } from '../../../../domain/shop/Shop'
 import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
-import { ItemAggregateService } from '../../../content-generation/service/item/ItemAggregateService'
+import { ItemEntityService } from '../../../content-generation/service/item/ItemEntityService'
 import { IConfigStoreAccessor, IContextSnapshotAccessor } from '../service/AppContextService'
 /**
  * 上下文轉換為領域模型的幫助器介面
  */
 export interface IContextToDomainConverter {
+  convertRunContextToDomain(): Run
   convertStashContextToDomain(): Stash
-  convertCharacterContextToDomain(): CharacterAggregate
+  convertCharacterContextToDomain(): Character
   convertShopContextToDomain(): Shop
 }
 /**
@@ -18,18 +20,22 @@ export interface IContextToDomainConverter {
  */
 export class ContextToDomainConverter implements IContextToDomainConverter {
   constructor(
-    private itemAggregateService: ItemAggregateService,
+    private itemEntityService: ItemEntityService,
     private characterAggregateService: ICharacterAggregateService,
     private contextAccessor: IContextSnapshotAccessor,
     private configStoreAccessor: IConfigStoreAccessor
   ) {}
+  convertRunContextToDomain(): Run {
+    const runContext = this.contextAccessor.getRunContext()
+    return new Run(runContext)
+  }
   convertStashContextToDomain(): Stash {
     const stashContext = this.contextAccessor.getStashContext()
     const relicRecords = stashContext.items.filter((s) => s.itemType === 'RELIC') as RelicRecord[]
-    const itemAggregates = this.itemAggregateService.createRelicsByRecords(relicRecords)
-    return new Stash(itemAggregates, stashContext.capacity)
+    const itemEntities = this.itemEntityService.createRelicsByRecords(relicRecords)
+    return new Stash(itemEntities, stashContext.capacity)
   }
-  convertCharacterContextToDomain(): CharacterAggregate {
+  convertCharacterContextToDomain(): Character {
     const characterContext = this.contextAccessor.getCharacterContext()
     const characterRecord: CharacterRecord = { ...characterContext }
     return this.characterAggregateService.createOneByRecord(characterRecord)
@@ -40,15 +46,15 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
     const shopConfig = this.configStoreAccessor.getConfigStore().shopStore.getShopConfig(shopContext.shopConfigId)
     // 透過物品記錄建立物品聚合
     const shopItemRecords = shopContext.items.filter((record) => record.itemType === 'RELIC')
-    const itemAggregates = this.itemAggregateService.createRelicsByRecords(shopItemRecords)
-    // 組合成商店物品聚合
-    const shopItemAggregates: ShopItemAggregate[] = itemAggregates.map((aggregate) => {
-      const record = shopItemRecords.find((r) => r.id === aggregate.record.id)!
+    const itemEntities = this.itemEntityService.createRelicsByRecords(shopItemRecords)
+    // 組合成商店物品實體
+    const shopItemEntities: ShopItemEntity[] = itemEntities.map((entity) => {
+      const record = shopItemRecords.find((r) => r.id === entity.record.id)!
       return {
-        itemAggregate: aggregate,
+        itemEntity: entity,
         record: record,
       }
     })
-    return new Shop(shopItemAggregates, shopConfig)
+    return new Shop(shopItemEntities, shopConfig)
   }
 }

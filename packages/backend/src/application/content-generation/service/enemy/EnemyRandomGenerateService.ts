@@ -1,31 +1,31 @@
-import { EnemyAggregate, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
+import { EnemyEntity, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
 import { Result } from '../../../../shared/result/Result'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
-import { IEnemyAggregateService } from './EnemyAggregateService'
+import { IEnemyEntityService } from './EnemyEntityService'
 /**
  * 敵人生成錯誤類型
  * - 無可用敵人: 關卡無可用敵人（已全部遭遇過）
  * - 關卡資訊無效: 關卡資訊不完整或無效
  */
 export interface IEnemyRandomGenerateService {
-  /** 隨機選擇並創建一個 EnemyAggregate */
-  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyAggregate>
+  /** 隨機選擇並創建一個 EnemyEntity */
+  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity>
 }
 /**
  * EnemyRandomGenerateService：負責真正的隨機選擇與封裝流程( createRandomOne )
- * - 僅負責選取哪個樣板、如何決策，組裝則委派給 IEnemyAggregateService
+ * - 僅負責選取哪個樣板、如何決策，組裝則委派給 IEnemyEntityService
  */
 export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
   constructor(
-    private readonly enemyAggregateService: IEnemyAggregateService,
+    private readonly enemyEntityService: IEnemyEntityService,
     private readonly appContextService: IAppContextService
   ) {}
   /**
-   * 隨機選擇並創建一個 EnemyAggregate
+   * 隨機選擇並創建一個 EnemyEntity
    */
-  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyAggregate> {
+  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity> {
     const runContext = this.appContextService.getAllContexts().runContext
     const { currentChapter, currentStage, chapters, seed } = runContext
     // 取得當前關卡可用的敵人生成資訊
@@ -43,8 +43,8 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
     // 取得敵人角色設定
     const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage]
     if (!stageEnemyRole) return Result.fail(ApplicationErrorCode.敵人_關卡資訊無效)
-    // 使用 EnemyAggregateService 建立敵人聚合體
-    const enemy = this.enemyAggregateService.createOneByTemplateUsingCurrentContext(
+    // 使用 EnemyEntityService 建立敵人聚合體
+    const enemy = this.enemyEntityService.createOneByTemplateUsingCurrentContext(
       rolledEnemyTemplateId,
       stageEnemyRole as EnemyRole
     )

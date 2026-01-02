@@ -1,6 +1,6 @@
 import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
-import { ItemAggregate, ItemRecord } from '../item/Item'
+import { ItemEntity, ItemRecord } from '../item/Item'
 const INITIAL_CAPACITY = 20
 export interface StashRecord {
   readonly items: ReadonlyArray<ItemRecord>
@@ -11,21 +11,21 @@ export interface StashRecord {
 // - 確保倉庫操作符合業務邏輯( 如容量限制、物品唯一性 )。
 // - 支援倉庫容量的動態擴展。
 export class Stash {
-  private _items: ReadonlyArray<ItemAggregate> = []
+  private _items: ReadonlyArray<ItemEntity> = []
   private _capacity: number
-  constructor(initialItems: ReadonlyArray<ItemAggregate> = [], initialCapacity: number = INITIAL_CAPACITY) {
+  constructor(initialItems: ReadonlyArray<ItemEntity> = [], initialCapacity: number = INITIAL_CAPACITY) {
     this._items = [...initialItems]
     this._capacity = initialCapacity
   }
   // ====== public methods ======
-  public get items(): ReadonlyArray<ItemAggregate> {
+  public get items(): ReadonlyArray<ItemEntity> {
     return this._items
   }
   public get capacity(): number {
     return this._capacity
   }
   /** 試試新增物品到倉庫。*/
-  public addItem(item: ItemAggregate): Result<Stash, DomainErrorCode.倉庫_倉庫已滿> {
+  public addItem(item: ItemEntity): Result<Stash, DomainErrorCode.倉庫_倉庫已滿> {
     if (this.isAtCapacity()) {
       return Result.fail(DomainErrorCode.倉庫_倉庫已滿)
     }
@@ -40,13 +40,13 @@ export class Stash {
     return Result.success(new Stash(newItems, this.capacity))
   }
   /** 嘗試從倉庫中取出物品。*/
-  public getItem(itemId: string): ItemAggregate | null {
+  public getItem(itemId: string): ItemEntity | null {
     const item = this._items.find((i) => i.record.id === itemId) || null
     if (!item) return null
     return item
   }
   /** 列出倉庫中的所有物品。*/
-  public listItems(): ReadonlyArray<ItemAggregate> {
+  public listItems(): ReadonlyArray<ItemEntity> {
     return this._items
   }
   /** 獲取倉庫已使用的容量。*/

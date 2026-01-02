@@ -1,8 +1,3 @@
-/*
-接下來你要做 建立空檔案, 包含註解 但不要有任何實際程式碼, 滿足能"預備實現"藍圖:
-- 獎勵不同類型 會有不同的生成策略
-親合度代表著 character 穿戴在身上遺物群們 統計下來某個 tag 的重複出現次數越高, 代表這個 character 越喜歡這個 tag
-*/
 import { ItemRecord } from '../item/Item'
 /**
  * 獎勵類型
@@ -19,30 +14,30 @@ export type CombatRewardType =
  * 獎勵資料結構
  */
 export interface CombatReward {
-  type: CombatRewardType
-  itemRecords: ItemRecord[]
-  gold: number
+  readonly type: CombatRewardType
+  readonly itemRecords: ReadonlyArray<ItemRecord>
+  readonly gold: number
 }
 /**
  * 戰鬥勝利詳情
  */
 export interface CombatWinDetail {
-  selectedRewardIndex: number
-  availableRewards: CombatReward[]
+  readonly selectedRewardIndex: number
+  readonly availableRewards: ReadonlyArray<CombatReward>
 }
 /**
  * 戰鬥失敗詳情
  */
 export interface CombatLoseDetail {
-  retryCountToDeduct: number
+  readonly retryCountToDeduct: number
 }
 /**
  * 賽後共用結果
  */
 export type CombatDifficultyType = 'NORMAL' | 'ELITE' | 'BOSS' | 'ENDLESS'
 export interface PostCombatSharedContext {
-  isPlayerConfirmed: boolean
-  combatDifficulty: CombatDifficultyType
+  readonly isPlayerConfirmed: boolean
+  readonly combatDifficulty: CombatDifficultyType
 }
 /**
  * 戰鬥勝利結果

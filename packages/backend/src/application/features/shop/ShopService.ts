@@ -1,4 +1,4 @@
-import { ItemAggregate } from '../../../domain/item/Item'
+import { ItemEntity } from '../../../domain/item/Item'
 import { DomainErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
 import { IItemGenerationService } from '../../content-generation/service/item/ItemGenerationService'
@@ -42,7 +42,7 @@ export class ShopService implements IShopService {
     const deductResult = character.deductGold(shopItem.record.price)
     if (deductResult.isFailure) return Result.fail(deductResult.error!)
     // 嘗試加入倉庫
-    const stashResult = stash.addItem(shopItem.itemAggregate)
+    const stashResult = stash.addItem(shopItem.itemEntity)
     if (stashResult.isFailure) return Result.fail(stashResult.error!)
     // 從商店移除物品
     const shopResult = shop.removeItem(itemId)
@@ -80,7 +80,7 @@ export class ShopService implements IShopService {
     const { shop } = this.ctxHandler.loadShopDomainContexts()
     const start = shop.items.length
     const end = shop.config.shopSlotCount
-    const items: ItemAggregate[] = []
+    const items: ItemEntity[] = []
     // 生成新物品
     for (let i = start; i < end; i++) {
       const result = this.itemGenerationService.generateRandomItemFromShop()

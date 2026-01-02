@@ -1,105 +1,71 @@
-// import { ItemAggregate } from '../../../domain/item/Item'
-// import { CombatReward, PostCombatContext } from '../../../domain/post-combat/PostCombat'
-// import { PriceHelper } from '../../../domain/shop/PriceHelper'
-// import { Result } from '../../../shared/result/Result'
-// import { IItemGenerationService } from '../../content-generation/service/item/ItemGenerationService'
-// import { IContextToDomainConverter } from '../../core-infrastructure/context/helper/ContextToDomainConverter'
-// import {
-//   IAppContextService,
-//   IConfigStoreAccessor,
-//   IContextMutator,
-//   IContextSnapshotAccessor,
-// } from '../../core-infrastructure/context/service/AppContextService'
-// import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
-// import { RewardGenerationContext } from './reward/Reward'
-// export class PostCombatProcessor {
-//   constructor(
-//     private rewardFactory: IRewardFactory,
-//     private contextSnapshotAccessor: IContextSnapshotAccessor,
-//     private contextUnitOfWork: IContextUnitOfWork,
-//     private contextAccessor: IContextSnapshotAccessor,
-//     private contextToDomainConverter: IContextToDomainConverter
-//   ) {}
-//   public process(): Result<void> {
-//     const postCombatCtx: PostCombatContext = this.contextAccessor.getRunContext().temporaryContext.postCombat
-//     if (!postCombatCtx) {
-//       return Result.fail('PostCombat context is missing') //FIXME: 改 成適當的錯誤代碼
-//     }
-//     if (postCombatCtx.result === 'WIN') {
-//       const rewardContext: RewardGenerationContext = {
-//         character: this.contextToDomainConverter.convertCharacterContextToDomain(),
-//         difficulty: postCombatCtx.combatDifficulty,
-//         stash: this.contextToDomainConverter.convertStashContextToDomain(),
-//       }
-//       const rewardResult = this.rewardFactory.createRewards(rewardContext)
-//       if (rewardResult.isFailure) {
-//         return Result.fail(rewardResult.error!)
-//       }
-//       this.contextUnitOfWork.updateRunContext({
-//         ...this.contextAccessor.getRunContext(),
-//         temporaryContext: {
-//           postCombat: {},
-//         },
-//       })
-//       // 存入DB
-//     }
-//     if (postCombatCtx.result === 'LOSE') {
-//       // 進行扣除重試次數或死亡
-//     }
-//     return Result.success(undefined)
-//   }
-// }
-// interface IRewardFactory {
-//   createRewards(context: RewardGenerationContext): Result<CombatReward[]>
-// }
-// export class RewardFactory {
-//   constructor(
-//     private itemGenerationService: IItemGenerationService,
-//     private configStoreAccessor: IConfigStoreAccessor
-//   ) {}
-//   public createRewards(context: RewardGenerationContext): Result<CombatReward[]> {
-//     const rewards: CombatReward[] = []
-//     // 首領獎勵
-//     if (context.difficulty === 'BOSS') {
-//       const result = this.itemGenerationService.generateRandomItemFromReward('BOSS_REWARD')
-//       if (result.isFailure) return Result.fail(result.error!)
-//       rewards.push({ type: 'BOSS_REWARD', itemRecords: [result.value!.record], gold: 0 })
-//     }
-//     // 精英獎勵
-//     if (context.difficulty === 'ELITE') {
-//       const result = this.itemGenerationService.generateRandomItemFromReward('ELITE_REWARD')
-//       if (result.isFailure) return Result.fail(result.error!)
-//       rewards.push({ type: 'ELITE_REWARD', itemRecords: [result.value!.record], gold: 0 })
-//     }
-//     if (context.difficulty === 'NORMAL') {
-//       // Reward A
-//       const highAffinityResult = this.itemGenerationService.generateRandomItemFromReward('HIGH_AFFINITY')
-//       if (highAffinityResult.isFailure) return Result.fail(highAffinityResult.error!)
-//       rewards.push({ type: 'HIGH_AFFINITY', itemRecords: [highAffinityResult.value!.record], gold: 0 })
-//       // Reward B
-//       const gold = this.createGold(highAffinityResult.value!)
-//       rewards.push({ type: 'GOLD', itemRecords: [], gold })
-//       // Reward C
-//       const highRarityResult = this.itemGenerationService.generateRandomItemFromReward('HIGH_RARITY_RELIC')
-//       if (highRarityResult.isFailure) return Result.fail(highRarityResult.error!)
-//       rewards.push({ type: 'HIGH_RARITY_RELIC', itemRecords: [highRarityResult.value!.record], gold: 0 })
-//       // Reward D
-//       const lowAffinityResult = this.itemGenerationService.generateRandomItemFromReward('LOW_AFFINITY')
-//       if (lowAffinityResult.isFailure) return Result.fail(lowAffinityResult.error!)
-//       rewards.push({ type: 'LOW_AFFINITY', itemRecords: [lowAffinityResult.value!.record], gold: 0 })
-//     }
-//     if (context.difficulty === 'ENDLESS') {
-//       //TODO: 暫時沒想法
-//     }
-//     return Result.success(rewards)
-//   }
-//   /* 根據物品計算金幣數量 */
-//   private createGold = (item: ItemAggregate) => {
-//     const { shopStore } = this.configStoreAccessor.getConfigStore()
-//     const config = shopStore.getShopConfig('DEFAULT')
-//     const rarity = item.template.rarity
-//     const difficulty = item.record.atCreated.difficulty
-//     const gold = PriceHelper.calculateItemPrice({ config, difficulty, rarity, isBuying: true, isDiscounted: false })
-//     return gold
-//   }
-// }
+import { PostCombatContext, PostCombatWinContext } from '../../../domain/post-combat/PostCombat'
+import { ApplicationErrorCode } from '../../../shared/result/ErrorCodes'
+import { Result } from '../../../shared/result/Result'
+import { IPostCombatContextHandler } from './PostCombatContextHandler'
+import { RewardGenerationContext } from './reward/Reward'
+import { IRewardFactory } from './reward/RewardFactory'
+export class PostCombatProcessor {
+  constructor(
+    private rewardFactory: IRewardFactory,
+    private ctxHandler: IPostCombatContextHandler
+  ) {}
+  /**
+   * 處理戰鬥後邏輯：根據結果執行勝利或失敗流程
+   */
+  public process(): Result<void> {
+    const postCombatCtx = this.ctxHandler.getPostCombatContext()
+    if (!postCombatCtx) {
+      return Result.fail(ApplicationErrorCode.初始化_起始聖物無效) // 使用統一錯誤代碼 這邊是錯誤的 代表要新增一個錯誤代碼
+    }
+    if (postCombatCtx.result === 'WIN') {
+      return this.handleWin(postCombatCtx)
+    }
+    if (postCombatCtx.result === 'LOSE') {
+      return this.handleLose(postCombatCtx)
+    }
+    return Result.success(undefined)
+  }
+  /**
+   * 處理勝利邏輯：生成獎勵並更新上下文（不可變方式）
+   */
+  private handleWin(postCombatCtx: PostCombatContext): Result<void> {
+    // 驗證當前 Run 狀態
+    const validateResult = this.ctxHandler.validateRunStatus()
+    if (validateResult.isFailure) return Result.fail(validateResult.error!)
+    // 載入領域上下文
+    const { character, stash } = this.ctxHandler.loadPostCombatDomainContexts()
+    const rewardContext: RewardGenerationContext = {
+      character,
+      difficulty: postCombatCtx.combatDifficulty,
+      stash,
+    }
+    const rewardResult = this.rewardFactory.createRewards(rewardContext.difficulty)
+    if (rewardResult.isFailure) {
+      return Result.fail(rewardResult.error!)
+    }
+    // 更新戰鬥後上下文，添加生成的獎勵
+    const updatedPostCombat = {
+      ...(postCombatCtx as PostCombatWinContext),
+      detail: {
+        ...(postCombatCtx as PostCombatWinContext).detail,
+        availableRewards: rewardResult.value!,
+      },
+    }
+    this.ctxHandler.updatePostCombatContext(updatedPostCombat)
+    return Result.success(undefined)
+  }
+  private handleLose(postCombatCtx: PostCombatContext): Result<void> {
+    // 驗證當前 Run 狀態
+    const validateResult = this.ctxHandler.validateRunStatus()
+    if (validateResult.isFailure) return Result.fail(validateResult.error!)
+    // 計算新的重試次數
+    const currentRetries = this.ctxHandler.getRemainingFailRetries()
+    const retryCountToDeduct = (postCombatCtx as any).detail.retryCountToDeduct || 1
+    const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
+    // 提交重試次數扣除
+    this.ctxHandler.commitRetryDeductionTransaction({
+      remainingFailRetries: newRemainingRetries,
+    })
+    return Result.success(undefined)
+  }
+}

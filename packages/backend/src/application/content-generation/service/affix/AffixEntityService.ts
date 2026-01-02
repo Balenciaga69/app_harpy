@@ -1,5 +1,5 @@
 // ...existing code...
-import { AffixAggregate, AffixRecord, AffixTemplate } from '../../../../domain/affix/Affix'
+import { AffixEntity, AffixRecord, AffixTemplate } from '../../../../domain/affix/Affix'
 import { AffixEffect } from '../../../../domain/affix/effect/AffixEffectTemplate'
 import {
   IConfigStoreAccessor,
@@ -7,52 +7,52 @@ import {
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { AffixRecordFactory } from '../../factory/AffixFactory'
 /**
- * 詞綴聚合根服務：負責建立 AffixAggregate
- * 職責：透過模板與當前上下文組裝完整的詞綴聚合根
+ * 詞綴實體服務：負責建立 AffixEntity
+ * 職責：透過模板與當前上下文組裝完整的詞綴實體
  * 依賴：IConfigStoreAccessor( 讀模板 )、IContextSnapshotAccessor( 讀難度資訊 )
  * 邊界：純建立邏輯，不涉及狀態修改
  */
-export interface IAffixAggregateService {
-  /** 從 AffixRecord 建立單一詞綴聚合根( 組裝現有記錄 ) */
-  createOneByRecord(record: AffixRecord): AffixAggregate
-  /** 批次從 AffixRecord 建立詞綴聚合根 */
-  createManyByRecords(records: AffixRecord[]): AffixAggregate[]
-  /** 從模板與當前上下文建立單一詞綴聚合根( 自動產生記錄 ) */
-  createOneByTemplateUsingCurrentContext(templateId: string): AffixAggregate
-  /** 批次從模板與當前上下文建立詞綴聚合根 */
-  createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixAggregate[]
+export interface IAffixEntityService {
+  /** 從 AffixRecord 建立單一詞綴實體( 組裝現有記錄 ) */
+  createOneByRecord(record: AffixRecord): AffixEntity
+  /** 批次從 AffixRecord 建立詞綴實體 */
+  createManyByRecords(records: AffixRecord[]): AffixEntity[]
+  /** 從模板與當前上下文建立單一詞綴實體( 自動產生記錄 ) */
+  createOneByTemplateUsingCurrentContext(templateId: string): AffixEntity
+  /** 批次從模板與當前上下文建立詞綴實體 */
+  createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixEntity[]
 }
-export class AffixAggregateService implements IAffixAggregateService {
+export class AffixEntityService implements IAffixEntityService {
   constructor(
     private readonly configStoreAccessor: IConfigStoreAccessor,
     private readonly contextSnapshot: IContextSnapshotAccessor
   ) {}
-  /** 建立單一 AffixAggregate */
-  createOneByRecord(record: AffixRecord): AffixAggregate {
+  /** 建立單一 AffixEntity */
+  createOneByRecord(record: AffixRecord): AffixEntity {
     const template = this.resolveTemplate(record.templateId)
     const effects = this.resolveEffects(template)
-    return new AffixAggregate(record, template, effects)
+    return new AffixEntity(record, template, effects)
   }
-  /** 批次建立 AffixAggregate */
-  createManyByRecords(records: AffixRecord[]): AffixAggregate[] {
+  /** 批次建立 AffixEntity */
+  createManyByRecords(records: AffixRecord[]): AffixEntity[] {
     return records.map((r) => this.createOneByRecord(r))
   }
-  /** 從當前上下文建立單一 AffixAggregate */
-  createOneByTemplateUsingCurrentContext(templateId: string): AffixAggregate {
+  /** 從當前上下文建立單一 AffixEntity */
+  createOneByTemplateUsingCurrentContext(templateId: string): AffixEntity {
     const template = this.resolveTemplate(templateId)
     const effects = this.resolveEffects(template)
     const currentInfo = this.contextSnapshot.getCurrentInfoForCreateRecord()
     const record = AffixRecordFactory.createOne(templateId, currentInfo)
-    return new AffixAggregate(record, template, effects)
+    return new AffixEntity(record, template, effects)
   }
-  /** 從當前上下文批次建立 AffixAggregate */
-  createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixAggregate[] {
+  /** 從當前上下文批次建立 AffixEntity */
+  createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixEntity[] {
     const currentInfo = this.contextSnapshot.getCurrentInfoForCreateRecord()
     const records = AffixRecordFactory.createMany(templateIds, currentInfo)
     return records.map((record) => {
       const template = this.resolveTemplate(record.templateId)
       const effects = this.resolveEffects(template)
-      return new AffixAggregate(record, template, effects)
+      return new AffixEntity(record, template, effects)
     })
   }
   /** 透過 templateId 取得 AffixTemplate */

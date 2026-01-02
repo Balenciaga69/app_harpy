@@ -3,32 +3,36 @@ import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
 import { UnitStatModifier } from '../stats/models/StatModifier'
 import { AffixEffect } from './effect/AffixEffectTemplate'
-/** 詞綴記錄，包含詞綴的基本識別資訊與創建資訊 */
+/** Affix record, including basic identification information and creation information of the affix */
 export interface AffixRecord extends BaseInstanceFields, WithSourceUnit, WithCreatedInfo {}
-/** 詞綴樣板，定義詞綴的靜態屬性與綁定的效果集合 */
+/** Affix template, defining the static properties of the affix and the set of bound effects */
 export interface AffixTemplate {
   readonly id: string
   readonly desc: I18nField
   readonly tags: ReadonlyArray<TagType>
   readonly effectIds: ReadonlyArray<string>
 }
-/** 詞綴聚合，包含詞綴記錄、樣板與效果集合 */
-export class AffixAggregate {
+/** Affix entity, including affix records, templates, and effect sets */
+
+export class AffixEntity {
   constructor(
     public readonly record: AffixRecord,
     public readonly template: AffixTemplate,
     public readonly effects: ReadonlyArray<AffixEffect>
   ) {}
-  /** 取得裝備此詞綴時所帶來的單位屬性修改器集合 */
+  /** Get the set of unit attribute modifiers provided when this affix is equipped. */
   getUnitStatModifiers(): UnitStatModifier[] {
     const { difficulty } = this.record.atCreated
-    // 先篩選出 ON_EQUIP 的效果
+    // First, filter out the effects of ON_EQUIP.
+
     const onEquipEffects = this.effects.filter((effect) => effect.trigger === 'ON_EQUIP')
-    // 取得所有 STAT_MODIFY 的 action
+    // Get all STAT_MODIFY actions
+
     const statModifyActions = onEquipEffects.flatMap((effect) =>
       effect.actions.filter((action) => action.type === 'STAT_MODIFY')
     )
-    // 計算每個 action 的 UnitStatModifier
+    // Calculate the UnitStatModifier for each action
+
     const unitStatModifiers = statModifyActions.map((statModifyEffect) => {
       const computedAffixMultiplier =
         !!statModifyEffect.affixMultiplier && statModifyEffect.affixMultiplier > 0

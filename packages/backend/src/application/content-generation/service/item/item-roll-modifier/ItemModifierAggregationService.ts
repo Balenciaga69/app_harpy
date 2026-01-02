@@ -64,7 +64,6 @@ function mergeModifiers(strategies: IItemRollModifierStrategy[]): Result<ItemRol
   }
   return Result.success(Array.from(modifierMap.values()))
 }
-
 function getModifierKey(modifier: ItemRollModifier): Result<string, string> {
   if (modifier.type === 'RARITY') {
     return Result.success(`RARITY:${modifier.rarity}`)

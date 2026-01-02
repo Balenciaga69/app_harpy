@@ -1,4 +1,4 @@
-import { CharacterAggregate, CharacterRecord } from '../../../domain/character/Character'
+import { Character, CharacterRecord } from '../../../domain/character/Character'
 import { Shop } from '../../../domain/shop/Shop'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
@@ -6,7 +6,6 @@ import { IContextToDomainConverter } from '../../core-infrastructure/context/hel
 import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
-
 export class ShopContextHandler implements IShopContextHandler {
   constructor(
     private contextAccessor: IContextSnapshotAccessor,
@@ -56,13 +55,11 @@ export class ShopContextHandler implements IShopContextHandler {
         ...updates.characterRecord,
       })
     }
-
     if (updates.stash) {
       this.unitOfWork.patchStashContext({
         items: updates.stash.listItems().map((i) => i.record),
       })
     }
-
     this.unitOfWork.commit()
     return Result.success(undefined)
   }
@@ -81,7 +78,7 @@ export class ShopContextHandler implements IShopContextHandler {
 export interface IShopContextHandler {
   loadShopDomainContexts(): {
     shop: Shop
-    character: CharacterAggregate
+    character: Character
     stash: Stash
   }
   getDifficulty(): number

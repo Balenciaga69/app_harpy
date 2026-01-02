@@ -10,7 +10,7 @@ export interface ProfessionTemplate {
   startRelicIds: string[]
 }
 /** 職業聚合，包含職業樣板與起始大絕招與遺物的實例 */
-export class ProfessionAggregate {
+export class ProfessionEntity {
   constructor(
     public readonly id: string,
     public readonly template: ProfessionTemplate,

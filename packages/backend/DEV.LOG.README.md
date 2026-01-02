@@ -2,39 +2,37 @@
 
 ## _2025/01/02_
 
-- 參考 Redux 管理 store 的方式, 改良後端對於遊戲狀態操作的架構
-- 將 shop, equipment 服務跟 context 操作解耦, 讓高層次與低層次代碼不會出現在同一個方法內
--
+- 參考 Redux 管理 store 的方式，改良後端對於遊戲狀態操作的架構。
+- 將 shop、equipment 服務與 context 操作解耦，避免高層次與低層次代碼混雜於同一方法。
+- 重新盤點領域物件，並劃分為 Entity、Aggregate、Value Object。
 
 ## _2025/01/01_
 
-- 發現自己需要一套價格系統來支援商店系統與獎勵價值生成派發系統
-- 補充說明:暫時暫緩價格系統開發
-- 發現 Post-Combat 系統的切換 Run 狀態需要 Run 作為豐富模型統一行為, 所以改為先開發 Run 模組
+- 發現需要一套價格系統以支援商店與獎勵價值生成派發系統（暫緩開發）。
+- Post-Combat 系統切換 Run 狀態需以 Run 作為豐富模型統一行為，因此優先開發 Run 模組。
 
 ## _2025/12/31_
 
-- 研究與探討 ResultPattern, Either Pattern, Exception Handling 的優缺點
-- 思考用狀態型別建造者強制將「開發者必須讀文件」的負擔，轉嫁給了「IDE 的靜態分析」。(例如 買東西:是否合法用戶->商店是否存在該商品->必須先驗證錢夠不夠->進行購買->提交變更)
-  - 後續又參考別人簡化成 Generic Template Fluent API, 讓多個方法都軟性半強制提醒有三個步驟: 驗守衛->處理業務邏輯->提交新狀態(雖然開發者依然可以強制 commit)
-  - 補充說明: 上述需求最後被我放棄, 為了讓每個服務都要遵循這樣要製造大量操作符與樣板, 開發體驗實在難受
+- 研究 ResultPattern、Either Pattern、Exception Handling 的優缺點。
+- 探討以狀態型別建造者強化 IDE 靜態分析，減少開發者需閱讀文件的負擔。
+- 參考 Generic Template Fluent API，嘗試將驗守衛、業務邏輯、狀態提交三步驟半強制化（最終因開發體驗不佳而放棄）。
 
 ## _2025/12/30_
 
-- 完成商店與商品系統開發
-- 更改遊戲失敗機制, 轉移至 TFT 那種扣血而非 Hades 死了就本 Run 結束
+- 完成商店與商品系統開發。
+- 遊戲失敗機制改為 TFT 式扣血，而非 Hades 式直接結束本 Run。
 
 ## _2025/12/29_
 
-- 重新建造 Stash,Character 等服務
-- 修正需多預先設想太美好而導致的豐富物件錯誤與過度複雜邏輯
+- 重新建構 Stash、Character 等服務。
+- 修正因過度理想化導致的豐富物件錯誤與複雜邏輯。
 
 ## v0.5.0
 
-- 寫好 Repo Pattern, Result Pattern, Context Manager, Factory Pattern, Generator, DataMapper, Template/Record/Aggregate 等等基礎架構
-- 實作 角色, 遺物, 穿戴裝備系統
-- 開發各種基礎 Domain 物件
-- v0.4 版不兼容變更
+- 完成 Repo Pattern、Result Pattern、Context Manager、Factory Pattern、Generator、DataMapper、Template/Record/Aggregate 等基礎架構。
+- 實作角色、遺物、穿戴裝備系統。
+- 開發各種基礎 Domain 物件。
+- v0.4 版不兼容變更。
 
 ## _2025/12/28_
 

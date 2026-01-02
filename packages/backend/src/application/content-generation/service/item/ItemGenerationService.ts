@@ -1,9 +1,9 @@
-import { ItemType, RelicAggregate } from '../../../../domain/item/Item'
+import { ItemType, RelicEntity } from '../../../../domain/item/Item'
 import { CombatRewardType } from '../../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
 import { IItemModifierAggregationService } from './item-roll-modifier/ItemModifierAggregationService'
-import { IItemAggregateService } from './ItemAggregateService'
+import { IItemEntityService } from './ItemEntityService'
 import { IItemConstraintService } from './sub-service/ItemConstraintService'
 import { IItemRollService } from './sub-service/ItemRollService'
 /**
@@ -13,15 +13,15 @@ import { IItemRollService } from './sub-service/ItemRollService'
  */
 export interface IItemGenerationService {
   /** 根據商店來源生成隨機物品 */
-  generateRandomItemFromShop(): Result<RelicAggregate>
+  generateRandomItemFromShop(): Result<RelicEntity>
   /** 根據獎勵類型生成隨機物品 */
-  generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicAggregate>
+  generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicEntity>
   /** 根據指定樣板生成物品 */
-  generateItemFromTemplate(templateId: string, itemType: ItemType): Result<RelicAggregate>
+  generateItemFromTemplate(templateId: string, itemType: ItemType): Result<RelicEntity>
 }
 export class ItemGenerationService implements IItemGenerationService {
   constructor(
-    private itemAggregateService: IItemAggregateService,
+    private itemEntityService: IItemEntityService,
     private constraintService: IItemConstraintService,
     private modifierService: IItemModifierAggregationService,
     private rollService: IItemRollService
@@ -29,7 +29,7 @@ export class ItemGenerationService implements IItemGenerationService {
   /**
    * 根據商店來源生成隨機物品
    */
-  generateRandomItemFromShop(): Result<RelicAggregate> {
+  generateRandomItemFromShop(): Result<RelicEntity> {
     // 取得 modifiers
     const modifiersResult = this.modifierService.aggregateShopModifiers()
     if (modifiersResult.isFailure) return Result.fail(modifiersResult.error!)
@@ -43,7 +43,7 @@ export class ItemGenerationService implements IItemGenerationService {
   /**
    * 根據獎勵類型生成隨機物品
    */
-  generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicAggregate> {
+  generateRandomItemFromReward(rewardType: CombatRewardType): Result<RelicEntity> {
     // 取得 modifiers
     const modifiersResult = this.modifierService.aggregateRewardModifiers(rewardType)
     if (modifiersResult.isFailure) return Result.fail(modifiersResult.error!)
@@ -57,7 +57,7 @@ export class ItemGenerationService implements IItemGenerationService {
   /**
    * 根據指定樣板生成物品
    */
-  generateItemFromTemplate(templateId: string, itemType: ItemType): Result<RelicAggregate> {
+  generateItemFromTemplate(templateId: string, itemType: ItemType): Result<RelicEntity> {
     // 檢查限制條件
     const constraintResult = this.constraintService.canGenerateItemTemplate(templateId)
     if (constraintResult.isFailure) {
@@ -68,7 +68,7 @@ export class ItemGenerationService implements IItemGenerationService {
       return Result.fail(ApplicationErrorCode.物品_物品類型未支援)
     }
     // 生成物品實例
-    const relic = this.itemAggregateService.createRelicByTemplateUsingCurrentContext(templateId)
+    const relic = this.itemEntityService.createRelicByTemplateUsingCurrentContext(templateId)
     return Result.success(relic)
   }
 }

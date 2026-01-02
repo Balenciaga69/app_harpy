@@ -4,7 +4,7 @@ export interface IEventStageProcessor {
   canTrigger: (ctx: StageProcessorContext) => boolean
   process: (ctx: StageProcessorContext) => void
 }
-/** 階段處理器上下文，提供事件判定所需的遊戲進度與歷史信息 */
+/** 階段處理器上下文，提供事件判定所需的遊戲進度與歷史資訊 */
 export interface StageProcessorContext {
   readonly seed: number
   readonly currentChapter: ChapterLevel
