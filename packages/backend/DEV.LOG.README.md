@@ -1,5 +1,12 @@
 # 摘要
 
+## v0.5.1
+
+- 新增 賽後模組、運行模組雛形
+- 新增獎勵派發系統
+- 新增 商店、倉庫功能開發
+- 正確命名與畫分領域物件為 Entity 與 Aggregate
+
 ## _2025/01/02_
 
 - 參考 Redux 管理 store 的方式，改良後端對於遊戲狀態操作的架構。
@@ -32,7 +39,7 @@
 - 完成 Repo Pattern、Result Pattern、Context Manager、Factory Pattern、Generator、DataMapper、Template/Record/Aggregate 等基礎架構。
 - 實作角色、遺物、穿戴裝備系統。
 - 開發各種基礎 Domain 物件。
-- v0.4 版不兼容變更。
+- v0.4 版不兼容變更。幾乎是全新做法。
 
 ## _2025/12/28_
 

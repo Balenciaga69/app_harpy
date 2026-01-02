@@ -13,7 +13,6 @@ export interface AffixTemplate {
   readonly effectIds: ReadonlyArray<string>
 }
 /** Affix entity, including affix records, templates, and effect sets */
-
 export class AffixEntity {
   constructor(
     public readonly record: AffixRecord,
@@ -24,15 +23,12 @@ export class AffixEntity {
   getUnitStatModifiers(): UnitStatModifier[] {
     const { difficulty } = this.record.atCreated
     // First, filter out the effects of ON_EQUIP.
-
     const onEquipEffects = this.effects.filter((effect) => effect.trigger === 'ON_EQUIP')
     // Get all STAT_MODIFY actions
-
     const statModifyActions = onEquipEffects.flatMap((effect) =>
       effect.actions.filter((action) => action.type === 'STAT_MODIFY')
     )
     // Calculate the UnitStatModifier for each action
-
     const unitStatModifiers = statModifyActions.map((statModifyEffect) => {
       const computedAffixMultiplier =
         !!statModifyEffect.affixMultiplier && statModifyEffect.affixMultiplier > 0
