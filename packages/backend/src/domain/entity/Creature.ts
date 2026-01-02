@@ -1,5 +1,5 @@
 import { I18nField } from '../../shared/models/I18nField'
-/** 生物實例，代表由玩家或敵人召喚的臨時單位，包含來源者信息 */
+/** 生物實例，代表由玩家或敵人召喚的臨時單位，包含來源者資訊 */
 export class CreatureAggregate {
   readonly summonerId: string
   readonly id: string

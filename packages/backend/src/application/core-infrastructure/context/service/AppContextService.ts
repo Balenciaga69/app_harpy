@@ -35,9 +35,9 @@ export interface IContextSnapshotAccessor {
   getShopContext(): IShopContext
   /** 一次取得所有上下文的快照 */
   getAllContexts(): IAppContext['contexts']
-  /** 取得當前建立時機信息( 章節、關卡、難度係數 ) */
+  /** 取得當前建立時機資訊( 章節、關卡、難度係數 ) */
   getCurrentAtCreatedInfo(): AtCreatedInfo
-  /** 取得建立記錄所需的當前信息( 難度、來源單位、建立時機 ) */
+  /** 取得建立記錄所需的當前資訊( 難度、來源單位、建立時機 ) */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
   /** 取得當前 Run 狀態 */
   getRunStatus(): IRunContext['status']
@@ -132,7 +132,7 @@ export class AppContextService implements IAppContextService {
     }
   }
   /**
-   * 取得當前建立時機信息
+   * 取得當前建立時機資訊
    */
   getCurrentAtCreatedInfo(): AtCreatedInfo {
     const { currentChapter, currentStage } = this.getRunContext()
@@ -141,7 +141,7 @@ export class AppContextService implements IAppContextService {
     return atCreated
   }
   /**
-   * 取得建立記錄所需的當前信息
+   * 取得建立記錄所需的當前資訊
    */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord {
     const characterContext = this.getCharacterContext()

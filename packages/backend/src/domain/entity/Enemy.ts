@@ -2,7 +2,7 @@ import { I18nField } from '../../shared/models/I18nField'
 import { TemplateWeightInfo, WithChapter } from '../../shared/models/TemplateWeightInfo'
 import { AffixAggregate } from '../affix/Affix'
 import { UltimateAggregate } from '../ultimate/Ultimate'
-/** 敵人生成信息，描述敵人出現的權重與進度約束 */
+/** 敵人生成資訊，描述敵人出現的權重與進度約束 */
 export interface EnemySpawnInfo extends TemplateWeightInfo, WithChapter {}
 /** 敵人難度角色，決定敵人的詞綴與大絕招配置 */
 export type EnemyRole = 'NORMAL' | 'ELITE' | 'BOSS'

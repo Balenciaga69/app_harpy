@@ -4,7 +4,7 @@ import { RelicAggregate, RelicRecord } from '../item/Item'
 import { ProfessionAggregate } from '../profession/Profession'
 import { UltimateAggregate, UltimateRecord } from '../ultimate/Ultimate'
 // === Record ===
-/** 角色記錄，保存角色的基本信息與裝備狀態 */
+/** 角色記錄，保存角色的基本資訊與裝備狀態 */
 export interface CharacterRecord {
   readonly id: string
   readonly name: string
