@@ -23,7 +23,6 @@ export interface IContextUnitOfWork {
   commit(): void
   rollback(): void
 }
-
 export class ContextUnitOfWork implements IContextUnitOfWork {
   private characterContextUpdate: ICharacterContext | null = null
   private stashContextUpdate: IStashContext | null = null
@@ -39,13 +38,11 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
     this.hasChanges = true
     return this // 支援鏈式調用
   }
-
   updateStashContext(ctx: IStashContext): this {
     this.stashContextUpdate = ctx
     this.hasChanges = true
     return this // 支援鏈式調用
   }
-
   updateRunContext(ctx: IRunContext): this {
     this.runContextUpdate = ctx
     this.hasChanges = true
@@ -78,28 +75,24 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
   rollback(): void {
     this.reset()
   }
-
   patchCharacterContext(patch: Partial<ICharacterContext>): this {
     const current = this.characterContextUpdate ?? this.contextAccessor.getCharacterContext()
     this.characterContextUpdate = { ...current, ...patch }
     this.hasChanges = true
     return this
   }
-
   patchStashContext(patch: Partial<IStashContext>): this {
     const current = this.stashContextUpdate ?? this.contextAccessor.getStashContext()
     this.stashContextUpdate = { ...current, ...patch }
     this.hasChanges = true
     return this
   }
-
   patchRunContext(patch: Partial<IRunContext>): this {
     const current = this.runContextUpdate ?? this.contextAccessor.getRunContext()
     this.runContextUpdate = { ...current, ...patch }
     this.hasChanges = true
     return this
   }
-
   patchShopContext(patch: Partial<IShopContext>): this {
     const current = this.shopContextUpdate ?? this.contextAccessor.getShopContext()
     this.shopContextUpdate = { ...current, ...patch }

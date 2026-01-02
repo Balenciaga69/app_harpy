@@ -12,6 +12,7 @@ export enum DomainErrorCode {
   角色_堆疊已滿 = '堆疊已滿',
   角色_聖物不存在 = '聖物不存在',
   角色_擴展容量無效 = '擴展容量無效',
+  角色_金錢不足 = '金錢不足',
   // Stash (倉庫)
   倉庫_倉庫已滿 = '倉庫已滿',
   倉庫_物品不存在 = '物品不存在',
@@ -48,6 +49,7 @@ export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, strin
   [DomainErrorCode.角色_堆疊已滿]: '此聖物已達最大堆疊數量',
   [DomainErrorCode.角色_聖物不存在]: '找不到指定的聖物',
   [DomainErrorCode.角色_擴展容量無效]: '負重擴展數值無效',
+  [DomainErrorCode.角色_金錢不足]: '金錢不足，無法完成交易',
   [DomainErrorCode.倉庫_倉庫已滿]: '倉庫已滿',
   [DomainErrorCode.倉庫_物品不存在]: '倉庫中找不到此物品',
   [DomainErrorCode.倉庫_容量設定無效]: '倉庫容量設定無效',
@@ -67,7 +69,6 @@ export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, strin
   [ApplicationErrorCode.初始化_職業不存在]: '職業不存在',
   [ApplicationErrorCode.初始化_起始聖物無效]: '起始聖物無效',
   [ApplicationErrorCode.初始化_版本衝突]: '資料衝突，請重試',
-  [ApplicationErrorCode.商店_金錢不足]: '金錢不足，無法完成交易',
   [ApplicationErrorCode.骰選_無可用選項]: '無可用選項可供骰選',
   [ApplicationErrorCode.遊戲_獎勵類型不支援]: '不支援的獎勵類型',
 }

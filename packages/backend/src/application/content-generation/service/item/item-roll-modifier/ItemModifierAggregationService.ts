@@ -44,7 +44,6 @@ export class ItemModifierAggregationService implements IItemModifierAggregationS
     return mergeModifiers(strategies)
   }
 }
-
 // 僅限本檔案內部使用的輔助函數
 function mergeModifiers(strategies: IItemRollModifierStrategy[]): Result<ItemRollModifier[], string> {
   const modifierMap = new Map<string, ItemRollModifier>()

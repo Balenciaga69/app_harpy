@@ -1,10 +1,8 @@
-import { CharacterRecord } from '../../../domain/character/Character'
 import { ItemAggregate } from '../../../domain/item/Item'
-import { ApplicationErrorCode, DomainErrorCode } from '../../../shared/result/ErrorCodes'
+import { DomainErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
 import { IItemGenerationService } from '../../content-generation/service/item/ItemGenerationService'
 import { IShopContextHandler } from './ShopContextHandler'
-
 /**
  * 商店服務介面
  * 職責：協調商店、角色、倉庫間的複雜交互
@@ -40,23 +38,18 @@ export class ShopService implements IShopService {
     const shopItemResult = shop.getItem(itemId)
     const shopItem = shopItemResult.value!
     if (shopItemResult.isFailure) return Result.fail(shopItemResult.error!)
-    // 檢查玩家金錢是否足夠
-    const goldAfterPurchase = character.record.gold - shopItem.record.price
-    if (goldAfterPurchase < 0) return Result.fail(ApplicationErrorCode.商店_金錢不足)
+    // 扣除金錢
+    const deductResult = character.deductGold(shopItem.record.price)
+    if (deductResult.isFailure) return Result.fail(deductResult.error!)
     // 嘗試加入倉庫
     const stashResult = stash.addItem(shopItem.itemAggregate)
     if (stashResult.isFailure) return Result.fail(stashResult.error!)
     // 從商店移除物品
     const shopResult = shop.removeItem(itemId)
     if (shopResult.isFailure) return Result.fail(shopResult.error!)
-    // 更新角色金錢記錄
-    const updatedCharacterRecord: CharacterRecord = {
-      ...character.record,
-      gold: goldAfterPurchase,
-    }
     // 使用 helper 提交交易
     this.ctxHandler.commitBuyTransaction({
-      characterRecord: updatedCharacterRecord,
+      characterRecord: deductResult.value!.record,
       shop: shopResult.value!,
       stash: stashResult.value!,
     })
@@ -73,15 +66,12 @@ export class ShopService implements IShopService {
     if (!itemToSell) return Result.fail(DomainErrorCode.倉庫_物品不存在)
     // 從倉庫移除物品
     const stashRemoveResult = stash.removeItem(itemId)
-    if (stashRemoveResult.isFailure) return Result.fail(DomainErrorCode.商店_商店物品不存在)
-    // 更新角色金錢
-    const updatedCharacterRecord: CharacterRecord = {
-      ...character.record,
-      gold: character.record.gold + shop.getSellPrice(itemToSell),
-    }
+    if (stashRemoveResult.isFailure) return Result.fail(stashRemoveResult.error!)
+    // 增加角色金錢
+    const addResult = character.addGold(shop.getSellPrice(itemToSell))
     // 使用 helper 提交交易
     this.ctxHandler.commitSellTransaction({
-      characterRecord: updatedCharacterRecord,
+      characterRecord: addResult.value!.record,
       stash: stashRemoveResult.value!,
     })
     return Result.success(undefined)
@@ -118,19 +108,14 @@ export class ShopService implements IShopService {
     const { shop, character } = this.ctxHandler.loadShopDomainContexts()
     const difficulty = this.ctxHandler.getDifficulty()
     const refreshCost = shop.config.baseRefreshCost * difficulty
-    const goldAfterRefresh = character.record.gold - refreshCost
-    if (goldAfterRefresh < 0) return Result.fail(ApplicationErrorCode.商店_金錢不足)
+    const deductResult = character.deductGold(refreshCost)
+    if (deductResult.isFailure) return Result.fail(deductResult.error!)
     // 執行刷新
     const result = this.refreshShopItemsBySystem()
     if (result.isFailure) return Result.fail(result.error!)
-    // 更新角色金錢記錄
-    const updatedCharacterRecord: CharacterRecord = {
-      ...character.record,
-      gold: goldAfterRefresh,
-    }
     // 使用 helper 提交交易（這裡只更新 character）
     this.ctxHandler.commitSellTransaction({
-      characterRecord: updatedCharacterRecord,
+      characterRecord: deductResult.value!.record,
     })
     return Result.success(undefined)
   }
