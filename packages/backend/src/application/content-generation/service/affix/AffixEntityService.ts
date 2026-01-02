@@ -12,7 +12,7 @@ import { AffixRecordFactory } from '../../factory/AffixFactory'
  * 依賴：IConfigStoreAccessor( 讀模板 )、IContextSnapshotAccessor( 讀難度資訊 )
  * 邊界：純建立邏輯，不涉及狀態修改
  */
-export interface IAffixAggregateService {
+export interface IAffixEntityService {
   /** 從 AffixRecord 建立單一詞綴實體( 組裝現有記錄 ) */
   createOneByRecord(record: AffixRecord): AffixEntity
   /** 批次從 AffixRecord 建立詞綴實體 */
@@ -22,7 +22,7 @@ export interface IAffixAggregateService {
   /** 批次從模板與當前上下文建立詞綴實體 */
   createManyByTemplateUsingCurrentContext(templateIds: string[]): AffixEntity[]
 }
-export class AffixAggregateService implements IAffixAggregateService {
+export class AffixEntityService implements IAffixEntityService {
   constructor(
     private readonly configStoreAccessor: IConfigStoreAccessor,
     private readonly contextSnapshot: IContextSnapshotAccessor

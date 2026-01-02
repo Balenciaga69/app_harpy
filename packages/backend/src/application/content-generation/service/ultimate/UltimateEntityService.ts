@@ -5,14 +5,14 @@ import {
   IContextSnapshotAccessor,
 } from '../../../core-infrastructure/context/service/AppContextService'
 import { UltimateRecordFactory } from '../../factory/UltimateFactory'
-import { IAffixAggregateService } from '../affix/AffixAggregateService'
+import { IAffixEntityService } from '../affix/AffixEntityService'
 /**
  * 大絕招實體服務：負責建立 UltimateEntity
  * 職責：透過模板、詞綴實體與當前上下文組裝完整的大絕招實體
- * 依賴：IConfigStoreAccessor( 讀模板 )、IContextSnapshotAccessor( 讀難度資訊 )、IAffixAggregateService
+ * 依賴：IConfigStoreAccessor( 讀模板 )、IContextSnapshotAccessor( 讀難度資訊 )、IAffixEntityService
  * 邊界：純建立邏輯，不涉及狀態修改
  */
-export interface IUltimateAggregateService {
+export interface IUltimateEntityService {
   /** 從 UltimateRecord 建立單一大絕招實體( 組裝現有記錄 ) */
   createOneByRecord(record: UltimateRecord): UltimateEntity
   /** 批次從 UltimateRecord 建立大絕招實體 */
@@ -22,9 +22,9 @@ export interface IUltimateAggregateService {
   /** 批次從模板與當前上下文建立大絕招實體 */
   createManyByTemplateUsingCurrentContext(templateIds: string[]): UltimateEntity[]
 }
-export class UltimateAggregateService implements IUltimateAggregateService {
+export class UltimateEntityService implements IUltimateEntityService {
   constructor(
-    private affixAggregateService: IAffixAggregateService,
+    private affixEntityService: IAffixEntityService,
     private configStoreAccessor: IConfigStoreAccessor,
     private contextSnapshot: IContextSnapshotAccessor
   ) {}
@@ -59,6 +59,6 @@ export class UltimateAggregateService implements IUltimateAggregateService {
   /** 取得 pluginAffixes */
   private resolvePluginAffixes(record: UltimateRecord): AffixEntity[] {
     const affixRecords = [...record.pluginAffixRecord]
-    return this.affixAggregateService.createManyByRecords(affixRecords)
+    return this.affixEntityService.createManyByRecords(affixRecords)
   }
 }

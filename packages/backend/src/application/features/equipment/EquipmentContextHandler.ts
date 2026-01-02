@@ -1,4 +1,4 @@
-import { CharacterAggregate } from '../../../domain/character/Character'
+import { Character } from '../../../domain/character/Character'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
 import { IContextToDomainConverter } from '../../core-infrastructure/context/helper/ContextToDomainConverter'
@@ -7,11 +7,11 @@ import { IContextUnitOfWork } from '../../core-infrastructure/context/service/Co
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
 export interface IEquipmentContextHandler {
   loadEquipmentDomainContexts(): {
-    character: CharacterAggregate
+    character: Character
     stash: Stash
   }
   validateRunStatus(): Result<void, string>
-  commitEquipmentTransaction(updates: { character: CharacterAggregate; stash: Stash }): Result<void>
+  commitEquipmentTransaction(updates: { character: Character; stash: Stash }): Result<void>
 }
 export class EquipmentContextHandler implements IEquipmentContextHandler {
   constructor(
@@ -32,7 +32,7 @@ export class EquipmentContextHandler implements IEquipmentContextHandler {
     return RunStatusGuard.requireStatus(status, 'IDLE')
   }
   /** 提交裝備交易事務 */
-  public commitEquipmentTransaction(updates: { character: CharacterAggregate; stash: Stash }): Result<void> {
+  public commitEquipmentTransaction(updates: { character: Character; stash: Stash }): Result<void> {
     this.unitOfWork.patchCharacterContext({
       ...updates.character.record,
     })

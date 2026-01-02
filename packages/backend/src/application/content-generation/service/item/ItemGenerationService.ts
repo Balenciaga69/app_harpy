@@ -3,7 +3,7 @@ import { CombatRewardType } from '../../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
 import { IItemModifierAggregationService } from './item-roll-modifier/ItemModifierAggregationService'
-import { IItemAggregateService } from './ItemAggregateService'
+import { IItemEntityService } from './ItemEntityService'
 import { IItemConstraintService } from './sub-service/ItemConstraintService'
 import { IItemRollService } from './sub-service/ItemRollService'
 /**
@@ -21,7 +21,7 @@ export interface IItemGenerationService {
 }
 export class ItemGenerationService implements IItemGenerationService {
   constructor(
-    private itemAggregateService: IItemAggregateService,
+    private itemEntityService: IItemEntityService,
     private constraintService: IItemConstraintService,
     private modifierService: IItemModifierAggregationService,
     private rollService: IItemRollService
@@ -68,7 +68,7 @@ export class ItemGenerationService implements IItemGenerationService {
       return Result.fail(ApplicationErrorCode.物品_物品類型未支援)
     }
     // 生成物品實例
-    const relic = this.itemAggregateService.createRelicByTemplateUsingCurrentContext(templateId)
+    const relic = this.itemEntityService.createRelicByTemplateUsingCurrentContext(templateId)
     return Result.success(relic)
   }
 }

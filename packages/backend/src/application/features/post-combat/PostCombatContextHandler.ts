@@ -1,5 +1,5 @@
 import { PostCombatContext } from '../../../domain/post-combat/PostCombat'
-import { CharacterAggregate } from '../../../domain/character/Character'
+import { Character } from '../../../domain/character/Character'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
 import { IContextToDomainConverter } from '../../core-infrastructure/context/helper/ContextToDomainConverter'
@@ -10,7 +10,7 @@ export interface IPostCombatContextHandler {
   getPostCombatContext(): PostCombatContext | undefined
   getRemainingFailRetries(): number
   loadPostCombatDomainContexts(): {
-    character: CharacterAggregate
+    character: Character
     stash: Stash
   }
   validateRunStatus(): Result<void, string>

@@ -1,4 +1,4 @@
-import { CharacterAggregate, CharacterRecord } from '../../../domain/character/Character'
+import { Character, CharacterRecord } from '../../../domain/character/Character'
 import { Shop } from '../../../domain/shop/Shop'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
@@ -78,7 +78,7 @@ export class ShopContextHandler implements IShopContextHandler {
 export interface IShopContextHandler {
   loadShopDomainContexts(): {
     shop: Shop
-    character: CharacterAggregate
+    character: Character
     stash: Stash
   }
   getDifficulty(): number

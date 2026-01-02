@@ -1,8 +1,8 @@
-import { CharacterAggregate } from '../../../../domain/character/Character'
+import { Character } from '../../../../domain/character/Character'
 import { CombatDifficultyType, CombatReward, CombatRewardType } from '../../../../domain/post-combat/PostCombat'
 import { Stash } from '../../../../domain/stash/Stash'
 export interface RewardGenerationContext {
-  readonly character: CharacterAggregate
+  readonly character: Character
   readonly difficulty: CombatDifficultyType
   readonly stash: Stash
 }
