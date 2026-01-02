@@ -39,9 +39,10 @@ export interface CombatLoseDetail {
 /**
  * 賽後共用結果
  */
+export type CombatDifficultyType = 'NORMAL' | 'ELITE' | 'BOSS' | 'ENDLESS'
 export interface PostCombatSharedContext {
   isPlayerConfirmed: boolean
-  combatDifficulty: 'NORMAL' | 'ELITE' | 'BOSS' | 'ENDLESS'
+  combatDifficulty: CombatDifficultyType
 }
 /**
  * 戰鬥勝利結果

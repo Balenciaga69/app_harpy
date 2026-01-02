@@ -67,9 +67,10 @@ export interface IProfessionStore {
   setMany(professions: ProfessionTemplate[]): void
 }
 /** 商店配置存儲介面：支援商店配置的查詢 */
+export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 export interface IShopStore {
-  getShopConfig(id: string): ShopConfig
-  hasShopConfig(id: string): boolean
+  getShopConfig(id: ShopConfigId): ShopConfig
+  hasShopConfig(id: ShopConfigId): boolean
   getAllShopConfigs(): ShopConfig[]
   setMany(shopConfigs: ShopConfig[]): void
 }
