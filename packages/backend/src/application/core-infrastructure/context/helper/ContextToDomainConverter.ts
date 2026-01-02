@@ -1,5 +1,6 @@
 import { CharacterAggregate, CharacterRecord } from '../../../../domain/character/Character'
 import { RelicRecord } from '../../../../domain/item/Item'
+import { Run } from '../../../../domain/run/Run'
 import { Shop, ShopItemAggregate } from '../../../../domain/shop/Shop'
 import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
@@ -9,6 +10,7 @@ import { IConfigStoreAccessor, IContextSnapshotAccessor } from '../service/AppCo
  * 上下文轉換為領域模型的幫助器介面
  */
 export interface IContextToDomainConverter {
+  convertRunContextToDomain(): Run
   convertStashContextToDomain(): Stash
   convertCharacterContextToDomain(): CharacterAggregate
   convertShopContextToDomain(): Shop
@@ -23,6 +25,10 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
     private contextAccessor: IContextSnapshotAccessor,
     private configStoreAccessor: IConfigStoreAccessor
   ) {}
+  convertRunContextToDomain(): Run {
+    const runContext = this.contextAccessor.getRunContext()
+    return new Run(runContext)
+  }
   convertStashContextToDomain(): Stash {
     const stashContext = this.contextAccessor.getStashContext()
     const relicRecords = stashContext.items.filter((s) => s.itemType === 'RELIC') as RelicRecord[]
