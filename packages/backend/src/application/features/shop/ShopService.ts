@@ -1,12 +1,10 @@
-import { CharacterRecord } from '../../domain/character/Character'
-import { ItemAggregate } from '../../domain/item/Item'
-import { ApplicationErrorCode, DomainErrorCode } from '../../shared/result/ErrorCodes'
-import { Result } from '../../shared/result/Result'
-import { IItemGenerationService } from '../content-generation/service/item/ItemGenerationService'
-import { IContextToDomainConverter } from '../core-infrastructure/context/helper/ContextToDomainConverter'
-import { IContextSnapshotAccessor } from '../core-infrastructure/context/service/AppContextService'
-import { IContextUnitOfWork } from '../core-infrastructure/context/service/ContextUnitOfWork'
-import { RunStatusGuard } from '../core-infrastructure/run-status/RunStatusGuard'
+import { CharacterRecord } from '../../../domain/character/Character'
+import { ItemAggregate } from '../../../domain/item/Item'
+import { ApplicationErrorCode, DomainErrorCode } from '../../../shared/result/ErrorCodes'
+import { Result } from '../../../shared/result/Result'
+import { IItemGenerationService } from '../../content-generation/service/item/ItemGenerationService'
+import { IShopContextHandler } from './ShopContextHandler'
+
 /**
  * 商店服務介面
  * 職責：協調商店、角色、倉庫間的複雜交互
@@ -28,18 +26,16 @@ export interface IShopService {
  */
 export class ShopService implements IShopService {
   constructor(
-    private contextAccessor: IContextSnapshotAccessor,
-    private contextToDomainConverter: IContextToDomainConverter,
     private itemGenerationService: IItemGenerationService,
-    private unitOfWork: IContextUnitOfWork
+    private ctxHandler: IShopContextHandler
   ) {}
   /** 購買 */
   buyItem(itemId: string): Result<void, string> {
     // 驗證當前 Run 狀態
-    const validateResult = this.validateCurrentRunStatus()
+    const validateResult = this.ctxHandler.validateRunStatus()
     if (validateResult.isFailure) return Result.fail(validateResult.error!)
     // 轉換 Context → Domain
-    const { shop, character, stash } = this.loadDomainContexts()
+    const { shop, character, stash } = this.ctxHandler.loadShopDomainContexts()
     // 從商店找到指定的物品
     const shopItemResult = shop.getItem(itemId)
     const shopItem = shopItemResult.value!
@@ -58,29 +54,20 @@ export class ShopService implements IShopService {
       ...character.record,
       gold: goldAfterPurchase,
     }
-    // 使用 Unit of Work 原子提交所有變更
-    this.unitOfWork
-      .updateCharacterContext({
-        ...this.contextAccessor.getCharacterContext(),
-        ...updatedCharacterRecord,
-      })
-      .updateStashContext({
-        ...this.contextAccessor.getStashContext(),
-        items: stashResult.value!.items.map((item) => item.record),
-      })
-      .updateShopContext({
-        ...this.contextAccessor.getShopContext(),
-        items: shopResult.value!.items.map((shopAgg) => shopAgg.record),
-      })
-      .commit()
+    // 使用 helper 提交交易
+    this.ctxHandler.commitBuyTransaction({
+      characterRecord: updatedCharacterRecord,
+      shop: shopResult.value!,
+      stash: stashResult.value!,
+    })
     return Result.success(undefined)
   }
   /** 出售 */
   sellItem(itemId: string): Result<void, string> {
-    const validateResult = this.validateCurrentRunStatus()
+    const validateResult = this.ctxHandler.validateRunStatus()
     if (validateResult.isFailure) return Result.fail(validateResult.error!)
     // 轉換 Context → Domain
-    const { shop, character, stash } = this.loadDomainContexts()
+    const { shop, character, stash } = this.ctxHandler.loadShopDomainContexts()
     // 從倉庫取出要出售的物品
     const itemToSell = stash.getItem(itemId)
     if (!itemToSell) return Result.fail(DomainErrorCode.倉庫_物品不存在)
@@ -92,21 +79,15 @@ export class ShopService implements IShopService {
       ...character.record,
       gold: character.record.gold + shop.getSellPrice(itemToSell),
     }
-    // 原子提交變更
-    this.unitOfWork
-      .updateCharacterContext({
-        ...this.contextAccessor.getCharacterContext(),
-        ...updatedCharacterRecord,
-      })
-      .updateStashContext({
-        ...this.contextAccessor.getStashContext(),
-        items: stashRemoveResult.value!.items.map((item) => item.record),
-      })
-      .commit()
+    // 使用 helper 提交交易
+    this.ctxHandler.commitSellTransaction({
+      characterRecord: updatedCharacterRecord,
+      stash: stashRemoveResult.value!,
+    })
     return Result.success(undefined)
   }
   generateShopItems(): Result<void, string> {
-    const { shop } = this.loadDomainContexts()
+    const { shop } = this.ctxHandler.loadShopDomainContexts()
     const start = shop.items.length
     const end = shop.config.shopSlotCount
     const items: ItemAggregate[] = []
@@ -122,23 +103,20 @@ export class ShopService implements IShopService {
     // 將最稀有的第一個物品設為折扣
     const discountResult = shop.setRarestItemAsDiscount()
     if (discountResult.isFailure) return Result.fail(discountResult.error!)
-    // 更新 shopContext
-    this.unitOfWork
-      .updateShopContext({
-        ...this.contextAccessor.getShopContext(),
-        items: addResult.value!.items.map((shopAgg) => shopAgg.record),
-      })
-      .commit()
+    // 使用 helper 提交交易
+    this.ctxHandler.commitGenerateShopItemsTransaction({
+      shop: addResult.value!,
+    })
     return Result.success(undefined)
   }
   /** 刷新商店 */
   refreshShopItems(): Result<void, string> {
     // 驗證當前 Run 狀態
-    const validateResult = this.validateCurrentRunStatus()
+    const validateResult = this.ctxHandler.validateRunStatus()
     if (validateResult.isFailure) return Result.fail(validateResult.error!)
     // 玩家主動刷新，需扣除金錢
-    const { shop, character } = this.loadDomainContexts()
-    const { difficulty } = this.contextAccessor.getCurrentAtCreatedInfo()
+    const { shop, character } = this.ctxHandler.loadShopDomainContexts()
+    const difficulty = this.ctxHandler.getDifficulty()
     const refreshCost = shop.config.baseRefreshCost * difficulty
     const goldAfterRefresh = character.record.gold - refreshCost
     if (goldAfterRefresh < 0) return Result.fail(ApplicationErrorCode.商店_金錢不足)
@@ -150,12 +128,10 @@ export class ShopService implements IShopService {
       ...character.record,
       gold: goldAfterRefresh,
     }
-    this.unitOfWork
-      .updateCharacterContext({
-        ...this.contextAccessor.getCharacterContext(),
-        ...updatedCharacterRecord,
-      })
-      .commit()
+    // 使用 helper 提交交易（這裡只更新 character）
+    this.ctxHandler.commitSellTransaction({
+      characterRecord: updatedCharacterRecord,
+    })
     return Result.success(undefined)
   }
   /** 系統觸發刷新商店（不花錢） */
@@ -164,20 +140,5 @@ export class ShopService implements IShopService {
     const result = this.generateShopItems()
     if (result.isFailure) return Result.fail(result.error!)
     return Result.success(undefined)
-  }
-  /** 載入領域上下文 */
-  private loadDomainContexts() {
-    const shop = this.contextToDomainConverter.convertShopContextToDomain()
-    const character = this.contextToDomainConverter.convertCharacterContextToDomain()
-    const stash = this.contextToDomainConverter.convertStashContextToDomain()
-    return { shop, character, stash }
-  }
-  /** 驗證當前 Run 狀態是否允許裝備操作 */
-  private validateCurrentRunStatus(): Result<void, string> {
-    {
-      const status = this.contextAccessor.getRunStatus()
-      const result = RunStatusGuard.requireStatus(status, 'IDLE')
-      return result
-    }
   }
 }
