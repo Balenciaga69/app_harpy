@@ -1,7 +1,7 @@
 import { CharacterAggregate, CharacterRecord } from '../../../../domain/character/Character'
 import { RelicRecord } from '../../../../domain/item/Item'
 import { Run } from '../../../../domain/run/Run'
-import { Shop, ShopItemAggregate } from '../../../../domain/shop/Shop'
+import { Shop, ShopItemEntity } from '../../../../domain/shop/Shop'
 import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
 import { ItemAggregateService } from '../../../content-generation/service/item/ItemAggregateService'
@@ -32,8 +32,8 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
   convertStashContextToDomain(): Stash {
     const stashContext = this.contextAccessor.getStashContext()
     const relicRecords = stashContext.items.filter((s) => s.itemType === 'RELIC') as RelicRecord[]
-    const itemAggregates = this.itemAggregateService.createRelicsByRecords(relicRecords)
-    return new Stash(itemAggregates, stashContext.capacity)
+    const itemEntitys = this.itemAggregateService.createRelicsByRecords(relicRecords)
+    return new Stash(itemEntitys, stashContext.capacity)
   }
   convertCharacterContextToDomain(): CharacterAggregate {
     const characterContext = this.contextAccessor.getCharacterContext()
@@ -46,15 +46,15 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
     const shopConfig = this.configStoreAccessor.getConfigStore().shopStore.getShopConfig(shopContext.shopConfigId)
     // 透過物品記錄建立物品聚合
     const shopItemRecords = shopContext.items.filter((record) => record.itemType === 'RELIC')
-    const itemAggregates = this.itemAggregateService.createRelicsByRecords(shopItemRecords)
-    // 組合成商店物品聚合
-    const shopItemAggregates: ShopItemAggregate[] = itemAggregates.map((aggregate) => {
+    const itemEntitys = this.itemAggregateService.createRelicsByRecords(shopItemRecords)
+    // 組合成商店物品實體
+    const shopItemEntitys: ShopItemEntity[] = itemEntitys.map((aggregate) => {
       const record = shopItemRecords.find((r) => r.id === aggregate.record.id)!
       return {
-        itemAggregate: aggregate,
+        itemEntity: aggregate,
         record: record,
       }
     })
-    return new Shop(shopItemAggregates, shopConfig)
+    return new Shop(shopItemEntitys, shopConfig)
   }
 }

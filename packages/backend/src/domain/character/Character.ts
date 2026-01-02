@@ -1,8 +1,8 @@
 import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
-import { RelicAggregate, RelicRecord } from '../item/Item'
+import { RelicEntity, RelicRecord } from '../item/Item'
 import { ProfessionAggregate } from '../profession/Profession'
-import { UltimateAggregate, UltimateRecord } from '../ultimate/Ultimate'
+import { UltimateEntity, UltimateRecord } from '../ultimate/Ultimate'
 // === Record ===
 /** 角色記錄，保存角色的基本資訊與裝備狀態 */
 export interface CharacterRecord {
@@ -31,13 +31,13 @@ export const CharacterRecordHelper = {
 export class CharacterAggregate {
   private readonly _record: CharacterRecord
   private readonly _profession: ProfessionAggregate
-  private readonly _relics: ReadonlyArray<RelicAggregate>
-  private readonly _ultimate: UltimateAggregate
+  private readonly _relics: ReadonlyArray<RelicEntity>
+  private readonly _ultimate: UltimateEntity
   constructor(
     record: CharacterRecord,
     profession: ProfessionAggregate,
-    relics: ReadonlyArray<RelicAggregate>,
-    ultimate: UltimateAggregate
+    relics: ReadonlyArray<RelicEntity>,
+    ultimate: UltimateEntity
   ) {
     this._record = record
     this._profession = profession
@@ -51,14 +51,14 @@ export class CharacterAggregate {
   public get profession(): ProfessionAggregate {
     return this._profession
   }
-  public get relics(): ReadonlyArray<RelicAggregate> {
+  public get relics(): ReadonlyArray<RelicEntity> {
     return this._relics
   }
-  public get ultimate(): UltimateAggregate {
+  public get ultimate(): UltimateEntity {
     return this._ultimate
   }
   /** 裝備聖物，返回新的角色聚合實例或失敗原因 */
-  public equipRelic(relic: RelicAggregate): Result<CharacterAggregate, string> {
+  public equipRelic(relic: RelicEntity): Result<CharacterAggregate, string> {
     // 檢查是否可裝備（負重與容量限制）
     if (this.isOverloaded(relic.template.loadCost)) {
       return Result.fail(DomainErrorCode.角色_負重超載)
@@ -111,7 +111,7 @@ export class CharacterAggregate {
     return Result.success(new CharacterAggregate(newRecord, this._profession, this._relics, this._ultimate))
   }
   /** 取得某一聖物 */
-  public getRelic(relicId: string): Result<RelicAggregate, string> {
+  public getRelic(relicId: string): Result<RelicEntity, string> {
     const relic = this.relics.find((r) => r.record.id === relicId)
     if (!relic) return Result.fail(DomainErrorCode.角色_聖物不存在)
     return Result.success(relic)
@@ -138,7 +138,7 @@ export class CharacterAggregate {
     return this.calculateRelicsLoad([...this._relics])
   }
   /** 產生新的角色聚合根( 根據新 relics 陣列 ) */
-  private createWithRelics(newRelics: ReadonlyArray<RelicAggregate>): CharacterAggregate {
+  private createWithRelics(newRelics: ReadonlyArray<RelicEntity>): CharacterAggregate {
     const newRecord: CharacterRecord = {
       ...this._record,
       relics: newRelics.map((r) => r.record),
@@ -147,7 +147,7 @@ export class CharacterAggregate {
     return new CharacterAggregate(newRecord, this._profession, newRelics, this._ultimate)
   }
   /** 計算遺物集合負重 */
-  private calculateRelicsLoad(relics: RelicAggregate[]): number {
+  private calculateRelicsLoad(relics: RelicEntity[]): number {
     return relics.reduce((total, relic) => total + relic.template.loadCost, 0)
   }
 }

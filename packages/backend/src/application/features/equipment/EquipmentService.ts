@@ -1,4 +1,4 @@
-import { RelicAggregate } from '../../../domain/item/Item'
+import { RelicEntity } from '../../../domain/item/Item'
 import { ApplicationErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
 import { IEquipmentContextHandler } from './EquipmentContextHandler'
@@ -51,7 +51,7 @@ export class EquipmentService implements IEquipmentService {
     const removeItemResult = stash.removeItem(relicId)
     if (removeItemResult.isFailure) return Result.fail(removeItemResult.error ?? '')
     // 執行裝備聖物的邏輯
-    const equipResult = character.equipRelic(targetRelicAggregate as RelicAggregate)
+    const equipResult = character.equipRelic(targetRelicAggregate as RelicEntity)
     if (equipResult.isFailure) return Result.fail(equipResult.error ?? '')
     // 提交變更
     const newStash = removeItemResult.value!

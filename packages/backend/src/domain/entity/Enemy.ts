@@ -1,7 +1,7 @@
 import { I18nField } from '../../shared/models/I18nField'
 import { TemplateWeightInfo, WithChapter } from '../../shared/models/TemplateWeightInfo'
-import { AffixAggregate } from '../affix/Affix'
-import { UltimateAggregate } from '../ultimate/Ultimate'
+import { AffixEntity } from '../affix/Affix'
+import { UltimateEntity } from '../ultimate/Ultimate'
 /** 敵人生成資訊，描述敵人出現的權重與進度約束 */
 export interface EnemySpawnInfo extends TemplateWeightInfo, WithChapter {}
 /** 敵人難度角色，決定敵人的詞綴與大絕招配置 */
@@ -18,13 +18,13 @@ export interface EnemyTemplate {
   readonly desc: I18nField
   readonly roleConfigs: Record<EnemyRole, EnemyRoleConfig>
 }
-/** 敵人聚合，包含敵人的樣板與根據難度生成的詞綴與大絕招 */
-export class EnemyAggregate {
+/** 敵人實體，包含敵人的樣板與根據難度生成的詞綴與大絕招 */
+export class EnemyEntity {
   constructor(
     public readonly id: string,
     public readonly role: EnemyRole,
     public readonly template: EnemyTemplate,
-    public readonly affixes: AffixAggregate[],
-    public readonly ultimate: UltimateAggregate
+    public readonly affixes: AffixEntity[],
+    public readonly ultimate: UltimateEntity
   ) {}
 }

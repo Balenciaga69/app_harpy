@@ -1,4 +1,4 @@
-import { EnemyAggregate, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
+import { EnemyEntity, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
 import { Result } from '../../../../shared/result/Result'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
@@ -10,8 +10,8 @@ import { IEnemyAggregateService } from './EnemyAggregateService'
  * - 關卡資訊無效: 關卡資訊不完整或無效
  */
 export interface IEnemyRandomGenerateService {
-  /** 隨機選擇並創建一個 EnemyAggregate */
-  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyAggregate>
+  /** 隨機選擇並創建一個 EnemyEntity */
+  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity>
 }
 /**
  * EnemyRandomGenerateService：負責真正的隨機選擇與封裝流程( createRandomOne )
@@ -23,9 +23,9 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
     private readonly appContextService: IAppContextService
   ) {}
   /**
-   * 隨機選擇並創建一個 EnemyAggregate
+   * 隨機選擇並創建一個 EnemyEntity
    */
-  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyAggregate> {
+  createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity> {
     const runContext = this.appContextService.getAllContexts().runContext
     const { currentChapter, currentStage, chapters, seed } = runContext
     // 取得當前關卡可用的敵人生成資訊

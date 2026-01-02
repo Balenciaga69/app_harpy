@@ -1,4 +1,4 @@
-import { ItemAggregate } from '../../../../domain/item/Item'
+import { ItemEntity } from '../../../../domain/item/Item'
 import { CombatDifficultyType, CombatReward } from '../../../../domain/post-combat/PostCombat'
 import { PriceHelper } from '../../../../domain/shop/PriceHelper'
 import { Result } from '../../../../shared/result/Result'
@@ -85,7 +85,7 @@ export class RewardFactory implements IRewardFactory {
   /**
    * 計算金幣：基於物品屬性與配置
    */
-  private calculateGold(item: ItemAggregate): number {
+  private calculateGold(item: ItemEntity): number {
     const { shopStore } = this.configStoreAccessor.getConfigStore()
     const config = shopStore.getShopConfig('DEFAULT')
     const rarity = item.template.rarity

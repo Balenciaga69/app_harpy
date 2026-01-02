@@ -2,7 +2,7 @@ import { BaseInstanceFields, WithCreatedInfo, WithSourceUnit } from '../../share
 import { GameHook } from '../../shared/models/GameHook'
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
-import { AffixAggregate, AffixRecord } from '../affix/Affix'
+import { AffixEntity, AffixRecord } from '../affix/Affix'
 import { UltimateEffect } from './UltimateEffect'
 /** 大絕招樣板，定義大絕招的靜態屬性與行為 */
 export interface UltimateTemplate {
@@ -20,23 +20,23 @@ export interface UltimateTemplate {
 export interface UltimateRecord extends BaseInstanceFields, WithSourceUnit, WithCreatedInfo {
   readonly pluginAffixRecord: ReadonlyArray<AffixRecord>
 }
-/** 大絕招聚合根，封裝大絕招的狀態與行為 */
-export class UltimateAggregate {
+/** 大絕招實體，封裝大絕招的狀態與行為 */
+export class UltimateEntity {
   constructor(
     public readonly record: UltimateRecord,
     public readonly template: UltimateTemplate,
-    public readonly pluginAffixes: ReadonlyArray<AffixAggregate> = []
+    public readonly pluginAffixes: ReadonlyArray<AffixEntity> = []
   ) {}
   /**
-   * 新增插件詞綴，返回新的大絕招聚合實例
+   * 新增插件詞綴，返回新的大絕招實體
    */
-  addPluginAffix(affix: AffixAggregate): UltimateAggregate {
+  addPluginAffix(affix: AffixEntity): UltimateEntity {
     const newPluginAffixes = [...this.pluginAffixes, affix]
     const pluginAffixRecord = newPluginAffixes.map((a) => a.record)
     const newRecord: UltimateRecord = {
       ...this.record,
       pluginAffixRecord,
     }
-    return new UltimateAggregate(newRecord, this.template, newPluginAffixes)
+    return new UltimateEntity(newRecord, this.template, newPluginAffixes)
   }
 }

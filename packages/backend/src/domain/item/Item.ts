@@ -1,7 +1,7 @@
 import { BaseInstanceFields, WithCreatedInfo } from '../../shared/models/BaseInstanceFields'
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
-import { AffixRecord, AffixAggregate } from '../affix/Affix'
+import { AffixRecord, AffixEntity } from '../affix/Affix'
 export type ItemType = 'RELIC'
 /** 物品稀有度等級，決定物品的品質與掉落概率 */
 export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
@@ -30,30 +30,30 @@ export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
 export interface RelicRecord extends ItemRecord {
   readonly itemType: 'RELIC'
 }
-export interface IItemAggregate {
+export interface IItemEntity {
   readonly record: ItemRecord
   readonly template: ItemTemplate
-  readonly affixAggregates: ReadonlyArray<AffixAggregate>
+  readonly affixEntities: ReadonlyArray<AffixEntity>
 }
-export abstract class ItemAggregate implements IItemAggregate {
+export abstract class ItemEntity implements IItemEntity {
   constructor(
     public record: ItemRecord,
     public readonly template: ItemTemplate,
-    public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
+    public readonly affixEntities: ReadonlyArray<AffixEntity> = []
   ) {}
   /** 獲取物品的所有單位屬性修飾器 */
   getUnitStatModifiers() {
-    return this.affixAggregates.flatMap((affix) => affix.getUnitStatModifiers())
+    return this.affixEntities.flatMap((affix) => affix.getUnitStatModifiers())
   }
 }
-/** 遺物聚合，包含遺物記錄、樣板與詞綴快照集合 */
-export class RelicAggregate extends ItemAggregate {
+/** 遺物實體，包含遺物記錄、樣板與詞綴快照集合 */
+export class RelicEntity extends ItemEntity {
   constructor(
     public readonly record: RelicRecord,
     public readonly template: RelicTemplate,
-    public readonly affixAggregates: ReadonlyArray<AffixAggregate> = []
+    public readonly affixEntities: ReadonlyArray<AffixEntity> = []
   ) {
-    super(record, template, affixAggregates)
+    super(record, template, affixEntities)
   }
   get maxStacks(): number {
     return this.template.maxStacks

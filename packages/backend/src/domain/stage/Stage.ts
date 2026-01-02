@@ -1,11 +1,11 @@
 import { I18nField } from '../../shared/models/I18nField'
-import { EnemyAggregate } from '../entity/Enemy'
+import { EnemyEntity } from '../entity/Enemy'
 import { IEventStageProcessor } from './StageProcessorContext'
 /** 敵人階段實例，代表遭遇特定敵人的階段 */
 export interface EnemyStage {
   id: string
   type: 'ELITE' | 'BOSS' | 'NORMAL'
-  enemy: EnemyAggregate
+  enemy: EnemyEntity
 }
 /** 事件階段實例，代表發生特定事件的階段 */
 export interface EventStage {
