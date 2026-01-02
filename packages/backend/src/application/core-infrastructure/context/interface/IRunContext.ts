@@ -2,7 +2,7 @@ import { ItemRollModifier } from '../../../../domain/item/roll/ItemRollModifier'
 import { PostCombatContext } from '../../../../domain/post-combat/PostCombat'
 import { StageType } from '../../../../domain/stage/StageType'
 import { ChapterLevel } from '../../../../shared/models/TemplateWeightInfo'
-import { RunStatus } from '../../run-status/RunStatus'
+import { RunStatus } from '../../../../domain/run/RunTypes'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 export interface IRunContext extends WithRunIdAndVersion {
   readonly seed: number // 運行隨機種子

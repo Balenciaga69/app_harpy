@@ -23,6 +23,9 @@ export enum DomainErrorCode {
   // Run (遊戲進程)
   Run_狀態不符 = 'Run 狀態不符',
   Run_非法狀態轉換 = '非法的狀態轉換',
+  Run_重試次數不足 = '重試次數不足',
+  Run_無法前進到相同或較早關卡 = '無法前進到相同或較早關卡',
+  Run_敵人已遭遇過 = '敵人已遭遇過',
 }
 // ===== Application 層錯誤 =====
 export enum ApplicationErrorCode {
@@ -57,6 +60,9 @@ export const ErrorMessages: Record<DomainErrorCode | ApplicationErrorCode, strin
   [DomainErrorCode.商店_商店物品不存在]: '商店中找不到此物品',
   [DomainErrorCode.Run_狀態不符]: '當前狀態不允許此操作',
   [DomainErrorCode.Run_非法狀態轉換]: '非法的狀態轉換',
+  [DomainErrorCode.Run_重試次數不足]: '重試次數不足，無法繼續',
+  [DomainErrorCode.Run_無法前進到相同或較早關卡]: '無法前進到相同或較早關卡',
+  [DomainErrorCode.Run_敵人已遭遇過]: '此敵人已遭遇過',
   [ApplicationErrorCode.敵人_無可用敵人]: '當前關卡無可用敵人',
   [ApplicationErrorCode.敵人_關卡資訊無效]: '關卡資訊無效或不完整',
   [ApplicationErrorCode.物品_物品模板不存在]: '物品模板不存在',
