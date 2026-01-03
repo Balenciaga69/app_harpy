@@ -2,9 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { RunInitializationService } from '@app-harpy/game-core';
+import { RunInitializationService, ShopService } from '@app-harpy/game-core';
 import { InMemoryContextRepository } from '../infra/InMemoryContextRepository';
 import { InitRunDto } from './dto/InitRunDto';
+import { BuyItemDto } from './dto/BuyItemDto';
+import { SellItemDto } from './dto/SellItemDto';
+import { RefreshShopDto } from './dto/RefreshShopDto';
 import { ConfigService } from './config.service';
 
 /**
@@ -16,6 +19,23 @@ export class RunService {
     private readonly contextRepo: InMemoryContextRepository,
     private readonly configService: ConfigService,
   ) {}
+
+  /**
+   * 取得職業列表
+   */
+  async getProfessions() {
+    const configStore = await this.configService.getConfigStore();
+    const professions = configStore.professionStore.getAllProfessions();
+
+    return {
+      success: true,
+      data: professions.map((prof: any) => ({
+        id: prof.id,
+        name: prof.name,
+        desc: prof.desc,
+      })),
+    };
+  }
 
   /**
    * 初始化新 Run
@@ -47,6 +67,100 @@ export class RunService {
         runId: result.value!.contexts.runContext.runId,
         professionId: result.value!.contexts.characterContext.professionId,
         seed: result.value!.contexts.runContext.seed,
+      },
+    };
+  }
+
+  /**
+   * 在商店購買物品
+   */
+  async buyItem(dto: BuyItemDto) {
+    const configStore = await this.configService.getConfigStore();
+    const shopService = new ShopService(configStore, {
+      batch: this.contextRepo,
+    });
+
+    const result = await shopService.buyItem({
+      runId: dto.runId,
+      itemId: dto.itemId,
+      persist: true,
+    });
+
+    if (result.isFailure) {
+      throw new BadRequestException({
+        error: result.error,
+        message: '購買物品失敗',
+      });
+    }
+
+    return {
+      success: true,
+      message: '購買成功',
+      data: {
+        runId: dto.runId,
+        itemId: dto.itemId,
+      },
+    };
+  }
+
+  /**
+   * 賣出物品
+   */
+  async sellItem(dto: SellItemDto) {
+    const configStore = await this.configService.getConfigStore();
+    const shopService = new ShopService(configStore, {
+      batch: this.contextRepo,
+    });
+
+    const result = await shopService.sellItem({
+      runId: dto.runId,
+      itemId: dto.itemId,
+      persist: true,
+    });
+
+    if (result.isFailure) {
+      throw new BadRequestException({
+        error: result.error,
+        message: '賣出物品失敗',
+      });
+    }
+
+    return {
+      success: true,
+      message: '賣出成功',
+      data: {
+        runId: dto.runId,
+        itemId: dto.itemId,
+      },
+    };
+  }
+
+  /**
+   * 刷新商店物品
+   */
+  async refreshShop(dto: RefreshShopDto) {
+    const configStore = await this.configService.getConfigStore();
+    const shopService = new ShopService(configStore, {
+      batch: this.contextRepo,
+    });
+
+    const result = await shopService.refreshShop({
+      runId: dto.runId,
+      persist: true,
+    });
+
+    if (result.isFailure) {
+      throw new BadRequestException({
+        error: result.error,
+        message: '刷新商店失敗',
+      });
+    }
+
+    return {
+      success: true,
+      message: '刷新成功',
+      data: {
+        runId: dto.runId,
       },
     };
   }
