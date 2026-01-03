@@ -5,7 +5,7 @@ import {
   IStashContext,
   ICharacterContext,
   IShopContext,
-} from '@app-harpy/game-core';
+} from 'src/from-game-core';
 
 /**
  * In-Memory 實作的批量上下文儲存庫

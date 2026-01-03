@@ -17,17 +17,6 @@ import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
 } from './stage-progression/service/StageNodeGenerationService'
-//TODO: 添加跟 Shop 相關功能
-/**
- * Run 初始化錯誤類型
- * - 職業不存在: 指定的職業不存在
- * - 起始聖物無效: 起始聖物ID無效或不存在
- * - 版本衝突: 並發寫入衝突（資料庫層面）
- */
-export type RunInitializationError =
-  | ApplicationErrorCode.初始化_職業不存在
-  | ApplicationErrorCode.初始化_起始聖物無效
-  | ApplicationErrorCode.初始化_版本衝突
 // RUN 初始化服務相關常數
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
 const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
@@ -52,22 +41,7 @@ export class RunInitializationService {
     private readonly repos?: { batch?: IContextBatchRepository },
     private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
-  /**
-   * 初始化 RUN，上下文可選持久化
-   *
-   * 流程：
-   * 1. 驗證職業存在性
-   * 2. 生成 Run ID 與種子
-   * 3. 建立所有 Context（Run, Character, Stash）
-   * 4. 驗證起始聖物有效性
-   * 5. 若 persist=true，批次更新至資料庫
-   *
-   * 失敗情況：
-   * - ProfessionNotFound: 指定的職業不存在
-   * - InvalidStartingRelics: 起始聖物ID無效
-   * - VersionConflict: 資料庫並發寫入衝突
-   */
-  async initialize(params: RunInitializationParams): Promise<Result<IAppContext, RunInitializationError>> {
+  async initialize(params: RunInitializationParams): Promise<Result<IAppContext>> {
     // 驗證職業存在性
     const profession = this.configStore.professionStore.getProfession(params.professionId)
     if (!profession) {
@@ -80,7 +54,7 @@ export class RunInitializationService {
     // 建立所有 Context
     const contextsResult = this.buildContexts(runId, params, seed)
     if (contextsResult.isFailure) {
-      return Result.fail(contextsResult.error as RunInitializationError)
+      return Result.fail(contextsResult.error!)
     }
     const contexts = contextsResult.value!
     // 可選持久化上下文至資料庫
@@ -111,9 +85,6 @@ export class RunInitializationService {
       configStore: this.configStore,
     })
   }
-  /**
-   * 初始化各個上下文(Run、Stash、Character)
-   */
   private buildContexts(
     runId: string,
     params: RunInitializationParams,
@@ -186,10 +157,6 @@ export class RunInitializationService {
     }
     return Result.success({ runContext, characterContext, stashContext, shopContext })
   }
-  /**
-   * 初始化起始聖物
-   * FIXME: 簡化此方法，避免重複代碼
-   */
   private createRelicRecord(
     startingRelicIds: string[] = [],
     characterId: string
