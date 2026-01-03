@@ -1,7 +1,6 @@
 import { Result } from '../../../../shared/result/Result'
 import { IRunService } from '../../run/RunService'
 import { IPostCombatContextHandler } from '../PostCombatContextHandler'
-
 /**
  * 戰鬥後協調服務介面
  * 職責：協調獎勵派發與 Run 推進，確保兩個事務的原子性
@@ -15,7 +14,6 @@ export interface IPostCombatCoordinationService {
    */
   claimRewardsAndAdvance(params: { selectedRewardIndexes: number[]; nextStageNumber: number }): Result<void, string>
 }
-
 /**
  * 戰鬥後協調服務：協調領獎與推進
  * 職責：
@@ -30,7 +28,6 @@ export class PostCombatCoordinationService implements IPostCombatCoordinationSer
     private postCombatContextHandler: IPostCombatContextHandler,
     private runService: IRunService
   ) {}
-
   /**
    * 協調領獎與推進的完整流程
    * 副作用：修改角色、倉庫、PostCombat 上下文
@@ -39,14 +36,11 @@ export class PostCombatCoordinationService implements IPostCombatCoordinationSer
     // 1. 驗證 Run 狀態
     const validateStatus = this.postCombatContextHandler.validateRunStatus()
     if (validateStatus.isFailure) return Result.fail(validateStatus.error!)
-
     // 2. 驗證獎勵選擇有效性（Handler 已實作邏輯）
     const validateReward = this.postCombatContextHandler.validateRewardSelection(params.selectedRewardIndexes)
     if (validateReward.isFailure) return Result.fail(validateReward.error!)
-
     // 3. 加載角色與倉庫領域模型
     const { character, stash } = this.postCombatContextHandler.loadPostCombatDomainContexts()
-
     // 4. 應用獎勵到角色與倉庫（Handler 已實作邏輯）
     const applyRewardResult = this.postCombatContextHandler.applyRewardsToCharacterAndStash(
       character,
@@ -54,7 +48,6 @@ export class PostCombatCoordinationService implements IPostCombatCoordinationSer
       params.selectedRewardIndexes
     )
     if (applyRewardResult.isFailure) return Result.fail(applyRewardResult.error!)
-
     // 5. 原子性提交所有變更（Handler 已實作邏輯）
     const { updatedCharacter, updatedStash } = applyRewardResult.value!
     const commitResult = this.postCombatContextHandler.commitClaimRewardsAndAdvance({
@@ -63,10 +56,8 @@ export class PostCombatCoordinationService implements IPostCombatCoordinationSer
       selectedRewardIndexes: params.selectedRewardIndexes,
     })
     if (commitResult.isFailure) return Result.fail(commitResult.error!)
-
     const advanceResult = this.runService.advanceToNextStage(params.nextStageNumber)
     if (advanceResult.isFailure) return Result.fail(advanceResult.error!)
-
     return Result.success(undefined)
   }
 }

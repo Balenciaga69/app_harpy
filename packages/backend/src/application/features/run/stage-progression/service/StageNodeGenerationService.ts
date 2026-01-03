@@ -1,5 +1,5 @@
-import { StageType } from '../../../domain/stage/StageType'
-import { RandomHelper } from '../../../shared/helpers/RandomHelper'
+import { StageType } from '../../../../../domain/stage/StageType'
+import { RandomHelper } from '../../../../../shared/helpers/RandomHelper'
 // TODO: 未來搬到 env 配置 (目前暫時不處理)
 /** 單一章節的總關卡數 */
 const LEVEL_COUNT = 10

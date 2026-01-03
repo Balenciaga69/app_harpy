@@ -1,12 +1,6 @@
 import { Result } from '../../../../shared/result/Result'
 import { IRunContextHandler } from '../RunContextHandler'
-/**
- * 關卡初始化服務介面
- * （暫時定義在此，後續應移至 StageInitializationService）
- */
-export interface IStageInitializationService {
-  initializeStage(stageNumber: number): Result<void, string>
-}
+import { IStageInitializationService } from '../stage-progression/service/StageInitializationService'
 /**
  * Run 協調服務介面
  * 職責：協調 Run 推進與關卡初始化，確保狀態一致性
@@ -51,21 +45,17 @@ export class RunCoordinationService implements IRunCoordinationService {
    * 副作用：修改 Run Context、臨時上下文
    */
   advanceToNextStageAndInitialize(stageNumber: number): Result<void, string> {
-    // TODO: 驗證當前 Run 狀態
+    // Step 1: 驗證當前 Run 狀態必須為 POST_COMBAT
     const validateResult = this.runContextHandler.validateRunStatus('POST_COMBAT')
     if (validateResult.isFailure) return Result.fail(validateResult.error!)
-    // TODO: 加載 Run 領域模型
+    // Step 2: 加載 Run 領域模型並執行推進邏輯
     const run = this.runContextHandler.loadRunDomain()
-    // TODO: 執行推進邏輯（驗證 stageNumber 合法性、狀態轉換）
     const advanceResult = run.advanceToNextStage(stageNumber)
     if (advanceResult.isFailure) return Result.fail(advanceResult.error!)
-    // TODO: 提交 Run 變更
+    // Step 3: 提交 Run 變更
     const newRun = advanceResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    // TODO: 初始化新關卡
-    // - 根據新關卡的 stageNode 類型決定生成內容
-    // - NORMAL/ELITE/BOSS：生成敵人
-    // - EVENT：觸發事件
+    // Step 4: 初始化新關卡（生成敵人、節點、事件）
     const initResult = this.stageInitializationService.initializeStage(stageNumber)
     if (initResult.isFailure) return Result.fail(initResult.error!)
     return Result.success(undefined)

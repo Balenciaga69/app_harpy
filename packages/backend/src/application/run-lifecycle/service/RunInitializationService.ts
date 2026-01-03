@@ -16,7 +16,7 @@ import { IContextBatchRepository } from '../../core-infrastructure/repository/IR
 import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
-} from '../../stage-progression/service/StageNodeGenerationService'
+} from '../../features/run/stage-progression/service/StageNodeGenerationService'
 //TODO: 添加跟 Shop 相關功能
 /**
  * Run 初始化錯誤類型

@@ -8,7 +8,6 @@ import { IContextSnapshotAccessor } from '../../core-infrastructure/context/serv
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
 import { ItemEntityService } from '../../content-generation/service/item/ItemEntityService'
-
 /**
  * 獎勵派發結果
  */
@@ -16,7 +15,6 @@ export interface RewardApplicationResult {
   readonly updatedCharacter: Character
   readonly updatedStash: Stash
 }
-
 export interface IPostCombatContextHandler {
   getPostCombatContext(): PostCombatContext | undefined
   getRemainingFailRetries(): number
@@ -103,7 +101,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     this.unitOfWork.commit()
     return Result.success(undefined)
   }
-
   /**
    * 驗證獎勵選擇有效性
    */
@@ -112,31 +109,25 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     if (!postCombatCtx) {
       return Result.fail(DomainErrorCode.PostCombat_上下文不存在)
     }
-
     if (postCombatCtx.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
     const { maxSelectableCount, availableRewards } = postCombatCtx.detail
-
     // 檢查 selectedIndexes.length == maxSelectableCount
     if (selectedIndexes.length != maxSelectableCount) {
       return Result.fail(DomainErrorCode.PostCombat_獎勵數量不符)
     }
-
     // 檢查每個 index 都在 [0, availableRewards.length)
     if (selectedIndexes.some((idx) => typeof idx !== 'number' || idx < 0 || idx >= availableRewards.length)) {
       return Result.fail(DomainErrorCode.PostCombat_無效獎勵索引)
     }
-
     // 檢查沒有重複索引
     const uniqueIndexes = new Set(selectedIndexes)
     if (uniqueIndexes.size !== selectedIndexes.length) {
       return Result.fail(DomainErrorCode.PostCombat_重複獎勵索引)
     }
-
     return Result.success(undefined)
   }
-
   /**
    * 應用獎勵到角色與倉庫
    * 遍歷選擇的獎勵索引，根據類型派發金幣與物品
@@ -150,26 +141,20 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     if (!postCombatCtx || postCombatCtx.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-
     const availableRewards = postCombatCtx.detail.availableRewards
-
     const applyRewardResult = selectedIndexes.reduce(
       (accumulatorResult, selectedIndex) => {
         // 如果前面已失敗，直接返回失敗結果
         if (accumulatorResult.isFailure) {
           return accumulatorResult
         }
-
         const accumulated: RewardApplicationResult = accumulatorResult.value!
         const reward: CombatReward = availableRewards[selectedIndex]
-
         if (!reward) {
           return Result.fail<RewardApplicationResult>(DomainErrorCode.PostCombat_無效獎勵索引)
         }
-
         let updatedCharacter = accumulated.updatedCharacter
         let updatedStash = accumulated.updatedStash
-
         // 派發金幣
         if (reward.gold > 0) {
           const goldResult = updatedCharacter.addGold(reward.gold)
@@ -178,7 +163,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
           }
           updatedCharacter = goldResult.value!
         }
-
         // 派發物品
         for (const itemRecord of reward.itemRecords) {
           const itemEntity = this.createRelicEntityFromRecord(itemRecord)
@@ -188,7 +172,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
           }
           updatedStash = addItemResult.value!
         }
-
         return Result.success<RewardApplicationResult>({
           updatedCharacter,
           updatedStash,
@@ -196,10 +179,8 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
       },
       Result.success<RewardApplicationResult>({ updatedCharacter: character, updatedStash: stash })
     )
-
     return applyRewardResult
   }
-
   /**
    * 從 ItemRecord 建立 RelicEntity
    * 將獎勵中的物品記錄轉換為領域實體
@@ -207,7 +188,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
   private createRelicEntityFromRecord(itemRecord: any) {
     return this.itemEntityService.createRelicByRecord(itemRecord)
   }
-
   /**
    * 原子性提交領獎與推進變更
    * 一次性提交角色、倉庫、PostCombat 上下文變更，標記玩家已確認領獎
@@ -221,12 +201,10 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     if (!postCombatCtx) {
       return Result.fail(DomainErrorCode.PostCombat_上下文不存在)
     }
-
     // 僅在勝利狀態時才能提交
     if (postCombatCtx.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-
     // 構建更新後的 PostCombat 上下文，標記玩家已確認領獎
     const winCtx = postCombatCtx
     const updatedPostCombatCtx: PostCombatContext = {
@@ -238,7 +216,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
         selectedRewardIndexes: params.selectedRewardIndexes,
       },
     }
-
     // 累積所有變更到 unitOfWork，一次性提交
     this.unitOfWork
       .patchCharacterContext({
@@ -253,7 +230,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
         },
       })
       .commit()
-
     return Result.success(undefined)
   }
 }
