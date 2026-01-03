@@ -290,7 +290,7 @@
 本索引完全來自 `shit.md` 的重構與組織
 
 如需查看原始完整分析，請參考：
-`c:\Users\wits\Desktop\GitRepo\app_harpy\packages\backend\shit.md`
+`c:\Users\wits\Desktop\GitRepo\app_harpy\packages\game-core\shit.md`
 
 ---
 
