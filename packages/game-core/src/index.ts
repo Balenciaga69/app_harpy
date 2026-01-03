@@ -1,5 +1,5 @@
 // Application Layer
-export * from './application/run-lifecycle/service/RunInitializationService'
+export * from './application/features/run/RunInitializationService'
 export * from './application/core-infrastructure/repository/IRepositories'
 export * from './application/core-infrastructure/context/interface/IRunContext'
 export * from './application/core-infrastructure/context/interface/ICharacterContext'
