@@ -8,6 +8,7 @@ import { IContextSnapshotAccessor } from '../../core-infrastructure/context/serv
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
 import { ItemEntityService } from '../../content-generation/service/item/ItemEntityService'
+import { IRunService } from '../run/RunService'
 /**
  * 獎勵派發結果
  */
@@ -22,6 +23,7 @@ export interface IPostCombatContextHandler {
     character: Character
     stash: Stash
   }
+  endRun(): Result<void>
   validateRunStatus(): Result<void, string>
   updatePostCombatContext(updatedPostCombat: PostCombatContext): Result<void>
   commitRewardSelectionTransaction(updates: { characterRecord?: any; stash?: Stash }): Result<void>
@@ -43,7 +45,8 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     private contextAccessor: IContextSnapshotAccessor,
     private contextToDomainConverter: IContextToDomainConverter,
     private unitOfWork: IContextUnitOfWork,
-    private itemEntityService: ItemEntityService
+    private itemEntityService: ItemEntityService,
+    private runService: IRunService
   ) {}
   /** 獲取戰鬥後上下文 */
   public getPostCombatContext(): PostCombatContext | undefined {
@@ -230,6 +233,14 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
         },
       })
       .commit()
+    return Result.success(undefined)
+  }
+
+  public endRun(): Result<void> {
+    const result = this.runService.endRun()
+    if (result.isFailure) {
+      return Result.fail(result.error!)
+    }
     return Result.success(undefined)
   }
 }
