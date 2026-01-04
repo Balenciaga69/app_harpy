@@ -1,8 +1,8 @@
-import { nanoid } from 'nanoid'
 import { CharacterRecord } from '../../../domain/character/Character'
 import { RelicRecord } from '../../../domain/item/Item'
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
+import { IdGeneratorHelper } from '../../core-infrastructure/id'
 /** CharacterRecord 創建參數 */
 export interface CharacterRecordCreateParams {
   difficulty: number
@@ -23,7 +23,7 @@ export interface CharacterRecordCreateParams {
  */
 function createCharacterRecord(professionId: string, params: CharacterRecordCreateParams): CharacterRecord {
   const record: CharacterRecord = {
-    id: 'character-record-' + nanoid(),
+    id: IdGeneratorHelper.generateCharacterId(),
     name: params.name,
     professionId,
     relics: params.relics,

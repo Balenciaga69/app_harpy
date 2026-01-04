@@ -1,4 +1,3 @@
-// TODO: 這份代碼由 ai 生成, 需要人工審核, 但暫時先保留
 import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
@@ -12,16 +11,144 @@ import { ICharacterContext } from '../../core-infrastructure/context/interface/I
 import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/interface/IRunContext'
 import { IShopContext } from '../../core-infrastructure/context/interface/IShopContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
-import { IContextBatchRepository } from '../../core-infrastructure/repository/IRepositories'
+import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
+import { IdGeneratorHelper } from '../../core-infrastructure/id'
 import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
 } from './stage-progression/service/StageNodeGenerationService'
+import { IItemStore } from '../../core-infrastructure/static-config/IConfigStores'
+
 // RUN 初始化服務相關常數
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
-const CREATE_EXPECTED_VERSION = 0 // 建立新上下文時的預期版本
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3] // 預設章節列表
 const DEFAULT_REMAINING_FAIL_RETRIES = 3
+
+// ========================================
+// 純函數區：可獨立測試的組裝邏輯
+// ========================================
+
+/**
+ * 生成初始聖物記錄（純函數）
+ * 職責：驗證聖物 Template 並組裝 RelicRecord
+ */
+function generateInitialRelicRecords(
+  startingRelicIds: string[],
+  itemStore: IItemStore,
+  characterId: string
+): Result<RelicRecord[], ApplicationErrorCode.初始化_起始聖物無效> {
+  if (!startingRelicIds || startingRelicIds.length === 0) {
+    return Result.success([])
+  }
+
+  const relicTemplates = startingRelicIds
+    .map((id) => itemStore.getRelic(id))
+    .filter((template): template is NonNullable<typeof template> => template !== undefined)
+
+  if (relicTemplates.length === 0) {
+    return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
+  }
+
+  const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
+  const initialAffixData: AffixRecordCreateParams = {
+    atCreated: { chapter: 1, stage: 1, difficulty: DifficultyHelper.getDifficultyFactor(1, 1) },
+    difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
+    sourceUnitId: characterId,
+  }
+
+  const affixRecords = AffixRecordFactory.createMany(affixIds, initialAffixData)
+  const relicRecords = RelicRecordFactory.createMany(startingRelicIds, {
+    ...initialAffixData,
+    affixRecords,
+  })
+
+  return Result.success(relicRecords)
+}
+
+/**
+ * 組裝 RunContext（純函數）
+ * 職責：生成章節與關卡節點結構
+ */
+function buildRunContext(runId: string, seed: number, stageGenerator: IStageNodeGenerationService): IRunContext {
+  const chapters: Record<ChapterLevel, ChapterInfo> = {} as Record<ChapterLevel, ChapterInfo>
+  for (const ch of DEFAULT_CHAPTER_LEVELS) {
+    chapters[ch] = { stageNodes: stageGenerator.generateStageNodes(seed + ch) }
+  }
+
+  return {
+    runId,
+    version: INITIAL_VERSION,
+    seed,
+    currentChapter: 1 as ChapterLevel,
+    currentStage: 1,
+    encounteredEnemyIds: [],
+    chapters,
+    remainingFailRetries: DEFAULT_REMAINING_FAIL_RETRIES,
+    rollModifiers: [],
+    status: 'IDLE',
+    temporaryContext: {},
+  }
+}
+
+/**
+ * 組裝 CharacterContext（純函數）
+ * 職責：組裝角色初始狀態
+ */
+function buildCharacterContext(
+  runId: string,
+  professionId: string,
+  characterName: string,
+  relicRecords: RelicRecord[]
+): ICharacterContext {
+  const characterId = `${runId}-char`
+  return {
+    runId,
+    version: INITIAL_VERSION,
+    id: characterId,
+    name: characterName,
+    professionId,
+    relics: relicRecords,
+    gold: 0,
+    ultimate: {
+      pluginAffixRecord: [],
+      id: '',
+      templateId: '',
+      sourceUnitId: '',
+      atCreated: { chapter: 1, stage: 1, difficulty: 1 },
+    },
+    loadCapacity: 2,
+    currentLoad: 0,
+  }
+}
+
+/**
+ * 組裝 StashContext（純函數）
+ */
+function buildStashContext(runId: string): IStashContext {
+  return {
+    runId,
+    version: INITIAL_VERSION,
+    capacity: 20,
+    items: [],
+  }
+}
+
+/**
+ * 組裝 ShopContext（純函數）
+ */
+function buildShopContext(runId: string): IShopContext {
+  return {
+    runId,
+    version: INITIAL_VERSION,
+    shopConfigId: 'DEFAULT',
+    items: [],
+  }
+}
+
+// ========================================
+// RunInitializationService 類別
+// ========================================
+
 /** Run 初始化參數 */
 export interface RunInitializationParams {
   professionId: string
@@ -31,61 +158,63 @@ export interface RunInitializationParams {
   seed?: number
   persist?: boolean
 }
+
 /**
  * RUN 初始化服務：創建新遊戲進度的完整上下文
- * 職責：生成 Run ID、初始化上下文、可選持久化
+ * 職責：協調流程、驗證職業、可選持久化
+ *
+ * 設計說明：
+ * - 使用 UnitOfWork 模式管理事務，支持原子性提交
+ * - 分層設計：純函數組裝 → Assembler 協調 → Service 業務流程
+ * - 初始化時不生成聚合根，延遲轉換提升性能
  */
 export class RunInitializationService {
   constructor(
     private readonly configStore: IAppContext['configStore'],
-    private readonly repos?: { batch?: IContextBatchRepository },
+    private readonly unitOfWork: IContextUnitOfWork,
     private readonly stageGenerator?: IStageNodeGenerationService
   ) {}
+
   async initialize(params: RunInitializationParams): Promise<Result<IAppContext>> {
     // 驗證職業存在性
     const profession = this.configStore.professionStore.getProfession(params.professionId)
     if (!profession) {
       return Result.fail(ApplicationErrorCode.初始化_職業不存在)
     }
-    // 使用指定或隨機種子初始化隨機數生成器
+
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
-    const runId = this.generateRunId(rng)
+    const runId = IdGeneratorHelper.generateRunId()
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
-    // 建立所有 Context
-    const contextsResult = this.buildContexts(runId, params, seed)
+
+    // 組裝所有 Context
+    const contextsResult = this.buildAllContexts(runId, params, seed)
     if (contextsResult.isFailure) {
       return Result.fail(contextsResult.error!)
     }
+
     const contexts = contextsResult.value!
-    // 可選持久化上下文至資料庫
-    if (!!params.persist && this.repos && this.repos.batch) {
-      const updates = {
-        run: { context: contexts.runContext, expectedVersion: CREATE_EXPECTED_VERSION },
-        stash: { context: contexts.stashContext, expectedVersion: CREATE_EXPECTED_VERSION },
-        character: { context: contexts.characterContext, expectedVersion: CREATE_EXPECTED_VERSION },
-        shop: { context: contexts.shopContext, expectedVersion: CREATE_EXPECTED_VERSION },
-      }
-      const result = await this.repos.batch.updateBatch(updates)
-      // 並發衝突檢查
-      if (result === null) {
-        return Result.fail(ApplicationErrorCode.初始化_版本衝突)
-      }
-      return Result.success({
-        contexts: {
-          runContext: result.runContext ?? contexts.runContext,
-          stashContext: result.stashContext ?? contexts.stashContext,
-          characterContext: result.characterContext ?? contexts.characterContext,
-          shopContext: result.shopContext ?? contexts.shopContext,
-        },
-        configStore: this.configStore,
-      })
+
+    // 可選持久化
+    if (params.persist) {
+      this.unitOfWork
+        .updateRunContext(contexts.runContext)
+        .updateCharacterContext(contexts.characterContext)
+        .updateStashContext(contexts.stashContext)
+        .updateShopContext(contexts.shopContext)
+        .commit()
     }
+
     return Result.success({
       contexts,
       configStore: this.configStore,
     })
   }
-  private buildContexts(
+
+  /**
+   * 組裝所有 Context（協調函數）
+   * 職責：調用純函數並處理依賴
+   */
+  private buildAllContexts(
     runId: string,
     params: RunInitializationParams,
     seed: number
@@ -99,103 +228,29 @@ export class RunInitializationService {
     ApplicationErrorCode.初始化_起始聖物無效
   > {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
-    const chaptersLevels: ChapterLevel[] = DEFAULT_CHAPTER_LEVELS
-    const chapters: Record<ChapterLevel, ChapterInfo> = {} as Record<ChapterLevel, ChapterInfo>
-    for (const ch of chaptersLevels) {
-      chapters[ch] = { stageNodes: stageGen.generateStageNodes(seed + ch) }
-    }
-    const runContext: IRunContext = {
-      runId,
-      version: INITIAL_VERSION,
-      seed,
-      currentChapter: 1 as ChapterLevel,
-      currentStage: 1,
-      encounteredEnemyIds: [],
-      chapters: chapters,
-      remainingFailRetries: DEFAULT_REMAINING_FAIL_RETRIES,
-      rollModifiers: [],
-      status: 'IDLE',
-      temporaryContext: {},
-    }
     const characterId = `${runId}-char`
-    // 驗證起始聖物（如有指定）
-    const relicRecordsResult = this.createRelicRecord(params.startingRelicIds, characterId)
+
+    // 1. 生成聖物記錄
+    const relicRecordsResult = generateInitialRelicRecords(
+      params.startingRelicIds ?? [],
+      this.configStore.itemStore,
+      characterId
+    )
     if (relicRecordsResult.isFailure) {
-      return Result.fail(relicRecordsResult.error as ApplicationErrorCode.初始化_起始聖物無效)
+      return Result.fail(relicRecordsResult.error!)
     }
-    const characterContext: ICharacterContext = {
+
+    // 2. 組裝各個 Context
+    const runContext = buildRunContext(runId, seed, stageGen)
+    const characterContext = buildCharacterContext(
       runId,
-      version: INITIAL_VERSION,
-      id: characterId,
-      name: params.characterName ?? 'Player',
-      professionId: params.professionId,
-      relics: relicRecordsResult.value!,
-      gold: 0,
-      ultimate: {
-        //TODO: 無技能先留空
-        // FIXME: 缺一個取 UltimateTemplate 的方法在下方
-        pluginAffixRecord: [],
-        id: '',
-        templateId: '',
-        sourceUnitId: '',
-        atCreated: { chapter: 1, stage: 1, difficulty: 1 },
-      },
-      loadCapacity: 2,
-      currentLoad: 0,
-    }
-    const stashContext: IStashContext = {
-      runId,
-      version: INITIAL_VERSION,
-      capacity: 20,
-      items: [],
-    }
-    const shopContext: IShopContext = {
-      runId,
-      version: INITIAL_VERSION,
-      shopConfigId: 'DEFAULT', // 使用預設商店配置
-      items: [], // 初始化為空商店
-    }
+      params.professionId,
+      params.characterName ?? 'Player',
+      relicRecordsResult.value!
+    )
+    const stashContext = buildStashContext(runId)
+    const shopContext = buildShopContext(runId)
+
     return Result.success({ runContext, characterContext, stashContext, shopContext })
-  }
-  private createRelicRecord(
-    startingRelicIds: string[] = [],
-    characterId: string
-  ): Result<RelicRecord[], ApplicationErrorCode.初始化_起始聖物無效> {
-    // 若未指定起始聖物，返回空陣列（成功）
-    if (!startingRelicIds || startingRelicIds.length === 0) {
-      return Result.success([])
-    }
-    // 從 itemStore 載入聖物樣板
-    const { itemStore } = this.configStore
-    const relicTemplates = startingRelicIds
-      .map((id) => itemStore.getRelic(id))
-      .filter((template): template is NonNullable<typeof template> => template !== undefined)
-    // 驗證至少有一個聖物有效
-    if (relicTemplates.length === 0) {
-      return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
-    }
-    // 建立詞綴記錄
-    const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
-    const initialAffixData: AffixRecordCreateParams = {
-      atCreated: {
-        chapter: 1,
-        stage: 1,
-        difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
-      },
-      difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
-      sourceUnitId: characterId,
-    }
-    const affixRecords = AffixRecordFactory.createMany(affixIds, initialAffixData)
-    // 建立聖物記錄
-    const relicRecords = RelicRecordFactory.createMany(startingRelicIds, {
-      ...initialAffixData,
-      affixRecords: affixRecords,
-    })
-    return Result.success(relicRecords)
-  }
-  /** 生成唯一的 Run ID */
-  private generateRunId(rng?: RandomHelper): string {
-    const randomPart = rng ? Math.floor(rng.next() * 1000) : Math.floor(Math.random() * 1000)
-    return `run-${Date.now().toString(36)}-${randomPart}`
   }
 }

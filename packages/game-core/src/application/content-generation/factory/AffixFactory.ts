@@ -1,6 +1,6 @@
-import { nanoid } from 'nanoid'
 import { AffixRecord } from '../../../domain/affix/Affix'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
+import { IdGeneratorHelper } from '../../core-infrastructure/id'
 /** AffixRecord 創建參數 */
 export interface AffixRecordCreateParams {
   difficulty: number
@@ -9,7 +9,7 @@ export interface AffixRecordCreateParams {
 }
 function createRecord(templateId: string, params: AffixRecordCreateParams): AffixRecord {
   return {
-    id: 'affix-record-' + nanoid(),
+    id: IdGeneratorHelper.generateAffixRecordId(),
     templateId,
     sourceUnitId: params.sourceUnitId,
     atCreated: params.atCreated,

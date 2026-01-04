@@ -1,7 +1,7 @@
-import { nanoid } from 'nanoid'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { RelicRecord } from '../../../domain/item/Item'
 import { AffixRecord } from '../../../domain/affix/Affix'
+import { IdGeneratorHelper } from '../../core-infrastructure/id'
 /** RelicRecord 創建參數 */
 export interface RelicRecordCreateParams {
   difficulty: number
@@ -16,7 +16,7 @@ export interface RelicRecordCreateParams {
  */
 function createRecord(templateId: string, params: RelicRecordCreateParams): RelicRecord {
   const record: RelicRecord = {
-    id: 'relic-record-' + nanoid(),
+    id: IdGeneratorHelper.generateRelicRecordId(),
     templateId,
     affixRecords: params.affixRecords,
     atCreated: params.atCreated,
