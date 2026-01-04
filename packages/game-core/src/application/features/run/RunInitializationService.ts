@@ -12,7 +12,7 @@ import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/inte
 import { IShopContext } from '../../core-infrastructure/context/interface/IShopContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
-import { IdGeneratorHelper } from '../../core-infrastructure/id'
+import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
 import { IItemStore } from '../../core-infrastructure/static-config/IConfigStores'
 import {
   IStageNodeGenerationService,

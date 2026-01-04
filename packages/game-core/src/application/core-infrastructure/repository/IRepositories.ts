@@ -25,7 +25,7 @@ export interface IRepository<T extends WithRunIdAndVersion> {
   delete(id: string): Promise<void>
 }
 /** 上下文批量更新結果 */
-interface IContextUpdateResult {
+export interface IContextUpdateResult {
   success: boolean
   runContext?: IRunContext
   stashContext?: IStashContext
