@@ -1,4 +1,5 @@
 import { Controller, Post, Get, Body } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InitRunDto } from './dto/InitRunDto';
 import { BuyItemDto } from './dto/BuyItemDto';
 import { SellItemDto } from './dto/SellItemDto';
@@ -16,8 +17,38 @@ export class RunController {
    * GET /api/run/professions - 取得職業列表
    */
   @Get('professions')
+  @ApiOperation({ summary: '取得職業列表' })
+  @ApiResponse({
+    status: 200,
+    description: '成功取得職業列表',
+    schema: {
+      example: {
+        success: true,
+        data: [
+          {
+            id: 'warrior',
+            name: { tw: '戰士', en: 'Warrior' },
+            desc: { tw: '強力的近戰職業', en: 'Powerful melee class' },
+          },
+        ],
+      },
+    },
+  })
   async getProfessions() {
     return this.runService.getProfessions();
+  }
+
+  /**
+   * GET /api/run/relics - 取得所有聖物模板
+   */
+  @Get('relics')
+  @ApiOperation({ summary: '取得所有聖物模板' })
+  @ApiResponse({
+    status: 200,
+    description: '成功取得聖物模板列表',
+  })
+  async getRelicTemplates() {
+    return this.runService.getRelicTemplates();
   }
 
   /**

@@ -20,7 +20,7 @@ export class InMemoryContextRepository implements IContextBatchRepository {
    * 原子性更新多個 Context（簡化版：無版本檢查）
    * 副作用：直接覆寫記憶體中的資料
    */
-  updateBatch(
+  async updateBatch(
     updates: {
       run?: { context: IRunContext; expectedVersion: number };
       stash?: { context: IStashContext; expectedVersion: number };
@@ -28,7 +28,14 @@ export class InMemoryContextRepository implements IContextBatchRepository {
       shop?: { context: IShopContext; expectedVersion: number };
     },
     globalVersion?: number,
-  ) {
+  ): Promise<{
+    success: boolean;
+    runContext?: IRunContext;
+    stashContext?: IStashContext;
+    characterContext?: ICharacterContext;
+    shopContext?: IShopContext;
+    globalVersion: number;
+  } | null> {
     // 提取 runId（所有 Context 共用）
     const runId =
       updates.run?.context.runId ||
@@ -54,14 +61,14 @@ export class InMemoryContextRepository implements IContextBatchRepository {
       this.store.set(`shop:${runId}`, updates.shop.context);
     }
 
-    return {
+    return Promise.resolve({
       success: true,
       runContext: updates.run?.context,
       stashContext: updates.stash?.context,
       characterContext: updates.character?.context,
       shopContext: updates.shop?.context,
       globalVersion: (globalVersion || 0) + 1,
-    };
+    });
   }
 
   /** 根據 key 直接取得資料（測試用） */

@@ -38,6 +38,29 @@ export class RunService {
   }
 
   /**
+   * 取得所有聖物模板
+   */
+  async getRelicTemplates() {
+    const configStore = await this.configService.getConfigStore();
+    const relics = configStore.itemStore.getAllRelics();
+
+    return {
+      success: true,
+      data: relics.map((relic: any) => ({
+        id: relic.id,
+        name: relic.name,
+        desc: relic.desc,
+        itemType: relic.itemType,
+        rarity: relic.rarity,
+        affixIds: relic.affixIds,
+        tags: relic.tags,
+        loadCost: relic.loadCost,
+        maxStacks: relic.maxStacks,
+      })),
+    };
+  }
+
+  /**
    * 初始化新 Run
    * 流程：調用 game-core 的 RunInitializationService
    */
