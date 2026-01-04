@@ -1,6 +1,6 @@
-import { nanoid } from 'nanoid'
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
+import { IdGeneratorHelper } from '../../core-infrastructure/id'
 /** UltimateRecord 創建參數 */
 export interface UltimateRecordCreateParams {
   difficulty: number
@@ -10,7 +10,7 @@ export interface UltimateRecordCreateParams {
 /** 建立 UltimateRecord */
 function createUltimateRecord(templateId: string, params: UltimateRecordCreateParams): UltimateRecord {
   return {
-    id: 'ultimate-record-' + nanoid(),
+    id: IdGeneratorHelper.generateUltimateRecordId(),
     templateId,
     sourceUnitId: params.sourceUnitId,
     pluginAffixRecord: [],
