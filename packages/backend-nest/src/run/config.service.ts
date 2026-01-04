@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { Injectable } from '@nestjs/common';
 import {
   GameConfigAssembler,
@@ -15,10 +13,14 @@ import {
 /**
  * 遊戲配置服務：單例管理 ConfigStore
  * 職責：在應用啟動時載入所有靜態配置
+ * 設計：延遲初始化以加快應用啟動速度
+ *
+ * 注意：game-core 的類型定義暫時有限制，故 eslint-disable 作用於整個文件
+ * TODO：待 game-core 類型完善後移除此註解
  */
 @Injectable()
 export class ConfigService {
-  private configAssembler: any;
+  private configAssembler: GameConfigAssembler;
   private isInitialized = false;
 
   constructor() {
