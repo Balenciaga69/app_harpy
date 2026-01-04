@@ -1,7 +1,7 @@
 ﻿import { ProfessionTemplate } from '../../domain/profession/Profession'
 // ZH_TW: 戰士職業 - 主要使用強大一擊技能，配備堅毅之心遺物
 const profession_warrior: ProfessionTemplate = {
-  id: 'prof_warrior',
+  id: 'WARRIOR',
   name: { tw: '戰士', en: 'Warrior' },
   desc: {
     tw: '力量與決心的化身。擁有強大的單體傷害技能，能承受更多傷害。',
