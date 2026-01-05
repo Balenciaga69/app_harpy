@@ -4,7 +4,7 @@ import { IsString, IsOptional, IsNumber, IsArray } from 'class-validator'
  */
 export class InitRunDto {
   @IsString()
-  professionId: string
+  professionId: string | undefined
   @IsOptional()
   @IsNumber()
   seed?: number

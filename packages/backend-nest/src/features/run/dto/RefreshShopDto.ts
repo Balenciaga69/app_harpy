@@ -4,5 +4,5 @@ import { IsString } from 'class-validator'
  */
 export class RefreshShopDto {
   @IsString()
-  runId: string
+  runId: string | undefined
 }

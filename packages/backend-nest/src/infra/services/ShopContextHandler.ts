@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InMemoryContextRepository } from '../repositories/InMemoryContextRepository'
-import { ConfigService } from '../../features/run/services/config.service'
 /**
  * 快速實現的商店上下文處理器
  * 用途：MVP 快速開發
  */
 @Injectable()
 export class ShopContextHandler {
-  constructor(
-    private readonly repository: InMemoryContextRepository,
-    private readonly configService: ConfigService
-  ) {}
+  constructor(private readonly repository: InMemoryContextRepository) {}
   async loadShopContext(runId: string) {
     return this.repository.getShopContext(runId)
   }

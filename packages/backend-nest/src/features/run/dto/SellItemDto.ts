@@ -4,7 +4,7 @@ import { IsString } from 'class-validator'
  */
 export class SellItemDto {
   @IsString()
-  runId: string
+  runId: string | undefined
   @IsString()
-  itemId: string
+  itemId: string | undefined
 }

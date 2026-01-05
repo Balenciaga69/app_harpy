@@ -86,7 +86,7 @@ export class RunService {
    * 流程：調用 game-core 的 RunInitializationService
    */
   async initializeRun(dto: InitRunDto) {
-    const result = await this.runInitServiceWrapper.initialize(dto.professionId, dto.seed, dto.startingRelicIds)
+    const result = await this.runInitServiceWrapper.initialize(dto.professionId ?? '', dto.seed, dto.startingRelicIds)
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
@@ -106,7 +106,7 @@ export class RunService {
    * 在商店購買物品
    */
   buyItem(dto: BuyItemDto) {
-    const result = this.shopServiceWrapper.buyItem(dto.itemId)
+    const result = this.shopServiceWrapper.buyItem(dto.itemId ?? '')
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
@@ -126,7 +126,7 @@ export class RunService {
    * 賣出物品
    */
   sellItem(dto: SellItemDto) {
-    const result = this.shopServiceWrapper.sellItem(dto.itemId)
+    const result = this.shopServiceWrapper.sellItem(dto.itemId ?? '')
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
