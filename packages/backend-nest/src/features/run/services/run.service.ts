@@ -1,24 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 import { Injectable, BadRequestException } from '@nestjs/common'
-import { InMemoryContextRepository } from '../../../infra/repositories/InMemoryContextRepository'
-import { ItemGenerationService } from '../../../infra/services/ItemGenerationService'
-import { ShopContextHandler } from '../../../infra/services/ShopContextHandler'
 import { InitRunDto } from '../dto/InitRunDto'
 import { BuyItemDto } from '../dto/BuyItemDto'
 import { SellItemDto } from '../dto/SellItemDto'
 import { RefreshShopDto } from '../dto/RefreshShopDto'
 import { ConfigService } from './config.service'
-import { RunInitializationService, ShopService } from '../../../from-game-core'
+import { ShopServiceWrapper } from './shop-service.wrapper'
+import { RunInitServiceWrapper } from './run-init-service.wrapper'
 /**
  * Run 應用服務：協調 game-core 邏輯與後端基礎設施
  */
 @Injectable()
 export class RunService {
   constructor(
-    private readonly contextRepo: InMemoryContextRepository,
     private readonly configService: ConfigService,
-    private readonly itemGenService: ItemGenerationService,
-    private readonly shopContextHandler: ShopContextHandler
+    private readonly shopServiceWrapper: ShopServiceWrapper,
+    private readonly runInitServiceWrapper: RunInitServiceWrapper
   ) {}
   /**
    * 取得職業列表
@@ -56,18 +52,41 @@ export class RunService {
       })),
     }
   }
+
+  /**
+   * 取得指定職業的可選起始聖物（BFF 規則友好）
+   */
+  async getSelectableStartingRelics(professionId: string) {
+    const configStore = await this.configService.getConfigStore()
+    const profession = configStore.professionStore.getProfession(professionId)
+    if (!profession) {
+      throw new BadRequestException({
+        error: 'PROFESSION_NOT_FOUND',
+        message: '職業不存在',
+      })
+    }
+    const relics = configStore.itemStore.getManyRelics([...profession.startRelicIds])
+    return {
+      success: true,
+      data: relics.map((relic: any) => ({
+        id: relic.id,
+        name: relic.name,
+        desc: relic.desc,
+        itemType: relic.itemType,
+        rarity: relic.rarity,
+        affixIds: relic.affixIds,
+        tags: relic.tags,
+        loadCost: relic.loadCost,
+        maxStacks: relic.maxStacks,
+      })),
+    }
+  }
   /**
    * 初始化新 Run
    * 流程：調用 game-core 的 RunInitializationService
    */
   async initializeRun(dto: InitRunDto) {
-    const configStore = await this.configService.getConfigStore()
-    const runInitService = new RunInitializationService(configStore, this.contextRepo as any)
-    const result = await runInitService.initialize({
-      professionId: dto.professionId,
-      seed: dto.seed,
-      persist: true,
-    })
+    const result = await this.runInitServiceWrapper.initialize(dto.professionId ?? '', dto.seed, dto.startingRelicIds)
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
@@ -87,8 +106,7 @@ export class RunService {
    * 在商店購買物品
    */
   buyItem(dto: BuyItemDto) {
-    const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
-    const result = shopService.buyItem(dto.itemId)
+    const result = this.shopServiceWrapper.buyItem(dto.itemId ?? '')
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
@@ -108,8 +126,7 @@ export class RunService {
    * 賣出物品
    */
   sellItem(dto: SellItemDto) {
-    const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
-    const result = shopService.sellItem(dto.itemId)
+    const result = this.shopServiceWrapper.sellItem(dto.itemId ?? '')
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
@@ -129,8 +146,7 @@ export class RunService {
    * 刷新商店物品
    */
   refreshShop(dto: RefreshShopDto) {
-    const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
-    const result = shopService.refreshShopItems()
+    const result = this.shopServiceWrapper.refreshShopItems()
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,

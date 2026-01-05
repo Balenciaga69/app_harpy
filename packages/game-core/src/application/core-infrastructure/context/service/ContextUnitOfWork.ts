@@ -3,11 +3,6 @@ import { IContextMutator, IContextSnapshotAccessor } from './AppContextService'
 import { IRunContext } from '../interface/IRunContext'
 import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
-/**
- * 上下文單位工作介面
- *
- * 職責：定義 UnitOfWork 模式的抽象，確保多個 Context 的變更作為一個原子性事務進行提交
- */
 export interface IContextUnitOfWork {
   // === Update ===
   updateCharacterContext(ctx: ICharacterContext): IContextUnitOfWork

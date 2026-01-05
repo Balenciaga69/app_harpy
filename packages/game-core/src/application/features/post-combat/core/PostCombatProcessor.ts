@@ -1,19 +1,27 @@
-import { PostCombatContext, PostCombatLoseContext, PostCombatWinContext } from '../../../domain/post-combat/PostCombat'
-import { ApplicationErrorCode } from '../../../shared/result/ErrorCodes'
-import { Result } from '../../../shared/result/Result'
-import { IPostCombatContextHandler } from './PostCombatContextHandler'
-import { RewardGenerationContext } from './reward/Reward'
-import { IRewardFactory } from './reward/RewardFactory'
+import {
+  PostCombatContext,
+  PostCombatWinContext,
+  PostCombatLoseContext,
+} from '../../../../domain/post-combat/PostCombat'
+import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../shared/result/Result'
+import { RewardGenerationContext } from '../reward/Reward'
+import { IRewardFactory } from '../reward/RewardFactory'
+import { IPostCombatContextAccessor } from './PostCombatContextAccessor'
+import { IPostCombatDomainConverter } from './PostCombatDomainConverter'
+import { IPostCombatTransactionManager } from './PostCombatTransactionManager'
 export class PostCombatProcessor {
   constructor(
     private rewardFactory: IRewardFactory,
-    private ctxHandler: IPostCombatContextHandler
+    private contextAccessor: IPostCombatContextAccessor,
+    private postCombatDomainConverter: IPostCombatDomainConverter,
+    private transactionManager: IPostCombatTransactionManager
   ) {}
   /**
    * 處理戰鬥後邏輯：根據結果執行勝利或失敗流程
    */
   public process(): Result<void> {
-    const postCombatCtx = this.ctxHandler.getPostCombatContext()
+    const postCombatCtx = this.contextAccessor.getPostCombatContext()
     if (!postCombatCtx) {
       return Result.fail(ApplicationErrorCode.初始化_起始聖物無效) // 使用統一錯誤代碼 這邊是錯誤的 代表要新增一個錯誤代碼
     }
@@ -29,11 +37,8 @@ export class PostCombatProcessor {
    * 處理勝利邏輯：生成獎勵並更新上下文（不可變方式）
    */
   private handleWin(postCombatCtx: PostCombatContext): Result<void> {
-    // 驗證當前 Run 狀態
-    const validateResult = this.ctxHandler.validateRunStatus()
-    if (validateResult.isFailure) return Result.fail(validateResult.error!)
-    // 載入領域上下文
-    const { character, stash } = this.ctxHandler.loadPostCombatDomainContexts()
+    const character = this.postCombatDomainConverter.convertCharacterContextToDomain()
+    const stash = this.postCombatDomainConverter.convertStashContextToDomain()
     const rewardContext: RewardGenerationContext = {
       character,
       difficulty: postCombatCtx.combatDifficulty,
@@ -51,28 +56,22 @@ export class PostCombatProcessor {
         availableRewards: rewardResult.value!,
       },
     }
-    this.ctxHandler.updatePostCombatContext(updatedPostCombat)
+    this.transactionManager.updatePostCombatContext(updatedPostCombat)
     return Result.success(undefined)
   }
   private handleLose(postCombatCtx: PostCombatLoseContext): Result<void> {
     // 驗證當前 Run 狀態
-    const validateResult = this.ctxHandler.validateRunStatus()
-    if (validateResult.isFailure) return Result.fail(validateResult.error!)
+    // 這裡如需驗證狀態，請外部注入 validator，或於 processor 外部驗證
     // if 是首領戰或無盡戰鬥，結束 Run
     if (postCombatCtx.combatDifficulty === 'BOSS' || postCombatCtx.combatDifficulty === 'ENDLESS') {
-      const endResult = this.ctxHandler.endRun()
-      if (endResult.isFailure) {
-        return Result.fail(endResult.error!)
-      }
+      // 這裡如需結束 run，請外部注入 runService，或於 processor 外部處理
     } else {
       // 計算新的重試次數
-      const currentRetries = this.ctxHandler.getRemainingFailRetries()
+      const currentRetries = this.contextAccessor.getRemainingFailRetries()
       const retryCountToDeduct = (postCombatCtx as any).detail.retryCountToDeduct || 1
       const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
       // 提交重試次數扣除
-      this.ctxHandler.commitRetryDeductionTransaction({
-        remainingFailRetries: newRemainingRetries,
-      })
+      this.transactionManager.commitRetryDeduction(newRemainingRetries)
     }
     return Result.success(undefined)
   }

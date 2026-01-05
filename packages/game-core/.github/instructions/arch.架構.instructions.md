@@ -34,7 +34,7 @@ applyTo: '/*.ts, /*.md'
 ### 2.2 資料真相
 
 - 唯一真相：所有狀態必須存放在後端資料庫
-- 多裝置考量：玩家可能多裝置或多瀏覽器登入同一帳號
+- 多裝置考量：玩家可能多裝置或多瀏覽器登入同一帳號, 不鼓勵但不阻止
 - 單一紀錄：同時只允許一個事實來源
 
 ## 3 系統架構分層
@@ -96,19 +96,7 @@ Config 系統組成：
 
 ### 4.3 內容生成系統（Factory）
 
-工廠用途：根據靜態模板與當前遊戲狀態動態生成 Aggregate
-
-生成體系：
-
-- 物品生成：商店、關卡掉落、獎勵
-- 敵人生成：隨機選擇模板並套用難度係數
-- 詞綴生成：與物品或敵人關聯
-- 關卡節點生成：章節進度相關
-
-Factory 層級：
-
-- Factory（低階）：將 Template 與 Record 組合為完整 Aggregate
-- AggregateService（高階）：使用 Factory、Config Store、Context Snapshot 來建立 Aggregate
+-- 等待補充
 
 ## 5 動態資料系統（Context）
 
@@ -116,28 +104,11 @@ Context 定義：遊戲運行時的狀態快照，保存動態資料以供持久
 
 ### 5.1 上下文分類
 
-- 角色資訊（Character Context）
-- 倉庫（Stash Context）
-- 商店狀態（Shop Context）
-- 戰鬥前事務（Pre-battle Context）
-- 戰鬥後事務（Post-battle Context）
-- 關卡進程（Stage Progress Context）
-- 敵人資訊（Enemy Context）
+-- 等待補充
 
 ### 5.2 儲存策略
 
-- 拆分儲存：將 Run Context 拆分成多個子 JSON 欄位（角色屬性 JSON、倉庫 JSON、商店 JSON 等）
-- 儲存位置：NoSQL 資料庫（遊戲核心 NoSQL），每個 Run 對應一筆記錄
-
-優勢：
-
-- 高效更新：小操作（如購買物品）僅讀取/更新相關欄位（倉庫 JSON），減少 IO
-- 查詢支援：支援索引查詢（如金幣欄位），便於統計分析
-- 性能優化：多欄位允許精準讀寫
-
-挑戰：
-
-- 一致性：欄位間一致性需額外處理（如交易確保多欄位同步）
+-- 等待補充
 
 ### 5.3 版本控制與並發
 
@@ -163,8 +134,6 @@ Context 定義：遊戲運行時的狀態快照，保存動態資料以供持久
 
 - ContextBatchRepository 支援原子性更新多個 Context
 - 要麼全部成功，要麼全部失敗
-
-詳見 tech/context.md 的版本號與樂觀鎖章節
 
 ### 5.4 禁止清單
 
@@ -241,9 +210,8 @@ RDB（帳戶系統）：
 - 商店系統
 - 戰鬥前後事務系統
   - 下注遊戲
-  - 賽前變數系統
+  - 賽前變數系統(奇遇/賽局增幅)
   - 賽後獎勵與生成系統
-- 賭博系統
 - 倉庫系統
 - 角色管理系統
 - 商店交易系統
@@ -281,13 +249,32 @@ RDB（帳戶系統）：
 - 帳戶層與 Run 層分離
 - Run 結束即歸零，帳戶進度永久保留
 
-## 9 相關文件導覽
+## 9 樂觀鎖
 
-詳細概念請參考 FAQ：
+game-core 專案（你現在的位置）
+├─ Domain Layer
+│ └─ 純邏輯（無任何外部依賴）
+├─ Application Layer
+│ ├─ Context 定義
+│ ├─ Context 存取邏輯
+│ ├─ IRepository<T> 介面定義 ← 樂觀鎖在這裡定義
+│ │ (預期行為：version 不符 → null)
+│ └─ 流程服務
+└─ Infra Layer
+└─ 靜態配置加載器（無持久化）
 
-- tech/config.md：靜態資料系統設計
-- tech/entity-model.md：Template/Record/Aggregate 三層結構
-- tech/context.md：動態資料與版本控制詳解
-- tech/factory.md：工廠模式與內容生成
-- stat.md、affix.md、ultimate.md 等：具體領域模型實現
-- run.md、stage.md、shop.md、stash.md 等：功能系統詳解
+─── 跨進程邊界 ───
+
+另一個 API 專案（單獨的 Node.js/Go/Python 專案）
+├─ 實現 IRepository<T> 介面
+│ ├─ DynamoDB 連接
+│ ├─ 樂觀鎖邏輯（Lua script 或 DynamoDB ConditionExpression）
+│ └─ 版本檢驗細節
+├─ HTTP/RPC 層
+│ └─ 暴露 API 給前端或其他服務
+└─ 部署
+└─ AWS Lambda + DynamoDB
+
+遠端 infra（你看不到的地方）
+├─ DynamoDB
+└─ Lambda 函數

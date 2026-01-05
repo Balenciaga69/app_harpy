@@ -1,23 +1,29 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022"],
-    "module": "commonjs",
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "noEmit": false,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "sourceMap": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", ".git", ".github", "scripts", "depr"]
+  "compileOnSave": false,
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".git",
+    ".github",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "depr"
+  ]
 }

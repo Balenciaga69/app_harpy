@@ -1,6 +1,6 @@
 import { Result } from '../../../../shared/result/Result'
 import { IRunService } from '../../run/RunService'
-import { IPostCombatContextHandler } from '../PostCombatContextHandler'
+import { IPostCombatContextHandler } from './PostCombatContextHandler'
 /**
  * 戰鬥後協調服務介面
  * 職責：協調獎勵派發與 Run 推進，確保兩個事務的原子性
