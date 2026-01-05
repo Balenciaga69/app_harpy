@@ -90,6 +90,36 @@ const relic_squire_chainmail: RelicTemplate = {
   loadCost: 5,
   maxStacks: 1,
 }
+// ZH_TW: 遊俠之心 - 遊俠專用遺物，提升 200 攻擊力
+const relic_ranger_heart: RelicTemplate = {
+  id: 'relic_ranger_heart',
+  name: { tw: '遊俠之心', en: 'Ranger Heart' },
+  desc: {
+    tw: '精準的遊俠之心，提升 200 點攻擊力。只有遊俠能夠裝備。',
+    en: "A ranger's precise heart, increases attack damage by 200. Only rangers can equip.",
+  },
+  itemType: 'RELIC',
+  rarity: 'COMMON',
+  affixIds: ['affix_ranger_attack_boost_1'],
+  tags: ['ATTACK'],
+  loadCost: 1,
+  maxStacks: 1,
+}
+// ZH_TW: 法師之心 - 法師專用遺物，提升 50 能量
+const relic_mage_heart: RelicTemplate = {
+  id: 'relic_mage_heart',
+  name: { tw: '法師之心', en: 'Mage Heart' },
+  desc: {
+    tw: '神秘的法師之心，提升 50 點能量。只有法師能夠裝備。',
+    en: "A mage's mystical heart, increases energy by 50. Only mages can equip.",
+  },
+  itemType: 'RELIC',
+  rarity: 'COMMON',
+  affixIds: ['affix_mage_energy_boost_1'],
+  tags: ['ENERGY'],
+  loadCost: 1,
+  maxStacks: 1,
+}
 export const RelicTemplateList: RelicTemplate[] = [
   relic_warrior_resolute_heart,
   relic_warrior_frost_dagger,
@@ -97,4 +127,6 @@ export const RelicTemplateList: RelicTemplate[] = [
   relic_pirate_rum,
   relic_necromancer_embrace,
   relic_squire_chainmail,
+  relic_ranger_heart,
+  relic_mage_heart,
 ]

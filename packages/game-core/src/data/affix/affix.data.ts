@@ -166,6 +166,46 @@ const affix_effect_squire_chainmail_evasion: AffixEffect = {
     },
   ],
 }
+// ZH_TW: 遊俠攻擊力提升詞綴 - 遊俠之心使用
+const affix_ranger_attack_boost_1: AffixTemplate = {
+  id: 'affix_ranger_attack_boost_1',
+  desc: { tw: '攻擊力提升 200 點', en: 'Increase attack damage by 200' },
+  tags: ['ATTACK'],
+  effectIds: ['affix_effect_ranger_attack_boost_1'],
+}
+const affix_effect_ranger_attack_boost_1: AffixEffect = {
+  id: 'affix_effect_ranger_attack_boost_1',
+  trigger: 'ON_EQUIP',
+  conditions: [],
+  actions: [
+    {
+      type: 'STAT_MODIFY',
+      stat: 'attackDamage',
+      operation: 'ADD',
+      value: 200,
+    },
+  ],
+}
+// ZH_TW: 法師能量提升詞綴 - 法師之心使用
+const affix_mage_energy_boost_1: AffixTemplate = {
+  id: 'affix_mage_energy_boost_1',
+  desc: { tw: '能量提升 50 點', en: 'Increase energy by 50' },
+  tags: ['ENERGY'],
+  effectIds: ['affix_effect_mage_energy_boost_1'],
+}
+const affix_effect_mage_energy_boost_1: AffixEffect = {
+  id: 'affix_effect_mage_energy_boost_1',
+  trigger: 'ON_EQUIP',
+  conditions: [],
+  actions: [
+    {
+      type: 'STAT_MODIFY',
+      stat: 'maxEnergy',
+      operation: 'ADD',
+      value: 50,
+    },
+  ],
+}
 export const AffixTemplateList: AffixTemplate[] = [
   affix_chemist_poison_resist_1,
   affix_warrior_hp_boost_1,
@@ -174,6 +214,8 @@ export const AffixTemplateList: AffixTemplate[] = [
   affix_pirate_rum_effect,
   affix_necromancer_resurrection_double,
   affix_squire_chainmail_boost,
+  affix_ranger_attack_boost_1,
+  affix_mage_energy_boost_1,
 ]
 export const AffixEffectTemplateList: AffixEffect[] = [
   affix_effect_chemist_poison_resist_1,
@@ -185,4 +227,6 @@ export const AffixEffectTemplateList: AffixEffect[] = [
   affix_effect_necromancer_resurrection_double,
   affix_effect_squire_chainmail_hp,
   affix_effect_squire_chainmail_evasion,
+  affix_effect_ranger_attack_boost_1,
+  affix_effect_mage_energy_boost_1,
 ]
