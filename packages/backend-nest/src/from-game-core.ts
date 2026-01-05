@@ -16,5 +16,16 @@ export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalItem
 export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalProfessionConfigLoader'
 export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalShopConfigLoader'
 export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalUltimateConfigLoader'
+// Shop Feature
 export * from '@app-harpy/game-core/dist/application/features/shop/ShopService'
-export * from '@app-harpy/game-core/dist/application/features/run/RunInitializationService'
+export * from '@app-harpy/game-core/dist/application/features/shop/ShopContextHandler'
+// Item Generation Service
+export * from '@app-harpy/game-core/dist/application/content-generation/service/item/ItemGenerationService'
+// Domain Models (needed for types)
+export * from '@app-harpy/game-core/dist/domain/item/Item'
+export * from '@app-harpy/game-core/dist/domain/post-combat/PostCombat'
+export * from '@app-harpy/game-core/dist/domain/character/Character'
+export * from '@app-harpy/game-core/dist/domain/shop/Shop'
+export * from '@app-harpy/game-core/dist/domain/stash/Stash'
+// Shared
+export * from '@app-harpy/game-core/dist/shared/result/Result'

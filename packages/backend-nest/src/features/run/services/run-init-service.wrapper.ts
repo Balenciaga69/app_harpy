@@ -9,12 +9,14 @@ import {
   IStashContext,
   IShopContext,
 } from '../../../from-game-core'
+
 @Injectable()
 export class RunInitServiceWrapper {
   constructor(
     private readonly configService: ConfigService,
     private readonly unitOfWorkAdapter: ContextUnitOfWorkAdapter
   ) {}
+
   async initialize(professionId: string, seed?: number, startingRelicIds?: string[]) {
     const configStore = await this.configService.getConfigStore()
     const initialContext: IAppContext = {
