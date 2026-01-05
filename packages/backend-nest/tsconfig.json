@@ -1,10 +1,7 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "resolvePackageJsonExports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -13,6 +10,7 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
+    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -20,9 +18,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "baseUrl": "./",
     "paths": {
+      // 確保這裡有 paths 配置，這非常重要！
       "@app-harpy/game-core/*": ["../game-core/dist/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }

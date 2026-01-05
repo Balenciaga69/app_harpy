@@ -3,10 +3,10 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022"],
-    "module": "es2022",
+    "module": "commonjs", // 從 "es2022" 改為 "commonjs"
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "moduleDetection": "force",
+    "moduleResolution": "node", // 從 "bundler" 改為 "node"
+    // "moduleDetection": "force", // 在 commonjs/node 環境下通常不需要，可以移除或註解掉
     "outDir": "dist",
     "noEmit": false,
     "strict": true,
@@ -17,6 +17,11 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "declaration": true
+    // 如果 game-core 內部有使用路徑別名 (paths)，可以在這裡添加 "baseUrl" 和 "paths"
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@my-game-core/*": ["src/*"]
+    // }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", ".git", ".github", "scripts"]
