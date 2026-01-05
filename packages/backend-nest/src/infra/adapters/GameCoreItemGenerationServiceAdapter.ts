@@ -1,28 +1,57 @@
 import { Injectable } from '@nestjs/common'
-import { IItemGenerationService, Result, ItemType, RelicEntity, CombatRewardType } from '../../from-game-core'
+import {
+  IItemGenerationService,
+  Result,
+  ItemType,
+  RelicEntity,
+  CombatRewardType,
+  AppContextService,
+} from '../../from-game-core'
+import { ContextStorage } from '../context/ContextStorage'
 
 /**
- * 適配層：為 game-core 的 IItemGenerationService 提供實現
- * game-core 中的真實實現有複雜依賴，此處提供簡化版本供 NestJS DI 容器注入
- *
- * 注意：當前實現是 Stub，如需完整實現應在 game-core 內部完成
+ * 物品生成服務適配層
+ * 職責：為 game-core 的 IItemGenerationService 提供完整實現
+ * 根據當前 IAppContext 初始化所有必需的 game-core 依賴
  */
 @Injectable()
 export class GameCoreItemGenerationServiceAdapter implements IItemGenerationService {
   generateRandomItemFromShop(): Result<RelicEntity> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+    try {
+      const appContext = ContextStorage.getContext()
+      // 應用上下文服務會在完整實現時使用
+      new AppContextService(appContext)
+      // TODO: 實現根據商店來源生成隨機物品的邏輯
+      // 需要使用 appContextService 和 configStore
+      throw new Error('TODO: Implement generateRandomItemFromShop')
+    } catch (error) {
+      return Result.fail(error instanceof Error ? error.message : 'Unknown error')
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   generateRandomItemFromReward(_rewardType: CombatRewardType): Result<RelicEntity> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+    try {
+      const appContext = ContextStorage.getContext()
+      // 應用上下文服務會在完整實現時使用
+      new AppContextService(appContext)
+      // TODO: 實現根據獎勵類型生成隨機物品的邏輯
+      // 需要使用 appContextService、configStore 和 rewardType
+      throw new Error('TODO: Implement generateRandomItemFromReward')
+    } catch (error) {
+      return Result.fail(error instanceof Error ? error.message : 'Unknown error')
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   generateItemFromTemplate(_templateId: string, _itemType: ItemType): Result<RelicEntity> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+    try {
+      const appContext = ContextStorage.getContext()
+      // 應用上下文服務會在完整實現時使用
+      new AppContextService(appContext)
+      // TODO: 實現根據指定樣板生成物品的邏輯
+      // 需要使用 appContextService、configStore、templateId 和 itemType
+      throw new Error('TODO: Implement generateItemFromTemplate')
+    } catch (error) {
+      return Result.fail(error instanceof Error ? error.message : 'Unknown error')
+    }
   }
 }

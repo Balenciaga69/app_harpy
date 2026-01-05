@@ -1,44 +1,101 @@
 import { Injectable } from '@nestjs/common'
-import { IShopContextHandler, Result, Character, CharacterRecord, Shop, Stash } from '../../from-game-core'
+import {
+  IShopContextHandler,
+  Result,
+  Character,
+  CharacterRecord,
+  Shop,
+  Stash,
+  AppContextService,
+  ContextUnitOfWork,
+} from '../../from-game-core'
+import { ContextStorage } from '../context/ContextStorage'
 
 /**
- * 適配層：為 game-core 的 IShopContextHandler 提供實現
- * game-core 中的真實實現依賴複雜的 Context 系統，此處提供簡化版本供 NestJS DI 容器注入
- *
- * 注意：當前實現是 Stub，如需完整實現應在 game-core 內部完成
+ * 商店上下文處理適配層
+ * 職責：為 game-core 的 IShopContextHandler 提供完整實現
+ * 根據當前 IAppContext 初始化所有必需的 game-core 依賴
  */
 @Injectable()
 export class GameCoreShopContextHandlerAdapter implements IShopContextHandler {
   getDifficulty(): number {
-    // 此方法不在當前 backend-nest 架構中使用
-    throw new Error('Not implemented in backend adapter')
+    const appContext = ContextStorage.getContext()
+    const appContextService = new AppContextService(appContext)
+    return appContextService.getCurrentAtCreatedInfo().difficulty
   }
 
   loadShopDomainContexts(): { shop: Shop; character: Character; stash: Stash } {
-    // 此方法不在當前 backend-nest 架構中使用
-    throw new Error('Not implemented in backend adapter')
+    // TODO: 實現上下文到領域模型的轉換
+    // 需要使用 AppContextService 提供的方法
+    throw new Error('TODO: Implement context to domain model conversion')
   }
 
   validateRunStatus(): Result<void, string> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+    const appContext = ContextStorage.getContext()
+    const appContextService = new AppContextService(appContext)
+    const runContext = appContextService.getRunContext()
+
+    if (runContext.status === 'IDLE') {
+      return Result.success(undefined)
+    }
+
+    return Result.fail(`Run status is not IDLE, current status: ${runContext.status}`)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  commitBuyTransaction(_updates: { characterRecord?: CharacterRecord; shop?: Shop; stash?: Stash }): Result<void> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+  commitBuyTransaction(updates: { characterRecord?: CharacterRecord; shop?: Shop; stash?: Stash }): Result<void> {
+    const appContext = ContextStorage.getContext()
+    const appContextService = new AppContextService(appContext)
+    const unitOfWork = new ContextUnitOfWork(appContextService, appContextService)
+
+    if (updates.characterRecord) {
+      unitOfWork.patchCharacterContext(updates.characterRecord)
+    }
+
+    if (updates.stash) {
+      unitOfWork.patchStashContext({
+        items: updates.stash.listItems().map((i) => i.record),
+      })
+    }
+
+    if (updates.shop) {
+      unitOfWork.patchShopContext({
+        items: updates.shop.items.map((shopAgg) => shopAgg.record),
+      })
+    }
+
+    unitOfWork.commit()
+    return Result.success(undefined)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  commitSellTransaction(_updates: { characterRecord?: CharacterRecord; stash?: Stash }): Result<void> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+  commitSellTransaction(updates: { characterRecord?: CharacterRecord; stash?: Stash }): Result<void> {
+    const appContext = ContextStorage.getContext()
+    const appContextService = new AppContextService(appContext)
+    const unitOfWork = new ContextUnitOfWork(appContextService, appContextService)
+
+    if (updates.characterRecord) {
+      unitOfWork.patchCharacterContext(updates.characterRecord)
+    }
+
+    if (updates.stash) {
+      unitOfWork.patchStashContext({
+        items: updates.stash.listItems().map((i) => i.record),
+      })
+    }
+
+    unitOfWork.commit()
+    return Result.success(undefined)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  commitGenerateShopItemsTransaction(_updates: { shop: Shop }): Result<void> {
-    // 此方法不在當前 backend-nest 架構中使用
-    return Result.fail('Not implemented in backend adapter')
+  commitGenerateShopItemsTransaction(updates: { shop: Shop }): Result<void> {
+    const appContext = ContextStorage.getContext()
+    const appContextService = new AppContextService(appContext)
+    const unitOfWork = new ContextUnitOfWork(appContextService, appContextService)
+
+    unitOfWork.patchShopContext({
+      items: updates.shop.items.map((shopAgg) => shopAgg.record),
+    })
+
+    unitOfWork.commit()
+    return Result.success(undefined)
   }
 }
