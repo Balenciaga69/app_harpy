@@ -21,6 +21,7 @@ type UpdateBatchResult = {
 /**
  * 內存 repository
  * 存取遊戲相關 context
+ * 在測試中模擬資料庫操作 避免依賴真實的資料庫
  */
 export class InMemoryContextRepository implements IContextBatchRepository {
   private store = new Map<string, any>()
