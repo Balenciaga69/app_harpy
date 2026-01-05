@@ -1,0 +1,63 @@
+### Health Check
+GET http://localhost:3000/health
+
+###
+
+### Get Professions
+GET http://localhost:3000/api/run/professions
+
+###
+
+### Get Relic Templates
+GET http://localhost:3000/api/run/relics
+
+###
+
+### Get Profession Relics (e.g., WARRIOR)
+GET http://localhost:3000/api/run/professions/WARRIOR/relics
+
+###
+
+### Initialize Run
+POST http://localhost:3000/api/run/init
+Content-Type: application/json
+
+{
+  "professionId": "WARRIOR",
+  "seed": 12345,
+  "startingRelicIds": ["relic_warrior_resolute_heart"]
+}
+
+###
+
+### Buy Item
+POST http://localhost:3000/api/run/shop/buy
+Content-Type: application/json
+
+{
+  "runId": "run_abc123",
+  "itemId": "item_example"
+}
+
+###
+
+### Sell Item
+POST http://localhost:3000/api/run/shop/sell
+Content-Type: application/json
+
+{
+  "runId": "run_abc123",
+  "itemId": "item_example"
+}
+
+###
+
+### Refresh Shop
+POST http://localhost:3000/api/run/shop/refresh
+Content-Type: application/json
+
+{
+  "runId": "run_abc123"
+}
+
+###
