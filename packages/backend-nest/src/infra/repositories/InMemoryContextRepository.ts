@@ -6,6 +6,17 @@ import {
   ICharacterContext,
   IShopContext,
 } from '../../from-game-core'
+
+// Define the return type for updateBatch
+type UpdateBatchResult = {
+  success: boolean
+  runContext?: IRunContext
+  stashContext?: IStashContext
+  characterContext?: ICharacterContext
+  shopContext?: IShopContext
+  globalVersion: number
+}
+
 @Injectable()
 export class InMemoryContextRepository implements IContextBatchRepository {
   private store = new Map<string, any>()
@@ -17,14 +28,7 @@ export class InMemoryContextRepository implements IContextBatchRepository {
       shop?: { context: IShopContext; expectedVersion: number }
     },
     globalVersion?: number
-  ): Promise<{
-    success: boolean
-    runContext?: IRunContext
-    stashContext?: IStashContext
-    characterContext?: ICharacterContext
-    shopContext?: IShopContext
-    globalVersion: number
-  } | null> {
+  ): Promise<UpdateBatchResult | null> {
     const runId =
       updates.run?.context.runId ||
       updates.character?.context.runId ||
