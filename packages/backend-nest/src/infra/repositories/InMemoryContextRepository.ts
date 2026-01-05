@@ -18,6 +18,10 @@ type UpdateBatchResult = {
 }
 
 @Injectable()
+/**
+ * 內存 repository
+ * 存取遊戲相關 context
+ */
 export class InMemoryContextRepository implements IContextBatchRepository {
   private store = new Map<string, any>()
   async updateBatch(
