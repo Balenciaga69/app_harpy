@@ -1,10 +1,10 @@
 import { Controller, Post, Get, Body } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
-import { InitRunDto } from './dto/InitRunDto'
-import { BuyItemDto } from './dto/BuyItemDto'
-import { SellItemDto } from './dto/SellItemDto'
-import { RefreshShopDto } from './dto/RefreshShopDto'
-import { RunService } from './run.service'
+import { InitRunDto } from '../dto/InitRunDto'
+import { BuyItemDto } from '../dto/BuyItemDto'
+import { SellItemDto } from '../dto/SellItemDto'
+import { RefreshShopDto } from '../dto/RefreshShopDto'
+import { RunService } from '../services/run.service'
 /**
  * Run 控制器：處理與遊戲進度初始化相關的 HTTP 請求
  */

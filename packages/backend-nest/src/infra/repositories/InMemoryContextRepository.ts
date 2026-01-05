@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { IContextBatchRepository, IRunContext, IStashContext, ICharacterContext, IShopContext } from '../from-game-core'
+import {
+  IContextBatchRepository,
+  IRunContext,
+  IStashContext,
+  ICharacterContext,
+  IShopContext,
+} from '../../from-game-core'
 /**
  * In-Memory 實作的批量上下文儲存庫
  * 用途：快速開發驗證，不具持久化能力

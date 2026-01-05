@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 import { Injectable, BadRequestException } from '@nestjs/common'
-import { InMemoryContextRepository } from '../infra/InMemoryContextRepository'
-import { ItemGenerationService } from '../infra/ItemGenerationService'
-import { ShopContextHandler } from '../infra/ShopContextHandler'
-import { InitRunDto } from './dto/InitRunDto'
-import { BuyItemDto } from './dto/BuyItemDto'
-import { SellItemDto } from './dto/SellItemDto'
-import { RefreshShopDto } from './dto/RefreshShopDto'
+import { InMemoryContextRepository } from '../../../infra/repositories/InMemoryContextRepository'
+import { ItemGenerationService } from '../../../infra/services/ItemGenerationService'
+import { ShopContextHandler } from '../../../infra/services/ShopContextHandler'
+import { InitRunDto } from '../dto/InitRunDto'
+import { BuyItemDto } from '../dto/BuyItemDto'
+import { SellItemDto } from '../dto/SellItemDto'
+import { RefreshShopDto } from '../dto/RefreshShopDto'
 import { ConfigService } from './config.service'
-import { RunInitializationService, ShopService } from '../from-game-core'
+import { RunInitializationService, ShopService } from '../../../from-game-core'
 /**
  * Run 應用服務：協調 game-core 邏輯與後端基礎設施
  */

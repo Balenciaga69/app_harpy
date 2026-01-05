@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { InMemoryContextRepository } from './InMemoryContextRepository'
-import { ConfigService } from '../run/config.service'
+import { InMemoryContextRepository } from '../repositories/InMemoryContextRepository'
+import { ConfigService } from '../../features/run/services/config.service'
 /**
  * 快速實現的商店上下文處理器
  * 用途：MVP 快速開發

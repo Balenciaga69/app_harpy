@@ -7,7 +7,7 @@ import {
   InternalProfessionConfigLoader,
   InternalShopConfigLoader,
   InternalUltimateConfigLoader,
-} from '../from-game-core'
+} from '../../../from-game-core'
 /**
  * 遊戲配置服務：單例管理 ConfigStore
  * 職責：在應用啟動時載入所有靜態配置
