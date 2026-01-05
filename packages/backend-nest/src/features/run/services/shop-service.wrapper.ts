@@ -1,22 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { ItemGenerationService } from '../../../infra/services/ItemGenerationService'
-import { ShopContextHandler } from '../../../infra/services/ShopContextHandler'
 import { ShopService } from '../../../from-game-core'
 /**
  * ShopService 包裝器
- * 用途：將 game-core 的 ShopService 包裝為 NestJS Injectable 服務
- * 優點：統一 DI，避免重複 new，保持代碼乾淨
+ * 用途：為 RunService 提供 game-core 的 ShopService 介面
+ * 設計：NestJS 負責通過工廠函數實例化 ShopService
+ * 優點：避免在業務層手動 new，依賴注入由框架管理
  */
 @Injectable()
 export class ShopServiceWrapper {
-  private shopService: ShopService
-  constructor(
-    private readonly itemGenService: ItemGenerationService,
-    private readonly shopContextHandler: ShopContextHandler
-  ) {
-    // 在構造時建立一次實例，避免每次方法調用都 new
-    this.shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
-  }
+  constructor(private readonly shopService: ShopService) {}
   /**
    * 購買物品
    */
