@@ -6,6 +6,8 @@ export * from '@app-harpy/game-core/dist/application/core-infrastructure/context
 export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/interface/IStashContext'
 export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/interface/IShopContext'
 export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/interface/IAppContext'
+export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/service/AppContextService'
+export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/service/ContextUnitOfWork'
 // Infrastructure Layer
 export * from '@app-harpy/game-core/dist/infra/static-config/assembler/GameConfigAssembler'
 export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalAffixConfigLoader'

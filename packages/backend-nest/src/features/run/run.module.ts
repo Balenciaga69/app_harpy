@@ -5,6 +5,7 @@ import { ConfigService } from './services/config.service'
 import { RunInitServiceWrapper } from './services/run-init-service.wrapper'
 import { ShopServiceWrapper } from './services/shop-service.wrapper'
 import { InMemoryContextRepository } from '../../infra/repositories/InMemoryContextRepository'
+import { ContextUnitOfWorkAdapter } from '../../infra/services/ContextUnitOfWorkAdapter'
 import { ItemGenerationService } from '../../infra/services/ItemGenerationService'
 import { ShopContextHandler } from '../../infra/services/ShopContextHandler'
 import { ShopService } from '../../from-game-core'
@@ -29,6 +30,7 @@ import { ShopService } from '../../from-game-core'
 
     // ✅ 基礎設施服務（預設 Singleton）
     InMemoryContextRepository,
+    ContextUnitOfWorkAdapter,
     ItemGenerationService,
     ShopContextHandler,
 
