@@ -1,2 +1,4 @@
 packages:
   - 'packages/*'
+  - '!packages/未完成內容'
+
