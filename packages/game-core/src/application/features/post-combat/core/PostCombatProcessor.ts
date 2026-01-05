@@ -1,9 +1,14 @@
-import { PostCombatContext, PostCombatLoseContext, PostCombatWinContext } from '../../../domain/post-combat/PostCombat'
-import { ApplicationErrorCode } from '../../../shared/result/ErrorCodes'
-import { Result } from '../../../shared/result/Result'
+import {
+  PostCombatContext,
+  PostCombatWinContext,
+  PostCombatLoseContext,
+} from '../../../../domain/post-combat/PostCombat'
+import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../shared/result/Result'
+import { RewardGenerationContext } from '../reward/Reward'
+import { IRewardFactory } from '../reward/RewardFactory'
 import { IPostCombatContextHandler } from './PostCombatContextHandler'
-import { RewardGenerationContext } from './reward/Reward'
-import { IRewardFactory } from './reward/RewardFactory'
+
 export class PostCombatProcessor {
   constructor(
     private rewardFactory: IRewardFactory,
