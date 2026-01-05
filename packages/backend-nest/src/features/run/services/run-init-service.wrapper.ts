@@ -16,12 +16,13 @@ export class RunInitServiceWrapper {
   /**
    * 初始化新 Run
    */
-  async initialize(professionId: string, seed?: number) {
+  async initialize(professionId: string, seed?: number, startingRelicIds?: string[]) {
     const configStore = await this.configService.getConfigStore()
     const runInitService = new RunInitializationService(configStore, this.contextRepo as any)
     return runInitService.initialize({
       professionId,
       seed,
+      startingRelicIds,
       persist: true,
     })
   }

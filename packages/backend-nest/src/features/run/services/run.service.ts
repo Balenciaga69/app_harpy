@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { InitRunDto } from '../dto/InitRunDto'
 import { BuyItemDto } from '../dto/BuyItemDto'
@@ -53,12 +52,41 @@ export class RunService {
       })),
     }
   }
+
+  /**
+   * 取得指定職業的可選起始聖物（BFF 規則友好）
+   */
+  async getSelectableStartingRelics(professionId: string) {
+    const configStore = await this.configService.getConfigStore()
+    const profession = configStore.professionStore.getProfession(professionId)
+    if (!profession) {
+      throw new BadRequestException({
+        error: 'PROFESSION_NOT_FOUND',
+        message: '職業不存在',
+      })
+    }
+    const relics = configStore.itemStore.getManyRelics([...profession.startRelicIds])
+    return {
+      success: true,
+      data: relics.map((relic: any) => ({
+        id: relic.id,
+        name: relic.name,
+        desc: relic.desc,
+        itemType: relic.itemType,
+        rarity: relic.rarity,
+        affixIds: relic.affixIds,
+        tags: relic.tags,
+        loadCost: relic.loadCost,
+        maxStacks: relic.maxStacks,
+      })),
+    }
+  }
   /**
    * 初始化新 Run
    * 流程：調用 game-core 的 RunInitializationService
    */
   async initializeRun(dto: InitRunDto) {
-    const result = await this.runInitServiceWrapper.initialize(dto.professionId, dto.seed)
+    const result = await this.runInitServiceWrapper.initialize(dto.professionId, dto.seed, dto.startingRelicIds)
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,

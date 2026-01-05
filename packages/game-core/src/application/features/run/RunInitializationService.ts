@@ -78,8 +78,16 @@ export class RunInitializationService {
     const profession = this.configStore.professionStore.getProfession(params.professionId)
     let startingRelicIds: string[]
     if (params.startingRelicIds) {
+      // 只允許最多一個起始聖物
       if (params.startingRelicIds.length > 1) {
         return Result.fail(ApplicationErrorCode.初始化_起始聖物只能選一個)
+      }
+      // 驗證所選起始聖物是否屬於該職業的可選範圍
+      const allowed = new Set(profession.startRelicIds)
+      for (const id of params.startingRelicIds) {
+        if (!allowed.has(id)) {
+          return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
+        }
       }
       startingRelicIds = params.startingRelicIds
     } else {
