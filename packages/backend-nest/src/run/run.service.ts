@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { InMemoryContextRepository } from '../infra/InMemoryContextRepository'
+import { ItemGenerationService } from '../infra/ItemGenerationService'
+import { ShopContextHandler } from '../infra/ShopContextHandler'
 import { InitRunDto } from './dto/InitRunDto'
 import { BuyItemDto } from './dto/BuyItemDto'
 import { SellItemDto } from './dto/SellItemDto'
@@ -17,7 +17,9 @@ import { RunInitializationService, ShopService } from '../from-game-core'
 export class RunService {
   constructor(
     private readonly contextRepo: InMemoryContextRepository,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly itemGenService: ItemGenerationService,
+    private readonly shopContextHandler: ShopContextHandler
   ) {}
 
   /**
@@ -67,9 +69,7 @@ export class RunService {
   async initializeRun(dto: InitRunDto) {
     const configStore = await this.configService.getConfigStore()
 
-    const runInitService = new RunInitializationService(configStore, {
-      batch: this.contextRepo,
-    })
+    const runInitService = new RunInitializationService(configStore, this.contextRepo as any)
 
     const result = await runInitService.initialize({
       professionId: dto.professionId,
@@ -97,17 +97,9 @@ export class RunService {
   /**
    * 在商店購買物品
    */
-  async buyItem(dto: BuyItemDto) {
-    const configStore = await this.configService.getConfigStore()
-    const shopService = new ShopService(configStore, {
-      batch: this.contextRepo,
-    })
-
-    const result = await shopService.buyItem({
-      runId: dto.runId,
-      itemId: dto.itemId,
-      persist: true,
-    })
+  buyItem(dto: BuyItemDto) {
+    const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
+    const result = shopService.buyItem(dto.itemId)
 
     if (result.isFailure) {
       throw new BadRequestException({
@@ -129,17 +121,9 @@ export class RunService {
   /**
    * 賣出物品
    */
-  async sellItem(dto: SellItemDto) {
-    const configStore = await this.configService.getConfigStore()
-    const shopService = new ShopService(configStore, {
-      batch: this.contextRepo,
-    })
-
-    const result = await shopService.sellItem({
-      runId: dto.runId,
-      itemId: dto.itemId,
-      persist: true,
-    })
+  sellItem(dto: SellItemDto) {
+    const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
+    const result = shopService.sellItem(dto.itemId)
 
     if (result.isFailure) {
       throw new BadRequestException({
@@ -161,16 +145,9 @@ export class RunService {
   /**
    * 刷新商店物品
    */
-  async refreshShop(dto: RefreshShopDto) {
-    const configStore = await this.configService.getConfigStore()
-    const shopService = new ShopService(configStore, {
-      batch: this.contextRepo,
-    })
-
-    const result = await shopService.refreshShop({
-      runId: dto.runId,
-      persist: true,
-    })
+  refreshShop(dto: RefreshShopDto) {
+    const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
+    const result = shopService.refreshShopItems()
 
     if (result.isFailure) {
       throw new BadRequestException({

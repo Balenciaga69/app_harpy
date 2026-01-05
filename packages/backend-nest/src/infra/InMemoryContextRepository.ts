@@ -65,6 +65,43 @@ export class InMemoryContextRepository implements IContextBatchRepository {
     })
   }
 
+  // 額外的 context 管理方法（供 ShopContextHandler 使用）
+  async updateRunContext(runId: string, context: IRunContext) {
+    this.store.set(`run:${runId}`, context)
+    return { success: true }
+  }
+
+  async updateCharacterContext(runId: string, context: ICharacterContext) {
+    this.store.set(`character:${runId}`, context)
+    return { success: true }
+  }
+
+  async updateStashContext(runId: string, context: IStashContext) {
+    this.store.set(`stash:${runId}`, context)
+    return { success: true }
+  }
+
+  async updateShopContext(runId: string, context: IShopContext) {
+    this.store.set(`shop:${runId}`, context)
+    return { success: true }
+  }
+
+  async getRunContext(runId: string) {
+    return this.store.get(`run:${runId}`) || null
+  }
+
+  async getCharacterContext(runId: string) {
+    return this.store.get(`character:${runId}`) || null
+  }
+
+  async getStashContext(runId: string) {
+    return this.store.get(`stash:${runId}`) || null
+  }
+
+  async getShopContext(runId: string) {
+    return this.store.get(`shop:${runId}`) || null
+  }
+
   /** 根據 key 直接取得資料（測試用） */
   getByKey(key: string): any {
     return this.store.get(key) || null
