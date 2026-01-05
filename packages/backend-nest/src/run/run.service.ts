@@ -2,13 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, BadRequestException } from '@nestjs/common'
-import { RunInitializationService, ShopService } from '@app-harpy/game-core'
 import { InMemoryContextRepository } from '../infra/InMemoryContextRepository'
 import { InitRunDto } from './dto/InitRunDto'
 import { BuyItemDto } from './dto/BuyItemDto'
 import { SellItemDto } from './dto/SellItemDto'
 import { RefreshShopDto } from './dto/RefreshShopDto'
 import { ConfigService } from './config.service'
+import { RunInitializationService, ShopService } from '../from-game-core'
 
 /**
  * Run 應用服務：協調 game-core 邏輯與後端基礎設施

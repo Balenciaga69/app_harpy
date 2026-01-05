@@ -6,9 +6,9 @@ import {
   InternalEnemyConfigLoader,
   InternalItemConfigLoader,
   InternalProfessionConfigLoader,
-  InternalUltimateConfigLoader,
   InternalShopConfigLoader,
-} from '@app-harpy/game-core'
+  InternalUltimateConfigLoader,
+} from '../from-game-core'
 
 /**
  * 遊戲配置服務：單例管理 ConfigStore

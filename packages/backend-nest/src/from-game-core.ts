@@ -15,3 +15,5 @@ export * from '@app-harpy/game-core/src/infra/static-config/loader/InternalItemC
 export * from '@app-harpy/game-core/src/infra/static-config/loader/InternalProfessionConfigLoader'
 export * from '@app-harpy/game-core/src/infra/static-config/loader/InternalShopConfigLoader'
 export * from '@app-harpy/game-core/src/infra/static-config/loader/InternalUltimateConfigLoader'
+export * from '@app-harpy/game-core/src/application/features/shop/ShopService'
+export * from '@app-harpy/game-core/src/application/features/run/RunInitializationService'
