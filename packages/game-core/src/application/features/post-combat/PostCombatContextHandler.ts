@@ -9,7 +9,6 @@ import { IPostCombatContextAccessor } from './core/PostCombatContextAccessor'
 import { IPostCombatDomainConverter } from './core/PostCombatDomainConverter'
 import { IPostCombatTransactionManager } from './core/PostCombatTransactionManager'
 import { IPostCombatValidator } from './core/PostCombatValidator'
-
 /**
  * 獎勵派發結果
  */
@@ -17,7 +16,6 @@ export interface RewardApplicationResult {
   readonly updatedCharacter: Character
   readonly updatedStash: Stash
 }
-
 export interface IPostCombatContextHandler {
   loadPostCombatDomainContexts(): {
     character: Character
@@ -46,7 +44,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     private itemEntityService: ItemEntityService,
     private runService: IRunService
   ) {}
-
   /** 載入戰鬥後相關的領域上下文 */
   public loadPostCombatDomainContexts() {
     return {
@@ -54,12 +51,10 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
       stash: this.converter.convertStashContextToDomain(),
     }
   }
-
   /** 驗證當前 Run 狀態是否為 POST_COMBAT */
   public validateRunStatus(): Result<void, string> {
     return this.validator.validateRunStatus()
   }
-
   /** 驗證獎勵選擇有效性 */
   public validateRewardSelection(selectedIndexes: number[]): Result<void, string> {
     return this.validator.validateRewardSelection(selectedIndexes)
@@ -117,7 +112,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     )
     return applyRewardResult
   }
-
   /**
    * 從 ItemRecord 建立 RelicEntity
    * 將獎勵中的物品記錄轉換為領域實體
@@ -125,7 +119,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
   private createRelicEntityFromRecord(itemRecord: any) {
     return this.itemEntityService.createRelicByRecord(itemRecord)
   }
-
   /**
    * 原子性提交領獎與推進變更
    * 一次性提交角色、倉庫、PostCombat 上下文變更，標記玩家已確認領獎
@@ -139,12 +132,10 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     if (!postCombatCtx) {
       return Result.fail(DomainErrorCode.PostCombat_上下文不存在)
     }
-
     // 僅在勝利狀態時才能提交
     if (postCombatCtx.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-
     // 構建更新後的 PostCombat 上下文，標記玩家已確認領獎
     const winCtx = postCombatCtx
     const updatedPostCombatCtx: PostCombatContext = {
@@ -156,14 +147,12 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
         selectedRewardIndexes: params.selectedRewardIndexes,
       },
     }
-
     return this.transactionManager.commitClaimRewardsAndAdvance({
       character: params.updatedCharacter,
       stash: params.updatedStash,
       postCombatContext: updatedPostCombatCtx,
     })
   }
-
   public endRun(): Result<void> {
     const result = this.runService.endRun()
     if (result.isFailure) {
