@@ -74,7 +74,7 @@ npm run start:prod
    // src/run/dto/YourActionDto.ts
    export class YourActionDto {
      @IsString()
-     yourField: string;
+     yourField: string
    }
    ```
 

@@ -66,7 +66,6 @@ export class RunController {
   async getRelicTemplates() {
     return this.runService.getRelicTemplates()
   }
-
   /**
    * GET /api/run/professions/:id/relics - 取得指定職業的可選起始聖物
    */

@@ -1,24 +1,33 @@
 import { Injectable } from '@nestjs/common'
-import { InMemoryContextRepository } from '../../../infra/repositories/InMemoryContextRepository'
+import { ContextUnitOfWorkAdapter } from '../../../infra/services/ContextUnitOfWorkAdapter'
 import { ConfigService } from './config.service'
-import { RunInitializationService } from '../../../from-game-core'
-/**
- * RunInitializationService 包裝器
- * 用途：將 game-core 的 RunInitializationService 包裝為 NestJS Injectable 服務
- * 優點：統一 DI，避免手動 new，保持代碼乾淨
- */
+import {
+  RunInitializationService,
+  IAppContext,
+  IRunContext,
+  ICharacterContext,
+  IStashContext,
+  IShopContext,
+} from '../../../from-game-core'
 @Injectable()
 export class RunInitServiceWrapper {
   constructor(
-    private readonly contextRepo: InMemoryContextRepository,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly unitOfWorkAdapter: ContextUnitOfWorkAdapter
   ) {}
-  /**
-   * 初始化新 Run
-   */
   async initialize(professionId: string, seed?: number, startingRelicIds?: string[]) {
     const configStore = await this.configService.getConfigStore()
-    const runInitService = new RunInitializationService(configStore, this.contextRepo as any)
+    const initialContext: IAppContext = {
+      configStore,
+      contexts: {
+        runContext: {} as IRunContext,
+        characterContext: {} as ICharacterContext,
+        stashContext: {} as IStashContext,
+        shopContext: {} as IShopContext,
+      },
+    }
+    const unitOfWork = this.unitOfWorkAdapter.createUnitOfWork(initialContext)
+    const runInitService = new RunInitializationService(configStore, unitOfWork)
     return runInitService.initialize({
       professionId,
       seed,

@@ -5,20 +5,14 @@ import { SellItemDto } from '../dto/SellItemDto'
 import { RefreshShopDto } from '../dto/RefreshShopDto'
 import { ConfigService } from './config.service'
 import { ShopServiceWrapper } from './shop-service.wrapper'
-import { RunInitServiceWrapper } from './run-init-service.wrapper'
-/**
- * Run 應用服務：協調 game-core 邏輯與後端基礎設施
- */
+import { RunApplicationService } from './run-application.service'
 @Injectable()
 export class RunService {
   constructor(
     private readonly configService: ConfigService,
     private readonly shopServiceWrapper: ShopServiceWrapper,
-    private readonly runInitServiceWrapper: RunInitServiceWrapper
+    private readonly runApplicationService: RunApplicationService
   ) {}
-  /**
-   * 取得職業列表
-   */
   async getProfessions() {
     const configStore = await this.configService.getConfigStore()
     const professions = configStore.professionStore.getAllProfessions()
@@ -31,9 +25,6 @@ export class RunService {
       })),
     }
   }
-  /**
-   * 取得所有聖物模板
-   */
   async getRelicTemplates() {
     const configStore = await this.configService.getConfigStore()
     const relics = configStore.itemStore.getAllRelics()
@@ -52,10 +43,6 @@ export class RunService {
       })),
     }
   }
-
-  /**
-   * 取得指定職業的可選起始聖物（BFF 規則友好）
-   */
   async getSelectableStartingRelics(professionId: string) {
     const configStore = await this.configService.getConfigStore()
     const profession = configStore.professionStore.getProfession(professionId)
@@ -81,30 +68,28 @@ export class RunService {
       })),
     }
   }
-  /**
-   * 初始化新 Run
-   * 流程：調用 game-core 的 RunInitializationService
-   */
   async initializeRun(dto: InitRunDto) {
-    const result = await this.runInitServiceWrapper.initialize(dto.professionId ?? '', dto.seed, dto.startingRelicIds)
-    if (result.isFailure) {
+    try {
+      const appContext = await this.runApplicationService.initializeRun(
+        dto.professionId ?? '',
+        dto.seed,
+        dto.startingRelicIds
+      )
+      return {
+        success: true,
+        data: {
+          runId: appContext.contexts.runContext.runId,
+          professionId: (appContext.contexts.characterContext as any).professionId,
+          seed: appContext.contexts.runContext.seed,
+        },
+      }
+    } catch (error) {
       throw new BadRequestException({
-        error: result.error,
+        error: error instanceof Error ? error.message : 'unknown_error',
         message: '初始化 Run 失敗',
       })
     }
-    return {
-      success: true,
-      data: {
-        runId: result.value!.contexts.runContext.runId,
-        professionId: result.value!.contexts.characterContext.professionId,
-        seed: result.value!.contexts.runContext.seed,
-      },
-    }
   }
-  /**
-   * 在商店購買物品
-   */
   buyItem(dto: BuyItemDto) {
     const result = this.shopServiceWrapper.buyItem(dto.itemId ?? '')
     if (result.isFailure) {
@@ -122,9 +107,6 @@ export class RunService {
       },
     }
   }
-  /**
-   * 賣出物品
-   */
   sellItem(dto: SellItemDto) {
     const result = this.shopServiceWrapper.sellItem(dto.itemId ?? '')
     if (result.isFailure) {
@@ -142,9 +124,6 @@ export class RunService {
       },
     }
   }
-  /**
-   * 刷新商店物品
-   */
   refreshShop(dto: RefreshShopDto) {
     const result = this.shopServiceWrapper.refreshShopItems()
     if (result.isFailure) {

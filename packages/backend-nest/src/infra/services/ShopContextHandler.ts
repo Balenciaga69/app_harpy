@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InMemoryContextRepository } from '../repositories/InMemoryContextRepository'
-/**
- * 快速實現的商店上下文處理器
- * 用途：MVP 快速開發
- */
 @Injectable()
 export class ShopContextHandler {
   constructor(private readonly repository: InMemoryContextRepository) {}
