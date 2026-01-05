@@ -2,9 +2,7 @@ import { Project, ReferencedSymbolEntry, Node } from 'ts-morph'
 import * as ts from 'typescript'
 import { writeFileSync } from 'fs'
 import { relative } from 'path'
-
 // npx ts-node scripts/extract-symbols.ts [outputFilePath]
-
 // 符號資訊介面
 interface SymbolInfo {
   name: string
@@ -12,14 +10,12 @@ interface SymbolInfo {
   file: string
   usages: string[]
 }
-
 /* 建立專案實例 */
 function createProject(): Project {
   return new Project({
     tsConfigFilePath: 'tsconfig.json',
   })
 }
-
 /* 檢查節點是否為目標符號種類 */
 function isTargetSymbolKind(node: Node): boolean {
   return (
@@ -31,7 +27,6 @@ function isTargetSymbolKind(node: Node): boolean {
     node.isKind(ts.SyntaxKind.VariableDeclaration)
   )
 }
-
 /* 提取單個節點的符號資訊 */
 function extractSymbolInfo(node: Node, sourceFilePath: string, project: Project): SymbolInfo {
   const name = (node as any).getName() || 'Unnamed' // 斷言為 any 以訪問 getName 方法
@@ -44,7 +39,6 @@ function extractSymbolInfo(node: Node, sourceFilePath: string, project: Project)
     .filter((v, i, a) => a.indexOf(v) === i)
   return { name, kind, file, usages }
 }
-
 /* 從專案中提取所有符號 */
 function extractSymbols(project: Project): SymbolInfo[] {
   const symbols: SymbolInfo[] = []
@@ -58,7 +52,6 @@ function extractSymbols(project: Project): SymbolInfo[] {
   })
   return symbols
 }
-
 /* 生成 Markdown 表格內容 */
 function generateMarkdownTable(symbols: SymbolInfo[]): string {
   let content = '| 名稱 | 種類 | 定義位置 | 使用位置 |\n'
@@ -68,20 +61,17 @@ function generateMarkdownTable(symbols: SymbolInfo[]): string {
   })
   return content
 }
-
 /* 寫入 Markdown 內容到文件 */
 function writeMarkdownFile(content: string, filePath: string): void {
   writeFileSync(filePath, content, 'utf8')
   console.log(`符號表格已輸出到 ${filePath}`)
 }
-
 /* 解析命令行參數 */
 function parseArguments(): { outputFilePath: string } {
   const args = process.argv.slice(2)
   const outputFilePath = args[0] || 'symbols.md'
   return { outputFilePath }
 }
-
 // 主體協調工具
 function main(): void {
   const { outputFilePath } = parseArguments()
@@ -90,5 +80,4 @@ function main(): void {
   const markdownContent = generateMarkdownTable(symbols)
   writeMarkdownFile(markdownContent, outputFilePath)
 }
-
 main()

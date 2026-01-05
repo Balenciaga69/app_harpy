@@ -1,6 +1,5 @@
 import { IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-
 /**
  * 刷新商店的請求 DTO
  *

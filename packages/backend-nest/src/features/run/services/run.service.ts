@@ -6,12 +6,6 @@ import { RefreshShopDto } from '../dto/RefreshShopDto'
 import { ConfigService } from './config.service'
 import { ShopServiceWrapper } from './shop-service.wrapper'
 import { RunApplicationService } from './run-application.service'
-
-/**
- * Run 業務服務：HTTP 適配層
- * 職責：將應用服務的結果轉換為 DTO，適配 Controller
- * 這是可選的中間層，用於處理 HTTP 特定的邏輯
- */
 @Injectable()
 export class RunService {
   constructor(
@@ -19,9 +13,6 @@ export class RunService {
     private readonly shopServiceWrapper: ShopServiceWrapper,
     private readonly runApplicationService: RunApplicationService
   ) {}
-  /**
-   * 取得職業列表
-   */
   async getProfessions() {
     const configStore = await this.configService.getConfigStore()
     const professions = configStore.professionStore.getAllProfessions()
@@ -34,9 +25,6 @@ export class RunService {
       })),
     }
   }
-  /**
-   * 取得所有聖物模板
-   */
   async getRelicTemplates() {
     const configStore = await this.configService.getConfigStore()
     const relics = configStore.itemStore.getAllRelics()
@@ -55,10 +43,6 @@ export class RunService {
       })),
     }
   }
-
-  /**
-   * 取得指定職業的可選起始聖物（BFF 規則友好）
-   */
   async getSelectableStartingRelics(professionId: string) {
     const configStore = await this.configService.getConfigStore()
     const profession = configStore.professionStore.getProfession(professionId)
@@ -84,10 +68,6 @@ export class RunService {
       })),
     }
   }
-  /**
-   * 初始化新 Run
-   * 流程：調用 game-core 的 RunInitializationService
-   */
   async initializeRun(dto: InitRunDto) {
     try {
       const appContext = await this.runApplicationService.initializeRun(
@@ -95,7 +75,6 @@ export class RunService {
         dto.seed,
         dto.startingRelicIds
       )
-
       return {
         success: true,
         data: {
@@ -111,9 +90,6 @@ export class RunService {
       })
     }
   }
-  /**
-   * 在商店購買物品
-   */
   buyItem(dto: BuyItemDto) {
     const result = this.shopServiceWrapper.buyItem(dto.itemId ?? '')
     if (result.isFailure) {
@@ -131,9 +107,6 @@ export class RunService {
       },
     }
   }
-  /**
-   * 賣出物品
-   */
   sellItem(dto: SellItemDto) {
     const result = this.shopServiceWrapper.sellItem(dto.itemId ?? '')
     if (result.isFailure) {
@@ -151,9 +124,6 @@ export class RunService {
       },
     }
   }
-  /**
-   * 刷新商店物品
-   */
   refreshShop(dto: RefreshShopDto) {
     const result = this.shopServiceWrapper.refreshShopItems()
     if (result.isFailure) {

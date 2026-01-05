@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-
 export interface IFileAnalysis {
   filePath: string
   fileName: string
@@ -14,7 +13,6 @@ export interface IFileAnalysis {
   inlineCommentLines: number
   issues: string[]
 }
-
 export interface IProjectReport {
   statistics: {
     filesScanned: number
@@ -26,20 +24,16 @@ export interface IProjectReport {
   priorityIssues: Record<string, any[]>
   missingDocstring: any[]
 }
-
 /**
  * 負責遍歷檔案系統並篩選目標 TypeScript 檔案
  */
 export class FileScanner {
   constructor(private readonly rootDir: string) {}
-
   public scan(): string[] {
     return this.walk(this.rootDir)
   }
-
   private walk(currentPath: string): string[] {
     const entries = fs.readdirSync(currentPath, { withFileTypes: true })
-
     return entries.flatMap((entry) => {
       const fullPath = path.join(currentPath, entry.name)
       if (entry.isDirectory()) {
@@ -48,26 +42,21 @@ export class FileScanner {
       return this.isTargetFile(entry.name) ? [fullPath] : []
     })
   }
-
   private isTargetFile(fileName: string): boolean {
     return fileName.endsWith('.ts') && !fileName.endsWith('.data.ts')
   }
 }
-
 /**
  * 負責單一檔案的語義與結構分析
  */
 export class CodeAnalyzer {
   private readonly LARGE_FILE_THRESHOLD = 500
   private readonly COMMENT_RATIO_THRESHOLD = 0.15
-
   constructor(private readonly srcDir: string) {}
-
   public analyze(filePath: string): IFileAnalysis {
     const content = fs.readFileSync(filePath, 'utf-8')
     const lines = content.split('\n')
     const relativePath = path.relative(this.srcDir, filePath)
-
     const analysis: IFileAnalysis = {
       filePath,
       fileName: path.basename(filePath),
@@ -80,15 +69,12 @@ export class CodeAnalyzer {
       inlineCommentLines: (content.match(/^\s*\/\/.*$/gm) || []).length,
       issues: [],
     }
-
     this.detectIssues(analysis)
     return analysis
   }
-
   private analyzeMethods(lines: string[]) {
     let methodCount = 0
     let methodsWithDocstring = 0
-
     lines.forEach((line, i) => {
       if (this.isMethodDeclaration(line)) {
         methodCount++
@@ -97,19 +83,15 @@ export class CodeAnalyzer {
         }
       }
     })
-
     return { methodCount, methodsWithDocstring }
   }
-
   private isMethodDeclaration(line: string): boolean {
     return /^\s*(async\s+)?(\w+\s*\(|function\s+\w+|constructor\s*\()/.test(line)
   }
-
   private hasLeadingDocstring(lines: string[], index: number): boolean {
     const lookbackLines = lines.slice(Math.max(0, index - 15), index).join('\n')
     return /\/\*\*[\s\S]*?\*\/$/.test(lookbackLines.trim())
   }
-
   private detectIssues(analysis: IFileAnalysis): void {
     if (analysis.lineCount > this.LARGE_FILE_THRESHOLD) {
       analysis.issues.push('LARGE')
@@ -119,7 +101,6 @@ export class CodeAnalyzer {
     }
   }
 }
-
 /**
  * 負責將分析結果聚合為結構化報告
  */
@@ -131,11 +112,9 @@ export class ReportGenerator {
       missingDocstring: this.findMissingDocs(analyses),
     }
   }
-
   private calculateStats(analyses: IFileAnalysis[]) {
     const totalMethods = analyses.reduce((s, a) => s + a.methodCount, 0)
     const documentedMethods = analyses.reduce((s, a) => s + a.methodsWithDocstring, 0)
-
     return {
       filesScanned: analyses.length,
       filesWithDocstringPercent: this.toPercent(analyses.filter((a) => a.docstringCount > 0).length, analyses.length),
@@ -144,7 +123,6 @@ export class ReportGenerator {
       averageFileSize: Math.round(analyses.reduce((s, a) => s + a.lineCount, 0) / analyses.length),
     }
   }
-
   private groupIssuesByLayer(analyses: IFileAnalysis[]) {
     const layers = ['domain', 'application', 'infra']
     return Object.fromEntries(
@@ -157,14 +135,12 @@ export class ReportGenerator {
       ])
     )
   }
-
   private findMissingDocs(analyses: IFileAnalysis[]) {
     return analyses
       .filter((a) => a.methodCount > 0 && a.methodsWithDocstring === 0)
       .map((a) => ({ file: a.fileName, dir: a.directory, methods: a.methodCount }))
       .slice(0, 15)
   }
-
   private toPercent(n: number, total: number): string {
     return total > 0 ? `${((n / total) * 100).toFixed(1)}%` : 'N/A'
   }

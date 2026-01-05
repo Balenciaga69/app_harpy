@@ -1,6 +1,5 @@
 import { IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-
 /**
  * 賣出物品的請求 DTO
  *
@@ -15,7 +14,6 @@ export class SellItemDto {
   })
   @IsString({ message: '遊戲進度 ID 必須是字串' })
   declare runId: string
-
   @ApiProperty({
     description: '商品 ID (例如: relic_xxxx)',
     example: 'relic_warrior_resolute_heart',
