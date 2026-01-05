@@ -1,6 +1,6 @@
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
-import { IdGeneratorHelper } from '../../core-infrastructure/id'
+import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
 /** UltimateRecord 創建參數 */
 export interface UltimateRecordCreateParams {
   difficulty: number

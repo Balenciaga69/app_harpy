@@ -2,8 +2,8 @@ import { RelicRecord } from '../../../domain/item/Item'
 import { DifficultyHelper } from '../../../shared/helpers/DifficultyHelper'
 import { RandomHelper } from '../../../shared/helpers/RandomHelper'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-import { Result } from '../../../shared/result/Result'
 import { ApplicationErrorCode } from '../../../shared/result/ErrorCodes'
+import { Result } from '../../../shared/result/Result'
 import { AffixRecordCreateParams, AffixRecordFactory } from '../../content-generation/factory/AffixFactory'
 import { RelicRecordFactory } from '../../content-generation/factory/RelicFactory'
 import { IAppContext } from '../../core-infrastructure/context/interface/IAppContext'
@@ -12,23 +12,17 @@ import { ChapterInfo, IRunContext } from '../../core-infrastructure/context/inte
 import { IShopContext } from '../../core-infrastructure/context/interface/IShopContext'
 import { IStashContext } from '../../core-infrastructure/context/interface/IStashContext'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
-import { IdGeneratorHelper } from '../../core-infrastructure/id'
+import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
+import { IItemStore } from '../../core-infrastructure/static-config/IConfigStores'
 import {
   IStageNodeGenerationService,
   StageNodeGenerationService,
 } from './stage-progression/service/StageNodeGenerationService'
-import { IItemStore } from '../../core-infrastructure/static-config/IConfigStores'
 // RUN 初始化服務相關常數
 const INITIAL_VERSION = 1 // 所有上下文的初始版本
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3] // 預設章節列表
 const DEFAULT_REMAINING_FAIL_RETRIES = 3
-// ========================================
-// 純函數區：可獨立測試的組裝邏輯
-// ========================================
-/**
- * 生成初始聖物記錄（純函數）
- * 職責：驗證聖物 Template 並組裝 RelicRecord
- */
+
 function generateInitialRelicRecords(
   startingRelicIds: string[],
   itemStore: IItemStore,
@@ -56,10 +50,7 @@ function generateInitialRelicRecords(
   })
   return Result.success(relicRecords)
 }
-/**
- * 組裝 RunContext（純函數）
- * 職責：生成章節與關卡節點結構
- */
+
 function buildRunContext(runId: string, seed: number, stageGenerator: IStageNodeGenerationService): IRunContext {
   const chapters: Record<ChapterLevel, ChapterInfo> = {} as Record<ChapterLevel, ChapterInfo>
   for (const ch of DEFAULT_CHAPTER_LEVELS) {
@@ -79,10 +70,7 @@ function buildRunContext(runId: string, seed: number, stageGenerator: IStageNode
     temporaryContext: {},
   }
 }
-/**
- * 組裝 CharacterContext（純函數）
- * 職責：組裝角色初始狀態
- */
+
 function buildCharacterContext(
   runId: string,
   professionId: string,
@@ -109,9 +97,7 @@ function buildCharacterContext(
     currentLoad: 0,
   }
 }
-/**
- * 組裝 StashContext（純函數）
- */
+
 function buildStashContext(runId: string): IStashContext {
   return {
     runId,
@@ -120,9 +106,7 @@ function buildStashContext(runId: string): IStashContext {
     items: [],
   }
 }
-/**
- * 組裝 ShopContext（純函數）
- */
+
 function buildShopContext(runId: string): IShopContext {
   return {
     runId,
@@ -131,9 +115,7 @@ function buildShopContext(runId: string): IShopContext {
     items: [],
   }
 }
-// ========================================
-// RunInitializationService 類別
-// ========================================
+
 /** Run 初始化參數 */
 export interface RunInitializationParams {
   professionId: string
@@ -195,15 +177,12 @@ export class RunInitializationService {
     runId: string,
     params: RunInitializationParams,
     seed: number
-  ): Result<
-    {
-      runContext: IRunContext
-      characterContext: ICharacterContext
-      stashContext: IStashContext
-      shopContext: IShopContext
-    },
-    ApplicationErrorCode.初始化_起始聖物無效
-  > {
+  ): Result<{
+    runContext: IRunContext
+    characterContext: ICharacterContext
+    stashContext: IStashContext
+    shopContext: IShopContext
+  }> {
     const stageGen = this.stageGenerator ?? new StageNodeGenerationService()
     const characterId = `${runId}-char`
     // 1. 生成聖物記錄

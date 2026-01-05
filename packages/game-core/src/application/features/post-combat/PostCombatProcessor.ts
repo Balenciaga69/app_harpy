@@ -1,4 +1,4 @@
-import { PostCombatContext, PostCombatWinContext } from '../../../domain/post-combat/PostCombat'
+import { PostCombatContext, PostCombatLoseContext, PostCombatWinContext } from '../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
 import { IPostCombatContextHandler } from './PostCombatContextHandler'
@@ -54,18 +54,26 @@ export class PostCombatProcessor {
     this.ctxHandler.updatePostCombatContext(updatedPostCombat)
     return Result.success(undefined)
   }
-  private handleLose(postCombatCtx: PostCombatContext): Result<void> {
+  private handleLose(postCombatCtx: PostCombatLoseContext): Result<void> {
     // 驗證當前 Run 狀態
     const validateResult = this.ctxHandler.validateRunStatus()
     if (validateResult.isFailure) return Result.fail(validateResult.error!)
-    // 計算新的重試次數
-    const currentRetries = this.ctxHandler.getRemainingFailRetries()
-    const retryCountToDeduct = (postCombatCtx as any).detail.retryCountToDeduct || 1
-    const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
-    // 提交重試次數扣除
-    this.ctxHandler.commitRetryDeductionTransaction({
-      remainingFailRetries: newRemainingRetries,
-    })
+    // if 是首領戰或無盡戰鬥，結束 Run
+    if (postCombatCtx.combatDifficulty === 'BOSS' || postCombatCtx.combatDifficulty === 'ENDLESS') {
+      const endResult = this.ctxHandler.endRun()
+      if (endResult.isFailure) {
+        return Result.fail(endResult.error!)
+      }
+    } else {
+      // 計算新的重試次數
+      const currentRetries = this.ctxHandler.getRemainingFailRetries()
+      const retryCountToDeduct = (postCombatCtx as any).detail.retryCountToDeduct || 1
+      const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
+      // 提交重試次數扣除
+      this.ctxHandler.commitRetryDeductionTransaction({
+        remainingFailRetries: newRemainingRetries,
+      })
+    }
     return Result.success(undefined)
   }
 }

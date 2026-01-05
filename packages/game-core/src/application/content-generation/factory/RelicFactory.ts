@@ -1,7 +1,7 @@
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { RelicRecord } from '../../../domain/item/Item'
 import { AffixRecord } from '../../../domain/affix/Affix'
-import { IdGeneratorHelper } from '../../core-infrastructure/id'
+import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
 /** RelicRecord 創建參數 */
 export interface RelicRecordCreateParams {
   difficulty: number

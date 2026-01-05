@@ -28,15 +28,15 @@ export class ProfessionEntityService implements IProfessionEntityService {
     return professionTemplate
   }
   /** 透過 templateIds 取得多個 RelicTemplate */
-  private resolveRelicTemplates(templateIds: string[]): RelicTemplate[] {
+  private resolveRelicTemplates(templateIds: ReadonlyArray<string>): RelicTemplate[] {
     const { itemStore } = this.appContextService.getConfigStore()
-    const relicTemplates = itemStore.getManyRelics(templateIds)
+    const relicTemplates = itemStore.getManyRelics([...templateIds])
     return relicTemplates
   }
   /** 透過 templateIds 取得多個 UltimateTemplate */
-  private resolveUltimateTemplates(templateIds: string[]): UltimateTemplate[] {
+  private resolveUltimateTemplates(templateIds: ReadonlyArray<string>): UltimateTemplate[] {
     const { ultimateStore } = this.appContextService.getConfigStore()
-    const ultimateTemplates = ultimateStore.getUltimates(templateIds)
+    const ultimateTemplates = ultimateStore.getUltimates([...templateIds])
     return ultimateTemplates
   }
 }

@@ -1,98 +1,117 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Game Core Backend - NestJS API 伺服器
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+這是遊戲核心的後端 API 層，使用 NestJS 框架構建。
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 目的
 
-## Description
+- 提供 HTTP API 接口供前端調用
+- 協調 game-core 邏輯層
+- 管理遊戲狀態持久化
+- 文檔化 API 接口（Swagger）
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 快速開始
 
-## Project setup
+### 安裝依賴
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+### 開發模式運行
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Run tests
+應用會在 `http://localhost:3000` 啟動
+
+### Swagger 文檔
+
+訪問 `http://localhost:3000/api` 查看完整 API 文檔
+
+### 編譯生產版本
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run build
+npm run start:prod
 ```
 
-## Deployment
+## 架構
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+詳見 [ARCHITECTURE.md](./ARCHITECTURE.md)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+簡要說明：
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- **Controllers** → 處理 HTTP 請求
+- **Services** → 協調 game-core 邏輯
+- **DTO** → 定義請求/響應結構
+- **Infra** → 配置和存儲層
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## API 端點
 
-## Resources
+### Health Check
 
-Check out a few resources that may come in handy when working with NestJS:
+- `GET /health` - 應用健康狀態
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Run（遊戲進度）
 
-## Support
+- `GET /api/run/professions` - 取得職業列表
+- `GET /api/run/relics` - 取得所有聖物模板
+- `POST /api/run/init` - 初始化新遊戲進度
+- `POST /api/run/shop/buy` - 購買物品
+- `POST /api/run/shop/sell` - 賣出物品
+- `POST /api/run/shop/refresh` - 刷新商店
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+詳細信息見 Swagger 文檔
 
-## Stay in touch
+## 開發指南
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 添加新 API 端點
 
-## License
+1. **定義 DTO**（如需要）
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+   ```typescript
+   // src/run/dto/YourActionDto.ts
+   export class YourActionDto {
+     @IsString()
+     yourField: string;
+   }
+   ```
+
+2. **在 Service 添加業務邏輯**
+
+   ```typescript
+   // src/run/run.service.ts
+   async yourAction(dto: YourActionDto) {
+     // 調用 game-core 邏輯
+   }
+   ```
+
+3. **在 Controller 暴露端點**
+   ```typescript
+   // src/run/run.controller.ts
+   @Post('your-action')
+   @ApiOperation({ summary: '操作說明' })
+   async yourAction(@Body() dto: YourActionDto) {
+     return this.runService.yourAction(dto);
+   }
+   ```
+
+### 代碼風格
+
+- 使用 TypeScript 嚴格模式
+- 避免 `any` 類型
+- 每個 Service 一個責任
+- 使用 JSDoc 註釋重要方法
+
+## 依賴
+
+核心依賴：
+
+- `@nestjs/common` - NestJS 核心
+- `@nestjs/swagger` - API 文檔
+- `@app-harpy/game-core` - 遊戲邏輯
+
+## 相關項目
+
+- [game-core](../game-core) - 遊戲邏輯核心模組

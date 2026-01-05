@@ -1,12 +1,10 @@
-import { IsString } from 'class-validator';
-
+import { IsString } from 'class-validator'
 /**
  * 賣出物品的請求 DTO
  */
 export class SellItemDto {
   @IsString()
-  runId: string;
-
+  runId: string
   @IsString()
-  itemId: string;
+  itemId: string
 }

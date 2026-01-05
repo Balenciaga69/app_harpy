@@ -39,8 +39,13 @@ export class ItemConstraintService implements IItemConstraintService {
       return Result.fail(ApplicationErrorCode.物品_章節不允許此物品)
     }
     // 檢查職業限制
-    if (constraint.professionIds && !constraint.professionIds.includes(characterContext.professionId)) {
-      return Result.fail(ApplicationErrorCode.物品_職業不允許此物品)
+    if (constraint.professionTypes) {
+      const profession = this.configStoreAccessor
+        .getConfigStore()
+        .professionStore.getProfession(characterContext.professionId)
+      if (!profession || !constraint.professionTypes.includes(profession.id)) {
+        return Result.fail(ApplicationErrorCode.物品_職業不允許此物品)
+      }
     }
     // 檢查事件/敵人限制( 有任一限制則不可生成 )
     if ((constraint.eventIds?.length ?? 0) > 0) {
