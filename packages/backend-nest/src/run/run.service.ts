@@ -9,7 +9,6 @@ import { SellItemDto } from './dto/SellItemDto'
 import { RefreshShopDto } from './dto/RefreshShopDto'
 import { ConfigService } from './config.service'
 import { RunInitializationService, ShopService } from '../from-game-core'
-
 /**
  * Run 應用服務：協調 game-core 邏輯與後端基礎設施
  */
@@ -21,14 +20,12 @@ export class RunService {
     private readonly itemGenService: ItemGenerationService,
     private readonly shopContextHandler: ShopContextHandler
   ) {}
-
   /**
    * 取得職業列表
    */
   async getProfessions() {
     const configStore = await this.configService.getConfigStore()
     const professions = configStore.professionStore.getAllProfessions()
-
     return {
       success: true,
       data: professions.map((prof: any) => ({
@@ -38,14 +35,12 @@ export class RunService {
       })),
     }
   }
-
   /**
    * 取得所有聖物模板
    */
   async getRelicTemplates() {
     const configStore = await this.configService.getConfigStore()
     const relics = configStore.itemStore.getAllRelics()
-
     return {
       success: true,
       data: relics.map((relic: any) => ({
@@ -61,29 +56,24 @@ export class RunService {
       })),
     }
   }
-
   /**
    * 初始化新 Run
    * 流程：調用 game-core 的 RunInitializationService
    */
   async initializeRun(dto: InitRunDto) {
     const configStore = await this.configService.getConfigStore()
-
     const runInitService = new RunInitializationService(configStore, this.contextRepo as any)
-
     const result = await runInitService.initialize({
       professionId: dto.professionId,
       seed: dto.seed,
       persist: true,
     })
-
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
         message: '初始化 Run 失敗',
       })
     }
-
     return {
       success: true,
       data: {
@@ -93,21 +83,18 @@ export class RunService {
       },
     }
   }
-
   /**
    * 在商店購買物品
    */
   buyItem(dto: BuyItemDto) {
     const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
     const result = shopService.buyItem(dto.itemId)
-
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
         message: '購買物品失敗',
       })
     }
-
     return {
       success: true,
       message: '購買成功',
@@ -117,21 +104,18 @@ export class RunService {
       },
     }
   }
-
   /**
    * 賣出物品
    */
   sellItem(dto: SellItemDto) {
     const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
     const result = shopService.sellItem(dto.itemId)
-
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
         message: '賣出物品失敗',
       })
     }
-
     return {
       success: true,
       message: '賣出成功',
@@ -141,21 +125,18 @@ export class RunService {
       },
     }
   }
-
   /**
    * 刷新商店物品
    */
   refreshShop(dto: RefreshShopDto) {
     const shopService = new ShopService(this.itemGenService as any, this.shopContextHandler as any)
     const result = shopService.refreshShopItems()
-
     if (result.isFailure) {
       throw new BadRequestException({
         error: result.error,
         message: '刷新商店失敗',
       })
     }
-
     return {
       success: true,
       message: '刷新成功',

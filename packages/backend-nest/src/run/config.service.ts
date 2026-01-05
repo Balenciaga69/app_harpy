@@ -8,7 +8,6 @@ import {
   InternalShopConfigLoader,
   InternalUltimateConfigLoader,
 } from '../from-game-core'
-
 /**
  * 遊戲配置服務：單例管理 ConfigStore
  * 職責：在應用啟動時載入所有靜態配置
@@ -21,7 +20,6 @@ import {
 export class ConfigService {
   private configAssembler: GameConfigAssembler
   private isInitialized = false
-
   constructor() {
     this.configAssembler = new GameConfigAssembler(
       new InternalEnemyConfigLoader(),
@@ -32,7 +30,6 @@ export class ConfigService {
       new InternalShopConfigLoader()
     )
   }
-
   /**
    * 取得 ConfigStore（延遲初始化）
    * 副作用：首次呼叫時會載入所有靜態配置
@@ -42,7 +39,6 @@ export class ConfigService {
       await this.configAssembler.assembleAllConfigs()
       this.isInitialized = true
     }
-
     return {
       affixStore: this.configAssembler.getAffixStore(),
       enemyStore: this.configAssembler.getEnemyStore(),
