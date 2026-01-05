@@ -142,6 +142,7 @@ function generateInitialRelicRecords(
   })
   return Result.success(relicRecords)
 }
+/** 建立 RunContext */
 function buildRunContext(runId: string, seed: number, stageGenerator: IStageNodeGenerationService): IRunContext {
   const chapters: Record<ChapterLevel, ChapterInfo> = {} as Record<ChapterLevel, ChapterInfo>
   for (const ch of DEFAULT_CHAPTER_LEVELS) {

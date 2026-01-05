@@ -5,16 +5,19 @@ import { SellItemDto } from '../dto/SellItemDto'
 import { RefreshShopDto } from '../dto/RefreshShopDto'
 import { ConfigService } from './config.service'
 import { ShopServiceWrapper } from './shop-service.wrapper'
-import { RunInitServiceWrapper } from './run-init-service.wrapper'
+import { RunApplicationService } from './run-application.service'
+
 /**
- * Run 應用服務：協調 game-core 邏輯與後端基礎設施
+ * Run 業務服務：HTTP 適配層
+ * 職責：將應用服務的結果轉換為 DTO，適配 Controller
+ * 這是可選的中間層，用於處理 HTTP 特定的邏輯
  */
 @Injectable()
 export class RunService {
   constructor(
     private readonly configService: ConfigService,
     private readonly shopServiceWrapper: ShopServiceWrapper,
-    private readonly runInitServiceWrapper: RunInitServiceWrapper
+    private readonly runApplicationService: RunApplicationService
   ) {}
   /**
    * 取得職業列表
@@ -86,20 +89,26 @@ export class RunService {
    * 流程：調用 game-core 的 RunInitializationService
    */
   async initializeRun(dto: InitRunDto) {
-    const result = await this.runInitServiceWrapper.initialize(dto.professionId ?? '', dto.seed, dto.startingRelicIds)
-    if (result.isFailure) {
+    try {
+      const appContext = await this.runApplicationService.initializeRun(
+        dto.professionId ?? '',
+        dto.seed,
+        dto.startingRelicIds
+      )
+
+      return {
+        success: true,
+        data: {
+          runId: appContext.contexts.runContext.runId,
+          professionId: (appContext.contexts.characterContext as any).professionId,
+          seed: appContext.contexts.runContext.seed,
+        },
+      }
+    } catch (error) {
       throw new BadRequestException({
-        error: result.error,
+        error: error instanceof Error ? error.message : 'unknown_error',
         message: '初始化 Run 失敗',
       })
-    }
-    return {
-      success: true,
-      data: {
-        runId: result.value!.contexts.runContext.runId,
-        professionId: result.value!.contexts.characterContext.professionId,
-        seed: result.value!.contexts.runContext.seed,
-      },
     }
   }
   /**
