@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
 import {
   GameConfigAssembler,
   InternalAffixConfigLoader,
@@ -8,7 +8,7 @@ import {
   InternalProfessionConfigLoader,
   InternalUltimateConfigLoader,
   InternalShopConfigLoader,
-} from '@app-harpy/game-core';
+} from '@app-harpy/game-core'
 
 /**
  * 遊戲配置服務：單例管理 ConfigStore
@@ -20,8 +20,8 @@ import {
  */
 @Injectable()
 export class ConfigService {
-  private configAssembler: GameConfigAssembler;
-  private isInitialized = false;
+  private configAssembler: GameConfigAssembler
+  private isInitialized = false
 
   constructor() {
     this.configAssembler = new GameConfigAssembler(
@@ -30,8 +30,8 @@ export class ConfigService {
       new InternalProfessionConfigLoader(),
       new InternalUltimateConfigLoader(),
       new InternalAffixConfigLoader(),
-      new InternalShopConfigLoader(),
-    );
+      new InternalShopConfigLoader()
+    )
   }
 
   /**
@@ -40,8 +40,8 @@ export class ConfigService {
    */
   async getConfigStore() {
     if (!this.isInitialized) {
-      await this.configAssembler.assembleAllConfigs();
-      this.isInitialized = true;
+      await this.configAssembler.assembleAllConfigs()
+      this.isInitialized = true
     }
 
     return {
@@ -51,6 +51,6 @@ export class ConfigService {
       professionStore: this.configAssembler.getProfessionStore(),
       ultimateStore: this.configAssembler.getUltimateStore(),
       shopStore: this.configAssembler.getShopStore(),
-    };
+    }
   }
 }

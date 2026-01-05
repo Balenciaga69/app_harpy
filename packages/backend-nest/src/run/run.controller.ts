@@ -1,10 +1,10 @@
-import { Controller, Post, Get, Body } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { InitRunDto } from './dto/InitRunDto';
-import { BuyItemDto } from './dto/BuyItemDto';
-import { SellItemDto } from './dto/SellItemDto';
-import { RefreshShopDto } from './dto/RefreshShopDto';
-import { RunService } from './run.service';
+import { Controller, Post, Get, Body } from '@nestjs/common'
+import { ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { InitRunDto } from './dto/InitRunDto'
+import { BuyItemDto } from './dto/BuyItemDto'
+import { SellItemDto } from './dto/SellItemDto'
+import { RefreshShopDto } from './dto/RefreshShopDto'
+import { RunService } from './run.service'
 
 /**
  * Run 控制器：處理與遊戲進度初始化相關的 HTTP 請求
@@ -35,7 +35,7 @@ export class RunController {
     },
   })
   async getProfessions() {
-    return this.runService.getProfessions();
+    return this.runService.getProfessions()
   }
 
   /**
@@ -48,7 +48,7 @@ export class RunController {
     description: '成功取得聖物模板列表',
   })
   async getRelicTemplates() {
-    return this.runService.getRelicTemplates();
+    return this.runService.getRelicTemplates()
   }
 
   /**
@@ -56,7 +56,7 @@ export class RunController {
    */
   @Post('init')
   async initializeRun(@Body() dto: InitRunDto) {
-    return this.runService.initializeRun(dto);
+    return this.runService.initializeRun(dto)
   }
 
   /**
@@ -64,7 +64,7 @@ export class RunController {
    */
   @Post('shop/buy')
   async buyItem(@Body() dto: BuyItemDto) {
-    return this.runService.buyItem(dto);
+    return this.runService.buyItem(dto)
   }
 
   /**
@@ -72,7 +72,7 @@ export class RunController {
    */
   @Post('shop/sell')
   async sellItem(@Body() dto: SellItemDto) {
-    return this.runService.sellItem(dto);
+    return this.runService.sellItem(dto)
   }
 
   /**
@@ -80,6 +80,6 @@ export class RunController {
    */
   @Post('shop/refresh')
   async refreshShop(@Body() dto: RefreshShopDto) {
-    return this.runService.refreshShop(dto);
+    return this.runService.refreshShop(dto)
   }
 }

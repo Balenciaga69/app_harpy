@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common'
 
 /**
  * Health Check 控制器
@@ -11,6 +11,6 @@ export class HealthController {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 }

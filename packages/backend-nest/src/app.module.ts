@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { HealthController } from './controllers/app.controller';
-import { RunModule } from './run/run.module';
+import { Module } from '@nestjs/common'
+import { HealthController } from './controllers/app.controller'
+import { RunModule } from './run/run.module'
 
 @Module({
   imports: [RunModule],
