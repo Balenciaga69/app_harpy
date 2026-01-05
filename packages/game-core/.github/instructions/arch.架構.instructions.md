@@ -281,13 +281,32 @@ RDB（帳戶系統）：
 - 帳戶層與 Run 層分離
 - Run 結束即歸零，帳戶進度永久保留
 
-## 9 相關文件導覽
+## 9 樂觀鎖
 
-詳細概念請參考 FAQ：
+game-core 專案（你現在的位置）
+├─ Domain Layer
+│ └─ 純邏輯（無任何外部依賴）
+├─ Application Layer
+│ ├─ Context 定義
+│ ├─ Context 存取邏輯
+│ ├─ IRepository<T> 介面定義 ← 樂觀鎖在這裡定義
+│ │ (預期行為：version 不符 → null)
+│ └─ 流程服務
+└─ Infra Layer
+└─ 靜態配置加載器（無持久化）
 
-- tech/config.md：靜態資料系統設計
-- tech/entity-model.md：Template/Record/Aggregate 三層結構
-- tech/context.md：動態資料與版本控制詳解
-- tech/factory.md：工廠模式與內容生成
-- stat.md、affix.md、ultimate.md 等：具體領域模型實現
-- run.md、stage.md、shop.md、stash.md 等：功能系統詳解
+─── 跨進程邊界 ───
+
+另一個 API 專案（單獨的 Node.js/Go/Python 專案）
+├─ 實現 IRepository<T> 介面
+│ ├─ DynamoDB 連接
+│ ├─ 樂觀鎖邏輯（Lua script 或 DynamoDB ConditionExpression）
+│ └─ 版本檢驗細節
+├─ HTTP/RPC 層
+│ └─ 暴露 API 給前端或其他服務
+└─ 部署
+└─ AWS Lambda + DynamoDB
+
+遠端 infra（你看不到的地方）
+├─ DynamoDB
+└─ Lambda 函數
