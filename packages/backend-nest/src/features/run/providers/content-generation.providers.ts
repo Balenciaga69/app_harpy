@@ -6,7 +6,6 @@ import {
   ProfessionEntityService,
   CharacterAggregateService,
 } from 'src/from-game-core'
-
 /**
  * 內容生成服務提供者
  * 負責實體和聚合體的生成邏輯

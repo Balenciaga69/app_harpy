@@ -7,7 +7,6 @@ import {
   IAppContext,
 } from 'src/from-game-core'
 import { ContextManager } from 'src/infra/context/ContextManager'
-
 /**
  * 細粒度介面提供者
  * 提供由 game-core 定義的細粒度介面實現

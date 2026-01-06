@@ -2,7 +2,6 @@ import { Controller, Post, Get, Body, Param } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger'
 import { InitRunDto } from '../../dto/InitRunDto'
 import { InitService } from './init.service'
-
 /**
  * 初始化控制器
  * 職責：處理遊戲初始化相關的 HTTP 請求
@@ -10,7 +9,6 @@ import { InitService } from './init.service'
 @Controller('api/run')
 export class InitController {
   constructor(private readonly initService: InitService) {}
-
   /**
    * GET /api/run/professions - 取得職業列表
    */
@@ -35,7 +33,6 @@ export class InitController {
   getProfessions() {
     return this.initService.getProfessions()
   }
-
   /**
    * GET /api/run/relics - 取得所有聖物模板
    */
@@ -66,7 +63,6 @@ export class InitController {
   getRelicTemplates() {
     return this.initService.getRelicTemplates()
   }
-
   /**
    * GET /api/run/professions/:id/relics - 取得指定職業的可選起始聖物
    */
@@ -77,7 +73,6 @@ export class InitController {
   getProfessionRelics(@Param('id') id: string) {
     return this.initService.getSelectableStartingRelics(id)
   }
-
   /**
    * POST /api/run/init - 初始化新遊戲進度
    */

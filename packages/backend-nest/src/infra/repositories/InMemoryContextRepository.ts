@@ -6,8 +6,6 @@ import {
   ICharacterContext,
   IShopContext,
 } from '../../from-game-core'
-
-// Define the return type for updateBatch
 type UpdateBatchResult = {
   success: boolean
   runContext?: IRunContext
@@ -16,13 +14,7 @@ type UpdateBatchResult = {
   shopContext?: IShopContext
   globalVersion: number
 }
-
 @Injectable()
-/**
- * 內存 repository
- * 存取遊戲相關 context
- * 在測試中模擬資料庫操作 避免依賴真實的資料庫
- */
 export class InMemoryContextRepository implements IContextBatchRepository {
   private store = new Map<string, any>()
   async updateBatch(

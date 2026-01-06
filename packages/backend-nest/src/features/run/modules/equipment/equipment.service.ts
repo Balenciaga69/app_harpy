@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException, Optional } from '@nestjs/common'
 import { EquipmentService } from 'src/from-game-core'
-
 /**
  * 裝備服務
  * 職責：處理裝備相關的業務邏輯
@@ -8,7 +7,6 @@ import { EquipmentService } from 'src/from-game-core'
 @Injectable()
 export class EquipmentNestService {
   constructor(@Optional() private readonly equipmentService: EquipmentService) {}
-
   /**
    * 裝備物品
    */
@@ -23,7 +21,6 @@ export class EquipmentNestService {
       data: { itemId },
     }
   }
-
   /**
    * 卸下裝備
    */

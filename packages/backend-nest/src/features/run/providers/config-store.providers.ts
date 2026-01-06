@@ -7,7 +7,6 @@ import {
   InternalAffixConfigLoader,
   InternalShopConfigLoader,
 } from 'src/from-game-core'
-
 /**
  * 配置存儲提供者
  * 負責組裝和提供遊戲配置（敵人、物品、職業等）

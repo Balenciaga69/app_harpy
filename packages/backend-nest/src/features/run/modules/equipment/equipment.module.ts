@@ -6,7 +6,6 @@ import { fineGrainedInterfaceProviders } from '../../providers/fine-grained-inte
 import { configStoreProviders } from '../../providers/config-store.providers'
 import { EquipmentController } from './equipment.controller'
 import { EquipmentNestService } from './equipment.service'
-
 /**
  * 裝備模組
  * 職責：管理裝備相關功能

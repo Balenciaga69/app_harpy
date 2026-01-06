@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core/constants'
 import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 import { ContextManager } from 'src/infra/context/ContextManager'
-
 // 子模組導入
 import { InitModule } from './modules/init/init.module'
 import { ShopModule } from './modules/shop/shop.module'
 import { EquipmentModule } from './modules/equipment/equipment.module'
-
 // Provider 導入
 import { configStoreProviders } from './providers/config-store.providers'
 import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
@@ -16,7 +14,6 @@ import { itemGenerationProviders } from './providers/item-generation.providers'
 import { contextConverterProviders } from './providers/context-converter.providers'
 import { runFeatureProviders } from './providers/run-feature.providers'
 import { postCombatFeatureProviders } from './providers/post-combat-feature.providers'
-
 /**
  * RunModule
  *
@@ -44,32 +41,26 @@ import { postCombatFeatureProviders } from './providers/post-combat-feature.prov
       provide: APP_INTERCEPTOR,
       useClass: ContextInitializationInterceptor,
     },
-
     // ============================================
     // 配置和存儲
     // ============================================
     ...configStoreProviders,
-
     // ============================================
     // 細粒度介面（由 game-core 定義）
     // ============================================
     ...fineGrainedInterfaceProviders,
-
     // ============================================
     // 內容生成鏈（敵人、物品、職業、最終技能）
     // ============================================
     ...contentGenerationProviders,
-
     // ============================================
     // 物品生成鏈（約束、修飾符、掉落、生成）
     // ============================================
     ...itemGenerationProviders,
-
     // ============================================
     // 上下文轉換和工作單元
     // ============================================
     ...contextConverterProviders,
-
     // ============================================
     // 功能特性提供者
     // ============================================

@@ -2,7 +2,6 @@ import { Injectable, BadRequestException } from '@nestjs/common'
 import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
 import { ContextManager } from 'src/infra/context/ContextManager'
 import { InitRunDto } from '../../dto/InitRunDto'
-
 /**
  * 初始化 Run 的服務
  * 職責：處理遊戲進度初始化邏輯
@@ -14,7 +13,6 @@ export class InitService {
     private readonly runInitializationService: RunInitializationService,
     private readonly contextManager: ContextManager
   ) {}
-
   /**
    * 取得所有可用職業
    */
@@ -29,14 +27,12 @@ export class InitService {
       })),
     }
   }
-
   /**
    * 取得所有聖物模板
    */
   getRelicTemplates() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
     const allRelics = professions.flatMap((p: any) => this.gameStartOptionsService.getSelectableStartingRelics(p.id))
-
     return {
       success: true,
       data: allRelics.map((relic: any) => ({
@@ -52,7 +48,6 @@ export class InitService {
       })),
     }
   }
-
   /**
    * 取得指定職業的可選起始聖物
    */
@@ -80,7 +75,6 @@ export class InitService {
       })
     }
   }
-
   /**
    * 初始化新遊戲進度
    */
@@ -91,16 +85,13 @@ export class InitService {
       startingRelicIds: dto.startingRelicIds,
       persist: true,
     })
-
     if (result.isFailure || !result.value) {
       throw new BadRequestException({
         error: result.error ?? 'unknown_error',
         message: '初始化 Run 失敗',
       })
     }
-
     const appContext = result.value
-
     // 保存 appContext 到 ContextManager
     try {
       this.contextManager.saveContext(appContext)
@@ -111,7 +102,6 @@ export class InitService {
         details: error instanceof Error ? error.message : undefined,
       })
     }
-
     return {
       success: true,
       data: {
