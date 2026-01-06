@@ -1,32 +1,32 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Request } from 'express'
-import { ContextStorage } from '../context/ContextStorage'
-import { AppContextRepository } from '../repositories/AppContextRepository'
+import { ContextManager } from '../context/ContextManager'
 
 /**
  * 上下文初始化攔截器
- * 職責：在每個請求開始時從 DTO 提取 runId，加載 IAppContext 到 ContextStorage
+ * 職責：在每個請求開始時從 DTO 提取 runId，加載 IAppContext 到 ContextManager
  *
  * 工作流程：
  * 1. 從 request.body 提取 runId
  * 2. 驗證 runId 有效性
- * 3. 從 Repository 加載該 runId 的 IAppContext
- * 4. 使用 ContextStorage 設置當前上下文
+ * 3. 從 ContextManager 加載該 runId 的 IAppContext
+ * 4. 使用 ContextManager 設置當前上下文
  * 5. 請求執行
- * 6. 請求完成後可以自動保存變更（可選）
  */
 @Injectable()
 export class ContextInitializationInterceptor implements NestInterceptor {
-  constructor(private contextRepository: AppContextRepository) {}
+  constructor(private contextManager: ContextManager) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>()
     const body = request.body as Record<string, any>
+
     if (request.url === '/api/run/init') {
-      // TODO: hard code for init endpoint
+      // 初始化端點不需要 runId
       return next.handle()
     }
+
     // 提取並驗證 runId
     const runId = body?.runId
     if (!runId || typeof runId !== 'string') {
@@ -36,11 +36,10 @@ export class ContextInitializationInterceptor implements NestInterceptor {
       })
     }
 
-    // 從 Repository 加載 IAppContext
-    // 注意：這裡假設 getByRunId 是同步的，如果是異步需要改為異步處理
+    // 從 ContextManager 加載 IAppContext
     let appContext
     try {
-      appContext = this.contextRepository.getByRunId(runId)
+      appContext = this.contextManager.getContextByRunId(runId)
     } catch (error) {
       throw new BadRequestException({
         error: 'INVALID_RUN_ID',
@@ -56,8 +55,8 @@ export class ContextInitializationInterceptor implements NestInterceptor {
       })
     }
 
-    // 在當前請求的異步上下文中設置 IAppContext
-    ContextStorage.setContext(appContext)
+    // 在當前請求的非同步上下文中設置 IAppContext
+    this.contextManager.setContext(appContext)
 
     // 執行後續的控制器和 Service
     return next.handle()

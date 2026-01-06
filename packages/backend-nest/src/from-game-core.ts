@@ -71,3 +71,5 @@ export * from '@app-harpy/game-core/dist/application/core-infrastructure/run-sta
 export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/helper/ContextToDomainConverter'
 export * from '@app-harpy/game-core/dist/application/features/equipment/EquipmentContextHandler'
 export * from '@app-harpy/game-core/dist/application/features/equipment/EquipmentService'
+// Fine-grained interface implementations
+export * from '@app-harpy/game-core/dist/application/core-infrastructure/context/service/AppContextService'

@@ -13,10 +13,11 @@ export class ContextStorage {
     ContextStorage.store.enterWith(appContext)
   }
 
-  static getContext(): IAppContext {
+  static getContext(): IAppContext | null {
     const context = ContextStorage.store.getStore()
     if (!context) {
-      throw new Error('IAppContext not available in current async context')
+      console.error('No AppContext found in ContextStorage')
+      return null
     }
     return context
   }

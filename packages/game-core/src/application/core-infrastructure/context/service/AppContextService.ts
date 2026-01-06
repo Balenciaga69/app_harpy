@@ -59,7 +59,7 @@ export interface IContextMutator {
   setShopContext(ctx: IShopContext): void
 }
 // 內部：單一持有者，保有最新的 IAppContext
-class AppContextHolder {
+export class AppContextHolder {
   private ctx: IAppContext
   constructor(initial: IAppContext) {
     this.ctx = initial

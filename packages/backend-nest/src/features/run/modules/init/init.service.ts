@@ -1,24 +1,23 @@
-import { Injectable, BadRequestException, Optional } from '@nestjs/common'
-import { GameStartOptionsService, RunInitializationService, ShopService } from 'src/from-game-core'
-import { BuyItemDto } from '../dto/BuyItemDto'
-import { InitRunDto } from '../dto/InitRunDto'
-import { RefreshShopDto } from '../dto/RefreshShopDto'
-import { SellItemDto } from '../dto/SellItemDto'
+import { Injectable, BadRequestException } from '@nestjs/common'
+import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
 import { ContextManager } from 'src/infra/context/ContextManager'
+import { InitRunDto } from '../../dto/InitRunDto'
 
 /**
- * RunNestService
- * 處理與遊戲進度、商店操作相關的業務邏輯
+ * 初始化 Run 的服務
+ * 職責：處理遊戲進度初始化邏輯
  */
 @Injectable()
-export class RunNestService {
+export class InitService {
   constructor(
     private readonly gameStartOptionsService: GameStartOptionsService,
     private readonly runInitializationService: RunInitializationService,
-    private readonly contextManager: ContextManager,
-    @Optional() private readonly shopService: ShopService
+    private readonly contextManager: ContextManager
   ) {}
 
+  /**
+   * 取得所有可用職業
+   */
   getProfessions() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
     return {
@@ -31,6 +30,9 @@ export class RunNestService {
     }
   }
 
+  /**
+   * 取得所有聖物模板
+   */
   getRelicTemplates() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
     const allRelics = professions.flatMap((p: any) => this.gameStartOptionsService.getSelectableStartingRelics(p.id))
@@ -51,6 +53,9 @@ export class RunNestService {
     }
   }
 
+  /**
+   * 取得指定職業的可選起始聖物
+   */
   getSelectableStartingRelics(professionId: string) {
     try {
       const relics = this.gameStartOptionsService.getSelectableStartingRelics(professionId)
@@ -76,6 +81,9 @@ export class RunNestService {
     }
   }
 
+  /**
+   * 初始化新遊戲進度
+   */
   async initializeRun(dto: InitRunDto) {
     const result = await this.runInitializationService.initialize({
       professionId: dto.professionId,
@@ -110,68 +118,6 @@ export class RunNestService {
         runId: appContext.contexts.runContext.runId,
         professionId: (appContext.contexts.characterContext as any).professionId,
         seed: appContext.contexts.runContext.seed,
-      },
-    }
-  }
-
-  buyItem(dto: BuyItemDto) {
-    if (!this.shopService) {
-      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
-    }
-    const result = this.shopService.buyItem(dto.itemId)
-    if (result.isFailure) {
-      throw new BadRequestException({
-        error: result.error,
-        message: '購買物品失敗',
-      })
-    }
-    return {
-      success: true,
-      message: '購買成功',
-      data: {
-        runId: dto.runId,
-        itemId: dto.itemId,
-      },
-    }
-  }
-
-  sellItem(dto: SellItemDto) {
-    if (!this.shopService) {
-      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
-    }
-    const result = this.shopService.sellItem(dto.itemId)
-    if (result.isFailure) {
-      throw new BadRequestException({
-        error: result.error,
-        message: '賣出物品失敗',
-      })
-    }
-    return {
-      success: true,
-      message: '賣出成功',
-      data: {
-        runId: dto.runId,
-        itemId: dto.itemId,
-      },
-    }
-  }
-
-  refreshShop(dto: RefreshShopDto) {
-    if (!this.shopService) {
-      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
-    }
-    const result = this.shopService.refreshShopItems()
-    if (result.isFailure) {
-      throw new BadRequestException({
-        error: result.error,
-        message: '刷新商店失敗',
-      })
-    }
-    return {
-      success: true,
-      message: '刷新成功',
-      data: {
-        runId: dto.runId,
       },
     }
   }
