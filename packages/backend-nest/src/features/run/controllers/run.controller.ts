@@ -5,7 +5,7 @@ import { InitRunDto } from '../dto/InitRunDto'
 import { BuyItemDto } from '../dto/BuyItemDto'
 import { SellItemDto } from '../dto/SellItemDto'
 import { RefreshShopDto } from '../dto/RefreshShopDto'
-import { RunNestService } from '../services/run.service'
+import { RunNestService } from '../services/run-nest.service'
 /**
  * Run 控制器：處理與遊戲進度初始化相關的 HTTP 請求
  */
