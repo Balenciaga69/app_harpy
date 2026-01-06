@@ -7,7 +7,7 @@ import { ConfigService } from './config.service'
 import { ShopServiceWrapper } from './shop-service.wrapper'
 import { RunApplicationService } from './run-application.service'
 @Injectable()
-export class RunService {
+export class RunNestService {
   constructor(
     private readonly configService: ConfigService,
     private readonly shopServiceWrapper: ShopServiceWrapper,

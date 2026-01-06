@@ -5,13 +5,13 @@ import { InitRunDto } from '../dto/InitRunDto'
 import { BuyItemDto } from '../dto/BuyItemDto'
 import { SellItemDto } from '../dto/SellItemDto'
 import { RefreshShopDto } from '../dto/RefreshShopDto'
-import { RunService } from '../services/run.service'
+import { RunNestService } from '../services/run.service'
 /**
  * Run 控制器：處理與遊戲進度初始化相關的 HTTP 請求
  */
 @Controller('api/run')
 export class RunController {
-  constructor(private readonly runService: RunService) {}
+  constructor(private readonly runService: RunNestService) {}
   /**
    * GET /api/run/professions - 取得職業列表
    */
