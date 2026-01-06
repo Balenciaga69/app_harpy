@@ -2,7 +2,10 @@ import { EnemyEntity, EnemyRole, EnemySpawnInfo } from '../../../../domain/entit
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
 import { Result } from '../../../../shared/result/Result'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
-import { IAppContextService } from '../../../core-infrastructure/context/service/AppContextService'
+import {
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+} from '../../../core-infrastructure/context/service/AppContextService'
 import { IEnemyEntityService } from './EnemyEntityService'
 /**
  * 敵人生成錯誤類型
@@ -20,13 +23,14 @@ export interface IEnemyRandomGenerateService {
 export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
   constructor(
     private readonly enemyEntityService: IEnemyEntityService,
-    private readonly appContextService: IAppContextService
+    private readonly configStoreAccessor: IConfigStoreAccessor,
+    private readonly contextSnapshotAccessor: IContextSnapshotAccessor
   ) {}
   /**
    * 隨機選擇並創建一個 EnemyEntity
    */
   createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity> {
-    const runContext = this.appContextService.getAllContexts().runContext
+    const runContext = this.contextSnapshotAccessor.getRunContext()
     const { currentChapter, currentStage, chapters, seed } = runContext
     // 取得當前關卡可用的敵人生成資訊
     const availableInfosResult = this.getAvailableEnemySpawnInfos()
@@ -54,8 +58,8 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
    * 取得當前關卡可用的敵人生成資訊
    */
   private getAvailableEnemySpawnInfos(): Result<EnemySpawnInfo[], ApplicationErrorCode.敵人_無可用敵人> {
-    const { enemyStore } = this.appContextService.getConfigStore()
-    const { currentChapter, encounteredEnemyIds } = this.appContextService.getRunContext()
+    const { enemyStore } = this.configStoreAccessor.getConfigStore()
+    const { currentChapter, encounteredEnemyIds } = this.contextSnapshotAccessor.getRunContext()
     // 過濾出尚未遭遇過的敵人生成資訊
     const availableInfos = enemyStore
       .getEnemySpawnInfosByChapter(currentChapter)

@@ -23,7 +23,10 @@ export class ContextInitializationInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>()
     const body = request.body as Record<string, any>
-
+    if (request.url === '/api/run/init') {
+      // TODO: hard code for init endpoint
+      return next.handle()
+    }
     // 提取並驗證 runId
     const runId = body?.runId
     if (!runId || typeof runId !== 'string') {

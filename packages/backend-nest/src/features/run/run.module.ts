@@ -5,12 +5,14 @@ import { StageInitializationService } from '@app-harpy/game-core/dist/applicatio
 import { Module, Scope } from '@nestjs/common'
 import {
   AffixEntityService,
-  AppContextService,
   CharacterAggregateService,
   ContextToDomainConverter,
   ContextUnitOfWork,
   EquipmentContextHandler,
   EquipmentService,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+  IContextMutator,
   GameConfigAssembler,
   GameStartOptionsService,
   InternalAffixConfigLoader,
@@ -48,11 +50,20 @@ import { ContextStorage } from '../../infra/context/ContextStorage'
 import { APP_INTERCEPTOR } from '@nestjs/core/constants'
 import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 
+/**
+ * RunModule
+ * 管理遊戲流程、商店、裝備、戰後獎勵等相關服務
+ *
+ * 注意：
+ * - 許多服務仍依賴細粒度介面（IConfigStoreAccessor, IContextSnapshotAccessor, IContextMutator）
+ * - ContextStorage 提供運行時上下文的非同步本地存儲，用於按需建立服務實例
+ * - Token bindings ('IConfigStoreAccessor' 等) 允許服務透過字串 token 注入細粒度介面
+ */
 @Module({
   controllers: [RunController],
   providers: [
     // ============================================
-    // Backend-Nest Infrastructure
+    // Infrastructure
     // ============================================
     AppContextRepository,
     {
@@ -64,6 +75,10 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
       useClass: InMemoryContextRepository,
       scope: Scope.TRANSIENT,
     },
+
+    // ============================================
+    // Configuration & Stores
+    // ============================================
     {
       provide: 'CONFIG_STORE',
       useFactory: async () => {
@@ -88,130 +103,180 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
 
     // ============================================
-    // Game-Core: Core Infrastructure
+    // Fine-grained Interface Tokens
+    // (由 ContextStorage 建立的實例提供)
     // ============================================
     {
-      provide: AppContextService,
+      provide: 'IConfigStoreAccessor',
       useFactory: () => {
         if (!ContextStorage.hasContext()) return null
-        const appContext = ContextStorage.getContext()
-        return new AppContextService(appContext)
+        const ctx = ContextStorage.getContext()
+        return {
+          getConfigStore: () => ctx.configStore,
+        }
       },
       scope: Scope.TRANSIENT,
     },
     {
-      provide: ContextUnitOfWork,
-      useFactory: (svc: AppContextService) => {
-        if (!svc) return null
-        return new ContextUnitOfWork(svc, svc)
+      provide: 'IContextSnapshotAccessor',
+      useFactory: () => {
+        if (!ContextStorage.hasContext()) return null
+        const ctx = ContextStorage.getContext()
+        return {
+          getRunContext: () => ctx.contexts.runContext,
+          getCharacterContext: () => ctx.contexts.characterContext,
+          getStashContext: () => ctx.contexts.stashContext,
+          getShopContext: () => ctx.contexts.shopContext,
+          getAllContexts: () => ctx.contexts,
+          getCurrentAtCreatedInfo: () => ({
+            chapter: ctx.contexts.runContext.currentChapter,
+            stage: ctx.contexts.runContext.currentStage,
+            difficulty: 1, // TODO: calculate from chapter/stage
+          }),
+          getCurrentInfoForCreateRecord: () => ({
+            difficulty: 1,
+            sourceUnitId: ctx.contexts.characterContext.id,
+            atCreated: {
+              chapter: ctx.contexts.runContext.currentChapter,
+              stage: ctx.contexts.runContext.currentStage,
+              difficulty: 1,
+            },
+          }),
+          getRunStatus: () => ctx.contexts.runContext.status,
+        }
       },
-      inject: [AppContextService],
+      scope: Scope.TRANSIENT,
+    },
+    {
+      provide: 'IContextMutator',
+      useFactory: () => {
+        if (!ContextStorage.hasContext()) return null
+        const ctxRef = { current: ContextStorage.getContext() }
+        return {
+          setRunContext: (ctx) => {
+            ctxRef.current = {
+              ...ctxRef.current,
+              contexts: { ...ctxRef.current.contexts, runContext: ctx },
+            }
+            ContextStorage.setContext(ctxRef.current)
+          },
+          setCharacterContext: (ctx) => {
+            ctxRef.current = {
+              ...ctxRef.current,
+              contexts: { ...ctxRef.current.contexts, characterContext: ctx },
+            }
+            ContextStorage.setContext(ctxRef.current)
+          },
+          setStashContext: (ctx) => {
+            ctxRef.current = {
+              ...ctxRef.current,
+              contexts: { ...ctxRef.current.contexts, stashContext: ctx },
+            }
+            ContextStorage.setContext(ctxRef.current)
+          },
+          setShopContext: (ctx) => {
+            ctxRef.current = {
+              ...ctxRef.current,
+              contexts: { ...ctxRef.current.contexts, shopContext: ctx },
+            }
+            ContextStorage.setContext(ctxRef.current)
+          },
+        }
+      },
       scope: Scope.TRANSIENT,
     },
 
     // ============================================
-    // Game-Core: Content Generation - Basic
+    // Content Generation Services
     // ============================================
-    {
-      provide: AffixEntityService,
-      useFactory: (svc: AppContextService) => {
-        if (!svc) return null
-        return new AffixEntityService(svc, svc)
-      },
-      inject: [AppContextService],
-      scope: Scope.TRANSIENT,
-    },
+    AffixEntityService,
     {
       provide: UltimateEntityService,
-      useFactory: (affixSvc: AffixEntityService, svc: AppContextService) => {
-        if (!svc || !affixSvc) return null
-        return new UltimateEntityService(affixSvc, svc, svc)
+      useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+        return new UltimateEntityService(affixSvc, config, snapshot)
       },
-      inject: [AffixEntityService, AppContextService],
+      inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: ItemEntityService,
-      useFactory: (affixSvc: AffixEntityService, svc: AppContextService) => {
-        if (!svc || !affixSvc) return null
-        return new ItemEntityService(svc, svc, affixSvc)
+      useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+        return new ItemEntityService(config, snapshot, affixSvc)
       },
-      inject: [AffixEntityService, AppContextService],
+      inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
-
-    // ============================================
-    // Game-Core: Content Generation - Advanced
-    // ============================================
     {
       provide: ProfessionEntityService,
-      useFactory: (svc: AppContextService) => {
-        if (!svc) return null
-        return new ProfessionEntityService(svc)
+      useFactory: (config: IConfigStoreAccessor) => {
+        return new ProfessionEntityService(config)
       },
-      inject: [AppContextService],
+      inject: ['IConfigStoreAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: CharacterAggregateService,
       useFactory: (
-        professionSvc: ProfessionEntityService,
+        profSvc: ProfessionEntityService,
         itemSvc: ItemEntityService,
         ultimateSvc: UltimateEntityService
       ) => {
-        if (!professionSvc || !itemSvc || !ultimateSvc) return null
-        return new CharacterAggregateService(professionSvc, itemSvc, ultimateSvc)
+        return new CharacterAggregateService(profSvc, itemSvc, ultimateSvc)
       },
       inject: [ProfessionEntityService, ItemEntityService, UltimateEntityService],
       scope: Scope.TRANSIENT,
     },
     {
       provide: EnemyEntityService,
-      useFactory: (affixSvc: AffixEntityService, ultimateSvc: UltimateEntityService, svc: AppContextService) => {
-        if (!affixSvc || !ultimateSvc || !svc) return null
-        return new EnemyEntityService(affixSvc, ultimateSvc, svc, svc)
+      useFactory: (
+        affixSvc: AffixEntityService,
+        ultimateSvc: UltimateEntityService,
+        config: IConfigStoreAccessor,
+        snapshot: IContextSnapshotAccessor
+      ) => {
+        return new EnemyEntityService(affixSvc, ultimateSvc, config, snapshot)
       },
-      inject: [AffixEntityService, UltimateEntityService, AppContextService],
+      inject: [AffixEntityService, UltimateEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: EnemyRandomGenerateService,
-      useFactory: (enemySvc: EnemyEntityService, svc: AppContextService) => {
-        if (!enemySvc || !svc) return null
-        return new EnemyRandomGenerateService(enemySvc, svc)
+      useFactory: (enemySvc: EnemyEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+        return new EnemyRandomGenerateService(enemySvc, config, snapshot)
       },
-      inject: [EnemyEntityService, AppContextService],
+      inject: [EnemyEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
 
     // ============================================
-    // Game-Core: Item Generation Chain
+    // Item Generation Chain
     // ============================================
     {
       provide: ItemConstraintService,
-      useFactory: (svc: AppContextService) => {
-        if (!svc) return null
-        return new ItemConstraintService(svc, svc)
+      useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+        return new ItemConstraintService(config, snapshot)
       },
-      inject: [AppContextService],
+      inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: ItemModifierAggregationService,
-      useFactory: (svc: AppContextService) => {
-        if (!svc) return null
-        return new ItemModifierAggregationService(svc, svc)
+      useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+        return new ItemModifierAggregationService(config, snapshot)
       },
-      inject: [AppContextService],
+      inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: ItemRollService,
-      useFactory: (constraintSvc: ItemConstraintService, svc: AppContextService) => {
-        if (!constraintSvc || !svc) return null
-        return new ItemRollService(svc, svc, constraintSvc)
+      useFactory: (
+        constraintSvc: ItemConstraintService,
+        config: IConfigStoreAccessor,
+        snapshot: IContextSnapshotAccessor
+      ) => {
+        return new ItemRollService(config, snapshot, constraintSvc)
       },
-      inject: [ItemConstraintService, AppContextService],
+      inject: [ItemConstraintService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
@@ -222,7 +287,6 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
         modifierSvc: ItemModifierAggregationService,
         rollSvc: ItemRollService
       ) => {
-        if (!itemSvc || !constraintSvc || !modifierSvc || !rollSvc) return null
         return new ItemGenerationService(itemSvc, constraintSvc, modifierSvc, rollSvc)
       },
       inject: [ItemEntityService, ItemConstraintService, ItemModifierAggregationService, ItemRollService],
@@ -230,34 +294,46 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
 
     // ============================================
-    // Game-Core: Context Converter
+    // Context Converter & Unit of Work
     // ============================================
     {
       provide: ContextToDomainConverter,
-      useFactory: (itemSvc: ItemEntityService, charSvc: CharacterAggregateService, svc: AppContextService) => {
-        if (!itemSvc || !charSvc || !svc) return null
-        return new ContextToDomainConverter(itemSvc, charSvc, svc, svc)
+      useFactory: (
+        itemSvc: ItemEntityService,
+        charSvc: CharacterAggregateService,
+        snapshot: IContextSnapshotAccessor,
+        config: IConfigStoreAccessor
+      ) => {
+        return new ContextToDomainConverter(itemSvc, charSvc, snapshot, config)
       },
-      inject: [ItemEntityService, CharacterAggregateService, AppContextService],
+      inject: [ItemEntityService, CharacterAggregateService, 'IContextSnapshotAccessor', 'IConfigStoreAccessor'],
+      scope: Scope.TRANSIENT,
+    },
+    {
+      provide: ContextUnitOfWork,
+      useFactory: (snapshot: IContextSnapshotAccessor, mutator: IContextMutator) => {
+        console.info('xZx snapshot', snapshot)
+        console.info('xZx mutator', mutator)
+        return new ContextUnitOfWork(mutator, snapshot)
+      },
+      inject: ['IContextSnapshotAccessor', 'IContextMutator'],
       scope: Scope.TRANSIENT,
     },
 
     // ============================================
-    // Game-Core: Feature - Shop
+    // Feature: Shop
     // ============================================
     {
       provide: ShopContextHandler,
-      useFactory: (svc: AppContextService, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
-        if (!svc || !converter || !uow) return null
-        return new ShopContextHandler(svc, converter, uow)
+      useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+        return new ShopContextHandler(snapshot, converter, uow)
       },
-      inject: [AppContextService, ContextToDomainConverter, ContextUnitOfWork],
+      inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
       scope: Scope.TRANSIENT,
     },
     {
       provide: ShopService,
       useFactory: (itemGenSvc: ItemGenerationService, shopHandler: ShopContextHandler) => {
-        if (!itemGenSvc || !shopHandler) return null
         return new ShopService(itemGenSvc, shopHandler)
       },
       inject: [ItemGenerationService, ShopContextHandler],
@@ -265,14 +341,14 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
 
     // ============================================
-    // Game-Core: Feature - Equipment
+    // Feature: Equipment
     // ============================================
     {
       provide: EquipmentContextHandler,
-      useFactory: (svc: AppContextService, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
-        return new EquipmentContextHandler(svc, converter, uow)
+      useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+        return new EquipmentContextHandler(snapshot, converter, uow)
       },
-      inject: [AppContextService, ContextToDomainConverter, ContextUnitOfWork],
+      inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
       scope: Scope.TRANSIENT,
     },
     {
@@ -285,14 +361,14 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
 
     // ============================================
-    // Game-Core: Feature - Run
+    // Feature: Run
     // ============================================
     {
       provide: RunContextHandler,
-      useFactory: (svc: AppContextService, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
-        return new RunContextHandler(svc, converter, uow)
+      useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+        return new RunContextHandler(snapshot, converter, uow)
       },
-      inject: [AppContextService, ContextToDomainConverter, ContextUnitOfWork],
+      inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
       scope: Scope.TRANSIENT,
     },
     {
@@ -320,10 +396,14 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
     {
       provide: StageInitializationService,
-      useFactory: (enemyGenSvc: EnemyRandomGenerateService, uow: ContextUnitOfWork, appSvc: AppContextService) => {
-        return new StageInitializationService(appSvc, uow, enemyGenSvc)
+      useFactory: (
+        enemyGenSvc: EnemyRandomGenerateService,
+        uow: ContextUnitOfWork,
+        snapshot: IContextSnapshotAccessor
+      ) => {
+        return new StageInitializationService(snapshot, uow, enemyGenSvc)
       },
-      inject: [EnemyRandomGenerateService, ContextUnitOfWork, AppContextService],
+      inject: [EnemyRandomGenerateService, ContextUnitOfWork, 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
@@ -344,22 +424,26 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
 
     // ============================================
-    // Game-Core: Feature - PostCombat
+    // Feature: PostCombat
     // ============================================
     {
       provide: PostCombatContextAccessor,
-      useFactory: (svc: AppContextService) => {
-        return new PostCombatContextAccessor(svc)
+      useFactory: (snapshot: IContextSnapshotAccessor) => {
+        return new PostCombatContextAccessor(snapshot)
       },
-      inject: [AppContextService],
+      inject: ['IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: PostCombatDomainConverter,
-      useFactory: (svc: AppContextService, itemSvc: ItemEntityService, charSvc: CharacterAggregateService) => {
-        return new PostCombatDomainConverter(svc, itemSvc, charSvc)
+      useFactory: (
+        snapshot: IContextSnapshotAccessor,
+        itemSvc: ItemEntityService,
+        charSvc: CharacterAggregateService
+      ) => {
+        return new PostCombatDomainConverter(snapshot, itemSvc, charSvc)
       },
-      inject: [AppContextService, ItemEntityService, CharacterAggregateService],
+      inject: ['IContextSnapshotAccessor', ItemEntityService, CharacterAggregateService],
       scope: Scope.TRANSIENT,
     },
     {
@@ -372,18 +456,18 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
     {
       provide: PostCombatTransactionManager,
-      useFactory: (uow: ContextUnitOfWork, svc: AppContextService) => {
-        return new PostCombatTransactionManager(svc, uow)
+      useFactory: (uow: ContextUnitOfWork, snapshot: IContextSnapshotAccessor) => {
+        return new PostCombatTransactionManager(snapshot, uow)
       },
-      inject: [ContextUnitOfWork, AppContextService],
+      inject: [ContextUnitOfWork, 'IContextSnapshotAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
       provide: RewardFactory,
-      useFactory: (itemGenSvc: ItemGenerationService, svc: AppContextService) => {
-        return new RewardFactory(itemGenSvc, svc)
+      useFactory: (itemGenSvc: ItemGenerationService, config: IConfigStoreAccessor) => {
+        return new RewardFactory(itemGenSvc, config)
       },
-      inject: [ItemGenerationService, AppContextService],
+      inject: [ItemGenerationService, 'IConfigStoreAccessor'],
       scope: Scope.TRANSIENT,
     },
     {
@@ -410,12 +494,16 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
     },
     {
       provide: PostCombatCoordinationService,
-      useFactory: (postCombatHandler: PostCombatContextHandler, runSvc: RunService) => {
-        return new PostCombatCoordinationService(postCombatHandler, runSvc)
+      useFactory: (handler: PostCombatContextHandler, runSvc: RunService) => {
+        return new PostCombatCoordinationService(handler, runSvc)
       },
       inject: [PostCombatContextHandler, RunService],
       scope: Scope.TRANSIENT,
     },
+
+    // ============================================
+    // Backend-Nest Services
+    // ============================================
     RunNestService,
   ],
 })

@@ -58,91 +58,51 @@ export interface IContextMutator {
   /** 更新商店上下文( 如商店物品、刷新狀態等 ) */
   setShopContext(ctx: IShopContext): void
 }
-/**
- * 完整應用上下文服務：結合讀、寫、快照計算
- * 職責：提供對應用上下文的完整操作能力
- * 邊界：應僅在需要完整操作的主流程或協調器中使用；一般服務應依賴細粒度介面
- * 注意：大多數服務應該只依賴此介面的子介面，而不是此介面本身，以保持依賴的清晰性
- */
-export interface IAppContextService extends IConfigStoreAccessor, IContextSnapshotAccessor, IContextMutator {}
-export class AppContextService implements IAppContextService {
-  constructor(private appContext: IAppContext) {}
-  /** 取得配置存儲，包含所有靜態模板 */
+// 內部：單一持有者，保有最新的 IAppContext
+class AppContextHolder {
+  private ctx: IAppContext
+  constructor(initial: IAppContext) {
+    this.ctx = initial
+  }
+  get(): IAppContext {
+    return this.ctx
+  }
+  set(next: IAppContext): void {
+    this.ctx = next
+  }
+}
+
+// 專責實作：靜態配置讀取
+export class ConfigStoreAccessorImpl implements IConfigStoreAccessor {
+  constructor(private holder: AppContextHolder) {}
   getConfigStore(): IAppContext['configStore'] {
-    return this.appContext.configStore
+    return this.holder.get().configStore
   }
-  /** 一次取得所有上下文的快照( 運行、角色、倉庫 ) */
-  getAllContexts(): IAppContext['contexts'] {
-    return this.appContext.contexts
-  }
-  /** 取得當前運行上下文 */
+}
+
+// 專責實作：提供快照與便利計算
+export class ContextSnapshotAccessorImpl implements IContextSnapshotAccessor {
+  constructor(private holder: AppContextHolder) {}
   getRunContext(): IRunContext {
-    return this.appContext.contexts.runContext
+    return this.holder.get().contexts.runContext
   }
-  /** 更新運行上下文( 透過不可變重建 )*/
-  setRunContext(ctx: IRunContext): void {
-    this.appContext = {
-      ...this.appContext,
-      contexts: {
-        ...this.appContext.contexts,
-        runContext: ctx,
-      },
-    }
-  }
-  /** 取得當前角色上下文 */
   getCharacterContext(): ICharacterContext {
-    return this.appContext.contexts.characterContext
+    return this.holder.get().contexts.characterContext
   }
-  /** 更新角色上下文( 透過不可變重建 )*/
-  setCharacterContext(ctx: ICharacterContext): void {
-    this.appContext = {
-      ...this.appContext,
-      contexts: {
-        ...this.appContext.contexts,
-        characterContext: ctx,
-      },
-    }
-  }
-  /** 取得當前倉庫上下文 */
   getStashContext(): IStashContext {
-    return this.appContext.contexts.stashContext
+    return this.holder.get().contexts.stashContext
   }
-  /** 更新倉庫上下文( 透過不可變重建 )*/
-  setStashContext(ctx: IStashContext): void {
-    this.appContext = {
-      ...this.appContext,
-      contexts: {
-        ...this.appContext.contexts,
-        stashContext: ctx,
-      },
-    }
-  }
-  /** 取得當前商店上下文 */
   getShopContext(): IShopContext {
-    return this.appContext.contexts.shopContext
+    return this.holder.get().contexts.shopContext
   }
-  /** 更新商店上下文( 透過不可變重建 )*/
-  setShopContext(ctx: IShopContext): void {
-    this.appContext = {
-      ...this.appContext,
-      contexts: {
-        ...this.appContext.contexts,
-        shopContext: ctx,
-      },
-    }
+  getAllContexts(): IAppContext['contexts'] {
+    return this.holder.get().contexts
   }
-  /**
-   * 取得當前建立時機資訊
-   */
   getCurrentAtCreatedInfo(): AtCreatedInfo {
     const { currentChapter, currentStage } = this.getRunContext()
     const difficulty = DifficultyHelper.getDifficultyFactor(currentChapter, currentStage)
-    const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
-    return atCreated
+    return { chapter: currentChapter, stage: currentStage, difficulty }
   }
-  /**
-   * 取得建立記錄所需的當前資訊
-   */
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord {
     const characterContext = this.getCharacterContext()
     const { currentChapter, currentStage } = this.getRunContext()
@@ -150,14 +110,32 @@ export class AppContextService implements IAppContextService {
     const atCreated = { chapter: currentChapter, stage: currentStage, difficulty }
     return { difficulty, sourceUnitId: characterContext.id, atCreated }
   }
-  /**
-   * 取得當前 Run 狀態
-   */
   getRunStatus(): IRunContext['status'] {
-    return this.appContext.contexts.runContext.status
+    return this.getRunContext().status
   }
-  /** 取得 Run 的臨時上下文 */
+  // 附加方法：Run 的臨時上下文（未列入 interface，供內部或 facade 使用）
   getTemporaryContext() {
-    return this.appContext.contexts.runContext.temporaryContext
+    return this.getRunContext().temporaryContext
+  }
+}
+
+// 專責實作：寫操作（透過不可變重建）
+export class ContextMutatorImpl implements IContextMutator {
+  constructor(private holder: AppContextHolder) {}
+  setRunContext(ctx: IRunContext): void {
+    const root = this.holder.get()
+    this.holder.set({ ...root, contexts: { ...root.contexts, runContext: ctx } })
+  }
+  setCharacterContext(ctx: ICharacterContext): void {
+    const root = this.holder.get()
+    this.holder.set({ ...root, contexts: { ...root.contexts, characterContext: ctx } })
+  }
+  setStashContext(ctx: IStashContext): void {
+    const root = this.holder.get()
+    this.holder.set({ ...root, contexts: { ...root.contexts, stashContext: ctx } })
+  }
+  setShopContext(ctx: IShopContext): void {
+    const root = this.holder.get()
+    this.holder.set({ ...root, contexts: { ...root.contexts, shopContext: ctx } })
   }
 }
