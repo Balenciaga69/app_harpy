@@ -32,7 +32,7 @@ export class InitController {
       },
     },
   })
-  async getProfessions() {
+  getProfessions() {
     return this.initService.getProfessions()
   }
 
@@ -63,7 +63,7 @@ export class InitController {
       },
     },
   })
-  async getRelicTemplates() {
+  getRelicTemplates() {
     return this.initService.getRelicTemplates()
   }
 
@@ -74,7 +74,7 @@ export class InitController {
   @ApiOperation({ summary: '取得指定職業的可選起始聖物' })
   @ApiParam({ name: 'id', description: '職業 id (e.g., WARRIOR)' })
   @ApiResponse({ status: 200, description: '成功取得起始聖物列表' })
-  async getProfessionRelics(@Param('id') id: string) {
+  getProfessionRelics(@Param('id') id: string) {
     return this.initService.getSelectableStartingRelics(id)
   }
 

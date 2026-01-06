@@ -23,7 +23,7 @@ export class EquipmentController {
       },
     },
   })
-  async equipItem(@Body() dto: { runId: string; itemId: string }) {
+  equipItem(@Body() dto: { runId: string; itemId: string }) {
     return this.equipmentService.equipItem(dto.itemId)
   }
 
@@ -40,7 +40,7 @@ export class EquipmentController {
       },
     },
   })
-  async unequipItem(@Body() dto: { runId: string; itemId: string }) {
+  unequipItem(@Body() dto: { runId: string; itemId: string }) {
     return this.equipmentService.unequipItem(dto.itemId)
   }
 }

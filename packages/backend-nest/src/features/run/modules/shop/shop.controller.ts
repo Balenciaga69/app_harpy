@@ -26,7 +26,7 @@ export class ShopController {
       },
     },
   })
-  async buyItem(@Body() dto: BuyItemDto) {
+  buyItem(@Body() dto: BuyItemDto) {
     return this.shopService.buyItem(dto)
   }
 
@@ -43,7 +43,7 @@ export class ShopController {
       },
     },
   })
-  async sellItem(@Body() dto: SellItemDto) {
+  sellItem(@Body() dto: SellItemDto) {
     return this.shopService.sellItem(dto)
   }
 
@@ -59,7 +59,7 @@ export class ShopController {
       },
     },
   })
-  async refreshShop(@Body() dto: RefreshShopDto) {
+  refreshShop(@Body() dto: RefreshShopDto) {
     return this.shopService.refreshShop(dto)
   }
 }
