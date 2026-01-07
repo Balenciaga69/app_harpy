@@ -1,12 +1,6 @@
 import { IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-/**
- * 賣出物品的請求 DTO
- *
- * 🎯 流程：
- * - 指定要賣出的 itemId
- * - runId 用於關聯到特定遊戲進度
- */
+
 export class SellItemDto {
   @ApiProperty({
     description: '遊戲進度 ID',

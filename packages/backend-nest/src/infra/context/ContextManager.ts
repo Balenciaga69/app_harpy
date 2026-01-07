@@ -12,6 +12,7 @@ export class ContextManager {
     ContextManager.store.enterWith(appContext)
   }
   getContext(): IAppContext | null {
+    //TODO: 這東西為何是從 store 取資料?
     const context = ContextManager.store.getStore()
     if (!context) {
       console.warn('No AppContext found in ContextManager')

@@ -83,7 +83,6 @@ export class InitService {
       professionId: dto.professionId,
       seed: dto.seed,
       startingRelicIds: dto.startingRelicIds,
-      persist: true,
     })
     if (result.isFailure || !result.value) {
       throw new BadRequestException({

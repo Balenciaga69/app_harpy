@@ -2,6 +2,7 @@ import { Scope } from '@nestjs/common'
 import {
   ContextToDomainConverter,
   ContextUnitOfWork,
+  IContextSnapshotAccessor,
   ItemGenerationService,
   ShopContextHandler,
   ShopService,
@@ -13,7 +14,7 @@ import {
 export const shopFeatureProviders = [
   {
     provide: ShopContextHandler,
-    useFactory: (snapshot: any, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new ShopContextHandler(snapshot, converter, uow)
     },
     inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],

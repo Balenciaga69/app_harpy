@@ -1,12 +1,6 @@
 import { IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-/**
- * 刷新商店的請求 DTO
- *
- * 🎯 流程：
- * - 指定遊戲進度 ID
- * - 觸發商店物品刷新
- */
+
 export class RefreshShopDto {
   @ApiProperty({
     description: '遊戲進度 ID',

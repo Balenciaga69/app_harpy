@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
@@ -26,6 +26,7 @@
     "seedrandom": "^3.0.5"
   },
   "devDependencies": {
-    "@types/seedrandom": "^3.0.8"
+    "@types/seedrandom": "^3.0.8",
+    "rimraf": "^5.0.5"
   }
 }

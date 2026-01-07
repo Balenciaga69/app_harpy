@@ -1,11 +1,13 @@
 import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
+  AppContextRunAdapter,
   ContextToDomainConverter,
   ContextUnitOfWork,
   EnemyEntityService,
   EnemyRandomGenerateService,
   GameStartOptionsService,
+  IAppContext,
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
   RunContextHandler,
@@ -39,7 +41,7 @@ export const runFeatureProviders = [
   },
   {
     provide: GameStartOptionsService,
-    useFactory: (configStore) => {
+    useFactory: (configStore: IAppContext['configStore']) => {
       return new GameStartOptionsService(configStore.professionStore, configStore.itemStore)
     },
     inject: ['CONFIG_STORE'],
@@ -94,11 +96,23 @@ export const runFeatureProviders = [
     scope: Scope.REQUEST,
   },
   {
-    provide: RunInitializationService,
-    useFactory: (configStore, stageGenerator: StageNodeGenerationService, unitOfWork: ContextUnitOfWork) => {
-      return new RunInitializationService(configStore, unitOfWork, stageGenerator)
+    provide: AppContextRunAdapter,
+    useFactory: (configStore: IAppContext['configStore']) => {
+      return new AppContextRunAdapter(configStore)
     },
-    inject: ['CONFIG_STORE', StageNodeGenerationService, ContextUnitOfWork],
+    inject: ['CONFIG_STORE'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunInitializationService,
+    useFactory: (
+      appContextRunAdapter: AppContextRunAdapter,
+      stageGenerator: StageNodeGenerationService,
+      unitOfWork: ContextUnitOfWork
+    ) => {
+      return new RunInitializationService(appContextRunAdapter, unitOfWork, stageGenerator)
+    },
+    inject: [AppContextRunAdapter, StageNodeGenerationService, ContextUnitOfWork],
     scope: Scope.REQUEST,
   },
 ]
