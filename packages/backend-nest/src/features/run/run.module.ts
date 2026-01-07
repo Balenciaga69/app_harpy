@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common'
-import { APP_INTERCEPTOR } from '@nestjs/core/constants'
-import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 import { ContextManager } from 'src/infra/context/ContextManager'
 // 子模組導入
 import { InitModule } from './modules/init/init.module'
@@ -18,10 +16,6 @@ import { postCombatFeatureProviders } from './providers/post-combat-feature.prov
   imports: [InitModule, ShopModule, EquipmentModule],
   providers: [
     ContextManager,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ContextInitializationInterceptor,
-    },
     ...configStoreProviders,
     ...fineGrainedInterfaceProviders,
     ...contentGenerationProviders,

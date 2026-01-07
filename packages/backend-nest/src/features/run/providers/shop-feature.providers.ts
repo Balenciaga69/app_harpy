@@ -1,10 +1,10 @@
 import { Scope } from '@nestjs/common'
 import {
-  ShopContextHandler,
-  ShopService,
-  ItemGenerationService,
   ContextToDomainConverter,
   ContextUnitOfWork,
+  ItemGenerationService,
+  ShopContextHandler,
+  ShopService,
 } from 'src/from-game-core'
 /**
  * 商店功能提供者

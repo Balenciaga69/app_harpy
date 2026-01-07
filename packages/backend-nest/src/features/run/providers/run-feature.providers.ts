@@ -1,14 +1,20 @@
 import { Scope } from '@nestjs/common'
 import {
+  AffixEntityService,
   ContextToDomainConverter,
   ContextUnitOfWork,
+  EnemyEntityService,
+  EnemyRandomGenerateService,
   GameStartOptionsService,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
   RunContextHandler,
   RunCoordinationService,
   RunInitializationService,
   RunService,
   StageInitializationService,
   StageNodeGenerationService,
+  UltimateEntityService,
 } from 'src/from-game-core'
 /**
  * 遊戲進度功能提供者
@@ -17,7 +23,7 @@ import {
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,
-    useFactory: (snapshot: any, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+    useFactory: (snapshot, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new RunContextHandler(snapshot, converter, uow)
     },
     inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
@@ -33,7 +39,7 @@ export const runFeatureProviders = [
   },
   {
     provide: GameStartOptionsService,
-    useFactory: (configStore: any) => {
+    useFactory: (configStore) => {
       return new GameStartOptionsService(configStore.professionStore, configStore.itemStore)
     },
     inject: ['CONFIG_STORE'],
@@ -47,11 +53,36 @@ export const runFeatureProviders = [
     scope: Scope.REQUEST,
   },
   {
+    provide: EnemyEntityService,
+    useFactory: (
+      affixEntityService: AffixEntityService,
+      ultimateEntityService: UltimateEntityService,
+      configStoreAccessor: IConfigStoreAccessor,
+      contextSnapshot: IContextSnapshotAccessor
+    ) => {
+      return new EnemyEntityService(affixEntityService, ultimateEntityService, configStoreAccessor, contextSnapshot)
+    },
+    inject: [AffixEntityService, UltimateEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EnemyRandomGenerateService,
+    useFactory: (
+      enemyEntityService: EnemyEntityService,
+      configStoreAccessor: IConfigStoreAccessor,
+      contextSnapshotAccessor: IContextSnapshotAccessor
+    ) => {
+      return new EnemyRandomGenerateService(enemyEntityService, configStoreAccessor, contextSnapshotAccessor)
+    },
+    inject: [EnemyEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
     provide: StageInitializationService,
-    useFactory: (contextAccessor: any, unitOfWork: any, enemyRandomGenerateService: any) => {
+    useFactory: (contextAccessor, unitOfWork, enemyRandomGenerateService) => {
       return new StageInitializationService(contextAccessor, unitOfWork, enemyRandomGenerateService)
     },
-    inject: ['IContextSnapshotAccessor', 'IContextUnitOfWork', 'IEnemyRandomGenerateService'],
+    inject: ['IContextSnapshotAccessor', ContextUnitOfWork, EnemyRandomGenerateService],
     scope: Scope.REQUEST,
   },
   {
@@ -64,7 +95,7 @@ export const runFeatureProviders = [
   },
   {
     provide: RunInitializationService,
-    useFactory: (configStore: any, stageGenerator: StageNodeGenerationService, unitOfWork: ContextUnitOfWork) => {
+    useFactory: (configStore, stageGenerator: StageNodeGenerationService, unitOfWork: ContextUnitOfWork) => {
       return new RunInitializationService(configStore, unitOfWork, stageGenerator)
     },
     inject: ['CONFIG_STORE', StageNodeGenerationService, ContextUnitOfWork],

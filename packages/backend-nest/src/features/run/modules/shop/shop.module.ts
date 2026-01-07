@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ShopService } from 'src/from-game-core'
+import { sharedProviders } from '../../providers/common-context-package'
 import { shopFeatureProviders } from '../../providers/shop-feature.providers'
-import { contentGenerationProviders } from '../../providers/content-generation.providers'
-import { itemGenerationProviders } from '../../providers/item-generation.providers'
-import { contextConverterProviders } from '../../providers/context-converter.providers'
-import { fineGrainedInterfaceProviders } from '../../providers/fine-grained-interface.providers'
-import { configStoreProviders } from '../../providers/config-store.providers'
 import { ShopController } from './shop.controller'
 import { ShopNestService } from './shop.service'
 /**
@@ -14,15 +10,7 @@ import { ShopNestService } from './shop.service'
  */
 @Module({
   controllers: [ShopController],
-  providers: [
-    ...configStoreProviders,
-    ...fineGrainedInterfaceProviders,
-    ...contentGenerationProviders,
-    ...itemGenerationProviders,
-    ...contextConverterProviders,
-    ...shopFeatureProviders,
-    ShopNestService,
-  ],
+  providers: [...sharedProviders, ...shopFeatureProviders, ShopNestService],
   exports: [ShopNestService, ShopService],
 })
 export class ShopModule {}

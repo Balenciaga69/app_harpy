@@ -12,6 +12,15 @@ import { ContextManager } from 'src/infra/context/ContextManager'
  * 提供由 game-core 定義的細粒度介面實現
  */
 export const fineGrainedInterfaceProviders = [
+  ContextManager,
+  {
+    provide: 'IConfigStoreAccessor',
+    useFactory: (holder: AppContextHolder) => {
+      return new ConfigStoreAccessorImpl(holder)
+    },
+    inject: [AppContextHolder],
+    scope: Scope.REQUEST,
+  },
   {
     provide: 'IConfigStoreAccessor',
     useFactory: (holder: AppContextHolder) => {

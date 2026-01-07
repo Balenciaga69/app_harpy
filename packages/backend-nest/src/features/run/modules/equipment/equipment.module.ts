@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common'
 import { EquipmentService } from 'src/from-game-core'
+import { sharedProviders } from '../../providers/common-context-package'
 import { equipmentFeatureProviders } from '../../providers/equipment-feature.providers'
-import { contextConverterProviders } from '../../providers/context-converter.providers'
-import { fineGrainedInterfaceProviders } from '../../providers/fine-grained-interface.providers'
-import { configStoreProviders } from '../../providers/config-store.providers'
 import { EquipmentController } from './equipment.controller'
 import { EquipmentNestService } from './equipment.service'
 /**
@@ -12,13 +10,7 @@ import { EquipmentNestService } from './equipment.service'
  */
 @Module({
   controllers: [EquipmentController],
-  providers: [
-    ...configStoreProviders,
-    ...fineGrainedInterfaceProviders,
-    ...contextConverterProviders,
-    ...equipmentFeatureProviders,
-    EquipmentNestService,
-  ],
+  providers: [...sharedProviders, ...equipmentFeatureProviders, EquipmentNestService],
   exports: [EquipmentNestService, EquipmentService],
 })
 export class EquipmentModule {}

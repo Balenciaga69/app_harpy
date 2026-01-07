@@ -52,3 +52,5 @@ export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalProf
 export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalShopConfigLoader'
 export * from '@app-harpy/game-core/dist/infra/static-config/loader/InternalUltimateConfigLoader'
 export * from '@app-harpy/game-core/dist/shared/result/Result'
+export * from '@app-harpy/game-core/dist/application/content-generation/service/enemy/EnemyEntityService'
+export * from '@app-harpy/game-core/dist/application/content-generation/service/enemy/EnemyRandomGenerateService'
