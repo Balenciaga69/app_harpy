@@ -20,7 +20,7 @@ export class InitService {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
     return {
       success: true,
-      data: professions.map((prof: any) => ({
+      data: professions.map((prof) => ({
         id: prof.id,
         name: prof.name,
         desc: prof.desc,
@@ -32,7 +32,7 @@ export class InitService {
    */
   getRelicTemplates() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
-    const allRelics = professions.flatMap((p: any) => this.gameStartOptionsService.getSelectableStartingRelics(p.id))
+    const allRelics = professions.flatMap((prof) => this.gameStartOptionsService.getSelectableStartingRelics(prof.id))
     return {
       success: true,
       data: allRelics.map((relic: any) => ({
@@ -56,7 +56,7 @@ export class InitService {
       const relics = this.gameStartOptionsService.getSelectableStartingRelics(professionId)
       return {
         success: true,
-        data: relics.map((relic: any) => ({
+        data: relics.map((relic) => ({
           id: relic.id,
           name: relic.name,
           desc: relic.desc,
@@ -106,7 +106,7 @@ export class InitService {
       success: true,
       data: {
         runId: appContext.contexts.runContext.runId,
-        professionId: (appContext.contexts.characterContext as any).professionId,
+        professionId: appContext.contexts.characterContext.professionId,
         seed: appContext.contexts.runContext.seed,
       },
     }

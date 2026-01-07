@@ -1,13 +1,14 @@
 import { Scope } from '@nestjs/common'
 import {
-  RunContextHandler,
-  RunService,
-  RunCoordinationService,
-  RunInitializationService,
-  StageNodeGenerationService,
-  GameStartOptionsService,
   ContextToDomainConverter,
   ContextUnitOfWork,
+  GameStartOptionsService,
+  RunContextHandler,
+  RunCoordinationService,
+  RunInitializationService,
+  RunService,
+  StageInitializationService,
+  StageNodeGenerationService,
 } from 'src/from-game-core'
 /**
  * 遊戲進度功能提供者
@@ -46,11 +47,19 @@ export const runFeatureProviders = [
     scope: Scope.REQUEST,
   },
   {
-    provide: RunCoordinationService,
-    useFactory: (runHandler: RunContextHandler) => {
-      return new RunCoordinationService(runHandler, null as any)
+    provide: StageInitializationService,
+    useFactory: (contextAccessor: any, unitOfWork: any, enemyRandomGenerateService: any) => {
+      return new StageInitializationService(contextAccessor, unitOfWork, enemyRandomGenerateService)
     },
-    inject: [RunContextHandler],
+    inject: ['IContextSnapshotAccessor', 'IContextUnitOfWork', 'IEnemyRandomGenerateService'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunCoordinationService,
+    useFactory: (runHandler: RunContextHandler, stageInitService: StageInitializationService) => {
+      return new RunCoordinationService(runHandler, stageInitService)
+    },
+    inject: [RunContextHandler, StageInitializationService],
     scope: Scope.REQUEST,
   },
   {

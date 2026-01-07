@@ -6,6 +6,9 @@ export class ContextManager {
   private static readonly store = new AsyncLocalStorage<IAppContext>()
   private persistentStore = new Map<string, IAppContext>()
   setContext(appContext: IAppContext): void {
+    if (ContextManager.store.getStore()) {
+      throw new Error('Context already set for this async scope — use runWithContext to create an isolated scope')
+    }
     ContextManager.store.enterWith(appContext)
   }
   getContext(): IAppContext | null {
