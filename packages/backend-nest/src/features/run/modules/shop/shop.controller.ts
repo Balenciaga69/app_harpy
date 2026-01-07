@@ -1,13 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common'
+import { Controller, Post, Body, UseInterceptors } from '@nestjs/common'
 import { ApiOperation, ApiBody } from '@nestjs/swagger'
 import { BuyItemDto } from '../../dto/BuyItemDto'
 import { SellItemDto } from '../../dto/SellItemDto'
 import { RefreshShopDto } from '../../dto/RefreshShopDto'
 import { ShopNestService } from './shop.service'
+import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 /**
  * 商店控制器
  * 職責：處理商店相關的 HTTP 請求
  */
+@UseInterceptors(ContextInitializationInterceptor)
 @Controller('api/run')
 export class ShopController {
   constructor(private readonly shopService: ShopNestService) {}

@@ -1,9 +1,11 @@
-import { Injectable, BadRequestException, Optional } from '@nestjs/common'
+import { Injectable, BadRequestException, Optional, UseInterceptors } from '@nestjs/common'
 import { EquipmentService } from 'src/from-game-core'
+import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 /**
  * 裝備服務
  * 職責：處理裝備相關的業務邏輯
  */
+@UseInterceptors(ContextInitializationInterceptor)
 @Injectable()
 export class EquipmentNestService {
   constructor(@Optional() private readonly equipmentService: EquipmentService) {}
