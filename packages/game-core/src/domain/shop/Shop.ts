@@ -1,8 +1,8 @@
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { Result } from '../../shared/result/Result'
 import { ItemEntity, ItemRecord } from '../item/Item'
-import { ShopConfig } from './ShopConfig'
 import { PriceHelper } from './PriceHelper'
+import { ShopConfig } from './ShopConfig'
 // === Record ===
 export interface ShopItemRecord extends ItemRecord {
   readonly price: number

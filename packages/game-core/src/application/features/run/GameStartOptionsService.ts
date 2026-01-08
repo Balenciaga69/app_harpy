@@ -1,5 +1,5 @@
-import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { RelicTemplate } from '../../../domain/item/Item'
+import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { IProfessionStore } from '../../core-infrastructure/static-config/IConfigStores'
 import { IItemStore } from '../../core-infrastructure/static-config/IConfigStores'
 /**

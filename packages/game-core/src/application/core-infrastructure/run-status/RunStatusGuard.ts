@@ -1,6 +1,6 @@
+import { RunStatus } from '../../../domain/run/RunTypes'
 import { DomainErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
-import { RunStatus } from '../../../domain/run/RunTypes'
 /** 用於管理 Run 狀態轉換的規則 */
 const ALLOWED_TRANSITIONS: Record<RunStatus, RunStatus[]> = {
   IDLE: ['PRE_COMBAT'],

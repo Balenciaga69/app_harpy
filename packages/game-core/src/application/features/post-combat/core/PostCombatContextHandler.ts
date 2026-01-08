@@ -1,14 +1,14 @@
-import { CombatReward, PostCombatContext } from '../../../../domain/post-combat/PostCombat'
 import { Character } from '../../../../domain/character/Character'
+import { CombatReward, PostCombatContext } from '../../../../domain/post-combat/PostCombat'
 import { Stash } from '../../../../domain/stash/Stash'
-import { Result } from '../../../../shared/result/Result'
 import { DomainErrorCode } from '../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../shared/result/Result'
 import { ItemEntityService } from '../../../content-generation/service/item/ItemEntityService'
 import { IRunService } from '../../run/RunService'
 import { IPostCombatContextAccessor } from './PostCombatContextAccessor'
-import { IPostCombatValidator } from './PostCombatValidator'
 import { IPostCombatDomainConverter } from './PostCombatDomainConverter'
 import { IPostCombatTransactionManager } from './PostCombatTransactionManager'
+import { IPostCombatValidator } from './PostCombatValidator'
 /**
  * 獎勵派發結果
  */

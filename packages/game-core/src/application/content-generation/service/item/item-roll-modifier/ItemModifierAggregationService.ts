@@ -1,12 +1,12 @@
 import { ItemRollModifier } from '../../../../../domain/item/roll/ItemRollModifier'
 import { CombatRewardType } from '../../../../../domain/post-combat/PostCombat'
+import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../../shared/result/Result'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../../core-infrastructure/context/service/AppContextService'
-import { Result } from '../../../../../shared/result/Result'
-import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
-import { IItemRollModifierStrategy } from './strategy/ItemRollModifierStrategy'
+import { IItemRollModifierStrategy } from './strategy/IItemRollModifierStrategy'
 import { ItemRollModifierStrategyFactory } from './strategy/ItemRollModifierStrategyFactory'
 /** Item Modifier Aggregation Service */
 export interface IItemModifierAggregationService {

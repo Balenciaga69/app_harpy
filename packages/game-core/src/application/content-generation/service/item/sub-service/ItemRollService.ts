@@ -8,12 +8,12 @@ import {
   IContextSnapshotAccessor,
 } from '../../../../core-infrastructure/context/service/AppContextService'
 import { ItemRollConfigId } from '../../../../core-infrastructure/static-config/IConfigStores'
-import { IItemConstraintService } from './ItemConstraintService'
 import {
+  aggregateModifiersByType,
   aggregateTemplateModifiers,
   calculateTemplateWeight,
-  aggregateModifiersByType,
 } from '../item-roll-modifier/ModifierAggregationHelper'
+import { IItemConstraintService } from './ItemConstraintService'
 /** 骰選結果類型 */
 type RollResult = {
   itemTemplateId: string

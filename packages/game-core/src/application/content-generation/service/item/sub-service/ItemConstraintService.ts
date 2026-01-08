@@ -1,6 +1,6 @@
-import { Result } from '../../../../../shared/result/Result'
-import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
 import { ItemRarity, ItemTemplate, ItemType } from '../../../../../domain/item/Item'
+import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../../shared/result/Result'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,

@@ -143,7 +143,7 @@ function buildRunContext(
     for (const ch of DEFAULT_CHAPTER_LEVELS) {
       chapters[ch] = { stageNodes: stageGenerator.generateStageNodes(seed + ch) }
     }
-  } catch (err) {
+  } catch {
     return Result.fail(ApplicationErrorCode.敵人_關卡資訊無效)
   }
   return Result.success({

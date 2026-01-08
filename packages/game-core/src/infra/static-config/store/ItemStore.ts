@@ -1,5 +1,5 @@
 import { IItemStore } from '../../../application/core-infrastructure/static-config/IConfigStores'
-import { RelicTemplate, ItemTemplate } from '../../../domain/item/Item'
+import { ItemTemplate,RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
 import { CombatRewardType } from '../../../domain/post-combat/PostCombat'
