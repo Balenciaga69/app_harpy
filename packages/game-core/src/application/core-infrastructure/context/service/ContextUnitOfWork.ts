@@ -1,8 +1,8 @@
 import { ICharacterContext } from '../interface/ICharacterContext'
-import { IContextMutator, IContextSnapshotAccessor } from './AppContextService'
 import { IRunContext } from '../interface/IRunContext'
 import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
+import { IContextMutator, IContextSnapshotAccessor } from './AppContextService'
 export interface IContextUnitOfWork {
   // === Update ===
   updateCharacterContext(ctx: ICharacterContext): IContextUnitOfWork

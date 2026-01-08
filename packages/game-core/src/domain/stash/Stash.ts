@@ -1,5 +1,5 @@
-import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
+import { Result } from '../../shared/result/Result'
 import { ItemEntity, ItemRecord } from '../item/Item'
 const INITIAL_CAPACITY = 20
 export interface StashRecord {

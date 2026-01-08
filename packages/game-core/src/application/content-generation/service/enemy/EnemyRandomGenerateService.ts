@@ -1,7 +1,7 @@
 import { EnemyEntity, EnemyRole, EnemySpawnInfo } from '../../../../domain/entity/Enemy'
 import { WeightRoller } from '../../../../shared/helpers/WeightRoller'
-import { Result } from '../../../../shared/result/Result'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../shared/result/Result'
 import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,

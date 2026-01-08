@@ -43,7 +43,7 @@ export default {
       'warn',
       {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-        alphabeticalOrder: true,
+        alphabetize: { order: 'asc', caseInsensitive: true },
       },
     ],
     // simple-import-sort

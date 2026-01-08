@@ -1,7 +1,7 @@
 import { BaseInstanceFields, WithCreatedInfo } from '../../shared/models/BaseInstanceFields'
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
-import { AffixRecord, AffixEntity } from '../affix/Affix'
+import { AffixEntity,AffixRecord } from '../affix/Affix'
 export type ItemType = 'RELIC'
 /** 物品稀有度等級，決定物品的品質與掉落概率 */
 export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'

@@ -1,7 +1,7 @@
 import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
-import { ItemRollModifier } from '../item/roll/ItemRollModifier'
-import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
+import { Result } from '../../shared/result/Result'
+import { ItemRollModifier } from '../item/roll/ItemRollModifier'
 import { ChapterInfo, RunStatus } from './RunTypes'
 export interface IRunFields {
   readonly seed: number // 運行隨機種子

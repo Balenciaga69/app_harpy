@@ -1,7 +1,7 @@
 import {
   PostCombatContext,
-  PostCombatWinContext,
   PostCombatLoseContext,
+  PostCombatWinContext,
 } from '../../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'

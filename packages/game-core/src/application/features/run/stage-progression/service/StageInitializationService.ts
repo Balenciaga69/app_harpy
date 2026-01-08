@@ -1,8 +1,8 @@
-import { Result } from '../../../../../shared/result/Result'
 import { ApplicationErrorCode } from '../../../../../shared/result/ErrorCodes'
+import { Result } from '../../../../../shared/result/Result'
+import { IEnemyRandomGenerateService } from '../../../../content-generation/service/enemy/EnemyRandomGenerateService'
 import { IContextSnapshotAccessor } from '../../../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../../../core-infrastructure/context/service/ContextUnitOfWork'
-import { IEnemyRandomGenerateService } from '../../../../content-generation/service/enemy/EnemyRandomGenerateService'
 /**
  * 關卡初始化服務介面
  * 職責：根據關卡節點類型初始化關卡內容（敵人、事件等）

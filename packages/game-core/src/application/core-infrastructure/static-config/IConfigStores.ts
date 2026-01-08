@@ -4,10 +4,10 @@ import { EnemySpawnInfo, EnemyTemplate } from '../../../domain/entity/Enemy'
 import { ItemTemplate, RelicTemplate } from '../../../domain/item/Item'
 import { ItemRollConfig, RewardRollConfig } from '../../../domain/item/roll/ItemRollConfig'
 import { ItemRollConstraint } from '../../../domain/item/roll/ItemRollConstraint'
+import { CombatRewardType } from '../../../domain/post-combat/PostCombat'
 import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
-import { CombatRewardType } from '../../../domain/post-combat/PostCombat'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
 /** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
