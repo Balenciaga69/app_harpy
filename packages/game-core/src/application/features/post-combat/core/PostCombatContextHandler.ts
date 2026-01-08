@@ -1,4 +1,5 @@
 import { Character } from '../../../../domain/character/Character'
+import { ItemRecord } from '../../../../domain/item/Item'
 import { CombatReward, PostCombatContext } from '../../../../domain/post-combat/PostCombat'
 import { Stash } from '../../../../domain/stash/Stash'
 import { DomainErrorCode } from '../../../../shared/result/ErrorCodes'
@@ -116,7 +117,7 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
    * 從 ItemRecord 建立 RelicEntity
    * 將獎勵中的物品記錄轉換為領域實體
    */
-  private createRelicEntityFromRecord(itemRecord: any) {
+  private createRelicEntityFromRecord(itemRecord: ItemRecord) {
     return this.itemEntityService.createRelicByRecord(itemRecord)
   }
   /**

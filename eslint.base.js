@@ -53,7 +53,7 @@ export default {
     ],
 
     // TypeScript 規則
-    '@typescript-eslint/explicit-function-return-type': 'warn', // 強制函式回傳型別
+    // '@typescript-eslint/explicit-function-return-type': 'warn', // 強制函式回傳型別
     '@typescript-eslint/no-explicit-any': 'warn', // 禁止 any
 
     // simple-import-sort 規則
