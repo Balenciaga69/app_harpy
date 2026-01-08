@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SharedInfraModule } from 'src/infra/shared-infra.module'
-import { SharedAppModule } from './application/shared-app.module'
-import { EquipmentModule } from './modules/equipment/equipment.module'
-import { InitModule } from './modules/init/init.module'
-import { ShopModule } from './modules/shop/shop.module'
+import { SharedAppModule } from '../app/shared/shared-app.module'
+import { EquipmentModule } from '../app/modules/equipment/equipment.module'
+import { InitModule } from '../app/modules/init/init.module'
+import { ShopModule } from '../app/modules/shop/shop.module'
 /**
  * 共享遊戲功能模組
  * 職責：協調遊戲進度相關的所有功能（初始化、商店、裝備）

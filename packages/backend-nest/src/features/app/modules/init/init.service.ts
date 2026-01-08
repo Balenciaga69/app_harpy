@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
 import { ContextManager } from 'src/infra/context/ContextManager'
-import { InitRunDto } from '../../dto/InitRunDto'
+import { InitRunDto } from './dto/InitRunDto'
 /**
  * 初始化 Run 的服務
  * 職責：處理遊戲進度初始化邏輯

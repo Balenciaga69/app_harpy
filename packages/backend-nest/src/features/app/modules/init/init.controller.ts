@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger'
-import { InitRunDto } from '../../dto/InitRunDto'
+import { InitRunDto } from './dto/InitRunDto'
 import { InitService } from './init.service'
 /**
  * 初始化控制器

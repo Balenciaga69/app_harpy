@@ -1,8 +1,8 @@
 import { Controller, Post, Body, UseInterceptors } from '@nestjs/common'
 import { ApiOperation, ApiBody } from '@nestjs/swagger'
-import { BuyItemDto } from '../../dto/BuyItemDto'
-import { SellItemDto } from '../../dto/SellItemDto'
-import { RefreshShopDto } from '../../dto/RefreshShopDto'
+import { BuyItemDto } from './dto/BuyItemDto'
+import { SellItemDto } from './dto/SellItemDto'
+import { RefreshShopDto } from './dto/RefreshShopDto'
 import { ShopNestService } from './shop.service'
 import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 /**

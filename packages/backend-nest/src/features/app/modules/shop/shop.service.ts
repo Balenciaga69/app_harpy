@@ -1,8 +1,8 @@
 import { Injectable, BadRequestException, Optional } from '@nestjs/common'
 import { ShopService } from 'src/from-game-core'
-import { BuyItemDto } from '../../dto/BuyItemDto'
-import { SellItemDto } from '../../dto/SellItemDto'
-import { RefreshShopDto } from '../../dto/RefreshShopDto'
+import { BuyItemDto } from './dto/BuyItemDto'
+import { SellItemDto } from './dto/SellItemDto'
+import { RefreshShopDto } from './dto/RefreshShopDto'
 /**
  * 商店服務
  * 職責：處理商店相關的業務邏輯（購買、賣出、刷新）
