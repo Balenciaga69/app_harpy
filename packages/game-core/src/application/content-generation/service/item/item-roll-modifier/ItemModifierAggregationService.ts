@@ -6,7 +6,7 @@ import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../../core-infrastructure/context/service/AppContextService'
-import { IItemRollModifierStrategy } from './strategy/ItemRollModifierStrategy'
+import { IItemRollModifierStrategy } from './strategy/IItemRollModifierStrategy'
 import { ItemRollModifierStrategyFactory } from './strategy/ItemRollModifierStrategyFactory'
 /** Item Modifier Aggregation Service */
 export interface IItemModifierAggregationService {
