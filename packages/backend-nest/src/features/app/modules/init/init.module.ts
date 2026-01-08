@@ -1,5 +1,6 @@
 ﻿import { Module } from '@nestjs/common'
 import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { SharedAppModule } from '../../shared/shared-app.module'
 import { runFeatureProviders } from './providers/run.providers'
 import { InitController } from './init.controller'
 import { InitService } from './init.service'
@@ -8,7 +9,7 @@ import { InitService } from './init.service'
  * 職責：處理遊戲進度初始化
  */
 @Module({
-  imports: [SharedInfraModule],
+  imports: [SharedInfraModule, SharedAppModule],
   controllers: [InitController],
   providers: [InitService, ...runFeatureProviders],
   exports: [InitService],

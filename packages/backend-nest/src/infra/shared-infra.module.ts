@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, Scope } from '@nestjs/common'
 import { ContextManager } from './context/ContextManager'
 import { configStoreProviders } from './providers/config-store.providers'
 import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
@@ -22,7 +22,18 @@ import { fineGrainedInterfaceProviders } from './providers/fine-grained-interfac
  * （避免循環依賴）
  */
 @Module({
-  providers: [ContextManager, ...configStoreProviders, ...fineGrainedInterfaceProviders],
-  exports: [ContextManager, ...configStoreProviders, ...fineGrainedInterfaceProviders],
+  providers: [
+    ...configStoreProviders,
+    {
+      provide: ContextManager,
+      useFactory: (configStore: any) => {
+        return new ContextManager(configStore)
+      },
+      inject: ['CONFIG_STORE'],
+      scope: Scope.DEFAULT,
+    },
+    ...fineGrainedInterfaceProviders,
+  ],
+  exports: [ContextManager, 'IConfigStoreAccessor', 'IContextSnapshotAccessor', 'IContextMutator', 'CONFIG_STORE'],
 })
 export class SharedInfraModule {}

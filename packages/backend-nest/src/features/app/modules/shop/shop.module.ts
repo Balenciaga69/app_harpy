@@ -1,5 +1,6 @@
 ﻿import { Module } from '@nestjs/common'
 import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { SharedAppModule } from '../../shared/shared-app.module'
 import { shopFeatureProviders } from './providers/shop.providers'
 import { ShopController } from './shop.controller'
 import { ShopNestService } from './shop.service'
@@ -8,7 +9,7 @@ import { ShopNestService } from './shop.service'
  * 職責：處理商店相關功能
  */
 @Module({
-  imports: [SharedInfraModule],
+  imports: [SharedInfraModule, SharedAppModule],
   controllers: [ShopController],
   providers: [ShopNestService, ...shopFeatureProviders],
   exports: [ShopNestService],

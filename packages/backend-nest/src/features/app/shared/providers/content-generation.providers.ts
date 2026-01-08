@@ -5,6 +5,8 @@ import {
   ItemEntityService,
   ProfessionEntityService,
   CharacterAggregateService,
+  IContextSnapshotAccessor,
+  IConfigStoreAccessor,
 } from 'src/from-game-core'
 /**
  * 內容生成服務提供者
@@ -19,7 +21,14 @@ import {
  * 原因：這些是業務邏輯層的服務，由應用服務協調使用
  */
 export const contentGenerationProviders = [
-  AffixEntityService,
+  {
+    provide: AffixEntityService,
+    useFactory: (configStoreAccessor: IConfigStoreAccessor, contextSnapshot: IContextSnapshotAccessor) => {
+      return new AffixEntityService(configStoreAccessor, contextSnapshot)
+    },
+    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
   {
     provide: UltimateEntityService,
     useFactory: (affixSvc: AffixEntityService, config: any, snapshot: any) => {

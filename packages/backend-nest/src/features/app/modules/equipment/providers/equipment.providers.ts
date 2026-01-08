@@ -4,6 +4,7 @@ import {
   EquipmentService,
   ContextToDomainConverter,
   ContextUnitOfWork,
+  IContextSnapshotAccessor,
 } from 'src/from-game-core'
 /**
  * 裝備功能提供者
@@ -15,7 +16,7 @@ import {
 export const equipmentFeatureProviders = [
   {
     provide: EquipmentContextHandler,
-    useFactory: (snapshot: any, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new EquipmentContextHandler(snapshot, converter, uow)
     },
     inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
