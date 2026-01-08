@@ -1,7 +1,7 @@
 import {
   PostCombatContext,
-  PostCombatWinContext,
   PostCombatLoseContext,
+  PostCombatWinContext,
 } from '../../../../domain/post-combat/PostCombat'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
@@ -68,7 +68,7 @@ export class PostCombatProcessor {
     } else {
       // 計算新的重試次數
       const currentRetries = this.contextAccessor.getRemainingFailRetries()
-      const retryCountToDeduct = (postCombatCtx as any).detail.retryCountToDeduct || 1
+      const retryCountToDeduct = postCombatCtx.detail.retryCountToDeduct || 1
       const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
       // 提交重試次數扣除
       this.transactionManager.commitRetryDeduction(newRemainingRetries)

@@ -1,12 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsArray, MinLength } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-/**
- * 初始化新 Run 的請求 DTO
- *
- * 🎯 使用場景：
- * - 前端選擇職業後，發送此請求以初始化新遊戲
- * - 可選帶入種子確保重現，帶入起始聖物自訂初始配置
- */
 export class InitRunDto {
   @ApiProperty({
     description: '職業 ID (例如: WARRIOR, MAGE, ROGUE)',

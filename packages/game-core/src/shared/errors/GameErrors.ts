@@ -6,8 +6,7 @@
 export abstract class GameError extends Error {
   constructor(
     message: string,
-    public readonly code: string,
-    public readonly meta?: any
+    public readonly code: string
   ) {
     super(message)
     this.name = this.constructor.name
@@ -16,6 +15,6 @@ export abstract class GameError extends Error {
 /** 配置未找到錯誤：當靜態配置資源不存在時拋出 */
 export class ConfigNotFoundError extends GameError {
   constructor(resourceType: string, resourceId: string) {
-    super(`${resourceType} 配置不存在: ${resourceId}`, 'CONFIG_NOT_FOUND', { resourceType, resourceId })
+    super(`${resourceType} 配置不存在: ${resourceId}`, 'CONFIG_NOT_FOUND')
   }
 }

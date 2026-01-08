@@ -1,5 +1,5 @@
-import { Result } from '../../shared/result/Result'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
+import { Result } from '../../shared/result/Result'
 import { RelicEntity, RelicRecord } from '../item/Item'
 import { ProfessionEntity } from '../profession/Profession'
 import { UltimateEntity, UltimateRecord } from '../ultimate/Ultimate'

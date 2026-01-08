@@ -5,11 +5,10 @@
       "type": "node",
       "request": "launch",
       "name": "Debug NestJS",
-      "program": "${workspaceFolder}/src/main.ts", // 調整為您的 main.ts 路徑
       "skipFiles": ["<node_internals>/**"],
-      "env": {
-        "NODE_ENV": "development"
-      }
+      "program": "${workspaceFolder}/src/main.ts",
+      "preLaunchTask": "npm: build",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }

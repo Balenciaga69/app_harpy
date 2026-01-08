@@ -2,7 +2,7 @@ import { Character } from '../../../domain/character/Character'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
 import { IContextToDomainConverter } from '../../core-infrastructure/context/helper/ContextToDomainConverter'
-import { IAppContextService } from '../../core-infrastructure/context/service/AppContextService'
+import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
 export interface IEquipmentContextHandler {
@@ -15,7 +15,7 @@ export interface IEquipmentContextHandler {
 }
 export class EquipmentContextHandler implements IEquipmentContextHandler {
   constructor(
-    private appContextService: IAppContextService,
+    private contextSnapshotAccessor: IContextSnapshotAccessor,
     private contextToDomainConverter: IContextToDomainConverter,
     private unitOfWork: IContextUnitOfWork
   ) {}
@@ -28,7 +28,7 @@ export class EquipmentContextHandler implements IEquipmentContextHandler {
   }
   /** 驗證當前 Run 狀態是否為 IDLE */
   public validateRunStatus(): Result<void, string> {
-    const status = this.appContextService.getRunStatus()
+    const status = this.contextSnapshotAccessor.getRunStatus()
     return RunStatusGuard.requireStatus(status, 'IDLE')
   }
   /** 提交裝備交易事務 */

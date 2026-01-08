@@ -4,13 +4,11 @@ import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../../../core-infrastructure/context/service/AppContextService'
-import {
-  IItemRollModifierStrategy,
-  MostFrequentTagModifierStrategy,
-  MostFrequentTagRewardModifierStrategy,
-  RarityRewardModifierStrategy,
-  ReverseFrequentTagRewardModifierStrategy,
-} from './ItemRollModifierStrategy'
+import { IItemRollModifierStrategy } from './IItemRollModifierStrategy'
+import { MostFrequentTagModifierStrategy } from './MostFrequentTagModifierStrategy'
+import { MostFrequentTagRewardModifierStrategy } from './MostFrequentTagRewardModifierStrategy'
+import { RarityRewardModifierStrategy } from './RarityRewardModifierStrategy'
+import { ReverseFrequentTagRewardModifierStrategy } from './ReverseFrequentTagRewardModifierStrategy'
 /**
  * 物品骰選修飾符策略工廠
  * 責任：根據來源（商店/獎勵）與配置，選擇並組裝相應的修飾符策略

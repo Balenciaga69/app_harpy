@@ -1,17 +1,14 @@
-/* eslint-disable @typescript-eslint/require-await */
-import { Controller, Post, Get, Body, Param } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger'
-import { InitRunDto } from '../dto/InitRunDto'
-import { BuyItemDto } from '../dto/BuyItemDto'
-import { SellItemDto } from '../dto/SellItemDto'
-import { RefreshShopDto } from '../dto/RefreshShopDto'
-import { RunService } from '../services/run.service'
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger'
+import { InitRunDto } from '../../dto/InitRunDto'
+import { InitService } from './init.service'
 /**
- * Run 控制器：處理與遊戲進度初始化相關的 HTTP 請求
+ * 初始化控制器
+ * 職責：處理遊戲初始化相關的 HTTP 請求
  */
 @Controller('api/run')
-export class RunController {
-  constructor(private readonly runService: RunService) {}
+export class InitController {
+  constructor(private readonly initService: InitService) {}
   /**
    * GET /api/run/professions - 取得職業列表
    */
@@ -33,8 +30,8 @@ export class RunController {
       },
     },
   })
-  async getProfessions() {
-    return this.runService.getProfessions()
+  getProfessions() {
+    return this.initService.getProfessions()
   }
   /**
    * GET /api/run/relics - 取得所有聖物模板
@@ -63,8 +60,8 @@ export class RunController {
       },
     },
   })
-  async getRelicTemplates() {
-    return this.runService.getRelicTemplates()
+  getRelicTemplates() {
+    return this.initService.getRelicTemplates()
   }
   /**
    * GET /api/run/professions/:id/relics - 取得指定職業的可選起始聖物
@@ -73,8 +70,8 @@ export class RunController {
   @ApiOperation({ summary: '取得指定職業的可選起始聖物' })
   @ApiParam({ name: 'id', description: '職業 id (e.g., WARRIOR)' })
   @ApiResponse({ status: 200, description: '成功取得起始聖物列表' })
-  async getProfessionRelics(@Param('id') id: string) {
-    return this.runService.getSelectableStartingRelics(id)
+  getProfessionRelics(@Param('id') id: string) {
+    return this.initService.getSelectableStartingRelics(id)
   }
   /**
    * POST /api/run/init - 初始化新遊戲進度
@@ -105,27 +102,6 @@ export class RunController {
     },
   })
   async initializeRun(@Body() dto: InitRunDto) {
-    return this.runService.initializeRun(dto)
-  }
-  /**
-   * POST /api/run/shop/buy - 在商店購買物品
-   */
-  @Post('shop/buy')
-  async buyItem(@Body() dto: BuyItemDto) {
-    return this.runService.buyItem(dto)
-  }
-  /**
-   * POST /api/run/shop/sell - 賣出物品
-   */
-  @Post('shop/sell')
-  async sellItem(@Body() dto: SellItemDto) {
-    return this.runService.sellItem(dto)
-  }
-  /**
-   * POST /api/run/shop/refresh - 刷新商店物品
-   */
-  @Post('shop/refresh')
-  async refreshShop(@Body() dto: RefreshShopDto) {
-    return this.runService.refreshShop(dto)
+    return this.initService.initializeRun(dto)
   }
 }

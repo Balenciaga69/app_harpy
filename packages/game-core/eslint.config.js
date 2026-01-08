@@ -1,101 +1,60 @@
 // 導入基礎 ESLint 配置
-import base from '../../eslint.base.js'
-// 導入 TypeScript ESLint 插件和解析器
-import tseslint from '@typescript-eslint/eslint-plugin'
-import tsParser from '@typescript-eslint/parser'
-// 導入架構邊界檢查插件
-import boundaries from 'eslint-plugin-boundaries'
+import base from '../../eslint.base.js' // 導入 monorepo 共用 ESLint 設定
+import tseslint from '@typescript-eslint/eslint-plugin' // TypeScript ESLint 插件
+import tsParser from '@typescript-eslint/parser' // TypeScript 解析器
+import boundaries from 'eslint-plugin-boundaries' // 架構邊界檢查插件
 
 export default [
-  // 應用基礎配置
-  base,
+  base, // 應用共用 ESLint 設定
   {
-    // 適用於 TypeScript 文件
-    files: ['src/**/*.ts', 'src/**/*.tsx'],
+    files: ['src/**/*.ts', 'src/**/*.tsx'], // 只針對 src 下 ts/tsx 檔案
     languageOptions: {
-      // 使用 TypeScript 解析器
-      parser: tsParser,
+      parser: tsParser, // 使用 TypeScript 解析器
       parserOptions: {
-        // 指定 TypeScript 項目配置文件
-        project: ['./tsconfig.json'],
+        project: ['./tsconfig.json'], // 指定 tsconfig 路徑
+        // tsconfigRootDir: __dirname, // [可選] 指定 tsconfig 根目錄
+        // ecmaVersion: 2022, // [可選] ECMAScript 版本
+        // sourceType: 'module', // [可選] 指定模組系統
       },
     },
     plugins: {
-      // TypeScript ESLint 插件
-      '@typescript-eslint': tseslint,
-      // 架構邊界檢查插件
-      boundaries,
+      '@typescript-eslint': tseslint, // TypeScript ESLint 插件
+      boundaries, // 架構邊界檢查
+      // simpleImportSort, // [可選] 自動排序 import
+      // sonarjs, // [可選] 異味代碼檢查
+      // 'unused-imports', // [可選] 自動清理未用 import
     },
     settings: {
-      // 配置模組解析器, 支持 TypeScript 路徑映射
       'import/resolver': {
         typescript: {
-          alwaysTryTypes: true,
-          project: './tsconfig.json',
+          alwaysTryTypes: true, // 解析 @types 資料夾
+          project: './tsconfig.json', // 指定 tsconfig 路徑
         },
+        // node: { extensions: ['.js', '.ts'] }, // [可選] 支援 node 解析
       },
-      // 定義架構層級元素
       'boundaries/elements': [
-        {
-          type: 'domain',
-          pattern: 'src/domain/**/*',
-        },
-        {
-          type: 'application',
-          pattern: 'src/application/**/*',
-        },
-        {
-          type: 'infra',
-          pattern: 'src/infra/**/*',
-        },
-        {
-          type: 'shared',
-          pattern: 'src/shared/**/*',
-        },
-        {
-          type: 'data',
-          pattern: 'src/data/**/*',
-        },
+        { type: 'domain', pattern: 'src/domain/**/*' }, // domain 層
+        { type: 'application', pattern: 'src/application/**/*' }, // application 層
+        { type: 'infra', pattern: 'src/infra/**/*' }, // infra 層
+        { type: 'shared', pattern: 'src/shared/**/*' }, // shared 層
+        { type: 'data', pattern: 'src/data/**/*' }, // data 層
       ],
-      // 定義 feature 邊界識別規則
-      'boundaries/ignore': ['**/*.spec.ts', '**/*.test.ts', '**/*.d.ts'],
+      'boundaries/ignore': ['**/*.spec.ts', '**/*.test.ts', '**/*.d.ts'], // 忽略測試與型別檔
+      // 'import/extensions': ['.js', '.ts'], // [可選] 支援副檔名
     },
     rules: {
-      // 應用 boundaries 推薦規則
-      ...boundaries.configs.recommended.rules,
-      // 禁用 no-private 規則 (允許同 feature 內引用)
-      'boundaries/no-private': 'off',
-      // 自訂架構依賴規則 (嚴格模式)
+      ...boundaries.configs.recommended.rules, // 套用 boundaries 推薦規則
+      'boundaries/no-private': 'off', // 關閉 private 限制（允許同 feature 內引用）
       'boundaries/element-types': [
-        2, // 錯誤級別
+        2, // 錯誤級別 2=error
         {
-          default: 'disallow',
+          default: 'disallow', // 預設禁止跨層依賴
           rules: [
-            // domain: 只能引用 domain 和 shared
-            {
-              from: ['domain'],
-              allow: ['domain', 'shared'],
-            },
-            // application: 可引用 application, domain, shared
-            {
-              from: ['application'],
-              allow: ['application', 'domain', 'shared'],
-            },
-            // infra: 可引用所有層（因為要實作各層）
-            {
-              from: ['infra'],
-              allow: ['application', 'domain', 'shared', 'infra', 'data'],
-            },
-            // shared: 只能引用 shared
-            {
-              from: ['shared'],
-              allow: ['shared'],
-            },
-            // data: 只能引用 data 和 shared
-            {
-              from: ['data'],
-              allow: ['data', 'domain', 'application', 'shared'],
-            },
+            { from: ['domain'], allow: ['domain', 'shared'] }, // domain 只能依賴 domain/shared
+            { from: ['application'], allow: ['application', 'domain', 'shared'] }, // application 可依賴 application/domain/shared
+            { from: ['infra'], allow: ['application', 'domain', 'shared', 'infra', 'data'] }, // infra 可依賴所有層
+            { from: ['shared'], allow: ['shared'] }, // shared 只能依賴 shared
+            { from: ['data'], allow: ['data', 'domain', 'application', 'shared'] }, // data 只能依賴 data/domain/application/shared
           ],
         },
       ],

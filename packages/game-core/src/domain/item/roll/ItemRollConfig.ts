@@ -1,5 +1,5 @@
-import { ItemRarity, ItemType } from '../Item'
 import { CombatRewardType } from '../../post-combat/PostCombat'
+import { ItemRarity, ItemType } from '../Item'
 /** 物品來源類型，區分物品的獲得途徑 */
 export type ItemRollSourceType = 'POST_COMBAT_REWARD' | 'SHOP_REFRESH'
 /** 物品生成修飾符策略類型 */
