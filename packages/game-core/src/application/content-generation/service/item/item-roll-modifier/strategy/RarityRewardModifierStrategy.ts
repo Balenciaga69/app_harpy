@@ -1,7 +1,6 @@
 import { ItemRarity } from '../../../../../../domain/item/Item'
 import { ItemRollModifier } from '../../../../../../domain/item/roll/ItemRollModifier'
 import { IItemRollModifierStrategy } from './IItemRollModifierStrategy'
-
 /**
  * 獎勵修飾符策略：稀有度偏好策略
  * 業務規則：調整不同稀有度的生成權重

@@ -24,7 +24,6 @@ export class RunInitializationService {
     private readonly unitOfWork: IContextUnitOfWork,
     private readonly stageNodeService?: IStageNodeGenerationService
   ) {}
-
   async initialize(params: RunInitializationParams): Promise<Result<IAppContext>> {
     // 驗證職業存在性
     const profession = this.external.getProfession(params.professionId)
@@ -40,17 +39,14 @@ export class RunInitializationService {
       return Result.fail(contextsResult.error!)
     }
     const contexts = contextsResult.value!
-
     this.unitOfWork
       .updateRunContext(contexts.runContext)
       .updateCharacterContext(contexts.characterContext)
       .updateStashContext(contexts.stashContext)
       .updateShopContext(contexts.shopContext)
       .commit()
-
     return Result.success({ contexts, configStore: this.external.getConfigStore() })
   }
-
   private assembleRunContexts(
     runId: string,
     params: RunInitializationParams,
@@ -63,21 +59,17 @@ export class RunInitializationService {
   }> {
     const stageService = this.stageNodeService ?? new StageNodeGenerationService()
     const characterId = `${runId}-char`
-
     // 1. 確定起始 relic IDs：優先使用參數提供的，否則使用職業的預設（透過防腐層）
     const profession = this.external.getProfession(params.professionId)!
     const startingRelicIdsResult = resolveStartingRelicIds(params.startingRelicIds, profession)
     if (startingRelicIdsResult.isFailure) return Result.fail(startingRelicIdsResult.error!)
     const startingRelicIds = startingRelicIdsResult.value!
-
     // 2. 生成聖物記錄（使用防腐層存取 item）
     const relicRecordsResult = createRelicRecordsForInitialization(startingRelicIds, this.external, characterId)
     if (relicRecordsResult.isFailure) return Result.fail(relicRecordsResult.error!)
-
     // 3. 組裝各個 Context（注意 stage 生成可能失敗）
     const runContextResult = buildRunContext(runId, seed, stageService)
     if (runContextResult.isFailure) return Result.fail(runContextResult.error!)
-
     const characterContext = buildCharacterContext(
       runId,
       params.professionId,
@@ -107,7 +99,6 @@ function resolveStartingRelicIds(
   }
   return Result.success(requested)
 }
-
 function createRelicRecordsForInitialization(
   startingRelicIds: string[],
   external: IRunExternalAdapter,
@@ -118,7 +109,6 @@ function createRelicRecordsForInitialization(
     .map((id) => external.getRelic(id))
     .filter((t): t is NonNullable<typeof t> => t !== undefined)
   if (relicTemplates.length === 0) return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
-
   const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
   const initialAffixData: AffixRecordCreateParams = {
     atCreated: { chapter: 1, stage: 1, difficulty: DifficultyHelper.getDifficultyFactor(1, 1) },
@@ -160,7 +150,6 @@ function buildRunContext(
     temporaryContext: {},
   })
 }
-
 function buildCharacterContext(
   runId: string,
   professionId: string,

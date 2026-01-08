@@ -1,7 +1,6 @@
 import { RelicTemplate } from '../../../../domain/item/Item'
 import { ProfessionTemplate } from '../../../../domain/profession/Profession'
 import { IAppContext } from '../../../core-infrastructure/context/interface/IAppContext'
-
 /**
  * 防腐層介面：將外部配置源（configStore 等）隔離，保證核心邏輯不直接依賴外部實作
  */
@@ -10,7 +9,6 @@ export interface IRunExternalAdapter {
   getRelic(relicId: string): RelicTemplate | undefined
   getConfigStore(): IAppContext['configStore']
 }
-
 /**
  * 把現有的 configStore 適配成 IRunExternalAdapter
  */

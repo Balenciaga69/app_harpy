@@ -71,7 +71,6 @@ export class AppContextHolder {
     this.ctx = next
   }
 }
-
 // 專責實作：靜態配置讀取
 export class ConfigStoreAccessorImpl implements IConfigStoreAccessor {
   constructor(private holder: AppContextHolder) {}
@@ -79,7 +78,6 @@ export class ConfigStoreAccessorImpl implements IConfigStoreAccessor {
     return this.holder.get().configStore
   }
 }
-
 // 專責實作：提供快照與便利計算
 export class ContextSnapshotAccessorImpl implements IContextSnapshotAccessor {
   constructor(private holder: AppContextHolder) {}
@@ -118,7 +116,6 @@ export class ContextSnapshotAccessorImpl implements IContextSnapshotAccessor {
     return this.getRunContext().temporaryContext
   }
 }
-
 // 專責實作：寫操作（透過不可變重建）
 export class ContextMutatorImpl implements IContextMutator {
   constructor(private holder: AppContextHolder) {}

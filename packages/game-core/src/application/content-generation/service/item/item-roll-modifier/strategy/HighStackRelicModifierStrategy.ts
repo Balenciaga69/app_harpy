@@ -4,7 +4,6 @@ import {
   IContextSnapshotAccessor,
 } from '../../../../../core-infrastructure/context/service/AppContextService'
 import { IItemRollModifierStrategy } from './IItemRollModifierStrategy'
-
 /**
  * 商店修飾符策略：高堆疊聖物策略
  * 業務規則：指定聖物樣板若堆疊數超過閾值，增加其再獲得的權重
