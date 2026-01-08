@@ -52,25 +52,24 @@ export default {
       },
     ],
 
+    // TypeScript 規則
+    '@typescript-eslint/explicit-function-return-type': 'warn', // 強制函式回傳型別
+    '@typescript-eslint/no-explicit-any': 'warn', // 禁止 any
+
     // simple-import-sort 規則
-    'simple-import-sort/imports': 'warn', // import 自動排序
-    'simple-import-sort/exports': 'warn', // export 自動排序
+    'simple-import-sort/imports': 'warn', // import 排序
+    'simple-import-sort/exports': 'warn', // export 排序
 
     // sonarjs 規則（異味代碼）
-    'sonarjs/no-duplicate-string': 'warn', // 警告重複字串
+    'sonarjs/no-duplicate-string': 'warn', // 禁止重複字串
     'sonarjs/no-identical-functions': 'warn', // 警告重複函式
     'sonarjs/no-small-switch': 'warn', // 警告過小的 switch
 
     // unused-imports 規則（未使用）
-    'unused-imports/no-unused-imports': 'warn', // 警告未使用的 import
+    'unused-imports/no-unused-imports': 'warn', // 自動清理未用 import
     'unused-imports/no-unused-vars': [
       'warn',
-      {
-        vars: 'all', // 檢查所有變數
-        varsIgnorePattern: '^_', // 忽略底線開頭的變數
-        args: 'after-used', // 只檢查用過後的參數
-        argsIgnorePattern: '^_', // 忽略底線開頭的參數
-      },
-    ],
+      { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+    ], // 自動清理未用變數
   },
 }

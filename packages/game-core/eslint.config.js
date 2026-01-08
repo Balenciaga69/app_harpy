@@ -58,13 +58,6 @@ export default [
           ],
         },
       ],
-      // '@typescript-eslint/no-explicit-any': 'warn', // [可選] 禁止 any
-      // '@typescript-eslint/explicit-function-return-type': 'warn', // [可選] 強制函式回傳型別
-      // 'simple-import-sort/imports': 'warn', // [可選] import 排序
-      // 'simple-import-sort/exports': 'warn', // [可選] export 排序
-      // 'sonarjs/no-duplicate-string': 'warn', // [可選] 禁止重複字串
-      // 'unused-imports/no-unused-imports': 'warn', // [可選] 自動清理未用 import
-      // 'unused-imports/no-unused-vars': ['warn', { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' }], // [可選] 自動清理未用變數
     },
   },
 ]
