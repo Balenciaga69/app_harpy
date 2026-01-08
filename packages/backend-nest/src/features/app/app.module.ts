@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { RunModule } from '../run/run.module'
+import { SharedFeatureModule } from '../shared/shared.module'
 import { HealthController } from './app.controller'
 @Module({
-  imports: [RunModule],
+  imports: [SharedFeatureModule],
   controllers: [HealthController],
   providers: [],
 })

@@ -2,7 +2,6 @@
   "name": "app-harpy-monorepo",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "description": "Game core monorepo with frontend and backend",
   "scripts": {
     "start": "pnpm --filter @app-harpy/frontend start",

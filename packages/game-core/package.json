@@ -4,7 +4,6 @@
   "description": "Game core logic library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
   "scripts": {
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
