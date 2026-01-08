@@ -1,6 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsArray, MinLength } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-
 export class InitRunDto {
   @ApiProperty({
     description: '職業 ID (例如: WARRIOR, MAGE, ROGUE)',

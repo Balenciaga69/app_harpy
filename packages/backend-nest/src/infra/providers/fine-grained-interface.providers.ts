@@ -7,20 +7,19 @@ import {
   ContextSnapshotAccessorImpl,
   IAppContext,
 } from 'src/from-game-core'
-import { ContextManager } from 'src/infra/context/ContextManager'
+import { ContextManager } from '../context/ContextManager'
 /**
  * 細粒度介面提供者
- * 提供由 game-core 定義的細粒度介面實現
+ * 職責：提供 game-core 定義的細粒度介面實現
+ * - IConfigStoreAccessor: 配置存儲訪問
+ * - IContextSnapshotAccessor: 上下文快照訪問
+ * - IContextMutator: 上下文變異
+ * - AppContextHolder: 應用上下文容器
+ *
+ * 層級：infra（技術適配層）
+ * 原因：這些是技術細節，用於連接 NestJS DI 與 game-core 的介面定義
  */
 export const fineGrainedInterfaceProviders = [
-  {
-    provide: 'IConfigStoreAccessor',
-    useFactory: (holder: AppContextHolder) => {
-      return new ConfigStoreAccessorImpl(holder)
-    },
-    inject: [AppContextHolder],
-    scope: Scope.REQUEST,
-  },
   {
     provide: 'IConfigStoreAccessor',
     useFactory: (holder: AppContextHolder) => {
@@ -48,7 +47,6 @@ export const fineGrainedInterfaceProviders = [
   {
     provide: AppContextHolder,
     useFactory: (contextManager: ContextManager, request: any) => {
-      // 新增 request 參數
       const body = request.body as Record<string, any>
       const runId = body?.runId as string | undefined
       let currentContext: IAppContext = {

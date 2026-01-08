@@ -1,6 +1,5 @@
 import { IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-
 export class RefreshShopDto {
   @ApiProperty({
     description: '遊戲進度 ID',
