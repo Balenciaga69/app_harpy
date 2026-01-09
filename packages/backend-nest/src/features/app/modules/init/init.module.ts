@@ -4,10 +4,7 @@ import { SharedAppModule } from '../../shared/shared-app.module'
 import { runFeatureProviders } from './providers/run.providers'
 import { InitController } from './init.controller'
 import { InitService } from './init.service'
-/**
- * 初始化模組
- * 職責：處理遊戲進度初始化
- */
+
 @Module({
   imports: [SharedInfraModule, SharedAppModule],
   controllers: [InitController],

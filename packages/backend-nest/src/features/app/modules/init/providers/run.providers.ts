@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common'
+﻿import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
   AppContextRunAdapter,
@@ -18,13 +18,7 @@ import {
   StageNodeGenerationService,
   UltimateEntityService,
 } from 'src/from-game-core'
-/**
- * 遊戲進度功能提供者
- * 職責：遊戲進度初始化、階段生成和協調服務
- *
- * 層級：features/run/init（功能模組特定邏輯）
- * 原因：這些是 Init 模組專有的業務流程
- */
+
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,

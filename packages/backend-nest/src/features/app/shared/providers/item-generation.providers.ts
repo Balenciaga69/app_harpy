@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common'
+﻿import { Scope } from '@nestjs/common'
 import {
   ItemConstraintService,
   ItemModifierAggregationService,
@@ -6,17 +6,7 @@ import {
   ItemGenerationService,
   ItemEntityService,
 } from 'src/from-game-core'
-/**
- * 物品生成鏈提供者
- * 職責：物品生成的完整流程
- * - ItemConstraintService: 物品約束檢查
- * - ItemModifierAggregationService: 物品修飾符聚合
- * - ItemRollService: 物品掉落機制
- * - ItemGenerationService: 物品生成協調
- *
- * 層級：app（應用層）
- * 原因：這些是應用層的複雜業務流程
- */
+
 export const itemGenerationProviders = [
   {
     provide: ItemConstraintService,

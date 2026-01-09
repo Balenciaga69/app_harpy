@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsArray, MinLength } from 'class-validator'
+﻿import { IsString, IsOptional, IsNumber, IsArray, MinLength } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 export class InitRunDto {
   @ApiProperty({

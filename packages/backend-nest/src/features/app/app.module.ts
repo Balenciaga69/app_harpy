@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+﻿import { Module } from '@nestjs/common'
 import { SharedInfraModule } from 'src/infra/shared-infra.module'
 import { HealthController } from './app.controller'
 import { EquipmentModule } from './modules/equipment/equipment.module'

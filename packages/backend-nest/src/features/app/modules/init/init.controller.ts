@@ -1,17 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+﻿import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger'
 import { InitRunDto } from './dto/InitRunDto'
 import { InitService } from './init.service'
-/**
- * 初始化控制器
- * 職責：處理遊戲初始化相關的 HTTP 請求
- */
+
 @Controller('api/run')
 export class InitController {
   constructor(private readonly initService: InitService) {}
-  /**
-   * GET /api/run/professions - 取得職業列表
-   */
+
   @Get('professions')
   @ApiOperation({ summary: '取得職業列表' })
   @ApiResponse({
@@ -33,9 +28,7 @@ export class InitController {
   getProfessions() {
     return this.initService.getProfessions()
   }
-  /**
-   * GET /api/run/relics - 取得所有聖物模板
-   */
+
   @Get('relics')
   @ApiOperation({ summary: '取得所有聖物模板' })
   @ApiResponse({
@@ -63,9 +56,7 @@ export class InitController {
   getRelicTemplates() {
     return this.initService.getRelicTemplates()
   }
-  /**
-   * GET /api/run/professions/:id/relics - 取得指定職業的可選起始聖物
-   */
+
   @Get('professions/:id/relics')
   @ApiOperation({ summary: '取得指定職業的可選起始聖物' })
   @ApiParam({ name: 'id', description: '職業 id (e.g., WARRIOR)' })
@@ -73,9 +64,7 @@ export class InitController {
   getProfessionRelics(@Param('id') id: string) {
     return this.initService.getSelectableStartingRelics(id)
   }
-  /**
-   * POST /api/run/init - 初始化新遊戲進度
-   */
+
   @Post('init')
   @ApiOperation({ summary: '初始化新遊戲 (可帶 professionId 與可選起始 relics)' })
   @ApiBody({

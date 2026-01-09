@@ -1,11 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common'
+﻿import { Injectable, BadRequestException } from '@nestjs/common'
 import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
 import { ContextManager } from 'src/infra/context/ContextManager'
 import { InitRunDto } from './dto/InitRunDto'
-/**
- * 初始化 Run 的服務
- * 職責：處理遊戲進度初始化邏輯
- */
 @Injectable()
 export class InitService {
   constructor(
@@ -13,9 +9,6 @@ export class InitService {
     private readonly runInitializationService: RunInitializationService,
     private readonly contextManager: ContextManager
   ) {}
-  /**
-   * 取得所有可用職業
-   */
   getProfessions() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
     return {
@@ -27,9 +20,6 @@ export class InitService {
       })),
     }
   }
-  /**
-   * 取得所有聖物模板
-   */
   getRelicTemplates() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
     const allRelics = professions.flatMap((prof) => this.gameStartOptionsService.getSelectableStartingRelics(prof.id))
@@ -48,9 +38,6 @@ export class InitService {
       })),
     }
   }
-  /**
-   * 取得指定職業的可選起始聖物
-   */
   getSelectableStartingRelics(professionId: string) {
     try {
       const relics = this.gameStartOptionsService.getSelectableStartingRelics(professionId)
@@ -75,9 +62,6 @@ export class InitService {
       })
     }
   }
-  /**
-   * 初始化新遊戲進度
-   */
   async initializeRun(dto: InitRunDto) {
     const result = await this.runInitializationService.initialize({
       professionId: dto.professionId,
@@ -91,7 +75,6 @@ export class InitService {
       })
     }
     const appContext = result.value
-    // 保存 appContext 到 ContextManager
     try {
       this.contextManager.saveContext(appContext)
     } catch (error) {

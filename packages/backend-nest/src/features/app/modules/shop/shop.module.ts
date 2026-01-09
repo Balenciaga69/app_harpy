@@ -4,10 +4,7 @@ import { SharedAppModule } from '../../shared/shared-app.module'
 import { shopFeatureProviders } from './providers/shop.providers'
 import { ShopController } from './shop.controller'
 import { ShopNestService } from './shop.service'
-/**
- * 商店模組
- * 職責：處理商店相關功能
- */
+
 @Module({
   imports: [SharedInfraModule, SharedAppModule],
   controllers: [ShopController],

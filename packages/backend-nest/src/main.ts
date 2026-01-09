@@ -1,9 +1,8 @@
-import { NestFactory } from '@nestjs/core'
+﻿import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './features/app/app.module'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  // Swagger 設置
   const config = new DocumentBuilder()
     .setTitle('Game Core API')
     .setDescription('遊戲核心 API 文檔')

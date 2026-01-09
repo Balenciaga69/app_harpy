@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common'
+﻿import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
   UltimateEntityService,
@@ -8,18 +8,7 @@ import {
   IContextSnapshotAccessor,
   IConfigStoreAccessor,
 } from 'src/from-game-core'
-/**
- * 內容生成服務提供者
- * 職責：實體和聚合體的生成邏輯
- * - Affix 實體服務
- * - Ultimate 實體服務
- * - Item 實體服務
- * - Profession 實體服務
- * - Character 聚合根服務
- *
- * 層級：app（應用層）
- * 原因：這些是業務邏輯層的服務，由應用服務協調使用
- */
+
 export const contentGenerationProviders = [
   {
     provide: AffixEntityService,
