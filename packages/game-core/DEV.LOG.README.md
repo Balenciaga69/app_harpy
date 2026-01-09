@@ -1,5 +1,10 @@
 # 摘要
 
+## _2025/01/09_
+
+- 測試 Refresh Shop 功能, 發現不少錯誤, 對 AI Coding 準確度感到擔憂 (包含可變不可變混用, 邏輯錯誤, 型別錯誤等)
+- 對 nestjs 專案添加 source map 支援, 以便在 VSCode 中進行斷點偵錯
+
 ## _2025/01/07_
 
 - 嘗試 NestJs module 循環依賴問題與 module injection 問題
