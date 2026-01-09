@@ -10,14 +10,14 @@ import { ICharacterContext } from './ICharacterContext'
 import { IRunContext } from './IRunContext'
 import { IShopContext } from './IShopContext'
 import { IStashContext } from './IStashContext'
-/** 所有上下文容器 */
+
 interface IContexts {
   readonly runContext: IRunContext
   readonly stashContext: IStashContext
   readonly characterContext: ICharacterContext
   readonly shopContext: IShopContext
 }
-/** 配置存儲容器 */
+
 interface IConfigStore {
   readonly enemyStore: IEnemyStore
   readonly itemStore: IItemStore

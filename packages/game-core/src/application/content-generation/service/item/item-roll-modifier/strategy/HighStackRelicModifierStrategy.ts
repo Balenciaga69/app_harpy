@@ -28,7 +28,7 @@ export class HighStackRelicModifierStrategy implements IItemRollModifierStrategy
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const relicTemplate = itemStore.getRelic(this.templateId)
     if (!relicTemplate) return []
-    // 計算該聖物的堆疊數
+
     const stackCount = characterContext.relics
       .filter(Boolean)
       .filter((relic) => relic.templateId === this.templateId).length

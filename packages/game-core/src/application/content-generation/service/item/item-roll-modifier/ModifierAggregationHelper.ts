@@ -61,16 +61,16 @@ export const calculateTemplateWeight = (
   baseWeight = 1
 ): number => {
   let weight = baseWeight
-  // 處理 id 修飾符（直接按樣板 id 匹配）
+
   const idMod = modifiers.idMultipliers.get(template.id)
   if (idMod !== undefined) weight *= idMod
-  // 處理 tag 修飾符（檢查樣板是否包含特定 tag）
+
   for (const [tag, multiplier] of modifiers.tagMultipliers.entries()) {
     if (template.tags.includes(tag)) {
       weight *= multiplier
     }
   }
-  // 處理 rarity 修飾符（按樣板稀有度匹配）
+
   const rarityMod = modifiers.rarityMultipliers.get(template.rarity)
   if (rarityMod !== undefined) weight *= rarityMod
   return weight

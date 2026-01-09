@@ -1,7 +1,7 @@
 import { AffixRecord } from '../../../domain/affix/Affix'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
-/** AffixRecord 創建參數 */
+
 export interface AffixRecordCreateParams {
   difficulty: number
   sourceUnitId: string

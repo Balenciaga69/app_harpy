@@ -4,14 +4,21 @@ import { Result } from '../../shared/result/Result'
 import { ItemRollModifier } from '../item/roll/ItemRollModifier'
 import { ChapterInfo, RunStatus } from './RunTypes'
 export interface IRunFields {
-  readonly seed: number // 運行隨機種子
-  readonly currentChapter: ChapterLevel // 目前所在章節
-  readonly currentStage: number // 目前所在關卡
-  readonly encounteredEnemyIds: string[] // 已遇到的敵人ID列表
-  readonly chapters: Record<ChapterLevel, ChapterInfo> // 章節資訊
-  readonly rollModifiers: ItemRollModifier[] // 物品生成用的修飾符
-  readonly remainingFailRetries: number // 剩餘重試次數
-  readonly status: RunStatus // 目前玩家所處的階段狀態
+  readonly seed: number
+
+  readonly currentChapter: ChapterLevel
+
+  readonly currentStage: number
+
+  readonly encounteredEnemyIds: string[]
+
+  readonly chapters: Record<ChapterLevel, ChapterInfo>
+
+  readonly rollModifiers: ItemRollModifier[]
+
+  readonly remainingFailRetries: number
+
+  readonly status: RunStatus
 }
 export interface IRunBehavior {
   deductRetry(): Result<Run>
@@ -40,7 +47,7 @@ export class Run implements IRunFields, IRunBehavior {
     this._remainingFailRetries = fields.remainingFailRetries
     this._status = fields.status
   }
-  // IRunFields implementation
+
   get seed(): number {
     return this._seed
   }
@@ -65,7 +72,7 @@ export class Run implements IRunFields, IRunBehavior {
   get status(): RunStatus {
     return this._status
   }
-  // IRunBehavior implementation
+
   deductRetry(): Result<Run> {
     if (this._remainingFailRetries <= 0) {
       return Result.fail(DomainErrorCode.Run_重試次數不足)

@@ -12,7 +12,6 @@ import { IUltimateEntityService } from '../ultimate/UltimateEntityService'
  * 邊界：純建立邏輯，不涉及狀態修改
  */
 export interface IEnemyEntityService {
-  /** 從模板與角色從當前上下文建立 EnemyEntity( 自動產生記錄、詞綴、大絕招 ) */
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyEntity
 }
 export class EnemyEntityService implements IEnemyEntityService {
@@ -22,7 +21,7 @@ export class EnemyEntityService implements IEnemyEntityService {
     private configStoreAccessor: IConfigStoreAccessor,
     private contextSnapshot: IContextSnapshotAccessor
   ) {}
-  /** 從敵人樣板與角色從當前上下文建立 EnemyEntity */
+
   createOneByTemplateUsingCurrentContext(enemyTemplateId: string, role: EnemyRole): EnemyEntity {
     const { enemyStore } = this.configStoreAccessor.getConfigStore()
     const enemyTemplate = enemyStore.getEnemy(enemyTemplateId)

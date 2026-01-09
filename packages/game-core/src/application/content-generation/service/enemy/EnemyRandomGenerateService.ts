@@ -13,7 +13,6 @@ import { IEnemyEntityService } from './EnemyEntityService'
  * - 關卡資訊無效: 關卡資訊不完整或無效
  */
 export interface IEnemyRandomGenerateService {
-  /** 隨機選擇並創建一個 EnemyEntity */
   createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity>
 }
 /**
@@ -32,11 +31,11 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
   createRandomOneByTemplateUsingCurrentContext(): Result<EnemyEntity> {
     const runContext = this.contextSnapshotAccessor.getRunContext()
     const { currentChapter, currentStage, chapters, seed } = runContext
-    // 取得當前關卡可用的敵人生成資訊
+
     const availableInfosResult = this.getAvailableEnemySpawnInfos()
     if (availableInfosResult.isFailure) return Result.fail(availableInfosResult.error!)
     const availableInfos = availableInfosResult.value!
-    // 使用權重骰子選出敵人樣板
+
     const forRollInfos = availableInfos.map((info) => ({
       id: info.templateId,
       weight: info.weight,
@@ -44,10 +43,10 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
     const rolledEnemyIdResult = WeightRoller.roll(seed, forRollInfos)
     if (rolledEnemyIdResult.isFailure) return Result.fail(rolledEnemyIdResult.error!)
     const rolledEnemyTemplateId = rolledEnemyIdResult.value!
-    // 取得敵人角色設定
+
     const stageEnemyRole = chapters[currentChapter].stageNodes[currentStage]
     if (!stageEnemyRole) return Result.fail(ApplicationErrorCode.敵人_關卡資訊無效)
-    // 使用 EnemyEntityService 建立敵人聚合體
+
     const enemy = this.enemyEntityService.createOneByTemplateUsingCurrentContext(
       rolledEnemyTemplateId,
       stageEnemyRole as EnemyRole
@@ -60,13 +59,13 @@ export class EnemyRandomGenerateService implements IEnemyRandomGenerateService {
   private getAvailableEnemySpawnInfos(): Result<EnemySpawnInfo[], ApplicationErrorCode.敵人_無可用敵人> {
     const { enemyStore } = this.configStoreAccessor.getConfigStore()
     const { currentChapter, encounteredEnemyIds } = this.contextSnapshotAccessor.getRunContext()
-    // 過濾出尚未遭遇過的敵人生成資訊
+
     const availableInfos = enemyStore
       .getEnemySpawnInfosByChapter(currentChapter)
       .filter((info) => !encounteredEnemyIds.includes(info.templateId))
-    // 確保至少有一個可用敵人
+
     if (availableInfos.length === 0) return Result.fail(ApplicationErrorCode.敵人_無可用敵人)
-    // 回傳可用敵人生成資訊
+
     return Result.success(availableInfos)
   }
 }

@@ -1,5 +1,5 @@
 import { ItemRollConstraint } from '../../domain/item/roll/ItemRollConstraint'
-// 物品骰選限制條件列表
+
 const itemRollConstraint_warrior_resolute_heart: ItemRollConstraint = {
   templateId: 'relic_warrior_resolute_heart',
   professionTypes: ['WARRIOR'],

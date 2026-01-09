@@ -1,11 +1,11 @@
 import { BaseInstanceFields, WithCreatedInfo } from '../../shared/models/BaseInstanceFields'
 import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
-import { AffixEntity,AffixRecord } from '../affix/Affix'
+import { AffixEntity, AffixRecord } from '../affix/Affix'
 export type ItemType = 'RELIC'
-/** 物品稀有度等級，決定物品的品質與掉落概率 */
+
 export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
-/** 物品樣板，定義物品的靜態屬性、詞綴與標籤 */
+
 export interface ItemTemplate {
   readonly id: string
   readonly name: I18nField
@@ -16,17 +16,17 @@ export interface ItemTemplate {
   readonly tags: ReadonlyArray<TagType>
   readonly loadCost: number
 }
-/** 遺物樣板，擴展物品樣板並定義最大堆疊層數 */
+
 export interface RelicTemplate extends ItemTemplate {
   readonly maxStacks: number
   readonly itemType: 'RELIC'
 }
-/** 物品記錄，包含基礎欄位與詞綴資訊 */
+
 export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
   readonly affixRecords: ReadonlyArray<AffixRecord>
   readonly itemType: ItemType
 }
-/** 遺物記錄，擴展物品記錄並指定類型為遺物 */
+
 export interface RelicRecord extends ItemRecord {
   readonly itemType: 'RELIC'
 }
@@ -41,12 +41,12 @@ export abstract class ItemEntity implements IItemEntity {
     public readonly template: ItemTemplate,
     public readonly affixEntities: ReadonlyArray<AffixEntity> = []
   ) {}
-  /** 獲取物品的所有單位屬性修飾器 */
+
   getUnitStatModifiers() {
     return this.affixEntities.flatMap((affix) => affix.getUnitStatModifiers())
   }
 }
-/** 遺物實體，包含遺物記錄、樣板與詞綴快照集合 */
+
 export class RelicEntity extends ItemEntity {
   constructor(
     public readonly record: RelicRecord,

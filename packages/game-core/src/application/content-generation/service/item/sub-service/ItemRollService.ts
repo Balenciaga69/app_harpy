@@ -14,13 +14,13 @@ import {
   calculateTemplateWeight,
 } from '../item-roll-modifier/ModifierAggregationHelper'
 import { IItemConstraintService } from './ItemConstraintService'
-/** 骰選結果類型 */
+
 type RollResult = {
   itemTemplateId: string
   itemType: ItemType
   rarity: ItemRarity
 }
-/** 物品骰選來源類型別名 */
+
 type ItemTypeAndRarityResult = { itemType: ItemType; rarity: ItemRarity }
 /**
  * 物品骰選服務：執行物品骰選流程
@@ -28,7 +28,6 @@ type ItemTypeAndRarityResult = { itemType: ItemType; rarity: ItemRarity }
  * 設計：純骰選流程，修飾符聚合邏輯從 ItemModifierAggregationService 分離
  */
 export interface IItemRollService {
-  /** 根據來源與修飾符骰選物品，返回樣板ID、類型、稀有度 */
   rollItem(source: ItemRollConfigId, modifiers: ItemRollModifier[]): Result<RollResult>
 }
 export class ItemRollService implements IItemRollService {
@@ -43,20 +42,20 @@ export class ItemRollService implements IItemRollService {
   rollItem(source: ItemRollConfigId, modifiers: ItemRollModifier[]): Result<RollResult> {
     const { seed } = this.contextSnapshot.getRunContext()
     const { itemStore } = this.configStoreAccessor.getConfigStore()
-    // 骰選物品類型與稀有度
+
     const typeAndRarityResult = this.rollItemTypeAndRarity(seed, itemStore.getItemRollConfig(source), modifiers)
     if (typeAndRarityResult.isFailure) {
       return Result.fail(typeAndRarityResult.error!)
     }
     const { itemType, rarity } = typeAndRarityResult.value!
-    // 取得可用樣板
+
     const availableTemplates = this.constraintService.getAvailableTemplates(itemType, rarity)
-    // 骰選最終樣板
+
     const templateIdResult = this.rollTemplate(seed, availableTemplates, modifiers)
     if (templateIdResult.isFailure) {
       return Result.fail(templateIdResult.error!)
     }
-    // 組裝結果
+
     return Result.success({
       itemTemplateId: templateIdResult.value!,
       itemType,
@@ -84,7 +83,7 @@ export class ItemRollService implements IItemRollService {
       rarity: rarityResult.value!,
     })
   }
-  /** 通用權重骰選：從權重映射中骰選結果 */
+
   private rollFromWeights<T extends string>(seed: number, weights: Record<T, number>): Result<T> {
     const weightList = Object.entries(weights).map(([key, weight]) => ({
       id: key as T,
@@ -92,22 +91,20 @@ export class ItemRollService implements IItemRollService {
     }))
     return WeightRoller.roll<T>(seed, weightList)
   }
-  /** 骰選稀有度：根據修飾符調整權重後骰選 */
+
   private rollRarity(seed: number, rollConfig: ItemRollConfig, modifiers: ItemRollModifier[]): Result<ItemRarity> {
-    // 取得 聚合後的 rarity 修飾符
     const rarityMultipliers = aggregateModifiersByType(modifiers, 'RARITY')
-    // 根據修飾符調整稀有度權重
+
     const adjustedWeights = Object.entries(rollConfig.rarityWeights).map(([rarity, weight]) => ({
       id: rarity as ItemRarity,
       weight: weight * (rarityMultipliers.get(rarity as ItemRarity) ?? 1),
     }))
     return WeightRoller.roll<ItemRarity>(seed, adjustedWeights)
   }
-  /** 骰選物品樣板：根據修飾符調整樣板權重後骰選 */
+
   private rollTemplate(seed: number, templates: ItemTemplate[], modifiers: ItemRollModifier[]): Result<string> {
-    // 聚合所有修飾符類型
     const modifierMap = aggregateTemplateModifiers(modifiers)
-    // 根據修飾符調整樣板權重
+
     const weightList = templates.map((template) => ({
       id: template.id,
       weight: calculateTemplateWeight(template, modifierMap),

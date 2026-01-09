@@ -11,11 +11,10 @@ import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGu
  * 邊界：專注於 Run 的狀態變更與事務提交
  */
 export interface IRunContextHandler {
-  /** 載入 Run Domain Model 由 Context */
   loadRunDomain(): Run
-  /** 驗證當前 Run 狀態是否可進行指定操作 */
+
   validateRunStatus(expectedStatus: RunStatus | RunStatus[]): Result<void, string>
-  /** 提交 Run Context 變更事務 */
+
   commitRunChanges(run: Run): void
 }
 export class RunContextHandler implements IRunContextHandler {

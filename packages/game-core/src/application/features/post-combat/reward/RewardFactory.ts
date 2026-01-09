@@ -16,7 +16,6 @@ export interface IRewardFactory {
  * 邊界：依賴介面，易測試與替換
  */
 export class RewardFactory implements IRewardFactory {
-  // 難度對應的獎勵策略 Map，減少 if-else 巢狀
   private readonly rewardStrategies: Map<string, () => Result<CombatReward[]>> = new Map([
     ['BOSS', this.createBossRewards.bind(this)],
     ['ELITE', this.createEliteRewards.bind(this)],
@@ -33,7 +32,7 @@ export class RewardFactory implements IRewardFactory {
   public createRewards(difficulty: CombatDifficultyType): Result<CombatReward[]> {
     const strategy = this.rewardStrategies.get(difficulty)
     if (!strategy) {
-      return Result.fail('Unsupported difficulty') // 可改為統一錯誤代碼
+      return Result.fail('Unsupported difficulty')
     }
     return strategy()
   }
@@ -58,18 +57,18 @@ export class RewardFactory implements IRewardFactory {
    */
   private createNormalRewards(): Result<CombatReward[]> {
     const rewards: CombatReward[] = []
-    // Reward A: 高親和物品
+
     const highAffinityResult = this.itemGenerationService.generateRandomItemFromReward('HIGH_AFFINITY')
     if (highAffinityResult.isFailure) return Result.fail(highAffinityResult.error!)
     rewards.push({ type: 'HIGH_AFFINITY', itemRecords: [highAffinityResult.value!.record], gold: 0 })
-    // Reward B: 金幣（基於物品計算）
+
     const gold = this.calculateGold(highAffinityResult.value!)
     rewards.push({ type: 'GOLD', itemRecords: [], gold })
-    // Reward C: 高稀有度物品
+
     const highRarityResult = this.itemGenerationService.generateRandomItemFromReward('HIGH_RARITY_RELIC')
     if (highRarityResult.isFailure) return Result.fail(highRarityResult.error!)
     rewards.push({ type: 'HIGH_RARITY_RELIC', itemRecords: [highRarityResult.value!.record], gold: 0 })
-    // Reward D: 低親和物品
+
     const lowAffinityResult = this.itemGenerationService.generateRandomItemFromReward('LOW_AFFINITY')
     if (lowAffinityResult.isFailure) return Result.fail(lowAffinityResult.error!)
     rewards.push({ type: 'LOW_AFFINITY', itemRecords: [lowAffinityResult.value!.record], gold: 0 })
@@ -79,7 +78,7 @@ export class RewardFactory implements IRewardFactory {
    * 無盡獎勵策略（待實作）
    */
   private createEndlessRewards(): Result<CombatReward[]> {
-    TODO: 實作無盡模式獎勵邏輯
+    // TODO: 實作無盡模式獎勵邏輯
     return Result.success([])
   }
   /**

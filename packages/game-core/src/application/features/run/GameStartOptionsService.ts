@@ -7,9 +7,8 @@ import { IItemStore } from '../../core-infrastructure/static-config/IConfigStore
  * 職責：提供玩家開始遊戲時的可選職業與對應 relic
  */
 export interface IGameStartOptionsService {
-  /** 獲取所有可選職業 */
   getAvailableProfessions(): ProfessionTemplate[]
-  /** 獲取指定職業的可選起始 relic */
+
   getSelectableStartingRelics(professionId: string): RelicTemplate[]
 }
 /**

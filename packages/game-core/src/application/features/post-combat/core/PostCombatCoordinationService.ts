@@ -33,22 +33,21 @@ export class PostCombatCoordinationService implements IPostCombatCoordinationSer
    * 副作用：修改角色、倉庫、PostCombat 上下文
    */
   claimRewardsAndAdvance(params: { selectedRewardIndexes: number[]; nextStageNumber: number }): Result<void, string> {
-    // 1. 驗證 Run 狀態
     const validateStatus = this.postCombatContextHandler.validateRunStatus()
     if (validateStatus.isFailure) return Result.fail(validateStatus.error!)
-    // 2. 驗證獎勵選擇有效性（Handler 已實作邏輯）
+
     const validateReward = this.postCombatContextHandler.validateRewardSelection(params.selectedRewardIndexes)
     if (validateReward.isFailure) return Result.fail(validateReward.error!)
-    // 3. 加載角色與倉庫領域模型
+
     const { character, stash } = this.postCombatContextHandler.loadPostCombatDomainContexts()
-    // 4. 應用獎勵到角色與倉庫（Handler 已實作邏輯）
+
     const applyRewardResult = this.postCombatContextHandler.applyRewardsToCharacterAndStash(
       character,
       stash,
       params.selectedRewardIndexes
     )
     if (applyRewardResult.isFailure) return Result.fail(applyRewardResult.error!)
-    // 5. 原子性提交所有變更（Handler 已實作邏輯）
+
     const { updatedCharacter, updatedStash } = applyRewardResult.value!
     const commitResult = this.postCombatContextHandler.commitClaimRewardsAndAdvance({
       updatedCharacter,

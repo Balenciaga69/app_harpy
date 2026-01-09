@@ -23,7 +23,7 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
     private contextAccessor: IContextSnapshotAccessor,
     private unitOfWork: IContextUnitOfWork
   ) {}
-  /** 提交獎勵選擇變更 */
+
   public commitRewardSelection(updates: { character: Character; stash: Stash }): Result<void> {
     this.unitOfWork
       .patchCharacterContext({
@@ -35,7 +35,7 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
       .commit()
     return Result.success(undefined)
   }
-  /** 提交重試次數扣除 */
+
   public commitRetryDeduction(remainingFailRetries: number): Result<void> {
     this.unitOfWork
       .patchRunContext({
@@ -44,7 +44,7 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
       .commit()
     return Result.success(undefined)
   }
-  /** 更新戰鬥後上下文 */
+
   public updatePostCombatContext(updatedPostCombat: PostCombatContext): Result<void> {
     const currentRunContext = this.contextAccessor.getRunContext()
     const updatedRunContext = {
@@ -57,7 +57,7 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
     this.unitOfWork.updateRunContext(updatedRunContext).commit()
     return Result.success(undefined)
   }
-  /** 原子性提交領獎與推進 */
+
   public commitClaimRewardsAndAdvance(updates: {
     character: Character
     stash: Stash

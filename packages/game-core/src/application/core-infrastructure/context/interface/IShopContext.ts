@@ -7,6 +7,5 @@ import { WithRunIdAndVersion } from './WithRunIdAndVersion'
  * 邊界：包含商店物品、刷新次數等狀態資訊
  */
 export interface IShopContext extends WithRunIdAndVersion, ShopRecord {
-  /** 商店配置ID */
   shopConfigId: ShopConfigId
 }

@@ -78,56 +78,56 @@ export class GameConfigAssembler implements IGameConfigAssembler {
     this.assembleAffixStore(affixConfig)
     this.assembleShopStore(shopConfig)
   }
-  /** 敵人 assemble 敵人 store */
+
   private assembleEnemyStore(enemyConfig: EnemyConfigDTO): void {
     this.enemyStore.setMany(enemyConfig.enemyTemplates)
     this.enemyStore.setEnemySpawnInfos(enemyConfig.spawnInfos)
   }
-  /** 物品 assemble 物品 store */
+
   private assembleItemStore(itemConfig: ItemConfigDTO): void {
     this.itemStore.setMany(itemConfig.relicTemplate)
     this.itemStore.setItemRollConfigs(itemConfig.itemRollConfigs)
     this.itemStore.setRewardRollConfigs(itemConfig.rewardRollConfigs)
     this.itemStore.setItemRollConstraints(itemConfig.itemRollConstraints)
   }
-  /** 職業 assemble 職業 store */
+
   private assembleProfessionStore(professionConfig: ProfessionConfigDTO): void {
     this.professionStore.setMany(professionConfig.professionTemplates)
   }
-  /** 大絕招 assemble 大絕招 store */
+
   private assembleUltimateStore(ultimateConfig: UltimateConfigDTO): void {
     this.ultimateStore.setMany(ultimateConfig.ultimateTemplates)
   }
-  /** 詞綴 assemble 詞綴 store */
+
   private assembleAffixStore(affixConfig: AffixConfigDTO): void {
     this.affixStore.setMany(affixConfig.affixTemplates)
     this.affixStore.setAffixEffects(affixConfig.affixEffectTemplates)
   }
-  /** 商店 assemble 商店 store */
+
   private assembleShopStore(shopConfig: ShopConfigDTO): void {
     this.shopStore.setMany(shopConfig.shopConfigs)
   }
-  /** 取得敵人 store */
+
   getEnemyStore(): EnemyStore {
     return this.enemyStore
   }
-  /** 取得物品 store */
+
   getItemStore(): ItemStore {
     return this.itemStore
   }
-  /** 取得職業 store */
+
   getProfessionStore(): ProfessionStore {
     return this.professionStore
   }
-  /** 取得大絕招 store */
+
   getUltimateStore(): UltimateStore {
     return this.ultimateStore
   }
-  /** 取得詞綴 store */
+
   getAffixStore(): AffixStore {
     return this.affixStore
   }
-  /** 取得商店 store */
+
   getShopStore(): ShopStore {
     return this.shopStore
   }

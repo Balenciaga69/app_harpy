@@ -45,17 +45,16 @@ export class RunCoordinationService implements IRunCoordinationService {
    * 副作用：修改 Run Context、臨時上下文
    */
   advanceToNextStageAndInitialize(stageNumber: number): Result<void, string> {
-    // Step 1: 驗證當前 Run 狀態必須為 POST_COMBAT
     const validateResult = this.runContextHandler.validateRunStatus('POST_COMBAT')
     if (validateResult.isFailure) return Result.fail(validateResult.error!)
-    // Step 2: 加載 Run 領域模型並執行推進邏輯
+
     const run = this.runContextHandler.loadRunDomain()
     const advanceResult = run.advanceToNextStage(stageNumber)
     if (advanceResult.isFailure) return Result.fail(advanceResult.error!)
-    // Step 3: 提交 Run 變更
+
     const newRun = advanceResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    // Step 4: 初始化新關卡（生成敵人、節點、事件）
+
     const initResult = this.stageInitializationService.initializeStage(stageNumber)
     if (initResult.isFailure) return Result.fail(initResult.error!)
     return Result.success(undefined)

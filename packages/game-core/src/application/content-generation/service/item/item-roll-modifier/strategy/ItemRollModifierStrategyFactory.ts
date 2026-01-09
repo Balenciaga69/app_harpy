@@ -45,13 +45,12 @@ export class ItemRollModifierStrategyFactory {
    * 根據獎勵類型從配置存儲讀取策略清單，並實例化對應策略
    */
   createRewardStrategies(rewardType: CombatRewardType): IItemRollModifierStrategy[] {
-    // 從配置存儲讀取獎勵配置
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const rewardConfig = itemStore.getRewardRollConfig(rewardType)
     if (!rewardConfig) {
       return []
     }
-    // 根據配置的策略清單實例化策略
+
     const strategies: IItemRollModifierStrategy[] = []
     for (const strategyConfig of rewardConfig.modifierStrategies) {
       switch (strategyConfig.strategyId) {
@@ -65,7 +64,6 @@ export class ItemRollModifierStrategyFactory {
           )
           break
         case 'RARITY_PREFERENCE':
-          // 直接從配置中讀取稀有度倍率，無需額外計算或硬編碼
           const rarityMultipliers = rewardConfig.rarityMultipliers || {
             COMMON: 1,
             RARE: 1,
@@ -78,7 +76,6 @@ export class ItemRollModifierStrategyFactory {
           strategies.push(new ReverseFrequentTagRewardModifierStrategy(this.configStoreAccessor, this.contextSnapshot))
           break
         default:
-          // 未知策略，跳過
           break
       }
     }

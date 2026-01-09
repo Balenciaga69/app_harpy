@@ -1,5 +1,5 @@
 ﻿import { UltimateTemplate } from '../../domain/ultimate/Ultimate'
-// ZH_TW: 化學毒彈
+
 const ultimate_chemist_poison_bomb: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb',
   name: { tw: '毒煙爆', en: 'Toxic Spores' },
@@ -21,7 +21,7 @@ const ultimate_chemist_poison_bomb: UltimateTemplate = {
     },
   ],
 }
-// ZH_TW: 化學毒盾
+
 const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb_shield',
   name: { tw: '毒盾牌', en: 'Toxic Shield' },
@@ -47,7 +47,7 @@ const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
     },
   ],
 }
-// ZH_TW: 戰士 - 強大一擊
+
 const ultimate_warrior_mighty_blow: UltimateTemplate = {
   id: 'ult_warrior_mighty_blow',
   name: { tw: '強大一擊', en: 'Mighty Blow' },

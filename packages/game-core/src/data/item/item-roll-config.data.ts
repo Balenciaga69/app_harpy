@@ -24,7 +24,7 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
       { strategyId: 'RARITY_PREFERENCE', multiplier: 1 },
       { strategyId: 'MOST_FREQUENT_TAG', multiplier: 1 },
     ],
-    // 稀有度偏好倍率配置
+
     rarityMultipliers: RarityMultipliers.HIGH_RARITY_RELIC,
   },
   HIGH_AFFINITY: {
@@ -56,9 +56,9 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
   },
 }
 export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, ...Object.values(RewardRollConfigs)]
-/** 獲取所有獎勵配置列表 */
+
 export const RewardRollConfigList: RewardRollConfig[] = Object.values(RewardRollConfigs)
-/** 根據獎勵類型取得對應的骰選配置 */
+
 export function getRewardRollConfig(rewardType: string): RewardRollConfig | undefined {
   return RewardRollConfigs[rewardType]
 }

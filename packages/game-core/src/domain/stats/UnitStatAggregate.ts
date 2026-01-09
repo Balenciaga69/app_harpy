@@ -1,6 +1,6 @@
 import { UnitStatModifier } from './models/StatModifier'
 import { UnitStats } from './models/UnitStats'
-/** 統計修飾符按字段分組的臨時映射 */
+
 type ByField = Partial<Record<keyof UnitStats, UnitStatModifier[]>>
 /**
  * 計算單一統計值，應用 ADD → MULTIPLY → SET 的優先級順序

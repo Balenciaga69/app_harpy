@@ -33,20 +33,19 @@ export class StageInitializationService implements IStageInitializationService {
     private enemyRandomGenerateService: IEnemyRandomGenerateService
   ) {}
   initializeStage(stageNumber: number): Result<void, string> {
-    // 檢查 stageNumber 有效性
     const runContext = this.contextAccessor.getRunContext()
     const { currentChapter, chapters } = runContext
-    // 驗證章節信息存在
+
     const chapterInfo = chapters[currentChapter]
     if (!chapterInfo) {
       return Result.fail(ApplicationErrorCode.關卡_章節信息不存在)
     }
-    // 驗證關卡節點存在
+
     const stageNode = chapterInfo.stageNodes[stageNumber]
     if (!stageNode) {
       return Result.fail(ApplicationErrorCode.關卡_節點不存在)
     }
-    // 根據節點類型執行不同初始化邏輯
+
     if (stageNode === 'NORMAL' || stageNode === 'ELITE' || stageNode === 'BOSS') {
       return this.initializeCombatStage(stageNode, stageNumber)
     } else if (stageNode === 'EVENT') {
@@ -55,25 +54,24 @@ export class StageInitializationService implements IStageInitializationService {
     return Result.fail(ApplicationErrorCode.關卡_未知類型)
   }
   private initializeCombatStage(stageType: string, stageNumber: number): Result<void, string> {
-    // 生成敵人
     const enemyResult = this.enemyRandomGenerateService.createRandomOneByTemplateUsingCurrentContext()
     if (enemyResult.isFailure) {
       return Result.fail(enemyResult.error!)
     }
     const enemy = enemyResult.value!
-    // 構建預戰鬥上下文（包含敵人信息和關卡難度類型）
+
     const preCombatContext = {
       enemy,
       combatDifficulty: stageType as 'NORMAL' | 'ELITE' | 'BOSS',
       stageNumber,
     }
-    // 更新 temporaryContext，存入預戰鬥信息
+
     const runContext = this.contextAccessor.getRunContext()
     const updatedTemporaryContext = {
       ...runContext.temporaryContext,
       preCombat: preCombatContext,
     }
-    // 提交變更
+
     this.unitOfWork.patchRunContext({
       temporaryContext: updatedTemporaryContext,
     })
@@ -96,7 +94,7 @@ export class StageInitializationService implements IStageInitializationService {
    * 注意：目前返回成功，待事件服務完成後補充實作
    */
   private initializeEventStage(_stageNumber: number): Result<void, string> {
-    TODO: 實作事件初始化邏輯
+    // TODO: 實作事件初始化邏輯
     return Result.success(undefined)
   }
 }
