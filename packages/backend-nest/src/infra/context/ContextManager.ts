@@ -25,7 +25,6 @@ export class ContextManager {
   getContext(): IAppContext | null {
     const context = ContextManager.store.getStore()
     if (!context) {
-      console.warn('No AppContext found in ContextManager')
       return null
     }
     return context
@@ -36,18 +35,19 @@ export class ContextManager {
   runWithContext<T>(appContext: IAppContext, fn: () => T): T {
     return ContextManager.store.run(appContext, fn)
   }
-  saveContext(appContext: IAppContext): void {
+  saveContext(appContext: IAppContext) {
     const runId = appContext.contexts.runContext.runId
     if (!runId) {
       throw new Error('AppContext must have a valid runId')
     }
     const contexts = appContext.contexts
-    this.runContexts.set(runId, {
+    const runContext = {
       runContext: this.shallowCopy(contexts.runContext),
       characterContext: this.shallowCopy(contexts.characterContext),
       stashContext: this.shallowCopy(contexts.stashContext),
       shopContext: this.shallowCopy(contexts.shopContext),
-    })
+    }
+    this.runContexts.set(runId, runContext)
   }
   getContextByRunId(runId: string): IAppContext | null {
     if (!runId) {

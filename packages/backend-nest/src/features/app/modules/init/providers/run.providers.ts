@@ -18,7 +18,6 @@ import {
   StageNodeGenerationService,
   UltimateEntityService,
 } from 'src/from-game-core'
-
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,

@@ -16,6 +16,9 @@ export class ShopNestService {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
+    const context = this.ctxManager.getContextByRunId(dto.runId)
+    if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+
     const result = this.shopService.buyItem(dto.itemId)
     if (result.isFailure) {
       throw new BadRequestException({
@@ -23,6 +26,7 @@ export class ShopNestService {
         message: '購買物品失敗',
       })
     }
+
     return {
       success: true,
       message: '購買成功',
@@ -37,6 +41,9 @@ export class ShopNestService {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
+    const context = this.ctxManager.getContextByRunId(dto.runId)
+    if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+
     const result = this.shopService.sellItem(dto.itemId)
     if (result.isFailure) {
       throw new BadRequestException({
@@ -44,6 +51,7 @@ export class ShopNestService {
         message: '賣出物品失敗',
       })
     }
+
     return {
       success: true,
       message: '賣出成功',
@@ -58,6 +66,9 @@ export class ShopNestService {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
+    const context = this.ctxManager.getContextByRunId(dto.runId)
+    if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+
     const result = this.shopService.refreshShopItems()
     if (result.isFailure) {
       throw new BadRequestException({
@@ -65,11 +76,7 @@ export class ShopNestService {
         message: '刷新商店失敗',
       })
     }
-    const x = this.ctxManager.getContextByRunId(dto.runId)
-    const y = x?.contexts.shopContext
-    const z = x?.contexts.characterContext.gold
-    console.info('xZx z', z)
-    console.info('xZx y', y?.items)
+
     return {
       success: true,
       message: '刷新成功',

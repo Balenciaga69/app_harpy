@@ -90,7 +90,7 @@ export class InitController {
       },
     },
   })
-  async initializeRun(@Body() dto: InitRunDto) {
+  initializeRun(@Body() dto: InitRunDto) {
     return this.initService.initializeRun(dto)
   }
 }

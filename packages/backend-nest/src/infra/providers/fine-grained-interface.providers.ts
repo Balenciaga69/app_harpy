@@ -1,16 +1,16 @@
 ﻿import { Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import {
-  AppContextHolder,
   ConfigStoreAccessorImpl,
   ContextMutatorImpl,
   ContextSnapshotAccessorImpl,
   IAppContext,
 } from 'src/from-game-core'
 import { ContextManager } from '../context/ContextManager'
+
 export const fineGrainedInterfaceProviders = [
   {
-    provide: AppContextHolder,
+    provide: 'IAppContext',
     useFactory: (contextManager: ContextManager, request: any) => {
       const body = request.body as Record<string, any>
       const runId = body?.runId as string | undefined
@@ -32,33 +32,40 @@ export const fineGrainedInterfaceProviders = [
           },
         }
       }
-      return new AppContextHolder(currentContext)
+      return currentContext
     },
     inject: [ContextManager, REQUEST],
     scope: Scope.REQUEST,
   },
   {
     provide: 'IConfigStoreAccessor',
-    useFactory: (holder: AppContextHolder) => {
-      return new ConfigStoreAccessorImpl(holder)
+    useFactory: (context: IAppContext) => {
+      return new ConfigStoreAccessorImpl(context)
     },
-    inject: [AppContextHolder],
+    inject: ['IAppContext'],
     scope: Scope.REQUEST,
   },
   {
     provide: 'IContextSnapshotAccessor',
-    useFactory: (holder: AppContextHolder) => {
-      return new ContextSnapshotAccessorImpl(holder)
+    useFactory: (context: IAppContext) => {
+      return new ContextSnapshotAccessorImpl(context)
     },
-    inject: [AppContextHolder],
+    inject: ['IAppContext'],
     scope: Scope.REQUEST,
   },
   {
     provide: 'IContextMutator',
-    useFactory: (holder: AppContextHolder) => {
-      return new ContextMutatorImpl(holder)
+    useFactory: (context: IAppContext, contextManager: ContextManager, request: any) => {
+      const onContextChange = (next: IAppContext) => {
+        const body = request.body as Record<string, any>
+        const runId = body?.runId as string | undefined
+        if (runId && typeof runId === 'string') {
+          contextManager.saveContext(next)
+        }
+      }
+      return new ContextMutatorImpl(onContextChange, context)
     },
-    inject: [AppContextHolder],
+    inject: ['IAppContext', ContextManager, REQUEST],
     scope: Scope.REQUEST,
   },
 ]

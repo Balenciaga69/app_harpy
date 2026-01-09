@@ -4,7 +4,6 @@ import { SharedAppModule } from '../../shared/shared-app.module'
 import { shopFeatureProviders } from './providers/shop.providers'
 import { ShopController } from './shop.controller'
 import { ShopNestService } from './shop.service'
-
 @Module({
   imports: [SharedInfraModule, SharedAppModule],
   controllers: [ShopController],

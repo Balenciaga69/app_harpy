@@ -17,6 +17,7 @@ export interface IContextSnapshotAccessor {
   getStashContext(): IStashContext
   getShopContext(): IShopContext
   getAllContexts(): IAppContext['contexts']
+  getAppContext(): IAppContext
   getCurrentAtCreatedInfo(): AtCreatedInfo
   getCurrentInfoForCreateRecord(): CommonInfoForCreateRecord
   getRunStatus(): IRunContext['status']
@@ -27,40 +28,31 @@ export interface IContextMutator {
   setStashContext(ctx: IStashContext): void
   setShopContext(ctx: IShopContext): void
 }
-export class AppContextHolder {
-  private ctx: IAppContext
-  constructor(initial: IAppContext) {
-    this.ctx = initial
-  }
-  get(): IAppContext {
-    return this.ctx
-  }
-  set(next: IAppContext): void {
-    this.ctx = next
-  }
-}
 export class ConfigStoreAccessorImpl implements IConfigStoreAccessor {
-  constructor(private holder: AppContextHolder) {}
+  constructor(private context: IAppContext) {}
   getConfigStore(): IAppContext['configStore'] {
-    return this.holder.get().configStore
+    return this.context.configStore
   }
 }
 export class ContextSnapshotAccessorImpl implements IContextSnapshotAccessor {
-  constructor(private holder: AppContextHolder) {}
+  constructor(private context: IAppContext) {}
   getRunContext(): IRunContext {
-    return this.holder.get().contexts.runContext
+    return this.context.contexts.runContext
   }
   getCharacterContext(): ICharacterContext {
-    return this.holder.get().contexts.characterContext
+    return this.context.contexts.characterContext
   }
   getStashContext(): IStashContext {
-    return this.holder.get().contexts.stashContext
+    return this.context.contexts.stashContext
   }
   getShopContext(): IShopContext {
-    return this.holder.get().contexts.shopContext
+    return this.context.contexts.shopContext
   }
   getAllContexts(): IAppContext['contexts'] {
-    return this.holder.get().contexts
+    return this.context.contexts
+  }
+  getAppContext(): IAppContext {
+    return this.context
   }
   getCurrentAtCreatedInfo(): AtCreatedInfo {
     const { currentChapter, currentStage } = this.getRunContext()
@@ -82,21 +74,24 @@ export class ContextSnapshotAccessorImpl implements IContextSnapshotAccessor {
   }
 }
 export class ContextMutatorImpl implements IContextMutator {
-  constructor(private holder: AppContextHolder) {}
+  constructor(
+    private onContextChange: (next: IAppContext) => void,
+    private currentContext: IAppContext
+  ) {}
   setRunContext(ctx: IRunContext): void {
-    const root = this.holder.get()
-    this.holder.set({ ...root, contexts: { ...root.contexts, runContext: ctx } })
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, runContext: ctx } })
   }
   setCharacterContext(ctx: ICharacterContext): void {
-    const root = this.holder.get()
-    this.holder.set({ ...root, contexts: { ...root.contexts, characterContext: ctx } })
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, characterContext: ctx } })
   }
   setStashContext(ctx: IStashContext): void {
-    const root = this.holder.get()
-    this.holder.set({ ...root, contexts: { ...root.contexts, stashContext: ctx } })
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, stashContext: ctx } })
   }
   setShopContext(ctx: IShopContext): void {
-    const root = this.holder.get()
-    this.holder.set({ ...root, contexts: { ...root.contexts, shopContext: ctx } })
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, shopContext: ctx } })
+  }
+  private updateContext(next: IAppContext): void {
+    this.currentContext = next
+    this.onContextChange(next)
   }
 }
