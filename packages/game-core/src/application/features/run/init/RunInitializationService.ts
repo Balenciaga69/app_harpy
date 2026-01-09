@@ -44,7 +44,7 @@ export class RunInitializationService {
     }
     return Result.success({ contexts, configStore: this.external.getConfigStore() })
   }
-  private validateProfession(professionId: string): Result<any> {
+  private validateProfession(professionId: string): Result<ProfessionTemplate> {
     const profession = this.external.getProfession(professionId)
     if (!profession) {
       return Result.fail(ApplicationErrorCode.初始化_職業不存在)

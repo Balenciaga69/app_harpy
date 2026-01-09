@@ -1,0 +1,96 @@
+# script.tips.md
+
+## Windows PowerShell 常用遞迴檔案列舉指令
+
+- 列出資料夾下所有檔案 (絕對路徑):
+
+  ```powershell
+  Get-ChildItem -Recurse -File "G:\Coding\app_harpy\packages\game-core\src" | Select-Object -ExpandProperty FullName
+  ```
+
+- 列出資料夾下所有檔案 (相對路徑):
+
+  ```powershell
+  Get-ChildItem -Recurse -File "你的資料夾路徑" | ForEach-Object { $_.FullName.Replace((Get-Location).Path + "\", "") }
+  ```
+
+- 只列出特定副檔名 (如 .ts):
+
+  ```powershell
+  Get-ChildItem -Recurse -File -Include *.ts "你的資料夾路徑"
+  ```
+
+最後更新: 2025-12-11
+
+## VS Code 擴充套件管理
+
+- `code --list-extensions`: 列出已安裝的擴充套件
+
+## cloc 工具使用指南
+
+`cloc` 支援多種語法與參數，以下是常用的幾個：
+
+- **指定語言**
+
+  `cloc --include-lang=TypeScript .`
+
+  只統計 TypeScript。
+
+- **排除資料夾**
+
+  `cloc . --exclude-dir=node_modules,dist`
+
+  排除 node_modules 和 dist。
+
+- **輸出為 JSON**
+
+  `cloc . --json`
+
+- **統計多種語言**
+
+  `cloc --include-lang=TypeScript,JavaScript .`
+
+- **只顯示總結**
+
+  `cloc . --report-file=summary.txt`
+
+- **統計特定副檔名**
+
+  `cloc . --include-ext=ts,tsx`
+
+- **顯示每個檔案的統計**
+
+  `cloc . --by-file`
+
+- **顯示詳細說明**
+
+  `cloc --help`
+
+- 我個人使用: `cloc --include-lang=TypeScript . --exclude-dir=data`
+
+## Repomix 詳細語法與參數
+
+### 基本語法
+
+- 我的最愛(my favorite):
+- repomix --remove-comments --include "**/*.ts" --ignore "data/**,**/__tests__/**" --style plain --output output.txt ./src
+- 完整語法: `repomix [options] <source-directory> [output-file]`
+
+- `<source-directory>`: 來源資料夾路徑（必填）。
+- `[output-file]`: 輸出檔案名稱（選填，預設為 `repomix-output.txt` 或類似）。
+
+### 常用參數
+
+- `--remove-comments`: 移除所有註釋（可切換，預設保留）。
+- `--include <patterns>`: 只包含匹配的檔案/資料夾（支援 glob 模式，如 `*.ts`）。
+- `--ignore <patterns>`: 排除匹配的檔案/資料夾（支援 glob，如 `node_modules/**`）。
+- `--output <file>`: 指定輸出檔案名稱。
+- `--style <format>`: 輸出格式（markdown 或 `plain`，預設 markdown）。
+- `--config <file>`: 使用自訂配置檔案（JSON 格式）。
+- `--verbose`: 顯示詳細輸出。
+- `--help`: 顯示幫助資訊。
+- `--version`: 顯示版本。
+
+### 進階參數
+
+- `--include-empty-directories`: 包含空資料夾。

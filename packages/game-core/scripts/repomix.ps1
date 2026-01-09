@@ -1,0 +1,2 @@
+repomix --remove-comments --include "**/*.ts" --ignore "data/**" --style plain --output output_app.txt ./src/application
+repomix --remove-comments --include "**/*.ts" --ignore "data/**" --style plain --output output_domain.txt ./src/domain

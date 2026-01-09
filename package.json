@@ -25,10 +25,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
     "autoprefixer": "^10.4.22",
+    "cloc": "2.6.0-cloc",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -43,15 +45,18 @@
     "eslint-plugin-sonarjs": "^3.0.5",
     "eslint-plugin-unused-imports": "^4.3.0",
     "globals": "^16.5.0",
+    "jest": "^30.0.0",
     "madge": "^8.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.4.2",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.2.5",
     "ts-morph": "^27.0.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.52.0",
-    "cloc": "2.6.0-cloc",
-    "rimraf": "^5.0.5"
+    "typescript-eslint": "^8.52.0"
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
-  "dependencies": {}
+  "dependencies": {
+    "repomix": "^1.11.0"
+  }
 }
