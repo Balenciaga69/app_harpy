@@ -5,6 +5,7 @@
 - 測試 Refresh Shop 功能, 發現不少錯誤, 對 AI Coding 準確度感到擔憂 (包含可變不可變混用, 邏輯錯誤, 型別錯誤等)
 - 對 nestjs 專案添加 source map 支援, 以便在 VSCode 中進行斷點偵錯
 - 用 eslint 各種套件與輔助工具替換 我寫的 AI 輔助品質檢查流程
+- 導入 eslint-simple-import-sort, sonarjs, unused-imports,boundaries,cloc, repomix, madge
 
 ## _2025/01/07_
 
