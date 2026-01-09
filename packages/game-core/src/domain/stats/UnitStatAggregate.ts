@@ -2,10 +2,7 @@ import { UnitStatModifier } from './models/StatModifier'
 import { UnitStats } from './models/UnitStats'
 
 type ByField = Partial<Record<keyof UnitStats, UnitStatModifier[]>>
-/**
- * 計算單一統計值，應用 ADD → MULTIPLY → SET 的優先級順序
- * 依據優先級應用修飾符：先累加所有 ADD 操作，再累乘 MULTIPLY 操作，最後檢查是否有 SET 操作覆蓋
- */
+
 function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[]): number {
   let addSum = 0
   let multiplySum = 0
@@ -29,10 +26,7 @@ function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[])
   if (lastSet !== undefined) v = lastSet
   return v
 }
-/**
- * 彙總所有統計修飾符，為每個統計字段計算最終值
- * 步驟：1. 按字段分組修飾符；2. 對每個字段應用優先級計算；3. 返回最終統計值映射
- */
+
 export const UnitStatAggregate = (baseStats: UnitStats, modifiers: readonly UnitStatModifier[]): UnitStats => {
   const byField: ByField = {}
   for (const m of modifiers) {

@@ -72,9 +72,7 @@ export class ShopContextHandler implements IShopContextHandler {
     return Result.success(undefined)
   }
 }
-/**
- * 商店上下文助手介面
- */
+
 export interface IShopContextHandler {
   loadShopDomainContexts(): {
     shop: Shop

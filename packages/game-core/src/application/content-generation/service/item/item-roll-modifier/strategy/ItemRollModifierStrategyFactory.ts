@@ -9,21 +9,11 @@ import { MostFrequentTagModifierStrategy } from './MostFrequentTagModifierStrate
 import { MostFrequentTagRewardModifierStrategy } from './MostFrequentTagRewardModifierStrategy'
 import { RarityRewardModifierStrategy } from './RarityRewardModifierStrategy'
 import { ReverseFrequentTagRewardModifierStrategy } from './ReverseFrequentTagRewardModifierStrategy'
-/**
- * 物品骰選修飾符策略工廠
- * 責任：根據來源（商店/獎勵）與配置，選擇並組裝相應的修飾符策略
- * 依賴：配置倉庫與上下文快照
- * 設計：從配置存儲讀取獎勵配置，而非硬編碼策略對應
- */
 export class ItemRollModifierStrategyFactory {
   constructor(
     private configStoreAccessor: IConfigStoreAccessor,
     private contextSnapshot: IContextSnapshotAccessor
   ) {}
-  /**
-   * 為商店骰選建立修飾符策略集合
-   * 根據商店配置的策略清單來組裝具體的策略實現
-   */
   createShopStrategies(
     strategyConfigs: Array<{ strategyId: ItemRollModifierStrategyType; multiplier: number }>
   ): IItemRollModifierStrategy[] {
@@ -40,17 +30,12 @@ export class ItemRollModifierStrategyFactory {
     }
     return strategies
   }
-  /**
-   * 為獎勵骰選建立修飾符策略集合
-   * 根據獎勵類型從配置存儲讀取策略清單，並實例化對應策略
-   */
   createRewardStrategies(rewardType: CombatRewardType): IItemRollModifierStrategy[] {
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const rewardConfig = itemStore.getRewardRollConfig(rewardType)
     if (!rewardConfig) {
       return []
     }
-
     const strategies: IItemRollModifierStrategy[] = []
     for (const strategyConfig of rewardConfig.modifierStrategies) {
       switch (strategyConfig.strategyId) {

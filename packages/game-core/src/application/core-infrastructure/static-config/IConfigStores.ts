@@ -9,7 +9,6 @@ import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate
   hasEnemy(id: string): boolean
@@ -20,7 +19,6 @@ export interface IEnemyStore {
   setMany(enemies: EnemyTemplate[]): void
   setEnemySpawnInfos(infos: EnemySpawnInfo[]): void
 }
-
 export type ItemRollConfigId = 'SHOP_REFRESH' | 'POST_COMBAT_REWARD'
 export interface IItemStore {
   getAllItemRollConstraints(): ItemRollConstraint[]
@@ -28,7 +26,6 @@ export interface IItemStore {
   hasItemRollConstraint(id: string): boolean
   getItemRollConfig(id: ItemRollConfigId): ItemRollConfig
   hasItemRollConfig(id: ItemRollConfigId): boolean
-
   getRewardRollConfig(rewardType: CombatRewardType): RewardRollConfig | undefined
   getRelic(id: string): RelicTemplate
   hasRelic(id: string): boolean
@@ -38,10 +35,8 @@ export interface IItemStore {
   getAllRelics(): RelicTemplate[]
   setMany(relics: RelicTemplate[]): void
   setItemRollConfigs(configs: ItemRollConfig[]): void
-
   setRewardRollConfigs(configs: RewardRollConfig[]): void
 }
-
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate
   getAffixes(ids: string[]): AffixTemplate[]
@@ -52,21 +47,18 @@ export interface IAffixStore {
   setMany(affixes: AffixTemplate[]): void
   setAffixEffects(effects: AffixEffect[]): void
 }
-
 export interface IUltimateStore {
   getUltimate(id: string): UltimateTemplate
   getUltimates(ids: string[]): UltimateTemplate[]
   hasUltimate(id: string): boolean
   setMany(ultimates: UltimateTemplate[]): void
 }
-
 export interface IProfessionStore {
   getProfession(id: string): ProfessionTemplate
   hasProfession(id: string): boolean
   getAllProfessions(): ProfessionTemplate[]
   setMany(professions: ProfessionTemplate[]): void
 }
-
 export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 export interface IShopStore {
   getShopConfig(id: ShopConfigId): ShopConfig

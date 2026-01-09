@@ -34,7 +34,6 @@ export class RunInitializationService {
     const rng = new RandomHelper(params.seed ?? Math.floor(Math.random() * 2 ** 31))
     const runId = IdGeneratorHelper.generateRunId()
     const seed = params.seed ?? Math.floor(rng.next() * 2 ** 31)
-
     const contextsResult = this.assembleRunContexts(runId, params, seed)
     if (contextsResult.isFailure) {
       return Result.fail(contextsResult.error!)
@@ -60,18 +59,14 @@ export class RunInitializationService {
   }> {
     const stageService = this.stageNodeService ?? new StageNodeGenerationService()
     const characterId = `${runId}-char`
-
     const profession = this.external.getProfession(params.professionId)!
     const startingRelicIdsResult = resolveStartingRelicIds(params.startingRelicIds, profession)
     if (startingRelicIdsResult.isFailure) return Result.fail(startingRelicIdsResult.error!)
     const startingRelicIds = startingRelicIdsResult.value!
-
     const relicRecordsResult = createRelicRecordsForInitialization(startingRelicIds, this.external, characterId)
     if (relicRecordsResult.isFailure) return Result.fail(relicRecordsResult.error!)
-
     const ultimateRecordResult = createUltimateRecordForInitialization(params, profession, this.external, characterId)
     if (ultimateRecordResult.isFailure) return Result.fail(ultimateRecordResult.error!)
-
     const runContextResult = buildRunContext(runId, seed, stageService)
     if (runContextResult.isFailure) return Result.fail(runContextResult.error!)
     const characterContext = buildCharacterContext(
@@ -86,11 +81,8 @@ export class RunInitializationService {
     return Result.success({ runContext: runContextResult.value!, characterContext, stashContext, shopContext })
   }
 }
-
 const INITIAL_VERSION = 1
-
 const DEFAULT_CHAPTER_LEVELS: ChapterLevel[] = [1, 2, 3]
-
 const DEFAULT_REMAINING_FAIL_RETRIES = 3
 function resolveStartingRelicIds(
   requested?: string[] | undefined,
@@ -129,16 +121,6 @@ function createRelicRecordsForInitialization(
   })
   return Result.success(relicRecords)
 }
-/**
- * 根據職業起始大絕招 ID 創建大絕招記錄
- * 優先使用玩家傳遞的 startingUltimateId，否則使用職業的第一個預設大絕招
- *
- * @param params 初始化參數（包含 startingUltimateId）
- * @param profession 職業配置（保證非 null）
- * @param external 外部適配器
- * @param characterId 角色 ID
- * @returns 創建的大絕招記錄或失敗
- */
 function createUltimateRecordForInitialization(
   params: RunInitializationParams,
   profession: ReturnType<IRunExternalAdapter['getProfession']>,
@@ -149,27 +131,21 @@ function createUltimateRecordForInitialization(
   if (!startUltimateIds || startUltimateIds.length === 0) {
     return Result.fail(ApplicationErrorCode.初始化_起始大絕招無效)
   }
-
   const ultimateId = params.startingUltimateId ?? startUltimateIds[0]
   const ultimateTemplate = external.getUltimate(ultimateId)
-
   if (!ultimateTemplate) {
     return Result.fail(ApplicationErrorCode.初始化_起始大絕招無效)
   }
-
   const initialAffixData: AffixRecordCreateParams = {
     atCreated: { chapter: 1, stage: 1, difficulty: DifficultyHelper.getDifficultyFactor(1, 1) },
     difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
     sourceUnitId: characterId,
   }
-
   const ultimateRecord = UltimateRecordFactory.createOne(ultimateId, {
     ...initialAffixData,
   })
-
   return Result.success(ultimateRecord)
 }
-
 function buildRunContext(
   runId: string,
   seed: number,
@@ -234,7 +210,6 @@ function buildShopContext(runId: string): IShopContext {
     items: [],
   }
 }
-
 export interface RunInitializationParams {
   professionId: string
   characterName?: string

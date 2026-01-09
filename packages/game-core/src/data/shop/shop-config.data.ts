@@ -1,9 +1,5 @@
 import { ShopConfig } from '../../domain/shop/ShopConfig'
-/**
- * 商店配置資料
- * 定義不同商店的行為參數
- * 注：修飾符策略統一在 ItemRollConfig 管理
- */
+
 export const ShopConfigList: ShopConfig[] = [
   {
     id: 'DEFAULT',

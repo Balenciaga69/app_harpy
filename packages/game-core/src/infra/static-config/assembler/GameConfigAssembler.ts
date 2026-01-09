@@ -19,10 +19,7 @@ import { ItemStore } from '../store/ItemStore'
 import { ProfessionStore } from '../store/ProfessionStore'
 import { ShopStore } from '../store/ShopStore'
 import { UltimateStore } from '../store/UltimateStore'
-/**
- * 遊戲配置組裝器：協調所有配置加載器，將 assemble 存儲
- * 職責：並行加載所有配置、轉換為內部存儲、管理存儲實例生命週期
- */
+
 export class GameConfigAssembler implements IGameConfigAssembler {
   private readonly enemyConfigLoader: IEnemyConfigLoader
   private readonly itemConfigLoader: IItemConfigLoader
@@ -57,11 +54,7 @@ export class GameConfigAssembler implements IGameConfigAssembler {
     this.affixStore = new AffixStore()
     this.shopStore = new ShopStore()
   }
-  /**
-   * 並行加載所有配置，然後轉換為內部存儲
-   * 副作用：初始化所有配置存儲
-   * 邊界：所有加載器必須有效，加載失敗則拋錯
-   */
+
   async assembleAllConfigs(): Promise<void> {
     const [enemyConfig, itemConfig, professionConfig, ultimateConfig, affixConfig, shopConfig] = await Promise.all([
       this.enemyConfigLoader.load(),

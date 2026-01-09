@@ -10,9 +10,6 @@ import { IPostCombatContextAccessor } from './core/PostCombatContextAccessor'
 import { IPostCombatDomainConverter } from './core/PostCombatDomainConverter'
 import { IPostCombatTransactionManager } from './core/PostCombatTransactionManager'
 import { IPostCombatValidator } from './core/PostCombatValidator'
-/**
- * 獎勵派發結果
- */
 export interface RewardApplicationResult {
   readonly updatedCharacter: Character
   readonly updatedStash: Stash
@@ -45,25 +42,18 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     private itemEntityService: ItemEntityService,
     private runService: IRunService
   ) {}
-
   public loadPostCombatDomainContexts() {
     return {
       character: this.converter.convertCharacterContextToDomain(),
       stash: this.converter.convertStashContextToDomain(),
     }
   }
-
   public validateRunStatus(): Result<void, string> {
     return this.validator.validateRunStatus()
   }
-
   public validateRewardSelection(selectedIndexes: number[]): Result<void, string> {
     return this.validator.validateRewardSelection(selectedIndexes)
   }
-  /**
-   * 應用獎勵到角色與倉庫
-   * 遍歷選擇的獎勵索引，根據類型派發金幣與物品
-   */
   public applyRewardsToCharacterAndStash(
     character: Character,
     stash: Stash,
@@ -86,7 +76,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
         }
         let updatedCharacter = accumulated.updatedCharacter
         let updatedStash = accumulated.updatedStash
-
         if (reward.gold > 0) {
           const goldResult = updatedCharacter.addGold(reward.gold)
           if (goldResult.isFailure) {
@@ -94,7 +83,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
           }
           updatedCharacter = goldResult.value!
         }
-
         for (const itemRecord of reward.itemRecords) {
           const itemEntity = this.createRelicEntityFromRecord(itemRecord)
           const addItemResult = updatedStash.addItem(itemEntity)
@@ -112,17 +100,9 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     )
     return applyRewardResult
   }
-  /**
-   * 從 ItemRecord 建立 RelicEntity
-   * 將獎勵中的物品記錄轉換為領域實體
-   */
   private createRelicEntityFromRecord(itemRecord: ItemRecord) {
     return this.itemEntityService.createRelicByRecord(itemRecord)
   }
-  /**
-   * 原子性提交領獎與推進變更
-   * 一次性提交角色、倉庫、PostCombat 上下文變更，標記玩家已確認領獎
-   */
   public commitClaimRewardsAndAdvance(params: {
     updatedCharacter: Character
     updatedStash: Stash
@@ -132,11 +112,9 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     if (!postCombatCtx) {
       return Result.fail(DomainErrorCode.PostCombat_上下文不存在)
     }
-
     if (postCombatCtx.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-
     const winCtx = postCombatCtx
     const updatedPostCombatCtx: PostCombatContext = {
       result: 'WIN',

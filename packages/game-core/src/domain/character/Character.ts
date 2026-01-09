@@ -25,9 +25,7 @@ const getRelicStackCount = (record: CharacterRecord): Map<string, number> => {
 export const CharacterRecordHelper = {
   getRelicStackCount,
 }
-/**
- * Include Profession, Relics, Ultimate, etc.
- */
+
 export class Character {
   private readonly _record: CharacterRecord
   private readonly _profession: ProfessionEntity

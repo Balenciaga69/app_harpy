@@ -17,9 +17,7 @@ export class PostCombatProcessor {
     private postCombatDomainConverter: IPostCombatDomainConverter,
     private transactionManager: IPostCombatTransactionManager
   ) {}
-  /**
-   * 處理戰鬥後邏輯：根據結果執行勝利或失敗流程
-   */
+
   public process(): Result<void> {
     const postCombatCtx = this.contextAccessor.getPostCombatContext()
     if (!postCombatCtx) {
@@ -33,9 +31,7 @@ export class PostCombatProcessor {
     }
     return Result.success(undefined)
   }
-  /**
-   * 處理勝利邏輯：生成獎勵並更新上下文（不可變方式）
-   */
+
   private handleWin(postCombatCtx: PostCombatContext): Result<void> {
     const character = this.postCombatDomainConverter.convertCharacterContextToDomain()
     const stash = this.postCombatDomainConverter.convertStashContextToDomain()

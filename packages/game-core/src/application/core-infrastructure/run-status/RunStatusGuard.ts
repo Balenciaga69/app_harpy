@@ -1,7 +1,6 @@
 import { RunStatus } from '../../../domain/run/RunTypes'
 import { DomainErrorCode } from '../../../shared/result/ErrorCodes'
 import { Result } from '../../../shared/result/Result'
-
 const ALLOWED_TRANSITIONS: Record<RunStatus, RunStatus[]> = {
   IDLE: ['PRE_COMBAT'],
   PRE_COMBAT: ['IN_COMBAT'],
@@ -9,7 +8,6 @@ const ALLOWED_TRANSITIONS: Record<RunStatus, RunStatus[]> = {
   POST_COMBAT: ['IDLE', 'COMPLETED'],
   COMPLETED: [],
 }
-
 const validateTransition = (current: RunStatus, next: RunStatus): Result<void, string> => {
   const allowedNextStates = ALLOWED_TRANSITIONS[current]
   if (!allowedNextStates?.includes(next)) {
@@ -17,7 +15,6 @@ const validateTransition = (current: RunStatus, next: RunStatus): Result<void, s
   }
   return Result.success(undefined)
 }
-
 const requireStatus = (current: RunStatus, expectedStatus: RunStatus | RunStatus[]): Result<void, string> => {
   if (Array.isArray(expectedStatus)) {
     if (!expectedStatus.includes(current)) {
@@ -30,7 +27,6 @@ const requireStatus = (current: RunStatus, expectedStatus: RunStatus | RunStatus
   }
   return Result.success(undefined)
 }
-
 export const RunStatusGuard = {
   validateTransition,
   requireStatus,

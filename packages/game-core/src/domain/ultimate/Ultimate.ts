@@ -27,9 +27,7 @@ export class UltimateEntity {
     public readonly template: UltimateTemplate,
     public readonly pluginAffixes: ReadonlyArray<AffixEntity> = []
   ) {}
-  /**
-   * 新增插件詞綴，返回新的大絕招實體
-   */
+
   addPluginAffix(affix: AffixEntity): UltimateEntity {
     const newPluginAffixes = [...this.pluginAffixes, affix]
     const pluginAffixRecord = newPluginAffixes.map((a) => a.record)
