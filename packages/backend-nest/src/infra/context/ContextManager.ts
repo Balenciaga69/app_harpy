@@ -46,17 +46,7 @@ export class ContextManager implements IContextPersistence {
   }
 
   saveContextAsync(appContext: IAppContext): Promise<void> {
-    const runId = appContext.contexts.runContext.runId
-    if (!runId) {
-      throw new Error('AppContext must have a valid runId')
-    }
-    const contexts = appContext.contexts
-    this.runContexts.set(runId, {
-      runContext: this.shallowCopy(contexts.runContext),
-      characterContext: this.shallowCopy(contexts.characterContext),
-      stashContext: this.shallowCopy(contexts.stashContext),
-      shopContext: this.shallowCopy(contexts.shopContext),
-    })
+    this.saveContext(appContext)
     // Future: Add DB persistence via repository
     return Promise.resolve()
   }
@@ -81,24 +71,9 @@ export class ContextManager implements IContextPersistence {
   }
 
   getContextByRunIdAsync(runId: string): Promise<IAppContext | null> {
-    if (!runId) {
-      return Promise.resolve(null)
-    }
-    // Try in-memory first
-    const runContext = this.runContexts.get(runId)
-    if (runContext) {
-      return Promise.resolve({
-        configStore: this.globalConfigStore,
-        contexts: {
-          runContext: this.shallowCopy(runContext.runContext),
-          characterContext: this.shallowCopy(runContext.characterContext),
-          stashContext: this.shallowCopy(runContext.stashContext),
-          shopContext: this.shallowCopy(runContext.shopContext),
-        },
-      })
-    }
-    // Future: Try DB via repository
-    return Promise.resolve(null)
+    const context = this.getContextByRunId(runId)
+    // Future: Try DB via repository if not found in memory
+    return Promise.resolve(context)
   }
 
   contextExists(runId: string): boolean {
