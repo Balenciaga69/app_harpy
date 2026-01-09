@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      rimraf:
-        specifier: ^5.0.5
-        version: 5.0.10
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.1
@@ -27,6 +23,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.22
         version: 10.4.22(postcss@8.5.6)
+      cloc:
+        specifier: 2.6.0-cloc
+        version: 2.6.0-cloc
       eslint:
         specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
@@ -78,6 +77,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.7.1
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.10
       ts-morph:
         specifier: ^27.0.2
         version: 27.0.2
@@ -3225,6 +3227,10 @@ packages:
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
     engines: {node: '>=12'}
+
+  cloc@2.6.0-cloc:
+    resolution: {integrity: sha512-fCHPvFN6I7WmC005u99WqLxqWnWhEra0YCppc2k8lpRZrPFIEaHaNxgJ+funlSRIZMSIOqxwpt7pmEKDPFCz2g==}
+    hasBin: true
 
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
@@ -9983,6 +9989,8 @@ snapshots:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
+
+  cloc@2.6.0-cloc: {}
 
   clone@1.0.4: {}
 
