@@ -6,7 +6,6 @@ import {
   ItemGenerationService,
   ItemEntityService,
 } from 'src/from-game-core'
-
 export const itemGenerationProviders = [
   {
     provide: ItemConstraintService,

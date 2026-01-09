@@ -60,4 +60,11 @@ export default [
       ],
     },
   },
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts'], // 針對測試檔案
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off', // 測試中允許使用 any
+      'sonarjs/no-duplicate-string': 'off', // 測試中允許重複字串
+    },
+  },
 ]

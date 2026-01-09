@@ -6,6 +6,7 @@ import { IContextToDomainConverter } from '../../core-infrastructure/context/hel
 import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
+
 export class ShopContextHandler implements IShopContextHandler {
   constructor(
     private contextAccessor: IContextSnapshotAccessor,

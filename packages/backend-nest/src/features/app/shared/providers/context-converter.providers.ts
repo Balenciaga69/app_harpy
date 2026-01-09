@@ -5,7 +5,6 @@ import {
   ItemEntityService,
   CharacterAggregateService,
 } from 'src/from-game-core'
-
 export const contextConverterProviders = [
   {
     provide: ContextToDomainConverter,

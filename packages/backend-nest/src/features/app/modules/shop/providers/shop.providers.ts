@@ -7,7 +7,6 @@ import {
   ShopContextHandler,
   ShopService,
 } from 'src/from-game-core'
-
 export const shopFeatureProviders = [
   {
     provide: ShopContextHandler,

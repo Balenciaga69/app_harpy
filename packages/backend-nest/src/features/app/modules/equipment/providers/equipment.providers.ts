@@ -6,7 +6,6 @@ import {
   ContextUnitOfWork,
   IContextSnapshotAccessor,
 } from 'src/from-game-core'
-
 export const equipmentFeatureProviders = [
   {
     provide: EquipmentContextHandler,

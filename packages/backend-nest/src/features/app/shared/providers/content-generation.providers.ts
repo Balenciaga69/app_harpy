@@ -8,7 +8,6 @@ import {
   IContextSnapshotAccessor,
   IConfigStoreAccessor,
 } from 'src/from-game-core'
-
 export const contentGenerationProviders = [
   {
     provide: AffixEntityService,
