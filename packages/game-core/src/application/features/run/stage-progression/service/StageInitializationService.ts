@@ -96,13 +96,7 @@ export class StageInitializationService implements IStageInitializationService {
    * 注意：目前返回成功，待事件服務完成後補充實作
    */
   private initializeEventStage(_stageNumber: number): Result<void, string> {
-    // TODO: 實作事件初始化邏輯
-    // 當前為佔位實作，待 EventProcessor 服務完成後補充
-    // 流程：
-    // 1. 調用事件處理服務選擇與觸發事件
-    // 2. 根據事件結果更新角色、倉庫或 Run Context
-    // 3. 將事件結果存入 temporaryContext.event
-    // 4. 提交變更
+    TODO: 實作事件初始化邏輯
     return Result.success(undefined)
   }
 }

@@ -79,7 +79,7 @@ export class RewardFactory implements IRewardFactory {
    * 無盡獎勵策略（待實作）
    */
   private createEndlessRewards(): Result<CombatReward[]> {
-    // TODO: 實作無盡模式獎勵邏輯
+    TODO: 實作無盡模式獎勵邏輯
     return Result.success([])
   }
   /**
