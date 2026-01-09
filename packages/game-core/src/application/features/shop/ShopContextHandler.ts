@@ -15,7 +15,6 @@ export class ShopContextHandler implements IShopContextHandler {
   public getDifficulty(): number {
     return this.contextAccessor.getCurrentAtCreatedInfo().difficulty
   }
-  /** 載入 Domain Models By Context */
   public loadShopDomainContexts() {
     return {
       shop: this.contextToDomainConverter.convertShopContextToDomain(),
@@ -23,12 +22,10 @@ export class ShopContextHandler implements IShopContextHandler {
       stash: this.contextToDomainConverter.convertStashContextToDomain(),
     }
   }
-  /** 驗證當前 Run 狀態是否為 IDLE */
   public validateRunStatus() {
     const status = this.contextAccessor.getRunStatus()
     return RunStatusGuard.requireStatus(status, 'IDLE')
   }
-  /** 提交 購買物品 交易事務 */
   public commitBuyTransaction(updates: { characterRecord?: CharacterRecord; shop?: Shop; stash?: Stash }) {
     if (updates.characterRecord) {
       this.unitOfWork.patchCharacterContext({
@@ -48,7 +45,6 @@ export class ShopContextHandler implements IShopContextHandler {
     this.unitOfWork.commit()
     return Result.success(undefined)
   }
-  /** 提交 出售物品 交易事務 */
   public commitSellTransaction(updates: { characterRecord?: CharacterRecord; stash?: Stash }) {
     if (updates.characterRecord) {
       this.unitOfWork.patchCharacterContext({
@@ -63,7 +59,6 @@ export class ShopContextHandler implements IShopContextHandler {
     this.unitOfWork.commit()
     return Result.success(undefined)
   }
-  /** 提交 生成商店物品 交易事務 */
   public commitGenerateShopItemsTransaction(updates: { shop: Shop }) {
     this.unitOfWork.patchShopContext({
       items: updates.shop.items.map((shopAgg) => shopAgg.record),
@@ -72,9 +67,6 @@ export class ShopContextHandler implements IShopContextHandler {
     return Result.success(undefined)
   }
 }
-/**
- * 商店上下文助手介面
- */
 export interface IShopContextHandler {
   loadShopDomainContexts(): {
     shop: Shop

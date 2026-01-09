@@ -4,10 +4,9 @@ import { StageType } from '../../../../domain/stage/StageType'
 import { WithRunIdAndVersion } from './WithRunIdAndVersion'
 export interface IRunContext extends WithRunIdAndVersion, IRunFields {
   readonly temporaryContext: {
-    // 臨時非全程存在的上下文資料
-    postCombat?: PostCombatContext // 戰鬥後事務
+    postCombat?: PostCombatContext
   }
 }
 export interface ChapterInfo {
-  readonly stageNodes: Record<number, StageType> // 關卡節點資訊
+  readonly stageNodes: Record<number, StageType>
 }

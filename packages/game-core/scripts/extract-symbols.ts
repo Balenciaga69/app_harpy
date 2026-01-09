@@ -3,7 +3,6 @@ import * as ts from 'typescript'
 import { writeFileSync } from 'fs'
 import { relative } from 'path'
 // npx ts-node scripts/extract-symbols.ts [outputFilePath]
-// 符號資訊介面
 interface SymbolInfo {
   name: string
   kind: string

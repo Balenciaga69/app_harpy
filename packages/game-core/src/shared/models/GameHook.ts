@@ -1,4 +1,3 @@
-/** 遊戲事件掛勾類型，定義各種遊戲內觸發的事件 */
 export type GameHook =
   | 'ON_BEFORE_DAMAGE'
   | 'ON_COMBAT_START'

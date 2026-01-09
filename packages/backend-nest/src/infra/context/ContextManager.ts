@@ -1,10 +1,21 @@
-import { Injectable } from '@nestjs/common'
+﻿import { Injectable } from '@nestjs/common'
 import { AsyncLocalStorage } from 'async_hooks'
 import { IAppContext } from '../../from-game-core'
+type IConfigStore = IAppContext['configStore']
+interface IRunExecutionContext {
+  readonly runContext: IAppContext['contexts']['runContext']
+  readonly characterContext: IAppContext['contexts']['characterContext']
+  readonly stashContext: IAppContext['contexts']['stashContext']
+  readonly shopContext: IAppContext['contexts']['shopContext']
+}
 @Injectable()
 export class ContextManager {
   private static readonly store = new AsyncLocalStorage<IAppContext>()
-  private persistentStore = new Map<string, IAppContext>()
+  private globalConfigStore: IConfigStore
+  private runContexts = new Map<string, IRunExecutionContext>()
+  constructor(configStore: IConfigStore) {
+    this.globalConfigStore = configStore
+  }
   setContext(appContext: IAppContext): void {
     if (ContextManager.store.getStore()) {
       throw new Error('Context already set for this async scope — use runWithContext to create an isolated scope')
@@ -30,22 +41,45 @@ export class ContextManager {
     if (!runId) {
       throw new Error('AppContext must have a valid runId')
     }
-    this.persistentStore.set(runId, this.deepCopy(appContext))
+    const contexts = appContext.contexts
+    this.runContexts.set(runId, {
+      runContext: this.shallowCopy(contexts.runContext),
+      characterContext: this.shallowCopy(contexts.characterContext),
+      stashContext: this.shallowCopy(contexts.stashContext),
+      shopContext: this.shallowCopy(contexts.shopContext),
+    })
   }
   getContextByRunId(runId: string): IAppContext | null {
     if (!runId) {
       return null
     }
-    const ctx = this.persistentStore.get(runId)
-    return ctx ? this.deepCopy(ctx) : null
+    const runContext = this.runContexts.get(runId)
+    if (!runContext) {
+      return null
+    }
+    return {
+      configStore: this.globalConfigStore,
+      contexts: {
+        runContext: this.shallowCopy(runContext.runContext),
+        characterContext: this.shallowCopy(runContext.characterContext),
+        stashContext: this.shallowCopy(runContext.stashContext),
+        shopContext: this.shallowCopy(runContext.shopContext),
+      },
+    }
   }
   contextExists(runId: string): boolean {
-    return this.persistentStore.has(runId)
+    return this.runContexts.has(runId)
   }
   deleteContext(runId: string): void {
-    this.persistentStore.delete(runId)
+    this.runContexts.delete(runId)
   }
-  private deepCopy(obj: any): any {
-    return JSON.parse(JSON.stringify(obj))
+  getConfigStore(): IConfigStore {
+    return this.globalConfigStore
+  }
+  private shallowCopy(obj: any): any {
+    if (obj === null || typeof obj !== 'object') {
+      return obj
+    }
+    return { ...obj }
   }
 }

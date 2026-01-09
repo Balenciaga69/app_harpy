@@ -4,10 +4,6 @@ import {
   IContextSnapshotAccessor,
 } from '../../../../../core-infrastructure/context/service/AppContextService'
 import { IItemRollModifierStrategy } from './IItemRollModifierStrategy'
-/**
- * 商店修飾符策略：高堆疊聖物策略
- * 業務規則：指定聖物樣板若堆疊數超過閾值，增加其再獲得的權重
- */
 export class HighStackRelicModifierStrategy implements IItemRollModifierStrategy {
   private readonly templateId: string
   private readonly stackThreshold: number
@@ -28,7 +24,6 @@ export class HighStackRelicModifierStrategy implements IItemRollModifierStrategy
     const { itemStore } = this.configStoreAccessor.getConfigStore()
     const relicTemplate = itemStore.getRelic(this.templateId)
     if (!relicTemplate) return []
-    // 計算該聖物的堆疊數
     const stackCount = characterContext.relics
       .filter(Boolean)
       .filter((relic) => relic.templateId === this.templateId).length

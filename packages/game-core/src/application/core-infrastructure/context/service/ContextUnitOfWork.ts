@@ -4,17 +4,14 @@ import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
 import { IContextMutator, IContextSnapshotAccessor } from './AppContextService'
 export interface IContextUnitOfWork {
-  // === Update ===
   updateCharacterContext(ctx: ICharacterContext): IContextUnitOfWork
   updateStashContext(ctx: IStashContext): IContextUnitOfWork
   updateRunContext(ctx: IRunContext): IContextUnitOfWork
   updateShopContext(ctx: IShopContext): IContextUnitOfWork
-  // === Patch ===
   patchCharacterContext(patch: Partial<ICharacterContext>): IContextUnitOfWork
   patchStashContext(patch: Partial<IStashContext>): IContextUnitOfWork
   patchRunContext(patch: Partial<IRunContext>): IContextUnitOfWork
   patchShopContext(patch: Partial<IShopContext>): IContextUnitOfWork
-  // === Other operations ===
   commit(): void
   rollback(): void
 }
@@ -31,28 +28,27 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
   updateCharacterContext(ctx: ICharacterContext): this {
     this.characterContextUpdate = ctx
     this.hasChanges = true
-    return this // 支援鏈式調用
+    return this
   }
   updateStashContext(ctx: IStashContext): this {
     this.stashContextUpdate = ctx
     this.hasChanges = true
-    return this // 支援鏈式調用
+    return this
   }
   updateRunContext(ctx: IRunContext): this {
     this.runContextUpdate = ctx
     this.hasChanges = true
-    return this // 支援鏈式調用
+    return this
   }
   updateShopContext(ctx: IShopContext): this {
     this.shopContextUpdate = ctx
     this.hasChanges = true
-    return this // 支援鏈式調用
+    return this
   }
   commit(): void {
     if (!this.hasChanges) {
-      return // 沒有變更，無需操作
+      return
     }
-    // 按固定順序提交（確保一致性）
     if (this.runContextUpdate !== null) {
       this.contextMutator.setRunContext(this.runContextUpdate)
     }

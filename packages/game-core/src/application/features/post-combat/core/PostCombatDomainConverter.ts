@@ -3,10 +3,6 @@ import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
 import { ItemEntityService } from '../../../content-generation/service/item/ItemEntityService'
 import { IContextSnapshotAccessor } from '../../../core-infrastructure/context/service/AppContextService'
-/**
- * 戰鬥後上下文轉換為領域模型
- * 職責：純粹的轉換邏輯，將上下文轉換為領域實體
- */
 export interface IPostCombatDomainConverter {
   convertCharacterContextToDomain(): Character
   convertStashContextToDomain(): Stash

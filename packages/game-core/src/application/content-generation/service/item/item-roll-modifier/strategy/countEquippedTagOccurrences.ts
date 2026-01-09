@@ -3,10 +3,6 @@ import {
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
 } from '../../../../../core-infrastructure/context/service/AppContextService'
-/**
- * 統計已裝備聖物的TAG出現次數
- * 純函數，無副作用
- */
 export function countEquippedTagOccurrences(
   configStoreAccessor: IConfigStoreAccessor,
   contextSnapshot: IContextSnapshotAccessor

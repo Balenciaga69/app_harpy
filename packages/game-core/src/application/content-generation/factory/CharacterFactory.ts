@@ -3,7 +3,6 @@ import { RelicRecord } from '../../../domain/item/Item'
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
-/** CharacterRecord 創建參數 */
 export interface CharacterRecordCreateParams {
   difficulty: number
   sourceUnitId: string
@@ -16,11 +15,6 @@ export interface CharacterRecordCreateParams {
   currentLoad: number
   gold: number
 }
-/**
- * CharacterRecordFactory：負責 CharacterRecord 的創建
- * - 單一職責：生成帶有唯一 ID 與創建背景的 CharacterRecord
- * - 無副作用：純粹的資料構建，便於單元測試與 mock
- */
 function createCharacterRecord(professionId: string, params: CharacterRecordCreateParams): CharacterRecord {
   const record: CharacterRecord = {
     id: IdGeneratorHelper.generateCharacterId(),

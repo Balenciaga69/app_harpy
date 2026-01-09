@@ -5,11 +5,6 @@ import {
 } from '../../../../../core-infrastructure/context/service/AppContextService'
 import { countEquippedTagOccurrences } from './countEquippedTagOccurrences'
 import { IItemRollModifierStrategy } from './IItemRollModifierStrategy'
-/**
- * 獎勵修飾符策略：反向高頻TAG策略
- * 業務規則：找出最常出現的TAG前三名，將其權重設為0（不生成）
- * 適用獎勵類型：LOW_AFFINITY
- */
 export class ReverseFrequentTagRewardModifierStrategy implements IItemRollModifierStrategy {
   private readonly topN: number = 3
   constructor(
@@ -19,7 +14,6 @@ export class ReverseFrequentTagRewardModifierStrategy implements IItemRollModifi
   aggregateModifiers(): ItemRollModifier[] {
     const tagFrequency = countEquippedTagOccurrences(this.configStoreAccessor, this.contextSnapshot)
     if (tagFrequency.size === 0) return []
-    // 取出現最頻繁的前N個TAG
     const sortedTags = Array.from(tagFrequency.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, this.topN)

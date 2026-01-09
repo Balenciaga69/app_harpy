@@ -1,4 +1,4 @@
-export * from '@app-harpy/game-core/dist/application/content-generation/service/affix/AffixEntityService'
+﻿export * from '@app-harpy/game-core/dist/application/content-generation/service/affix/AffixEntityService'
 export * from '@app-harpy/game-core/dist/application/content-generation/service/character/CharacterAggregateService'
 export * from '@app-harpy/game-core/dist/application/content-generation/service/item/item-roll-modifier/ItemModifierAggregationService'
 export * from '@app-harpy/game-core/dist/application/content-generation/service/item/ItemEntityService'

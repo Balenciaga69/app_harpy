@@ -1,8 +1,3 @@
-/**
- * 遊戲通用錯誤類別
- * 集中管理所有自定義錯誤，便於錯誤處理與分類
- */
-/** 基礎遊戲錯誤類別 */
 export abstract class GameError extends Error {
   constructor(
     message: string,
@@ -12,7 +7,6 @@ export abstract class GameError extends Error {
     this.name = this.constructor.name
   }
 }
-/** 配置未找到錯誤：當靜態配置資源不存在時拋出 */
 export class ConfigNotFoundError extends GameError {
   constructor(resourceType: string, resourceId: string) {
     super(`${resourceType} 配置不存在: ${resourceId}`, 'CONFIG_NOT_FOUND')

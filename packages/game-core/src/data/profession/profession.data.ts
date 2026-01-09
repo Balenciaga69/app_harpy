@@ -1,5 +1,4 @@
 ﻿import { ProfessionTemplate } from '../../domain/profession/Profession'
-// ZH_TW: 戰士職業 - 主要使用強大一擊技能，配備堅毅之心遺物
 const profession_warrior: ProfessionTemplate = {
   id: 'WARRIOR',
   name: { tw: '戰士', en: 'Warrior' },
@@ -10,7 +9,6 @@ const profession_warrior: ProfessionTemplate = {
   startUltimateIds: ['ult_warrior_mighty_blow'],
   startRelicIds: ['relic_warrior_resolute_heart'],
 }
-// ZH_TW: 遊俠職業 - 主要使用強大一擊技能，配備遊俠之心遺物
 const profession_ranger: ProfessionTemplate = {
   id: 'RANGER',
   name: { tw: '遊俠', en: 'Ranger' },
@@ -21,7 +19,6 @@ const profession_ranger: ProfessionTemplate = {
   startUltimateIds: ['ult_warrior_mighty_blow'],
   startRelicIds: ['relic_ranger_heart'],
 }
-// ZH_TW: 法師職業 - 主要使用強大一擊技能，配備法師之心遺物
 const profession_mage: ProfessionTemplate = {
   id: 'MAGE',
   name: { tw: '法師', en: 'Mage' },

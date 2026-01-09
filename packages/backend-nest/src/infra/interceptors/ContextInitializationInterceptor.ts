@@ -1,10 +1,9 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common'
+﻿import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Request } from 'express'
 import { ContextManager } from '../context/ContextManager'
 @Injectable()
 export class ContextInitializationInterceptor implements NestInterceptor {
-  // 可允許不帶 runId 的端點群
   private readonly ignoredEndpoints = new Set(['/api/run/init'])
   constructor(private contextManager: ContextManager) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

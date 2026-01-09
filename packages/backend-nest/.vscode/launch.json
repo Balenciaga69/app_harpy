@@ -8,7 +8,9 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/main.ts",
       "preLaunchTask": "npm: build",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      // "stopOnEntry": true,
+      "console": "integratedTerminal"
     }
   ]
 }

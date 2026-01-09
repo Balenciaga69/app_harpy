@@ -9,7 +9,6 @@ import { ProfessionTemplate } from '../../../domain/profession/Profession'
 import { ShopConfig } from '../../../domain/shop/ShopConfig'
 import { UltimateTemplate } from '../../../domain/ultimate/Ultimate'
 import { ChapterLevel } from '../../../shared/models/TemplateWeightInfo'
-/** 敵人配置存儲介面：支援敵人樣板與生成資訊的查詢 */
 export interface IEnemyStore {
   getEnemy(id: string): EnemyTemplate
   hasEnemy(id: string): boolean
@@ -20,7 +19,6 @@ export interface IEnemyStore {
   setMany(enemies: EnemyTemplate[]): void
   setEnemySpawnInfos(infos: EnemySpawnInfo[]): void
 }
-/** 物品配置存儲介面：支援聖物樣板、骰選配置與約束條件的查詢 */
 export type ItemRollConfigId = 'SHOP_REFRESH' | 'POST_COMBAT_REWARD'
 export interface IItemStore {
   getAllItemRollConstraints(): ItemRollConstraint[]
@@ -28,7 +26,6 @@ export interface IItemStore {
   hasItemRollConstraint(id: string): boolean
   getItemRollConfig(id: ItemRollConfigId): ItemRollConfig
   hasItemRollConfig(id: ItemRollConfigId): boolean
-  /** 根據獎勵類型取得獎勵骰選配置 */
   getRewardRollConfig(rewardType: CombatRewardType): RewardRollConfig | undefined
   getRelic(id: string): RelicTemplate
   hasRelic(id: string): boolean
@@ -38,10 +35,8 @@ export interface IItemStore {
   getAllRelics(): RelicTemplate[]
   setMany(relics: RelicTemplate[]): void
   setItemRollConfigs(configs: ItemRollConfig[]): void
-  /** 設置獎勵骰選配置 */
   setRewardRollConfigs(configs: RewardRollConfig[]): void
 }
-/** Affix配置存儲介面：支援Affix樣板與效果樣板的查詢 */
 export interface IAffixStore {
   getAffix(id: string): AffixTemplate
   getAffixes(ids: string[]): AffixTemplate[]
@@ -52,21 +47,18 @@ export interface IAffixStore {
   setMany(affixes: AffixTemplate[]): void
   setAffixEffects(effects: AffixEffect[]): void
 }
-/** 大絕招配置存儲介面：支援大絕招樣板的查詢 */
 export interface IUltimateStore {
   getUltimate(id: string): UltimateTemplate
   getUltimates(ids: string[]): UltimateTemplate[]
   hasUltimate(id: string): boolean
   setMany(ultimates: UltimateTemplate[]): void
 }
-/** 職業配置存儲介面：支援職業樣板的查詢 */
 export interface IProfessionStore {
   getProfession(id: string): ProfessionTemplate
   hasProfession(id: string): boolean
   getAllProfessions(): ProfessionTemplate[]
   setMany(professions: ProfessionTemplate[]): void
 }
-/** 商店配置存儲介面：支援商店配置的查詢 */
 export type ShopConfigId = 'DEFAULT' | 'PREMIUM'
 export interface IShopStore {
   getShopConfig(id: ShopConfigId): ShopConfig

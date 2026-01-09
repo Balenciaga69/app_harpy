@@ -6,18 +6,12 @@ import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
 import { ItemEntityService } from '../../../content-generation/service/item/ItemEntityService'
 import { IConfigStoreAccessor, IContextSnapshotAccessor } from '../service/AppContextService'
-/**
- * 上下文轉換為領域模型的幫助器介面
- */
 export interface IContextToDomainConverter {
   convertRunContextToDomain(): Run
   convertStashContextToDomain(): Stash
   convertCharacterContextToDomain(): Character
   convertShopContextToDomain(): Shop
 }
-/**
- * 上下文轉換為領域模型的幫助器
- */
 export class ContextToDomainConverter implements IContextToDomainConverter {
   constructor(
     private itemEntityService: ItemEntityService,
@@ -42,12 +36,9 @@ export class ContextToDomainConverter implements IContextToDomainConverter {
   }
   convertShopContextToDomain(): Shop {
     const shopContext = this.contextAccessor.getShopContext()
-    // 取得商店配置
     const shopConfig = this.configStoreAccessor.getConfigStore().shopStore.getShopConfig(shopContext.shopConfigId)
-    // 透過物品記錄建立物品聚合
     const shopItemRecords = shopContext.items.filter((record) => record.itemType === 'RELIC')
     const itemEntities = this.itemEntityService.createRelicsByRecords(shopItemRecords)
-    // 組合成商店物品實體
     const shopItemEntities: ShopItemEntity[] = itemEntities.map((entity) => {
       const record = shopItemRecords.find((r) => r.id === entity.record.id)!
       return {

@@ -3,22 +3,17 @@ import { Result } from '../../shared/result/Result'
 import { ItemEntity, ItemRecord } from '../item/Item'
 import { PriceHelper } from './PriceHelper'
 import { ShopConfig } from './ShopConfig'
-// === Record ===
 export interface ShopItemRecord extends ItemRecord {
   readonly price: number
   readonly isDiscounted: boolean
 }
-/** 商店 Record 介面 */
 export interface ShopRecord {
   readonly items: ReadonlyArray<ShopItemRecord>
 }
-// === Domain ===
-/** 商店物品實體，包含物品聚合與價格資訊 */
 export interface ShopItemEntity {
-  readonly itemEntity: ItemEntity // 物品聚合
+  readonly itemEntity: ItemEntity
   readonly record: ShopItemRecord
 }
-/**  Shop Class 管理商店物品與操作 */
 export class Shop {
   private readonly _items: ReadonlyArray<ShopItemEntity>
   private readonly _config: ShopConfig
@@ -26,20 +21,17 @@ export class Shop {
     this._items = items
     this._config = config
   }
-  // ====== public getters ======
   public get items(): ReadonlyArray<ShopItemEntity> {
     return this._items
   }
   public get config(): ShopConfig {
     return this._config
   }
-  /** 尋找並返回指定ID的物品 */
   public getItem(itemId: string): Result<ShopItemEntity> {
     const foundItem = this._items.find((i) => i.itemEntity.record.id === itemId)
     if (!foundItem) return Result.fail(DomainErrorCode.商店_商店物品不存在)
     return Result.success(foundItem)
   }
-  /** 添加物品 */
   addItem(item: ItemEntity): Result<Shop> {
     const { shopSlotCount } = this._config
     if (this._items.length >= shopSlotCount) {
@@ -48,7 +40,6 @@ export class Shop {
     const shopItem = this.convertToShopItemEntity(item)
     return Result.success(new Shop([...this._items, shopItem], this._config))
   }
-  /** 批量添加物品 */
   addManyItems(items: ReadonlyArray<ItemEntity>): Result<Shop> {
     const { shopSlotCount } = this._config
     if (this._items.length + items.length > shopSlotCount) {
@@ -57,7 +48,6 @@ export class Shop {
     const shopItems = items.map((item) => this.convertToShopItemEntity(item))
     return Result.success(new Shop([...this._items, ...shopItems], this._config))
   }
-  /** 移除物品 */
   removeItem(itemId: string): Result<Shop> {
     const newItems = this._items.filter((i) => i.itemEntity.record.id !== itemId)
     if (newItems.length === this._items.length) {
@@ -65,23 +55,18 @@ export class Shop {
     }
     return Result.success(new Shop(newItems, this._config))
   }
-  /** 清空 */
   clearItems(): Shop {
     return new Shop([], this._config)
   }
-  /** 將店內最稀有的物品設為折扣 */
   setRarestItemAsDiscount(): Result<Shop> {
     if (this._items.length === 0) {
       return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }
-    // 找出最稀有的物品
     const rarestItem = this._items.reduce((prev, current) => {
       return current.itemEntity.template.rarity > prev.itemEntity.template.rarity ? current : prev
     })
-    // 折扣該物品
     return this.discountItem(rarestItem.itemEntity.record.id)
   }
-  /** 折扣某一件物品 */
   discountItem(itemId: string): Result<Shop, DomainErrorCode.商店_商店物品不存在> {
     const itemIndex = this._items.findIndex((i) => i.itemEntity.record.id === itemId)
     if (itemIndex === -1) {
@@ -109,7 +94,6 @@ export class Shop {
     newItems[itemIndex] = newShopItem
     return Result.success(new Shop(newItems, this._config))
   }
-  /** 取得出售報價 */
   public getSellPrice(item: ItemEntity): number {
     return PriceHelper.calculateItemPrice({
       config: this._config,
@@ -119,7 +103,6 @@ export class Shop {
       isDiscounted: false,
     })
   }
-  /** 將"物品"轉換為"商店物品"，包含價格計算 */
   private convertToShopItemEntity(itemEntity: ItemEntity): ShopItemEntity {
     const price = PriceHelper.calculateItemPrice({
       config: this._config,
