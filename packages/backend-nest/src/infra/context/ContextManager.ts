@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@nestjs/common'
 import { AsyncLocalStorage } from 'async_hooks'
-import { IAppContext } from '../../from-game-core'
+import { IAppContext, IContextPersistence } from '../../from-game-core'
 type IConfigStore = IAppContext['configStore']
 interface IRunExecutionContext {
   readonly runContext: IAppContext['contexts']['runContext']
@@ -9,12 +9,15 @@ interface IRunExecutionContext {
   readonly shopContext: IAppContext['contexts']['shopContext']
 }
 @Injectable()
-export class ContextManager {
+export class ContextManager implements IContextPersistence {
   private static readonly store = new AsyncLocalStorage<IAppContext>()
   private globalConfigStore: IConfigStore
   private runContexts = new Map<string, IRunExecutionContext>()
-  constructor(configStore: IConfigStore) {
+  // Future: private repository for DB persistence
+  
+  constructor(configStore: IConfigStore, _repository?: any) {
     this.globalConfigStore = configStore
+    // Future: this.repository = repository
   }
   setContext(appContext: IAppContext): void {
     if (ContextManager.store.getStore()) {
@@ -41,6 +44,21 @@ export class ContextManager {
       shopContext: this.shallowCopy(contexts.shopContext),
     })
   }
+  
+  async saveContextAsync(appContext: IAppContext): Promise<void> {
+    const runId = appContext.contexts.runContext.runId
+    if (!runId) {
+      throw new Error('AppContext must have a valid runId')
+    }
+    const contexts = appContext.contexts
+    this.runContexts.set(runId, {
+      runContext: this.shallowCopy(contexts.runContext),
+      characterContext: this.shallowCopy(contexts.characterContext),
+      stashContext: this.shallowCopy(contexts.stashContext),
+      shopContext: this.shallowCopy(contexts.shopContext),
+    })
+    // Future: Add DB persistence via repository
+  }
   getContextByRunId(runId: string): IAppContext | null {
     if (!runId) {
       return null
@@ -58,6 +76,27 @@ export class ContextManager {
         shopContext: this.shallowCopy(runContext.shopContext),
       },
     }
+  }
+  
+  async getContextByRunIdAsync(runId: string): Promise<IAppContext | null> {
+    if (!runId) {
+      return null
+    }
+    // Try in-memory first
+    const runContext = this.runContexts.get(runId)
+    if (runContext) {
+      return {
+        configStore: this.globalConfigStore,
+        contexts: {
+          runContext: this.shallowCopy(runContext.runContext),
+          characterContext: this.shallowCopy(runContext.characterContext),
+          stashContext: this.shallowCopy(runContext.stashContext),
+          shopContext: this.shallowCopy(runContext.shopContext),
+        },
+      }
+    }
+    // Future: Try DB via repository
+    return null
   }
   contextExists(runId: string): boolean {
     return this.runContexts.has(runId)

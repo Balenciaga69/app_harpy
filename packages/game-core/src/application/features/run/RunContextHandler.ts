@@ -2,8 +2,9 @@ import { Run } from '../../../domain/run/Run'
 import { RunStatus } from '../../../domain/run/RunTypes'
 import { Result } from '../../../shared/result/Result'
 import { IContextToDomainConverter } from '../../core-infrastructure/context/helper/ContextToDomainConverter'
-import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
+import { AppContextHolder, IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
+import { IContextPersistence } from '../../core-infrastructure/context/service/IContextPersistence'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
 export interface IRunContextHandler {
   loadRunDomain(): Run
@@ -14,7 +15,9 @@ export class RunContextHandler implements IRunContextHandler {
   constructor(
     private contextAccessor: IContextSnapshotAccessor,
     private contextToDomainConverter: IContextToDomainConverter,
-    private unitOfWork: IContextUnitOfWork
+    private unitOfWork: IContextUnitOfWork,
+    private contextHolder?: AppContextHolder,
+    private contextPersistence?: IContextPersistence
   ) {}
   loadRunDomain(): Run {
     return this.contextToDomainConverter.convertRunContextToDomain()
@@ -35,5 +38,10 @@ export class RunContextHandler implements IRunContextHandler {
       status: run.status,
     })
     this.unitOfWork.commit()
+    
+    // Sync cache + DB after commit
+    if (this.contextHolder && this.contextPersistence) {
+      this.contextPersistence.saveContext(this.contextHolder.get())
+    }
   }
 }

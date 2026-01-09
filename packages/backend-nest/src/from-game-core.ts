@@ -16,6 +16,7 @@ export * from '@game-core-layer/application/core-infrastructure/context/interfac
 export * from '@game-core-layer/application/core-infrastructure/context/interface/WithRunIdAndVersion'
 export * from '@game-core-layer/application/core-infrastructure/context/service/AppContextService'
 export * from '@game-core-layer/application/core-infrastructure/context/service/ContextUnitOfWork'
+export * from '@game-core-layer/application/core-infrastructure/context/service/IContextPersistence'
 export * from '@game-core-layer/application/core-infrastructure/id/idGeneratorHelpers'
 export * from '@game-core-layer/application/core-infrastructure/repository/IRepositories'
 export * from '@game-core-layer/application/core-infrastructure/run-status/RunStatusGuard'

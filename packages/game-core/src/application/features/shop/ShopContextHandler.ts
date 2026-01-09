@@ -3,14 +3,17 @@ import { Shop } from '../../../domain/shop/Shop'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
 import { IContextToDomainConverter } from '../../core-infrastructure/context/helper/ContextToDomainConverter'
-import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
+import { AppContextHolder, IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
+import { IContextPersistence } from '../../core-infrastructure/context/service/IContextPersistence'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
 export class ShopContextHandler implements IShopContextHandler {
   constructor(
     private contextAccessor: IContextSnapshotAccessor,
     private contextToDomainConverter: IContextToDomainConverter,
-    private unitOfWork: IContextUnitOfWork
+    private unitOfWork: IContextUnitOfWork,
+    private contextHolder?: AppContextHolder,
+    private contextPersistence?: IContextPersistence
   ) {}
   public getDifficulty(): number {
     return this.contextAccessor.getCurrentAtCreatedInfo().difficulty
@@ -43,6 +46,12 @@ export class ShopContextHandler implements IShopContextHandler {
       })
     }
     this.unitOfWork.commit()
+    
+    // Sync cache + DB after commit
+    if (this.contextHolder && this.contextPersistence) {
+      this.contextPersistence.saveContext(this.contextHolder.get())
+    }
+    
     return Result.success(undefined)
   }
   public commitSellTransaction(updates: { characterRecord?: CharacterRecord; stash?: Stash }) {
@@ -57,6 +66,12 @@ export class ShopContextHandler implements IShopContextHandler {
       })
     }
     this.unitOfWork.commit()
+    
+    // Sync cache + DB after commit
+    if (this.contextHolder && this.contextPersistence) {
+      this.contextPersistence.saveContext(this.contextHolder.get())
+    }
+    
     return Result.success(undefined)
   }
   public commitGenerateShopItemsTransaction(updates: { shop: Shop }) {
@@ -64,6 +79,12 @@ export class ShopContextHandler implements IShopContextHandler {
       items: updates.shop.items.map((shopAgg) => shopAgg.record),
     })
     this.unitOfWork.commit()
+    
+    // Sync cache + DB after commit
+    if (this.contextHolder && this.contextPersistence) {
+      this.contextPersistence.saveContext(this.contextHolder.get())
+    }
+    
     return Result.success(undefined)
   }
 }

@@ -1,6 +1,7 @@
 ﻿import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
+  AppContextHolder,
   AppContextRunAdapter,
   ContextToDomainConverter,
   ContextUnitOfWork,
@@ -18,14 +19,21 @@ import {
   StageNodeGenerationService,
   UltimateEntityService,
 } from 'src/from-game-core'
+import { ContextManager } from 'src/infra/context/ContextManager'
 
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,
-    useFactory: (snapshot, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
-      return new RunContextHandler(snapshot, converter, uow)
+    useFactory: (
+      snapshot: IContextSnapshotAccessor,
+      converter: ContextToDomainConverter,
+      uow: ContextUnitOfWork,
+      holder: AppContextHolder,
+      ctxManager: ContextManager
+    ) => {
+      return new RunContextHandler(snapshot, converter, uow, holder, ctxManager)
     },
-    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork, AppContextHolder, ContextManager],
     scope: Scope.REQUEST,
   },
   {
