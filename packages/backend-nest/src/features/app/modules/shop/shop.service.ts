@@ -50,7 +50,7 @@ export class ShopNestService {
     }
   }
 
-  async refreshShop(dto: RefreshShopDto) {
+  refreshShop(dto: RefreshShopDto) {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }

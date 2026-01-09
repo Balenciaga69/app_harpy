@@ -14,10 +14,10 @@ export class ContextManager implements IContextPersistence {
   private globalConfigStore: IConfigStore
   private runContexts = new Map<string, IRunExecutionContext>()
   // Future: private repository for DB persistence
-  
-  constructor(configStore: IConfigStore, _repository?: any) {
+
+  constructor(configStore: IConfigStore) {
     this.globalConfigStore = configStore
-    // Future: this.repository = repository
+    // Future: Support repository injection for DB persistence
   }
   setContext(appContext: IAppContext): void {
     if (ContextManager.store.getStore()) {
@@ -44,8 +44,8 @@ export class ContextManager implements IContextPersistence {
       shopContext: this.shallowCopy(contexts.shopContext),
     })
   }
-  
-  async saveContextAsync(appContext: IAppContext): Promise<void> {
+
+  saveContextAsync(appContext: IAppContext): Promise<void> {
     const runId = appContext.contexts.runContext.runId
     if (!runId) {
       throw new Error('AppContext must have a valid runId')
@@ -58,7 +58,9 @@ export class ContextManager implements IContextPersistence {
       shopContext: this.shallowCopy(contexts.shopContext),
     })
     // Future: Add DB persistence via repository
+    return Promise.resolve()
   }
+
   getContextByRunId(runId: string): IAppContext | null {
     if (!runId) {
       return null
@@ -77,15 +79,15 @@ export class ContextManager implements IContextPersistence {
       },
     }
   }
-  
-  async getContextByRunIdAsync(runId: string): Promise<IAppContext | null> {
+
+  getContextByRunIdAsync(runId: string): Promise<IAppContext | null> {
     if (!runId) {
-      return null
+      return Promise.resolve(null)
     }
     // Try in-memory first
     const runContext = this.runContexts.get(runId)
     if (runContext) {
-      return {
+      return Promise.resolve({
         configStore: this.globalConfigStore,
         contexts: {
           runContext: this.shallowCopy(runContext.runContext),
@@ -93,11 +95,12 @@ export class ContextManager implements IContextPersistence {
           stashContext: this.shallowCopy(runContext.stashContext),
           shopContext: this.shallowCopy(runContext.shopContext),
         },
-      }
+      })
     }
     // Future: Try DB via repository
-    return null
+    return Promise.resolve(null)
   }
+
   contextExists(runId: string): boolean {
     return this.runContexts.has(runId)
   }
