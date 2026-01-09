@@ -3,10 +3,14 @@ import { ShopService } from 'src/from-game-core'
 import { BuyItemDto } from './dto/BuyItemDto'
 import { SellItemDto } from './dto/SellItemDto'
 import { RefreshShopDto } from './dto/RefreshShopDto'
+import { ContextManager } from 'src/infra/context/ContextManager'
 
 @Injectable()
 export class ShopNestService {
-  constructor(@Optional() private readonly shopService: ShopService) {}
+  constructor(
+    @Optional() private readonly shopService: ShopService,
+    private readonly ctxManager: ContextManager
+  ) {}
 
   buyItem(dto: BuyItemDto) {
     if (!this.shopService) {
@@ -61,6 +65,11 @@ export class ShopNestService {
         message: '刷新商店失敗',
       })
     }
+    const x = this.ctxManager.getContextByRunId(dto.runId)
+    const y = x?.contexts.shopContext
+    const z = x?.contexts.characterContext.gold
+    console.info('xZx z', z)
+    console.info('xZx y', y?.items)
     return {
       success: true,
       message: '刷新成功',

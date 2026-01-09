@@ -30,6 +30,10 @@ export class ItemConstraintService implements IItemConstraintService {
     if (!template) {
       return Result.fail(ApplicationErrorCode.物品_物品模板不存在)
     }
+    const hasConstraint = itemStore.hasItemRollConstraint(templateId)
+    if (!hasConstraint) {
+      return Result.success(undefined)
+    }
     const constraint = itemStore.getItemRollConstraint(templateId)
     if (!constraint) {
       return Result.success(undefined)

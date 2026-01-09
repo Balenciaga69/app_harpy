@@ -90,12 +90,13 @@ export class ShopService implements IShopService {
     // 添加到商店
     const addResult = shop.addManyItems(items)
     if (addResult.isFailure) return Result.fail(addResult.error!)
+    const addedShop = addResult.value!
     // 將最稀有的第一個物品設為折扣
-    const discountResult = shop.setRarestItemAsDiscount()
+    const discountResult = addedShop.setRarestItemAsDiscount()
     if (discountResult.isFailure) return Result.fail(discountResult.error!)
     // 使用 helper 提交交易
     this.ctxHandler.commitGenerateShopItemsTransaction({
-      shop: addResult.value!,
+      shop: addedShop,
     })
     return Result.success(undefined)
   }

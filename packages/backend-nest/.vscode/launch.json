@@ -9,7 +9,7 @@
       "program": "${workspaceFolder}/src/main.ts",
       "preLaunchTask": "npm: build",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "stopOnEntry": true,
+      // "stopOnEntry": true,
       "console": "integratedTerminal"
     }
   ]
