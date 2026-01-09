@@ -22,14 +22,6 @@ export class ContextManager {
     }
     ContextManager.store.enterWith(appContext)
   }
-  getContext(): IAppContext | null {
-    const context = ContextManager.store.getStore()
-    if (!context) {
-      console.warn('No AppContext found in ContextManager')
-      return null
-    }
-    return context
-  }
   hasContext(): boolean {
     return ContextManager.store.getStore() !== undefined
   }

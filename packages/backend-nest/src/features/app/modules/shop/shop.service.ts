@@ -58,6 +58,8 @@ export class ShopNestService {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
+    const xx = this.ctxManager.getContextByRunId(dto.runId)
+    console.info('xZx xx', xx)
     const result = this.shopService.refreshShopItems()
     if (result.isFailure) {
       throw new BadRequestException({

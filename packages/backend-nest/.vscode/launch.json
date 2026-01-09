@@ -17,14 +17,49 @@
 //   ]
 // }
 {
+  // 這是 VS Code 的 launch.json（支援註解，JSONC 格式）
+  // 用途：讓 VS Code 在啟動 Node/ts-node 時，能正確使用 source map，
+  //       以便按 F11 時可以直接跳回 TypeScript (.ts) 原始碼。
   "version": "0.2.0",
   "configurations": [
     {
+      // 這個設定會用 ts-node 直接執行 TypeScript 檔案（不用先 tsc 編譯）
       "type": "node",
       "request": "launch",
       "name": "Debug NestJS (ts-node)",
+
+      // 要執行的程式入口 (請確認此檔存在)
       "program": "${workspaceFolder}/src/main.ts",
-      "runtimeArgs": ["-r", "tsconfig-paths/register", "-r", "ts-node/register"],
+
+      // 啟動 Node 時要加的參數：
+      //  --enable-source-maps  => 允許 Node 使用 source map（讓 .js 對應 .ts）
+      //  -r tsconfig-paths/register => 在啟動時套用 tsconfig 的 path alias（像 @game-core-layer）
+      //  -r ts-node/register => 啟用 ts-node（讓 Node 能直接執行 .ts）
+      "runtimeArgs": ["--enable-source-maps", "-r", "tsconfig-paths/register", "-r", "ts-node/register"],
+
+      // 工作目錄：把它設成 workspace 根，確保相對路徑與 ts-node 對應正確
+      "cwd": "${workspaceFolder}",
+
+      // 環境變數：
+      //  TS_NODE_PROJECT 指定要用哪個 tsconfig（保證 ts-node 與 path alias 行為一致）
+      //  NODE_OPTIONS 再次啟用 source maps（有時候 debug extension 會需要）
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+        "NODE_OPTIONS": "--enable-source-maps"
+      },
+
+      // 告訴 VS Code 要啟用 source map 支援（讓除錯器對應到 .ts）
+      "sourceMaps": true,
+
+      // 在哪裡尋找原始的 .ts 檔案：
+      //  把 workspaceFolder 跟 ../game-core 都加進來，讓跨 package 的原始碼也能被找到
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/../game-core/**",
+        "!**/node_modules/**"
+      ],
+
+      // 使用整合終端機顯示程式輸出（比較直觀），並不要開啟 internal console
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }
