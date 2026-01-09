@@ -19,7 +19,6 @@ import { ItemStore } from '../store/ItemStore'
 import { ProfessionStore } from '../store/ProfessionStore'
 import { ShopStore } from '../store/ShopStore'
 import { UltimateStore } from '../store/UltimateStore'
-
 export class GameConfigAssembler implements IGameConfigAssembler {
   private readonly enemyConfigLoader: IEnemyConfigLoader
   private readonly itemConfigLoader: IItemConfigLoader
@@ -54,7 +53,6 @@ export class GameConfigAssembler implements IGameConfigAssembler {
     this.affixStore = new AffixStore()
     this.shopStore = new ShopStore()
   }
-
   async assembleAllConfigs(): Promise<void> {
     const [enemyConfig, itemConfig, professionConfig, ultimateConfig, affixConfig, shopConfig] = await Promise.all([
       this.enemyConfigLoader.load(),
@@ -71,56 +69,44 @@ export class GameConfigAssembler implements IGameConfigAssembler {
     this.assembleAffixStore(affixConfig)
     this.assembleShopStore(shopConfig)
   }
-
   private assembleEnemyStore(enemyConfig: EnemyConfigDTO): void {
     this.enemyStore.setMany(enemyConfig.enemyTemplates)
     this.enemyStore.setEnemySpawnInfos(enemyConfig.spawnInfos)
   }
-
   private assembleItemStore(itemConfig: ItemConfigDTO): void {
     this.itemStore.setMany(itemConfig.relicTemplate)
     this.itemStore.setItemRollConfigs(itemConfig.itemRollConfigs)
     this.itemStore.setRewardRollConfigs(itemConfig.rewardRollConfigs)
     this.itemStore.setItemRollConstraints(itemConfig.itemRollConstraints)
   }
-
   private assembleProfessionStore(professionConfig: ProfessionConfigDTO): void {
     this.professionStore.setMany(professionConfig.professionTemplates)
   }
-
   private assembleUltimateStore(ultimateConfig: UltimateConfigDTO): void {
     this.ultimateStore.setMany(ultimateConfig.ultimateTemplates)
   }
-
   private assembleAffixStore(affixConfig: AffixConfigDTO): void {
     this.affixStore.setMany(affixConfig.affixTemplates)
     this.affixStore.setAffixEffects(affixConfig.affixEffectTemplates)
   }
-
   private assembleShopStore(shopConfig: ShopConfigDTO): void {
     this.shopStore.setMany(shopConfig.shopConfigs)
   }
-
   getEnemyStore(): EnemyStore {
     return this.enemyStore
   }
-
   getItemStore(): ItemStore {
     return this.itemStore
   }
-
   getProfessionStore(): ProfessionStore {
     return this.professionStore
   }
-
   getUltimateStore(): UltimateStore {
     return this.ultimateStore
   }
-
   getAffixStore(): AffixStore {
     return this.affixStore
   }
-
   getShopStore(): ShopStore {
     return this.shopStore
   }

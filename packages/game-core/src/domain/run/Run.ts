@@ -5,19 +5,12 @@ import { ItemRollModifier } from '../item/roll/ItemRollModifier'
 import { ChapterInfo, RunStatus } from './RunTypes'
 export interface IRunFields {
   readonly seed: number
-
   readonly currentChapter: ChapterLevel
-
   readonly currentStage: number
-
   readonly encounteredEnemyIds: string[]
-
   readonly chapters: Record<ChapterLevel, ChapterInfo>
-
   readonly rollModifiers: ItemRollModifier[]
-
   readonly remainingFailRetries: number
-
   readonly status: RunStatus
 }
 export interface IRunBehavior {
@@ -47,7 +40,6 @@ export class Run implements IRunFields, IRunBehavior {
     this._remainingFailRetries = fields.remainingFailRetries
     this._status = fields.status
   }
-
   get seed(): number {
     return this._seed
   }
@@ -72,7 +64,6 @@ export class Run implements IRunFields, IRunBehavior {
   get status(): RunStatus {
     return this._status
   }
-
   deductRetry(): Result<Run> {
     if (this._remainingFailRetries <= 0) {
       return Result.fail(DomainErrorCode.Run_重試次數不足)

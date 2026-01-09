@@ -19,19 +19,16 @@ export class EquipmentContextHandler implements IEquipmentContextHandler {
     private contextToDomainConverter: IContextToDomainConverter,
     private unitOfWork: IContextUnitOfWork
   ) {}
-
   public loadEquipmentDomainContexts() {
     return {
       character: this.contextToDomainConverter.convertCharacterContextToDomain(),
       stash: this.contextToDomainConverter.convertStashContextToDomain(),
     }
   }
-
   public validateRunStatus(): Result<void, string> {
     const status = this.contextSnapshotAccessor.getRunStatus()
     return RunStatusGuard.requireStatus(status, 'IDLE')
   }
-
   public commitEquipmentTransaction(updates: { character: Character; stash: Stash }): Result<void> {
     this.unitOfWork.patchCharacterContext({
       ...updates.character.record,

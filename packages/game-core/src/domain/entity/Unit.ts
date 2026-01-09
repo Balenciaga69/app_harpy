@@ -8,7 +8,6 @@ export interface IUnit {
   id: string
   statSnapshot: UnitStats
   ailments: Map<string, string>
-
   affixes: AffixRecord[]
 }
 export interface WithUltimate {

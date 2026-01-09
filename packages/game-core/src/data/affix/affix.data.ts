@@ -1,6 +1,5 @@
 ﻿import { AffixTemplate } from '../../domain/affix/Affix'
 import { AffixEffect } from '../../domain/affix/effect/AffixEffectTemplate'
-
 const affix_chemist_poison_resist_1: AffixTemplate = {
   id: 'affix_chemist_poison_resist_1',
   desc: { tw: '一切毒傷害降低50%', en: 'Reduce all poison damage by 50%' },
@@ -20,7 +19,6 @@ const affix_effect_chemist_poison_resist_1: AffixEffect = {
     },
   ],
 }
-
 const affix_warrior_hp_boost_1: AffixTemplate = {
   id: 'affix_warrior_hp_boost_1',
   desc: { tw: '最大生命值提升 300 點', en: 'Increase max HP by 300' },
@@ -40,7 +38,6 @@ const affix_effect_warrior_hp_boost_1: AffixEffect = {
     },
   ],
 }
-
 const affix_warrior_attack_boost_3: AffixTemplate = {
   id: 'affix_warrior_attack_boost_3',
   desc: { tw: '攻擊力提升 3 點', en: 'Increase attack damage by 3' },
@@ -60,7 +57,6 @@ const affix_effect_warrior_attack_boost_3: AffixEffect = {
     },
   ],
 }
-
 const affix_universal_resurrection_boost_3: AffixTemplate = {
   id: 'affix_universal_resurrection_boost_3',
   desc: { tw: '復活機率提升 3%', en: 'Increase resurrection chance by 3%' },
@@ -80,7 +76,6 @@ const affix_effect_universal_resurrection_boost_3: AffixEffect = {
     },
   ],
 }
-
 const affix_pirate_rum_effect: AffixTemplate = {
   id: 'affix_pirate_rum_effect',
   desc: { tw: '攻擊力+5，閃避-5%', en: 'Attack +5, Evasion -5%' },
@@ -113,7 +108,6 @@ const affix_effect_pirate_rum_evasion: AffixEffect = {
     },
   ],
 }
-
 const affix_necromancer_resurrection_double: AffixTemplate = {
   id: 'affix_necromancer_resurrection_double',
   desc: { tw: '復活機率加倍', en: 'Double resurrection chance' },
@@ -133,7 +127,6 @@ const affix_effect_necromancer_resurrection_double: AffixEffect = {
     },
   ],
 }
-
 const affix_squire_chainmail_boost: AffixTemplate = {
   id: 'affix_squire_chainmail_boost',
   desc: { tw: '生命值+100，閃避+10%', en: 'HP +100, Evasion +10%' },
@@ -166,7 +159,6 @@ const affix_effect_squire_chainmail_evasion: AffixEffect = {
     },
   ],
 }
-
 const affix_ranger_attack_boost_1: AffixTemplate = {
   id: 'affix_ranger_attack_boost_1',
   desc: { tw: '攻擊力提升 200 點', en: 'Increase attack damage by 200' },
@@ -186,7 +178,6 @@ const affix_effect_ranger_attack_boost_1: AffixEffect = {
     },
   ],
 }
-
 const affix_mage_energy_boost_1: AffixTemplate = {
   id: 'affix_mage_energy_boost_1',
   desc: { tw: '能量提升 50 點', en: 'Increase energy by 50' },

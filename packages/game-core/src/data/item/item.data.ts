@@ -1,5 +1,4 @@
 ﻿import { RelicTemplate } from '../../domain/item/Item'
-
 const relic_warrior_resolute_heart: RelicTemplate = {
   id: 'relic_warrior_resolute_heart',
   name: { tw: '堅毅之心', en: 'Resolute Heart' },
@@ -14,7 +13,6 @@ const relic_warrior_resolute_heart: RelicTemplate = {
   loadCost: 1,
   maxStacks: 1,
 }
-
 const relic_warrior_frost_dagger: RelicTemplate = {
   id: 'relic_warrior_frost_dagger',
   name: { tw: '寒鋒匕首', en: 'Frost Dagger' },
@@ -29,7 +27,6 @@ const relic_warrior_frost_dagger: RelicTemplate = {
   loadCost: 1,
   maxStacks: 30,
 }
-
 const relic_universal_resurrection_artifact: RelicTemplate = {
   id: 'relic_universal_resurrection_artifact',
   name: { tw: '永生骨董', en: 'Resurrection Artifact' },
@@ -44,7 +41,6 @@ const relic_universal_resurrection_artifact: RelicTemplate = {
   loadCost: 1,
   maxStacks: 5,
 }
-
 const relic_pirate_rum: RelicTemplate = {
   id: 'relic_pirate_rum',
   name: { tw: '海盜萊姆酒', en: 'Pirate Rum' },
@@ -59,7 +55,6 @@ const relic_pirate_rum: RelicTemplate = {
   loadCost: 5,
   maxStacks: 1,
 }
-
 const relic_necromancer_embrace: RelicTemplate = {
   id: 'relic_necromancer_embrace',
   name: { tw: '死靈巫師的擁抱', en: 'Necromancer Embrace' },
@@ -74,7 +69,6 @@ const relic_necromancer_embrace: RelicTemplate = {
   loadCost: 10,
   maxStacks: 1,
 }
-
 const relic_squire_chainmail: RelicTemplate = {
   id: 'relic_squire_chainmail',
   name: { tw: '見習騎士鎖子甲', en: 'Squire Chainmail' },
@@ -89,7 +83,6 @@ const relic_squire_chainmail: RelicTemplate = {
   loadCost: 5,
   maxStacks: 1,
 }
-
 const relic_ranger_heart: RelicTemplate = {
   id: 'relic_ranger_heart',
   name: { tw: '遊俠之心', en: 'Ranger Heart' },
@@ -104,7 +97,6 @@ const relic_ranger_heart: RelicTemplate = {
   loadCost: 1,
   maxStacks: 1,
 }
-
 const relic_mage_heart: RelicTemplate = {
   id: 'relic_mage_heart',
   name: { tw: '法師之心', en: 'Mage Heart' },

@@ -24,7 +24,6 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
       { strategyId: 'RARITY_PREFERENCE', multiplier: 1 },
       { strategyId: 'MOST_FREQUENT_TAG', multiplier: 1 },
     ],
-
     rarityMultipliers: RarityMultipliers.HIGH_RARITY_RELIC,
   },
   HIGH_AFFINITY: {
@@ -56,9 +55,7 @@ const RewardRollConfigs: Record<string, RewardRollConfig> = {
   },
 }
 export const ItemRollConfigList: ItemRollConfig[] = [ShopRefresh, ...Object.values(RewardRollConfigs)]
-
 export const RewardRollConfigList: RewardRollConfig[] = Object.values(RewardRollConfigs)
-
 export function getRewardRollConfig(rewardType: string): RewardRollConfig | undefined {
   return RewardRollConfigs[rewardType]
 }

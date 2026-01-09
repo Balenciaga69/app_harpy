@@ -5,12 +5,9 @@ import { IContextToDomainConverter } from '../../core-infrastructure/context/hel
 import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
-
 export interface IRunContextHandler {
   loadRunDomain(): Run
-
   validateRunStatus(expectedStatus: RunStatus | RunStatus[]): Result<void, string>
-
   commitRunChanges(run: Run): void
 }
 export class RunContextHandler implements IRunContextHandler {
@@ -26,7 +23,6 @@ export class RunContextHandler implements IRunContextHandler {
     const status = this.contextAccessor.getRunStatus()
     return RunStatusGuard.requireStatus(status, expectedStatus)
   }
-
   commitRunChanges(run: Run): void {
     this.unitOfWork.patchRunContext({
       seed: run.seed,

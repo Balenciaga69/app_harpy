@@ -3,9 +3,7 @@ import { I18nField } from '../../shared/models/I18nField'
 import { TagType } from '../../shared/models/TagType'
 import { AffixEntity, AffixRecord } from '../affix/Affix'
 export type ItemType = 'RELIC'
-
 export type ItemRarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
-
 export interface ItemTemplate {
   readonly id: string
   readonly name: I18nField
@@ -16,17 +14,14 @@ export interface ItemTemplate {
   readonly tags: ReadonlyArray<TagType>
   readonly loadCost: number
 }
-
 export interface RelicTemplate extends ItemTemplate {
   readonly maxStacks: number
   readonly itemType: 'RELIC'
 }
-
 export interface ItemRecord extends BaseInstanceFields, WithCreatedInfo {
   readonly affixRecords: ReadonlyArray<AffixRecord>
   readonly itemType: ItemType
 }
-
 export interface RelicRecord extends ItemRecord {
   readonly itemType: 'RELIC'
 }
@@ -41,12 +36,10 @@ export abstract class ItemEntity implements IItemEntity {
     public readonly template: ItemTemplate,
     public readonly affixEntities: ReadonlyArray<AffixEntity> = []
   ) {}
-
   getUnitStatModifiers() {
     return this.affixEntities.flatMap((affix) => affix.getUnitStatModifiers())
   }
 }
-
 export class RelicEntity extends ItemEntity {
   constructor(
     public readonly record: RelicRecord,

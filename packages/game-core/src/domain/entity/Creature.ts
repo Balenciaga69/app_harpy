@@ -1,5 +1,4 @@
 import { I18nField } from '../../shared/models/I18nField'
-
 export class CreatureEntity {
   readonly summonerId: string
   readonly id: string
@@ -10,7 +9,6 @@ export class CreatureEntity {
     this.template = template
   }
 }
-
 export interface CreatureTemplate {
   id: string
   name: I18nField

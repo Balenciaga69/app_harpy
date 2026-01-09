@@ -3,7 +3,6 @@ import { Stash } from '../../../../domain/stash/Stash'
 import { ICharacterAggregateService } from '../../../content-generation/service/character/CharacterAggregateService'
 import { ItemEntityService } from '../../../content-generation/service/item/ItemEntityService'
 import { IContextSnapshotAccessor } from '../../../core-infrastructure/context/service/AppContextService'
-
 export interface IPostCombatDomainConverter {
   convertCharacterContextToDomain(): Character
   convertStashContextToDomain(): Stash

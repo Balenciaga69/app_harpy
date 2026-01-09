@@ -17,7 +17,6 @@ export class PostCombatProcessor {
     private postCombatDomainConverter: IPostCombatDomainConverter,
     private transactionManager: IPostCombatTransactionManager
   ) {}
-
   public process(): Result<void> {
     const postCombatCtx = this.contextAccessor.getPostCombatContext()
     if (!postCombatCtx) {
@@ -31,7 +30,6 @@ export class PostCombatProcessor {
     }
     return Result.success(undefined)
   }
-
   private handleWin(postCombatCtx: PostCombatContext): Result<void> {
     const character = this.postCombatDomainConverter.convertCharacterContextToDomain()
     const stash = this.postCombatDomainConverter.convertStashContextToDomain()
@@ -44,7 +42,6 @@ export class PostCombatProcessor {
     if (rewardResult.isFailure) {
       return Result.fail(rewardResult.error!)
     }
-
     const updatedPostCombat = {
       ...(postCombatCtx as PostCombatWinContext),
       detail: {
@@ -61,7 +58,6 @@ export class PostCombatProcessor {
       const currentRetries = this.contextAccessor.getRemainingFailRetries()
       const retryCountToDeduct = postCombatCtx.detail.retryCountToDeduct || 1
       const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
-
       this.transactionManager.commitRetryDeduction(newRemainingRetries)
     }
     return Result.success(undefined)

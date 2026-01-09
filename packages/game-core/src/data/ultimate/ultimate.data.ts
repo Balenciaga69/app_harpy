@@ -1,5 +1,4 @@
 ﻿import { UltimateTemplate } from '../../domain/ultimate/Ultimate'
-
 const ultimate_chemist_poison_bomb: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb',
   name: { tw: '毒煙爆', en: 'Toxic Spores' },
@@ -21,7 +20,6 @@ const ultimate_chemist_poison_bomb: UltimateTemplate = {
     },
   ],
 }
-
 const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
   id: 'ult_chemist_poison_bomb_shield',
   name: { tw: '毒盾牌', en: 'Toxic Shield' },
@@ -47,7 +45,6 @@ const ultimate_chemist_poison_bomb_shield: UltimateTemplate = {
     },
   ],
 }
-
 const ultimate_warrior_mighty_blow: UltimateTemplate = {
   id: 'ult_warrior_mighty_blow',
   name: { tw: '強大一擊', en: 'Mighty Blow' },

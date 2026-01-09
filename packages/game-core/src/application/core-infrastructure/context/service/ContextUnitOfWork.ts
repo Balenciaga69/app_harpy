@@ -8,12 +8,10 @@ export interface IContextUnitOfWork {
   updateStashContext(ctx: IStashContext): IContextUnitOfWork
   updateRunContext(ctx: IRunContext): IContextUnitOfWork
   updateShopContext(ctx: IShopContext): IContextUnitOfWork
-
   patchCharacterContext(patch: Partial<ICharacterContext>): IContextUnitOfWork
   patchStashContext(patch: Partial<IStashContext>): IContextUnitOfWork
   patchRunContext(patch: Partial<IRunContext>): IContextUnitOfWork
   patchShopContext(patch: Partial<IShopContext>): IContextUnitOfWork
-
   commit(): void
   rollback(): void
 }
@@ -51,7 +49,6 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
     if (!this.hasChanges) {
       return
     }
-
     if (this.runContextUpdate !== null) {
       this.contextMutator.setRunContext(this.runContextUpdate)
     }

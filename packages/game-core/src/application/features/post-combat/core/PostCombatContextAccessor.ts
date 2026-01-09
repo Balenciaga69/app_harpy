@@ -1,7 +1,6 @@
 import { PostCombatContext } from '../../../../domain/post-combat/PostCombat'
 import { RunStatus } from '../../../../domain/run/RunTypes'
 import { IContextSnapshotAccessor } from '../../../core-infrastructure/context/service/AppContextService'
-
 export interface IPostCombatContextAccessor {
   getPostCombatContext(): PostCombatContext | undefined
   getRemainingFailRetries(): number

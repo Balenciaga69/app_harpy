@@ -3,7 +3,6 @@ import { Result } from '../../shared/result/Result'
 import { RelicEntity, RelicRecord } from '../item/Item'
 import { ProfessionEntity } from '../profession/Profession'
 import { UltimateEntity, UltimateRecord } from '../ultimate/Ultimate'
-
 export interface CharacterRecord {
   readonly id: string
   readonly name: string
@@ -25,7 +24,6 @@ const getRelicStackCount = (record: CharacterRecord): Map<string, number> => {
 export const CharacterRecordHelper = {
   getRelicStackCount,
 }
-
 export class Character {
   private readonly _record: CharacterRecord
   private readonly _profession: ProfessionEntity
@@ -42,7 +40,6 @@ export class Character {
     this._relics = relics
     this._ultimate = ultimate
   }
-
   public get record(): CharacterRecord {
     return this._record
   }
@@ -55,19 +52,15 @@ export class Character {
   public get ultimate(): UltimateEntity {
     return this._ultimate
   }
-
   public equipRelic(relic: RelicEntity): Result<Character, string> {
     if (this.isOverloaded(relic.template.loadCost)) {
       return Result.fail(DomainErrorCode.角色_負重超載)
     }
-
     if (this.isMaxStacks(relic.template.id)) {
       return Result.fail(DomainErrorCode.角色_堆疊已滿)
     }
-
     return Result.success(this.createWithRelics([...this._relics, relic]))
   }
-
   public unequipRelic(relicId: string): Result<Character, string> {
     const targetRelic = this._relics.find((r) => r.record.id === relicId)
     if (!targetRelic) {
@@ -75,19 +68,16 @@ export class Character {
     }
     return Result.success(this.createWithRelics(this._relics.filter((r) => r.record.id !== relicId)))
   }
-
   public expandLoadCapacity(increaseAmount: number): Result<Character, string> {
     if (increaseAmount <= 0) {
       return Result.fail(DomainErrorCode.角色_擴展容量無效)
     }
-
     const newRecord: CharacterRecord = {
       ...this._record,
       loadCapacity: this._record.loadCapacity + increaseAmount,
     }
     return Result.success(new Character(newRecord, this._profession, this._relics, this._ultimate))
   }
-
   public deductGold(amount: number): Result<Character, string> {
     if (this._record.gold < amount) {
       return Result.fail(DomainErrorCode.角色_金錢不足)
@@ -98,7 +88,6 @@ export class Character {
     }
     return Result.success(new Character(newRecord, this._profession, this._relics, this._ultimate))
   }
-
   public addGold(amount: number): Result<Character, string> {
     const newRecord: CharacterRecord = {
       ...this._record,
@@ -106,35 +95,28 @@ export class Character {
     }
     return Result.success(new Character(newRecord, this._profession, this._relics, this._ultimate))
   }
-
   public getRelic(relicId: string): Result<RelicEntity, string> {
     const relic = this.relics.find((r) => r.record.id === relicId)
     if (!relic) return Result.fail(DomainErrorCode.角色_聖物不存在)
     return Result.success(relic)
   }
-
   public isOverloaded(loadCost: number): boolean {
     return this._record.currentLoad + loadCost > this._record.loadCapacity
   }
-
   public getCurrentStack(relicId: string): number {
     const stacksMap = CharacterRecordHelper.getRelicStackCount(this._record)
     const currentStacks = stacksMap.get(relicId) ?? 0
     return currentStacks
   }
-
   private isMaxStacks(relicId: string): boolean {
     const getRelicResult = this.getRelic(relicId)
     if (getRelicResult.isFailure) return false
-
     const targetRelic = getRelicResult.value!
     return this.getCurrentStack(relicId) >= targetRelic.maxStacks
   }
-
   public get currentLoad(): number {
     return this.calculateRelicsLoad([...this._relics])
   }
-
   private createWithRelics(newRelics: ReadonlyArray<RelicEntity>): Character {
     const newRecord: CharacterRecord = {
       ...this._record,
@@ -143,7 +125,6 @@ export class Character {
     }
     return new Character(newRecord, this._profession, newRelics, this._ultimate)
   }
-
   private calculateRelicsLoad(relics: RelicEntity[]): number {
     return relics.reduce((total, relic) => total + relic.template.loadCost, 0)
   }

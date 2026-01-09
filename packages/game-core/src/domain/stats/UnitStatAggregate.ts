@@ -1,8 +1,6 @@
 import { UnitStatModifier } from './models/StatModifier'
 import { UnitStats } from './models/UnitStats'
-
 type ByField = Partial<Record<keyof UnitStats, UnitStatModifier[]>>
-
 function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[]): number {
   let addSum = 0
   let multiplySum = 0
@@ -26,7 +24,6 @@ function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[])
   if (lastSet !== undefined) v = lastSet
   return v
 }
-
 export const UnitStatAggregate = (baseStats: UnitStats, modifiers: readonly UnitStatModifier[]): UnitStats => {
   const byField: ByField = {}
   for (const m of modifiers) {

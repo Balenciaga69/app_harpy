@@ -15,7 +15,6 @@ export class ShopContextHandler implements IShopContextHandler {
   public getDifficulty(): number {
     return this.contextAccessor.getCurrentAtCreatedInfo().difficulty
   }
-
   public loadShopDomainContexts() {
     return {
       shop: this.contextToDomainConverter.convertShopContextToDomain(),
@@ -23,12 +22,10 @@ export class ShopContextHandler implements IShopContextHandler {
       stash: this.contextToDomainConverter.convertStashContextToDomain(),
     }
   }
-
   public validateRunStatus() {
     const status = this.contextAccessor.getRunStatus()
     return RunStatusGuard.requireStatus(status, 'IDLE')
   }
-
   public commitBuyTransaction(updates: { characterRecord?: CharacterRecord; shop?: Shop; stash?: Stash }) {
     if (updates.characterRecord) {
       this.unitOfWork.patchCharacterContext({
@@ -48,7 +45,6 @@ export class ShopContextHandler implements IShopContextHandler {
     this.unitOfWork.commit()
     return Result.success(undefined)
   }
-
   public commitSellTransaction(updates: { characterRecord?: CharacterRecord; stash?: Stash }) {
     if (updates.characterRecord) {
       this.unitOfWork.patchCharacterContext({
@@ -63,7 +59,6 @@ export class ShopContextHandler implements IShopContextHandler {
     this.unitOfWork.commit()
     return Result.success(undefined)
   }
-
   public commitGenerateShopItemsTransaction(updates: { shop: Shop }) {
     this.unitOfWork.patchShopContext({
       items: updates.shop.items.map((shopAgg) => shopAgg.record),
@@ -72,7 +67,6 @@ export class ShopContextHandler implements IShopContextHandler {
     return Result.success(undefined)
   }
 }
-
 export interface IShopContextHandler {
   loadShopDomainContexts(): {
     shop: Shop
