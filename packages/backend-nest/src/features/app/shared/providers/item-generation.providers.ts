@@ -5,11 +5,13 @@ import {
   ItemRollService,
   ItemGenerationService,
   ItemEntityService,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
 } from 'src/from-game-core'
 export const itemGenerationProviders = [
   {
     provide: ItemConstraintService,
-    useFactory: (config: any, snapshot: any) => {
+    useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new ItemConstraintService(config, snapshot)
     },
     inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
@@ -17,7 +19,7 @@ export const itemGenerationProviders = [
   },
   {
     provide: ItemModifierAggregationService,
-    useFactory: (config: any, snapshot: any) => {
+    useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new ItemModifierAggregationService(config, snapshot)
     },
     inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
@@ -25,7 +27,11 @@ export const itemGenerationProviders = [
   },
   {
     provide: ItemRollService,
-    useFactory: (constraintSvc: ItemConstraintService, config: any, snapshot: any) => {
+    useFactory: (
+      constraintSvc: ItemConstraintService,
+      config: IConfigStoreAccessor,
+      snapshot: IContextSnapshotAccessor
+    ) => {
       return new ItemRollService(config, snapshot, constraintSvc)
     },
     inject: [ItemConstraintService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],

@@ -6,15 +6,15 @@ import { ContextManager } from '../context/ContextManager'
 export class ContextInitializationInterceptor implements NestInterceptor {
   private readonly ignoredEndpoints = new Set(['/api/run/init'])
   constructor(private contextManager: ContextManager) {}
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>()
-    const body = request.body as Record<string, any>
+    const body = (request.body ?? {}) as Record<string, unknown>
     if (this.isPathIgnored(request)) {
       return next.handle()
     }
     this.validateRunId(body)
     const runId = body.runId as string
-    let appContext
+    let appContext: ReturnType<ContextManager['getContextByRunId']>
     try {
       appContext = this.contextManager.getContextByRunId(runId)
     } catch (error) {
@@ -29,7 +29,7 @@ export class ContextInitializationInterceptor implements NestInterceptor {
   private isPathIgnored(request: Request): boolean {
     return this.ignoredEndpoints.has(request.path)
   }
-  private validateRunId(body: Record<string, any>): void {
+  private validateRunId(body: Record<string, unknown>): void {
     if (!body?.runId || typeof body.runId !== 'string') {
       throw new BadRequestException({
         error: 'MISSING_RUN_ID',

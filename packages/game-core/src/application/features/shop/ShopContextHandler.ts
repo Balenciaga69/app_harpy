@@ -1,4 +1,4 @@
-import { Character, CharacterRecord } from '../../../domain/character/Character'
+﻿import { Character, CharacterRecord } from '../../../domain/character/Character'
 import { Shop } from '../../../domain/shop/Shop'
 import { Stash } from '../../../domain/stash/Stash'
 import { Result } from '../../../shared/result/Result'
@@ -6,7 +6,6 @@ import { IContextToDomainConverter } from '../../core-infrastructure/context/hel
 import { IContextSnapshotAccessor } from '../../core-infrastructure/context/service/AppContextService'
 import { IContextUnitOfWork } from '../../core-infrastructure/context/service/ContextUnitOfWork'
 import { RunStatusGuard } from '../../core-infrastructure/run-status/RunStatusGuard'
-
 export class ShopContextHandler implements IShopContextHandler {
   constructor(
     private contextAccessor: IContextSnapshotAccessor,

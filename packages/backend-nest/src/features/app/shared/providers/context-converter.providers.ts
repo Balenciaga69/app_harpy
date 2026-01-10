@@ -4,11 +4,19 @@ import {
   ContextUnitOfWork,
   ItemEntityService,
   CharacterAggregateService,
+  IContextSnapshotAccessor,
+  IConfigStoreAccessor,
+  IContextMutator,
 } from 'src/from-game-core'
 export const contextConverterProviders = [
   {
     provide: ContextToDomainConverter,
-    useFactory: (itemSvc: ItemEntityService, charSvc: CharacterAggregateService, snapshot: any, config: any) => {
+    useFactory: (
+      itemSvc: ItemEntityService,
+      charSvc: CharacterAggregateService,
+      snapshot: IContextSnapshotAccessor,
+      config: IConfigStoreAccessor
+    ) => {
       return new ContextToDomainConverter(itemSvc, charSvc, snapshot, config)
     },
     inject: [ItemEntityService, CharacterAggregateService, 'IContextSnapshotAccessor', 'IConfigStoreAccessor'],
@@ -16,7 +24,7 @@ export const contextConverterProviders = [
   },
   {
     provide: ContextUnitOfWork,
-    useFactory: (snapshot: any, mutator: any) => {
+    useFactory: (snapshot: IContextSnapshotAccessor, mutator: IContextMutator) => {
       return new ContextUnitOfWork(mutator, snapshot)
     },
     inject: ['IContextSnapshotAccessor', 'IContextMutator'],

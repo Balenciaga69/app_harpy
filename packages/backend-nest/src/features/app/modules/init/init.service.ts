@@ -25,7 +25,7 @@ export class InitService {
     const allRelics = professions.flatMap((prof) => this.gameStartOptionsService.getSelectableStartingRelics(prof.id))
     return {
       success: true,
-      data: allRelics.map((relic: any) => ({
+      data: allRelics.map((relic) => ({
         id: relic.id,
         name: relic.name,
         desc: relic.desc,

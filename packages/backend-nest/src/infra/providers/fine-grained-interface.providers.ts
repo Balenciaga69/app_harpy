@@ -1,5 +1,6 @@
 ﻿import { Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
+import { Request } from 'express'
 import {
   ConfigStoreAccessorImpl,
   ContextMutatorImpl,
@@ -7,12 +8,11 @@ import {
   IAppContext,
 } from 'src/from-game-core'
 import { ContextManager } from '../context/ContextManager'
-
 export const fineGrainedInterfaceProviders = [
   {
     provide: 'IAppContext',
-    useFactory: (contextManager: ContextManager, request: any) => {
-      const body = request.body as Record<string, any>
+    useFactory: (contextManager: ContextManager, request: Request) => {
+      const body = (request.body ?? {}) as Record<string, unknown>
       const runId = body?.runId as string | undefined
       let currentContext: IAppContext | undefined
       if (runId && typeof runId === 'string') {
@@ -55,9 +55,9 @@ export const fineGrainedInterfaceProviders = [
   },
   {
     provide: 'IContextMutator',
-    useFactory: (context: IAppContext, contextManager: ContextManager, request: any) => {
+    useFactory: (context: IAppContext, contextManager: ContextManager, request: Request) => {
       const onContextChange = (next: IAppContext) => {
-        const body = request.body as Record<string, any>
+        const body = (request.body ?? {}) as Record<string, unknown>
         const runId = body?.runId as string | undefined
         if (runId && typeof runId === 'string') {
           contextManager.saveContext(next)

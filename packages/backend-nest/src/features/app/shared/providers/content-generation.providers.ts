@@ -19,7 +19,7 @@ export const contentGenerationProviders = [
   },
   {
     provide: UltimateEntityService,
-    useFactory: (affixSvc: AffixEntityService, config: any, snapshot: any) => {
+    useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new UltimateEntityService(affixSvc, config, snapshot)
     },
     inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
@@ -27,7 +27,7 @@ export const contentGenerationProviders = [
   },
   {
     provide: ItemEntityService,
-    useFactory: (affixSvc: AffixEntityService, config: any, snapshot: any) => {
+    useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new ItemEntityService(config, snapshot, affixSvc)
     },
     inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
@@ -35,7 +35,7 @@ export const contentGenerationProviders = [
   },
   {
     provide: ProfessionEntityService,
-    useFactory: (config: any) => {
+    useFactory: (config: IConfigStoreAccessor) => {
       return new ProfessionEntityService(config)
     },
     inject: ['IConfigStoreAccessor'],

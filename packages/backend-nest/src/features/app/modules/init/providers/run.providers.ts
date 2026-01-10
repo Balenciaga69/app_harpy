@@ -21,7 +21,7 @@ import {
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,
-    useFactory: (snapshot, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new RunContextHandler(snapshot, converter, uow)
     },
     inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
@@ -77,7 +77,11 @@ export const runFeatureProviders = [
   },
   {
     provide: StageInitializationService,
-    useFactory: (contextAccessor, unitOfWork, enemyRandomGenerateService) => {
+    useFactory: (
+      contextAccessor: IContextSnapshotAccessor,
+      unitOfWork: ContextUnitOfWork,
+      enemyRandomGenerateService: EnemyRandomGenerateService
+    ) => {
       return new StageInitializationService(contextAccessor, unitOfWork, enemyRandomGenerateService)
     },
     inject: ['IContextSnapshotAccessor', ContextUnitOfWork, EnemyRandomGenerateService],

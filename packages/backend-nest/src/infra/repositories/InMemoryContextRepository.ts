@@ -16,7 +16,7 @@ type UpdateBatchResult = {
 }
 @Injectable()
 export class InMemoryContextRepository implements IContextBatchRepository {
-  private store = new Map<string, any>()
+  private store = new Map<string, unknown>()
   async updateBatch(
     updates: {
       run?: { context: IRunContext; expectedVersion: number }
@@ -71,20 +71,20 @@ export class InMemoryContextRepository implements IContextBatchRepository {
     this.store.set(`shop:${runId}`, context)
     return Promise.resolve({ success: true })
   }
-  async getRunContext(runId: string) {
-    return Promise.resolve(this.store.get(`run:${runId}`) || null)
+  async getRunContext(runId: string): Promise<IRunContext | null> {
+    return Promise.resolve((this.store.get(`run:${runId}`) as IRunContext | undefined) ?? null)
   }
-  async getCharacterContext(runId: string) {
-    return Promise.resolve(this.store.get(`character:${runId}`) || null)
+  async getCharacterContext(runId: string): Promise<ICharacterContext | null> {
+    return Promise.resolve((this.store.get(`character:${runId}`) as ICharacterContext | undefined) ?? null)
   }
-  async getStashContext(runId: string) {
-    return Promise.resolve(this.store.get(`stash:${runId}`) || null)
+  async getStashContext(runId: string): Promise<IStashContext | null> {
+    return Promise.resolve((this.store.get(`stash:${runId}`) as IStashContext | undefined) ?? null)
   }
-  async getShopContext(runId: string) {
-    return Promise.resolve(this.store.get(`shop:${runId}`) || null)
+  async getShopContext(runId: string): Promise<IShopContext | null> {
+    return Promise.resolve((this.store.get(`shop:${runId}`) as IShopContext | undefined) ?? null)
   }
-  getByKey(key: string): any {
-    return this.store.get(key) || null
+  getByKey(key: string): unknown {
+    return this.store.get(key) ?? null
   }
   clear() {
     this.store.clear()
