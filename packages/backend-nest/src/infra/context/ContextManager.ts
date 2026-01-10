@@ -1,10 +1,8 @@
-﻿import { Injectable, Inject, Logger } from '@nestjs/common'
-import { AsyncLocalStorage } from 'async_hooks'
+﻿import { Inject, Injectable, Logger } from '@nestjs/common'
 import { IAppContext, IContextBatchRepository } from '../../from-game-core'
 type IConfigStore = IAppContext['configStore']
 @Injectable()
 export class ContextManager {
-  private static readonly store = new AsyncLocalStorage<IAppContext>()
   private globalConfigStore: IConfigStore
   private readonly logger = new Logger(ContextManager.name)
   constructor(
@@ -12,25 +10,6 @@ export class ContextManager {
     @Inject('IContextBatchRepository') private readonly repository: IContextBatchRepository
   ) {
     this.globalConfigStore = configStore
-  }
-  setContext(appContext: IAppContext): void {
-    if (ContextManager.store.getStore()) {
-      throw new Error('Context already set for this async scope — use runWithContext to create an isolated scope')
-    }
-    ContextManager.store.enterWith(appContext)
-  }
-  getContext(): IAppContext | null {
-    const context = ContextManager.store.getStore()
-    if (!context) {
-      return null
-    }
-    return context
-  }
-  hasContext(): boolean {
-    return ContextManager.store.getStore() !== undefined
-  }
-  runWithContext<T>(appContext: IAppContext, fn: () => T): T {
-    return ContextManager.store.run(appContext, fn)
   }
   async saveContext(appContext: IAppContext): Promise<void> {
     const runId = appContext.contexts.runContext.runId

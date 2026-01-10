@@ -29,7 +29,6 @@ export class ContextInitializationInterceptor implements NestInterceptor {
         if (!appContext) {
           throw new BadRequestException(ContextInitializationInterceptor.ERROR_RUN_NOT_FOUND(runId))
         }
-        this.contextManager.setContext(appContext)
         return next.handle()
       })
     )
