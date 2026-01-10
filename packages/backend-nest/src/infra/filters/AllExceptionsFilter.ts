@@ -1,8 +1,5 @@
-﻿import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common'
+﻿import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Request, Response } from 'express'
-/**
- * API ?航炊??蝯?
- */
 interface ApiErrorResponse {
   success: false
   error: string
@@ -11,12 +8,6 @@ interface ApiErrorResponse {
   timestamp: string
   path: string
 }
-/**
- * ?典??啣虜?蕪??
- * - 蝯曹????撣?
- * - 頧??箸?皞???API ?航炊??
- * - 閮?閰喟敦?隤斗隤?
- */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger('AllExceptionsFilter')
@@ -29,18 +20,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     this.logError(exception, request, status)
     response.status(status).json(errorResponse)
   }
-  /**
-   * ?? HTTP ??Ⅳ
-   */
   private getStatus(exception: unknown): number {
     if (exception instanceof HttpException) {
       return exception.getStatus()
     }
     return HttpStatus.INTERNAL_SERVER_ERROR
   }
-  /**
-   * 撱箇?璅????航炊??
-   */
   private buildErrorResponse(exception: unknown, request: Request): ApiErrorResponse {
     const now = new Date().toISOString()
     const path = request.url
@@ -65,7 +50,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         path,
       }
     }
-    // ????HttpException ?隤?
     const message = exception instanceof Error ? exception.message : String(exception)
     return {
       success: false,
@@ -75,9 +59,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path,
     }
   }
-  /**
-   * 閮??航炊?亥?
-   */
   private logError(exception: unknown, request: Request, status: number): void {
     const method = request.method
     const path = request.url

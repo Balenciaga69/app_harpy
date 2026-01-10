@@ -8,7 +8,6 @@ export type UnitStatType =
   | 'resurrectionChance'
   | 'resurrectionHpPercent'
 export type UnitStats = Record<UnitStatType, number>
-// todo: 搬運到 DATA 層或配置文件中
 export const DEFAULT_UNIT_STATS: UnitStats = {
   attackDamage: 10,
   currentEnergy: 0,

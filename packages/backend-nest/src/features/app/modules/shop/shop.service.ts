@@ -38,7 +38,7 @@ export class ShopNestService {
       throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     }
     const result = this.shopService.buyItem(dto.itemId)
-    ResultToExceptionMapper.throwIfFailure(result, '購買物品失敗')
+    ResultToExceptionMapper.throwIfFailure(result)
     return {
       success: true,
       message: '購買成功',
@@ -57,7 +57,7 @@ export class ShopNestService {
       throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     }
     const result = this.shopService.sellItem(dto.itemId)
-    ResultToExceptionMapper.throwIfFailure(result, '賣出物品失敗')
+    ResultToExceptionMapper.throwIfFailure(result)
     return {
       success: true,
       message: '賣出成功',
@@ -76,7 +76,7 @@ export class ShopNestService {
       throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     }
     const refreshResult = this.shopService.refreshShopItems()
-    ResultToExceptionMapper.throwIfFailure(refreshResult, '刷新商店失敗')
+    ResultToExceptionMapper.throwIfFailure(refreshResult)
     return {
       success: true,
       message: '刷新成功',

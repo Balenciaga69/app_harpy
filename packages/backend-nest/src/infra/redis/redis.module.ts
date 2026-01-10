@@ -2,17 +2,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import Redis from 'ioredis'
 import type { RedisOptions } from 'ioredis'
-/**
- * Redis 單例 Token
- */
 export const REDIS_CLIENT = 'REDIS_CLIENT'
-/**
- * Redis 全域模組
- * 負責初始化 Redis 連線並提供給應用各層使用
- *
- * 使用方式：
- * constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
- */
 @Global()
 @Module({
   imports: [ConfigModule],

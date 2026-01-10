@@ -42,6 +42,7 @@ export * from '@game-core-layer/application/features/run/stage-progression/servi
 export * from '@game-core-layer/application/features/run/stage-progression/service/StageNodeGenerationService'
 export * from '@game-core-layer/application/features/shop/ShopContextHandler'
 export * from '@game-core-layer/application/features/shop/ShopService'
+export * from '@game-core-layer/shared/result/ErrorCodes'
 export * from '@game-core-layer/domain/character/Character'
 export * from '@game-core-layer/domain/item/Item'
 export * from '@game-core-layer/domain/post-combat/PostCombat'

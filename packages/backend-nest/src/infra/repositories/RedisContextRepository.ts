@@ -46,10 +46,8 @@ export class RedisContextRepository implements IContextBatchRepository {
       if (updates.shop) {
         pipeline.set(this.getShopContextKey(runId), JSON.stringify(updates.shop.context), 'EX', this.getTTL())
       }
-      // 更新全域版本號
       const nextVersion = (globalVersion || 0) + 1
       pipeline.set(this.GLOBAL_VERSION_KEY, nextVersion.toString())
-      // 執行 pipeline
       await pipeline.exec()
       return {
         success: true,
@@ -109,10 +107,6 @@ export class RedisContextRepository implements IContextBatchRepository {
   private getShopContextKey(runId: string): string {
     return `shop:${runId}`
   }
-  /**
-   * 取得 Redis key 的過期時間（秒）
-   * 預設 24 小時（可根據需求調整）
-   */
   private getTTL(): number {
     return 86400 // 24 小時
   }

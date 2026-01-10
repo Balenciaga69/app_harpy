@@ -67,7 +67,7 @@ export class InitService {
       seed: dto.seed,
       startingRelicIds: dto.startingRelicIds,
     })
-    ResultToExceptionMapper.throwIfFailure(result, '初始化 Run 失敗')
+    ResultToExceptionMapper.throwIfFailure(result)
     const appContext = result.value!
     const runId = appContext.contexts.runContext.runId
     return {
