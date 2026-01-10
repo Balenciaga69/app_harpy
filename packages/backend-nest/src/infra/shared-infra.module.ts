@@ -1,12 +1,10 @@
 ﻿import { Module, Scope } from '@nestjs/common'
 import { ContextManager } from './context/ContextManager'
-import { RequestContextProvider } from './context/RequestContextProvider'
 import { configStoreProviders } from './providers/config-store.providers'
 import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
 @Module({
   providers: [
     ...configStoreProviders,
-    RequestContextProvider,
     {
       provide: ContextManager,
       useFactory: (configStore: any) => {
@@ -17,13 +15,6 @@ import { fineGrainedInterfaceProviders } from './providers/fine-grained-interfac
     },
     ...fineGrainedInterfaceProviders,
   ],
-  exports: [
-    ContextManager,
-    RequestContextProvider,
-    'IConfigStoreAccessor',
-    'IContextSnapshotAccessor',
-    'IContextMutator',
-    'CONFIG_STORE',
-  ],
+  exports: [ContextManager, 'IConfigStoreAccessor', 'IContextSnapshotAccessor', 'IContextMutator', 'CONFIG_STORE'],
 })
 export class SharedInfraModule {}

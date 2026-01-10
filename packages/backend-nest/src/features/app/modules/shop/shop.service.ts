@@ -26,7 +26,15 @@ export class ShopNestService {
         message: '購買物品失敗',
       })
     }
-
+    try {
+      this.ctxManager.saveCtxByRunId(dto.runId)
+    } catch (error) {
+      throw new BadRequestException({
+        error: 'CONTEXT_SAVE_FAILED',
+        message: '無法保存運行上下文',
+        details: error instanceof Error ? error.message : undefined,
+      })
+    }
     return {
       success: true,
       message: '購買成功',
@@ -51,7 +59,15 @@ export class ShopNestService {
         message: '賣出物品失敗',
       })
     }
-
+    try {
+      this.ctxManager.saveCtxByRunId(dto.runId)
+    } catch (error) {
+      throw new BadRequestException({
+        error: 'CONTEXT_SAVE_FAILED',
+        message: '無法保存運行上下文',
+        details: error instanceof Error ? error.message : undefined,
+      })
+    }
     return {
       success: true,
       message: '賣出成功',
@@ -76,7 +92,15 @@ export class ShopNestService {
         message: '刷新商店失敗',
       })
     }
-
+    try {
+      this.ctxManager.saveCtxByRunId(dto.runId)
+    } catch (error) {
+      throw new BadRequestException({
+        error: 'CONTEXT_SAVE_FAILED',
+        message: '無法保存運行上下文',
+        details: error instanceof Error ? error.message : undefined,
+      })
+    }
     return {
       success: true,
       message: '刷新成功',

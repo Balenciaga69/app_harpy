@@ -35,6 +35,9 @@ export class ContextManager {
   runWithContext<T>(appContext: IAppContext, fn: () => T): T {
     return ContextManager.store.run(appContext, fn)
   }
+  saveCtxByRunId(runId: string) {
+    return this.saveContext(this.getContextByRunId(runId)!)
+  }
   saveContext(appContext: IAppContext) {
     const runId = appContext.contexts.runContext.runId
     if (!runId) {
