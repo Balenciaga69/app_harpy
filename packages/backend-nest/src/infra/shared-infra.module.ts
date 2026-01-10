@@ -2,12 +2,13 @@
 import { ContextManager } from './context/ContextManager'
 import { configStoreProviders } from './providers/config-store.providers'
 import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
+type ConfigStore = ConstructorParameters<typeof ContextManager>[0]
 @Module({
   providers: [
     ...configStoreProviders,
     {
       provide: ContextManager,
-      useFactory: (configStore: any) => {
+      useFactory: (configStore: ConfigStore) => {
         return new ContextManager(configStore)
       },
       inject: ['CONFIG_STORE'],

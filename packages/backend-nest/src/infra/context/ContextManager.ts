@@ -79,7 +79,7 @@ export class ContextManager {
   getConfigStore(): IConfigStore {
     return this.globalConfigStore
   }
-  private shallowCopy(obj: any): any {
+  private shallowCopy<T extends object>(obj: T): T {
     if (obj === null || typeof obj !== 'object') {
       return obj
     }

@@ -1,4 +1,4 @@
-﻿import { Controller, Post, Body, UseInterceptors } from '@nestjs/common'
+﻿import { Controller, Post, Body, UseInterceptors, Get, Query } from '@nestjs/common'
 import { ApiOperation, ApiBody } from '@nestjs/swagger'
 import { BuyItemDto } from './dto/BuyItemDto'
 import { SellItemDto } from './dto/SellItemDto'
@@ -9,6 +9,11 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
 @Controller('api/run')
 export class ShopController {
   constructor(private readonly shopService: ShopNestService) {}
+
+  @Get('shop/items')
+  getShopItems(@Query('runId') runId: string) {
+    return this.shopService.getShopItems({ runId })
+  }
   @Post('shop/buy')
   @ApiOperation({ summary: '購買物品' })
   @ApiBody({
@@ -19,7 +24,7 @@ export class ShopController {
       },
     },
   })
-  async buyItem(@Body() dto: BuyItemDto) {
+  buyItem(@Body() dto: BuyItemDto) {
     return this.shopService.buyItem(dto)
   }
   @Post('shop/sell')
@@ -32,7 +37,7 @@ export class ShopController {
       },
     },
   })
-  async sellItem(@Body() dto: SellItemDto) {
+  sellItem(@Body() dto: SellItemDto) {
     return this.shopService.sellItem(dto)
   }
   @Post('shop/refresh')
@@ -44,7 +49,7 @@ export class ShopController {
       },
     },
   })
-  async refreshShop(@Body() dto: RefreshShopDto) {
+  refreshShop(@Body() dto: RefreshShopDto) {
     return this.shopService.refreshShop(dto)
   }
 }
