@@ -51,7 +51,6 @@ export class InMemoryContextRepository implements IContextBatchRepository {
   getByKey(key: string): unknown {
     return this.store.get(key) ?? null
   }
-
   async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
     if (!runId) {
       return null

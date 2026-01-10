@@ -8,7 +8,7 @@ import {
   IStashContext,
   IContextUpdateResult,
 } from '../../from-game-core'
-import { REDIS_CLIENT } from '../redis/RedisModule'
+import { REDIS_CLIENT } from '../redis/redis.module'
 @Injectable()
 export class RedisContextRepository implements IContextBatchRepository {
   private readonly logger = new Logger(RedisContextRepository.name)
@@ -68,13 +68,11 @@ export class RedisContextRepository implements IContextBatchRepository {
     this.logger.warn(`getByKey 為同步方法，不支持 Redis 操作，建議改用非同步方法 (key: ${key})`)
     return null
   }
-
   async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
     if (!runId) {
       this.logger.warn('getByRunId: runId 為空，操作被拒絕')
       return null
     }
-
     try {
       const [runData, characterData, stashData, shopData, globalVersionStr] = await Promise.all([
         this.redis.get(this.getRunContextKey(runId)),
@@ -83,11 +81,9 @@ export class RedisContextRepository implements IContextBatchRepository {
         this.redis.get(this.getShopContextKey(runId)),
         this.redis.get(this.GLOBAL_VERSION_KEY),
       ])
-
       if (!runData) {
         return null
       }
-
       return {
         success: true,
         runContext: JSON.parse(runData) as IRunContext,

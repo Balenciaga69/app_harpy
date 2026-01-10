@@ -1,15 +1,12 @@
 ﻿import { Injectable, Inject, Logger } from '@nestjs/common'
 import { AsyncLocalStorage } from 'async_hooks'
 import { IAppContext, IContextBatchRepository } from '../../from-game-core'
-
 type IConfigStore = IAppContext['configStore']
-
 @Injectable()
 export class ContextManager {
   private static readonly store = new AsyncLocalStorage<IAppContext>()
   private globalConfigStore: IConfigStore
   private readonly logger = new Logger(ContextManager.name)
-
   constructor(
     configStore: IConfigStore,
     @Inject('IContextBatchRepository') private readonly repository: IContextBatchRepository
@@ -22,7 +19,6 @@ export class ContextManager {
     }
     ContextManager.store.enterWith(appContext)
   }
-
   getContext(): IAppContext | null {
     const context = ContextManager.store.getStore()
     if (!context) {
@@ -30,15 +26,12 @@ export class ContextManager {
     }
     return context
   }
-
   hasContext(): boolean {
     return ContextManager.store.getStore() !== undefined
   }
-
   runWithContext<T>(appContext: IAppContext, fn: () => T): T {
     return ContextManager.store.run(appContext, fn)
   }
-
   async saveContext(appContext: IAppContext): Promise<void> {
     const runId = appContext.contexts.runContext.runId
     if (!runId) {
@@ -57,7 +50,6 @@ export class ContextManager {
       throw error
     }
   }
-
   async getContextByRunId(runId: string): Promise<IAppContext | null> {
     if (!runId) {
       return null
@@ -83,7 +75,6 @@ export class ContextManager {
       return null
     }
   }
-
   getConfigStore(): IConfigStore {
     return this.globalConfigStore
   }

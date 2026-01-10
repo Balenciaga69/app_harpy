@@ -8,7 +8,6 @@ import {
   IAppContext,
 } from 'src/from-game-core'
 import { ContextManager } from '../context/ContextManager'
-
 export const fineGrainedInterfaceProviders = [
   {
     provide: 'IAppContext',
@@ -16,14 +15,12 @@ export const fineGrainedInterfaceProviders = [
       const body = (request.body ?? {}) as Record<string, unknown>
       const runId = body?.runId as string | undefined
       let currentContext: IAppContext | undefined
-
       if (runId && typeof runId === 'string') {
         const persistedContext = await contextManager.getContextByRunId(runId)
         if (persistedContext) {
           currentContext = persistedContext
         }
       }
-
       if (!currentContext) {
         currentContext = {
           configStore: contextManager.getConfigStore(),
@@ -35,7 +32,6 @@ export const fineGrainedInterfaceProviders = [
           },
         }
       }
-
       return currentContext
     },
     inject: [ContextManager, REQUEST],

@@ -1,13 +1,12 @@
-﻿import { Injectable, BadRequestException } from '@nestjs/common'
+﻿import { BadRequestException, Injectable } from '@nestjs/common'
 import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
-import { ContextManager } from 'src/infra/context/ContextManager'
 import { InitRunDto } from './dto/InitRunDto'
+import { ResultToExceptionMapper } from 'src/infra/mappers/ResultToExceptionMapper'
 @Injectable()
 export class InitService {
   constructor(
     private readonly gameStartOptionsService: GameStartOptionsService,
-    private readonly runInitializationService: RunInitializationService,
-    private readonly contextManager: ContextManager
+    private readonly runInitializationService: RunInitializationService
   ) {}
   getProfessions() {
     const professions = this.gameStartOptionsService.getAvailableProfessions()
@@ -68,26 +67,13 @@ export class InitService {
       seed: dto.seed,
       startingRelicIds: dto.startingRelicIds,
     })
-    if (result.isFailure || !result.value) {
-      throw new BadRequestException({
-        error: result.error ?? 'unknown_error',
-        message: '初始化 Run 失敗',
-      })
-    }
-    const appContext = result.value
-    try {
-      await this.contextManager.saveContext(appContext)
-    } catch (error) {
-      throw new BadRequestException({
-        error: 'CONTEXT_SAVE_FAILED',
-        message: '無法保存運行上下文',
-        details: error instanceof Error ? error.message : undefined,
-      })
-    }
+    ResultToExceptionMapper.throwIfFailure(result, '初始化 Run 失敗')
+    const appContext = result.value!
+    const runId = appContext.contexts.runContext.runId
     return {
       success: true,
       data: {
-        runId: appContext.contexts.runContext.runId,
+        runId,
         professionId: appContext.contexts.characterContext.professionId,
         seed: appContext.contexts.runContext.seed,
       },

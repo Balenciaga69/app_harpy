@@ -1,8 +1,14 @@
 ﻿import { NestFactory } from '@nestjs/core'
+import { Logger } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './features/app/app.module'
+import { AllExceptionsFilter } from './infra/filters/AllExceptionsFilter'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+  const logger = new Logger('Bootstrap')
+  // 設定全域異常過濾器
+  app.useGlobalFilters(new AllExceptionsFilter())
+  // 設定 Swagger
   const config = new DocumentBuilder()
     .setTitle('Game Core API')
     .setDescription('遊戲核心 API 文檔')
@@ -10,7 +16,9 @@ async function bootstrap() {
     .build()
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document)
-  await app.listen(process.env.PORT ?? 3000)
-  console.log(`應用已啟動，Swagger 文檔地址: http://localhost:3000/api`)
+  // 啟動應用
+  const port = process.env.PORT ?? 3000
+  await app.listen(port)
+  logger.log(`應用已啟動，Swagger 文檔地址: http://localhost:${port}/api`)
 }
 void bootstrap()
