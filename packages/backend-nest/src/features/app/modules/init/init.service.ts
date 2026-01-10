@@ -76,7 +76,7 @@ export class InitService {
     }
     const appContext = result.value
     try {
-      this.contextManager.saveContext(appContext)
+      await this.contextManager.saveContext(appContext)
     } catch (error) {
       throw new BadRequestException({
         error: 'CONTEXT_SAVE_FAILED',

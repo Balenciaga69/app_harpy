@@ -13,11 +13,11 @@ export class ShopNestService {
     @Optional() private readonly shopService: ShopService,
     private readonly ctxManager: ContextManager
   ) {}
-  getShopItems(dto: GetShopItemsDto) {
+  async getShopItems(dto: GetShopItemsDto) {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
-    const context = this.ctxManager.getContextByRunId(dto.runId)
+    const context = await this.ctxManager.getContextByRunId(dto.runId)
     if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     const shopContext = context.contexts.shopContext
     if (!shopContext) {
@@ -28,11 +28,11 @@ export class ShopNestService {
       data: shopContext,
     }
   }
-  buyItem(dto: BuyItemDto) {
+  async buyItem(dto: BuyItemDto) {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
-    const context = this.ctxManager.getContextByRunId(dto.runId)
+    const context = await this.ctxManager.getContextByRunId(dto.runId)
     if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     const result = this.shopService.buyItem(dto.itemId)
     if (result.isFailure) {
@@ -42,7 +42,7 @@ export class ShopNestService {
       })
     }
     try {
-      this.ctxManager.saveCtxByRunId(dto.runId)
+      await this.ctxManager.saveContext(context)
     } catch (error) {
       throw new BadRequestException({
         error: 'CONTEXT_SAVE_FAILED',
@@ -59,11 +59,11 @@ export class ShopNestService {
       },
     }
   }
-  sellItem(dto: SellItemDto) {
+  async sellItem(dto: SellItemDto) {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
-    const context = this.ctxManager.getContextByRunId(dto.runId)
+    const context = await this.ctxManager.getContextByRunId(dto.runId)
     if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     const result = this.shopService.sellItem(dto.itemId)
     if (result.isFailure) {
@@ -73,7 +73,7 @@ export class ShopNestService {
       })
     }
     try {
-      this.ctxManager.saveCtxByRunId(dto.runId)
+      await this.ctxManager.saveContext(context)
     } catch (error) {
       throw new BadRequestException({
         error: 'CONTEXT_SAVE_FAILED',
@@ -90,11 +90,11 @@ export class ShopNestService {
       },
     }
   }
-  refreshShop(dto: RefreshShopDto) {
+  async refreshShop(dto: RefreshShopDto) {
     if (!this.shopService) {
       throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
     }
-    const context = this.ctxManager.getContextByRunId(dto.runId)
+    const context = await this.ctxManager.getContextByRunId(dto.runId)
     if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
     const refreshResult = this.shopService.refreshShopItems()
     if (refreshResult.isFailure) {
@@ -104,7 +104,7 @@ export class ShopNestService {
       })
     }
     try {
-      this.ctxManager.saveCtxByRunId(dto.runId)
+      await this.ctxManager.saveContext(context)
     } catch (error) {
       throw new BadRequestException({
         error: 'CONTEXT_SAVE_FAILED',

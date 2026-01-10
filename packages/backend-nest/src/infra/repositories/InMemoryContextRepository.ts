@@ -5,15 +5,8 @@ import {
   IRunContext,
   IShopContext,
   IStashContext,
+  IContextUpdateResult,
 } from '../../from-game-core'
-type UpdateBatchResult = {
-  success: boolean
-  runContext?: IRunContext
-  stashContext?: IStashContext
-  characterContext?: ICharacterContext
-  shopContext?: IShopContext
-  globalVersion: number
-}
 @Injectable()
 export class InMemoryContextRepository implements IContextBatchRepository {
   private store = new Map<string, unknown>()
@@ -25,7 +18,7 @@ export class InMemoryContextRepository implements IContextBatchRepository {
       shop?: { context: IShopContext; expectedVersion: number }
     },
     globalVersion?: number
-  ): Promise<UpdateBatchResult | null> {
+  ): Promise<IContextUpdateResult | null> {
     const runId =
       updates.run?.context.runId ||
       updates.character?.context.runId ||
@@ -55,38 +48,24 @@ export class InMemoryContextRepository implements IContextBatchRepository {
       globalVersion: (globalVersion || 0) + 1,
     })
   }
-  async updateRunContext(runId: string, context: IRunContext) {
-    this.store.set(`run:${runId}`, context)
-    return Promise.resolve({ success: true })
-  }
-  async updateCharacterContext(runId: string, context: ICharacterContext) {
-    this.store.set(`character:${runId}`, context)
-    return Promise.resolve({ success: true })
-  }
-  async updateStashContext(runId: string, context: IStashContext) {
-    this.store.set(`stash:${runId}`, context)
-    return Promise.resolve({ success: true })
-  }
-  async updateShopContext(runId: string, context: IShopContext) {
-    this.store.set(`shop:${runId}`, context)
-    return Promise.resolve({ success: true })
-  }
-  async getRunContext(runId: string): Promise<IRunContext | null> {
-    return Promise.resolve((this.store.get(`run:${runId}`) as IRunContext | undefined) ?? null)
-  }
-  async getCharacterContext(runId: string): Promise<ICharacterContext | null> {
-    return Promise.resolve((this.store.get(`character:${runId}`) as ICharacterContext | undefined) ?? null)
-  }
-  async getStashContext(runId: string): Promise<IStashContext | null> {
-    return Promise.resolve((this.store.get(`stash:${runId}`) as IStashContext | undefined) ?? null)
-  }
-  async getShopContext(runId: string): Promise<IShopContext | null> {
-    return Promise.resolve((this.store.get(`shop:${runId}`) as IShopContext | undefined) ?? null)
-  }
   getByKey(key: string): unknown {
     return this.store.get(key) ?? null
   }
-  clear() {
-    this.store.clear()
+
+  async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
+    if (!runId) {
+      return null
+    }
+    const runContext = this.store.get(`run:${runId}`) as IRunContext | undefined
+    if (!runContext) {
+      return null
+    }
+    return Promise.resolve({
+      success: true,
+      runContext,
+      characterContext: (this.store.get(`character:${runId}`) as ICharacterContext | undefined) ?? undefined,
+      stashContext: (this.store.get(`stash:${runId}`) as IStashContext | undefined) ?? undefined,
+      shopContext: (this.store.get(`shop:${runId}`) as IShopContext | undefined) ?? undefined,
+    })
   }
 }

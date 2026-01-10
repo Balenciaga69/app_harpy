@@ -8,19 +8,22 @@ import {
   IAppContext,
 } from 'src/from-game-core'
 import { ContextManager } from '../context/ContextManager'
+
 export const fineGrainedInterfaceProviders = [
   {
     provide: 'IAppContext',
-    useFactory: (contextManager: ContextManager, request: Request) => {
+    useFactory: async (contextManager: ContextManager, request: Request) => {
       const body = (request.body ?? {}) as Record<string, unknown>
       const runId = body?.runId as string | undefined
       let currentContext: IAppContext | undefined
+
       if (runId && typeof runId === 'string') {
-        const persistedContext = contextManager.getContextByRunId(runId)
+        const persistedContext = await contextManager.getContextByRunId(runId)
         if (persistedContext) {
           currentContext = persistedContext
         }
       }
+
       if (!currentContext) {
         currentContext = {
           configStore: contextManager.getConfigStore(),
@@ -32,6 +35,7 @@ export const fineGrainedInterfaceProviders = [
           },
         }
       }
+
       return currentContext
     },
     inject: [ContextManager, REQUEST],
@@ -56,11 +60,11 @@ export const fineGrainedInterfaceProviders = [
   {
     provide: 'IContextMutator',
     useFactory: (context: IAppContext, contextManager: ContextManager, request: Request) => {
-      const onContextChange = (next: IAppContext) => {
+      const onContextChange = async (next: IAppContext) => {
         const body = (request.body ?? {}) as Record<string, unknown>
         const runId = body?.runId as string | undefined
         if (runId && typeof runId === 'string') {
-          contextManager.saveContext(next)
+          await contextManager.saveContext(next)
         }
       }
       return new ContextMutatorImpl(onContextChange, context)

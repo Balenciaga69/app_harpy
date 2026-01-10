@@ -75,7 +75,7 @@ export class ContextSnapshotAccessorImpl implements IContextSnapshotAccessor {
 }
 export class ContextMutatorImpl implements IContextMutator {
   constructor(
-    private onContextChange: (next: IAppContext) => void,
+    private onContextChange: (next: IAppContext) => void | Promise<void>,
     private currentContext: IAppContext
   ) {}
   setRunContext(ctx: IRunContext): void {
@@ -92,6 +92,6 @@ export class ContextMutatorImpl implements IContextMutator {
   }
   private updateContext(next: IAppContext): void {
     this.currentContext = next
-    this.onContextChange(next)
+    void this.onContextChange(next)
   }
 }

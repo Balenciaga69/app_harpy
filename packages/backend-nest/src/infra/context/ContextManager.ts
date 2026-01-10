@@ -1,19 +1,19 @@
-﻿import { Injectable } from '@nestjs/common'
+﻿import { Injectable, Inject, Logger } from '@nestjs/common'
 import { AsyncLocalStorage } from 'async_hooks'
-import { IAppContext } from '../../from-game-core'
+import { IAppContext, IContextBatchRepository } from '../../from-game-core'
+
 type IConfigStore = IAppContext['configStore']
-interface IRunExecutionContext {
-  readonly runContext: IAppContext['contexts']['runContext']
-  readonly characterContext: IAppContext['contexts']['characterContext']
-  readonly stashContext: IAppContext['contexts']['stashContext']
-  readonly shopContext: IAppContext['contexts']['shopContext']
-}
+
 @Injectable()
 export class ContextManager {
   private static readonly store = new AsyncLocalStorage<IAppContext>()
   private globalConfigStore: IConfigStore
-  private runContexts = new Map<string, IRunExecutionContext>()
-  constructor(configStore: IConfigStore) {
+  private readonly logger = new Logger(ContextManager.name)
+
+  constructor(
+    configStore: IConfigStore,
+    @Inject('IContextBatchRepository') private readonly repository: IContextBatchRepository
+  ) {
     this.globalConfigStore = configStore
   }
   setContext(appContext: IAppContext): void {
@@ -22,6 +22,7 @@ export class ContextManager {
     }
     ContextManager.store.enterWith(appContext)
   }
+
   getContext(): IAppContext | null {
     const context = ContextManager.store.getStore()
     if (!context) {
@@ -29,60 +30,61 @@ export class ContextManager {
     }
     return context
   }
+
   hasContext(): boolean {
     return ContextManager.store.getStore() !== undefined
   }
+
   runWithContext<T>(appContext: IAppContext, fn: () => T): T {
     return ContextManager.store.run(appContext, fn)
   }
-  saveCtxByRunId(runId: string) {
-    return this.saveContext(this.getContextByRunId(runId)!)
-  }
-  saveContext(appContext: IAppContext) {
+
+  async saveContext(appContext: IAppContext): Promise<void> {
     const runId = appContext.contexts.runContext.runId
     if (!runId) {
       throw new Error('AppContext must have a valid runId')
     }
     const contexts = appContext.contexts
-    const runContext = {
-      runContext: this.shallowCopy(contexts.runContext),
-      characterContext: this.shallowCopy(contexts.characterContext),
-      stashContext: this.shallowCopy(contexts.stashContext),
-      shopContext: this.shallowCopy(contexts.shopContext),
+    try {
+      await this.repository.updateBatch({
+        run: { context: contexts.runContext, expectedVersion: 0 },
+        character: { context: contexts.characterContext, expectedVersion: 0 },
+        stash: { context: contexts.stashContext, expectedVersion: 0 },
+        shop: { context: contexts.shopContext, expectedVersion: 0 },
+      })
+    } catch (error) {
+      this.logger.error(`saveContext 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      throw error
     }
-    this.runContexts.set(runId, runContext)
   }
-  getContextByRunId(runId: string): IAppContext | null {
+
+  async getContextByRunId(runId: string): Promise<IAppContext | null> {
     if (!runId) {
       return null
     }
-    const runContext = this.runContexts.get(runId)
-    if (!runContext) {
+    try {
+      const result = await this.repository.getByRunId(runId)
+      if (!result?.success || !result.runContext) {
+        return null
+      }
+      return {
+        configStore: this.globalConfigStore,
+        contexts: {
+          runContext: result.runContext,
+          characterContext: result.characterContext ?? ({} as IAppContext['contexts']['characterContext']),
+          stashContext: result.stashContext ?? ({} as IAppContext['contexts']['stashContext']),
+          shopContext: result.shopContext ?? ({} as IAppContext['contexts']['shopContext']),
+        },
+      }
+    } catch (error) {
+      this.logger.error(
+        `getContextByRunId 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`
+      )
       return null
     }
-    return {
-      configStore: this.globalConfigStore,
-      contexts: {
-        runContext: this.shallowCopy(runContext.runContext),
-        characterContext: this.shallowCopy(runContext.characterContext),
-        stashContext: this.shallowCopy(runContext.stashContext),
-        shopContext: this.shallowCopy(runContext.shopContext),
-      },
-    }
   }
-  contextExists(runId: string): boolean {
-    return this.runContexts.has(runId)
-  }
-  deleteContext(runId: string): void {
-    this.runContexts.delete(runId)
-  }
+
   getConfigStore(): IConfigStore {
     return this.globalConfigStore
-  }
-  private shallowCopy<T extends object>(obj: T): T {
-    if (obj === null || typeof obj !== 'object') {
-      return obj
-    }
-    return { ...obj }
   }
 }
