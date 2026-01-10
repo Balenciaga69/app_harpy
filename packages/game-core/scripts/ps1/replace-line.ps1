@@ -1,12 +1,27 @@
-# 定義要處理的路徑
 $paths = @(
    "g:\Coding\app_harpy\packages\backend-nest\src",
    "g:\Coding\app_harpy\packages\game-core\src"
 )
 
-# 遍歷每個路徑並處理檔案
 foreach ($path in $paths) {
+   if (-not (Test-Path $path)) {
+      Write-Host "Path not found: $path" -ForegroundColor Yellow
+      continue
+   }
+
    Get-ChildItem -Path $path -Recurse -Include *.ts | ForEach-Object {
-      (Get-Content $_.FullName) -join "`n" -replace "`n`n", "`n" | Set-Content $_.FullName
+      $content = Get-Content $_.FullName -Raw
+
+      if ([string]::IsNullOrWhiteSpace($content)) {
+         return
+      }
+
+      $newContent = $content -replace '(\r?\n)\r?\n', '$1'
+
+      if ($content -ne $newContent) {
+         $utf8WithBom = [System.Text.UTF8Encoding]::new($true)
+         [System.IO.File]::WriteAllText($_.FullName, $newContent, $utf8WithBom)
+         Write-Host "Updated: $($_.FullName)" -ForegroundColor Green
+      }
    }
 }

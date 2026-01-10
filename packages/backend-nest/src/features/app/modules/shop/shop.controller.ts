@@ -9,7 +9,6 @@ import { ContextInitializationInterceptor } from 'src/infra/interceptors/Context
 @Controller('api/run')
 export class ShopController {
   constructor(private readonly shopService: ShopNestService) {}
-
   @Get('shop/items')
   getShopItems(@Query('runId') runId: string) {
     return this.shopService.getShopItems({ runId })

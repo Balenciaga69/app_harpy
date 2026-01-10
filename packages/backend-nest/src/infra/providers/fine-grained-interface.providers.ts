@@ -8,7 +8,6 @@ import {
   IAppContext,
 } from 'src/from-game-core'
 import { ContextManager } from '../context/ContextManager'
-
 export const fineGrainedInterfaceProviders = [
   {
     provide: 'IAppContext',
