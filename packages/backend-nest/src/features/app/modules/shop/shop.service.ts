@@ -96,10 +96,10 @@ export class ShopNestService {
     }
     const context = this.ctxManager.getContextByRunId(dto.runId)
     if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
-    const result = this.shopService.refreshShopItems()
-    if (result.isFailure) {
+    const refreshResult = this.shopService.refreshShopItems()
+    if (refreshResult.isFailure) {
       throw new BadRequestException({
-        error: result.error,
+        error: refreshResult.error,
         message: '刷新商店失敗',
       })
     }
