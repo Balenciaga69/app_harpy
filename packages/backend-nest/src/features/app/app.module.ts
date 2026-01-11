@@ -5,8 +5,10 @@ import { EquipmentModule } from './modules/equipment/equipment.module'
 import { InitModule } from './modules/init/init.module'
 import { ShopModule } from './modules/shop/shop.module'
 import { SharedAppModule } from './shared/shared-app.module'
+import { AuthModule } from '../auth/auth.module'
+import { RunModule } from '../run/run.module'
 @Module({
-  imports: [SharedInfraModule, SharedAppModule, InitModule, ShopModule, EquipmentModule],
+  imports: [SharedInfraModule, SharedAppModule, AuthModule, RunModule, InitModule, ShopModule, EquipmentModule],
   controllers: [HealthController],
   providers: [],
 })
