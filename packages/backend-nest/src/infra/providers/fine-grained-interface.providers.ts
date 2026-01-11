@@ -1,6 +1,7 @@
 ﻿import { Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { Request } from 'express'
+import { getRunIdFromRequest } from '../helpers/RequestUtils'
 import {
   ConfigStoreAccessorImpl,
   ContextMutatorImpl,
@@ -12,8 +13,7 @@ export const fineGrainedInterfaceProviders = [
   {
     provide: 'IAppContext',
     useFactory: async (contextManager: ContextManager, request: Request) => {
-      const body = (request.body ?? {}) as Record<string, unknown>
-      const runId = body?.runId as string | undefined
+      const runId = getRunIdFromRequest(request)
       let currentContext: IAppContext | undefined
       if (runId && typeof runId === 'string') {
         const persistedContext = await contextManager.getContextByRunId(runId)
@@ -57,8 +57,7 @@ export const fineGrainedInterfaceProviders = [
     provide: 'IContextMutator',
     useFactory: (context: IAppContext, contextManager: ContextManager, request: Request) => {
       const onContextChange = async (next: IAppContext) => {
-        const body = (request.body ?? {}) as Record<string, unknown>
-        const runId = body?.runId as string | undefined
+        const runId = getRunIdFromRequest(request)
         if (runId && typeof runId === 'string') {
           await contextManager.saveContext(next)
         }

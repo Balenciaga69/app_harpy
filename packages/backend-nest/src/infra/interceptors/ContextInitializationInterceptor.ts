@@ -3,6 +3,7 @@ import { Observable, from } from 'rxjs'
 import { switchMap } from 'rxjs/operators'
 import { Request } from 'express'
 import { ContextManager } from '../context/ContextManager'
+import { getRunIdFromRequest } from '../helpers/RequestUtils'
 @Injectable()
 export class ContextInitializationInterceptor implements NestInterceptor {
   private static readonly IGNORED_ENDPOINTS = new Set(['/api/run/init'])
@@ -20,7 +21,7 @@ export class ContextInitializationInterceptor implements NestInterceptor {
     if (ContextInitializationInterceptor.isPathIgnored(request)) {
       return next.handle()
     }
-    const runId = this.getRunIdFromRequest(request)
+    const runId = getRunIdFromRequest(request)
     if (!runId) {
       throw new BadRequestException(ContextInitializationInterceptor.ERROR_MISSING_RUN_ID)
     }
@@ -36,15 +37,5 @@ export class ContextInitializationInterceptor implements NestInterceptor {
   private static isPathIgnored(request: Request): boolean {
     return ContextInitializationInterceptor.IGNORED_ENDPOINTS.has(request.path)
   }
-  private getRunIdFromRequest(request: Request): string | undefined {
-    if (request.body && typeof request.body === 'object' && 'runId' in request.body) {
-      const val = (request.body as Record<string, unknown>).runId
-      return typeof val === 'string' ? val : undefined
-    }
-    if (request.query && typeof request.query === 'object' && 'runId' in request.query) {
-      const val = (request.query as Record<string, unknown>).runId
-      return typeof val === 'string' ? val : undefined
-    }
-    return undefined
-  }
+  // ...existing code...
 }
