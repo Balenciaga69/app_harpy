@@ -1,6 +1,6 @@
 ﻿import { Inject, Injectable, Logger } from '@nestjs/common'
-
 import { IAppContext, IContextBatchRepository } from '../../from-game-core'
+import { InjectionTokens } from '../providers/injection-tokens'
 type IConfigStore = IAppContext['configStore']
 @Injectable()
 export class ContextManager {
@@ -8,7 +8,7 @@ export class ContextManager {
   private readonly logger = new Logger(ContextManager.name)
   constructor(
     configStore: IConfigStore,
-    @Inject('IContextBatchRepository') private readonly repository: IContextBatchRepository
+    @Inject(InjectionTokens.ContextBatchRepository) private readonly repository: IContextBatchRepository
   ) {
     this.globalConfigStore = configStore
   }

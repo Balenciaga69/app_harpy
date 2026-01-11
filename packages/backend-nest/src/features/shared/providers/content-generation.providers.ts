@@ -8,13 +8,14 @@ import {
   ProfessionEntityService,
   UltimateEntityService,
 } from 'src/from-game-core'
+import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 export const contentGenerationProviders = [
   {
     provide: AffixEntityService,
     useFactory: (configStoreAccessor: IConfigStoreAccessor, contextSnapshot: IContextSnapshotAccessor) => {
       return new AffixEntityService(configStoreAccessor, contextSnapshot)
     },
-    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {
@@ -22,7 +23,7 @@ export const contentGenerationProviders = [
     useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new UltimateEntityService(affixSvc, config, snapshot)
     },
-    inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [AffixEntityService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {
@@ -30,7 +31,7 @@ export const contentGenerationProviders = [
     useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new ItemEntityService(config, snapshot, affixSvc)
     },
-    inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [AffixEntityService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {
@@ -38,7 +39,7 @@ export const contentGenerationProviders = [
     useFactory: (config: IConfigStoreAccessor) => {
       return new ProfessionEntityService(config)
     },
-    inject: ['IConfigStoreAccessor'],
+    inject: [InjectionTokens.ConfigStoreAccessor],
     scope: Scope.REQUEST,
   },
   {

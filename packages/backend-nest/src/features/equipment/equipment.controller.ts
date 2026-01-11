@@ -1,6 +1,5 @@
 ﻿import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
-
 import { EquipmentService } from './equipment.service'
 @Controller('api/run/equipment')
 export class EquipmentController {

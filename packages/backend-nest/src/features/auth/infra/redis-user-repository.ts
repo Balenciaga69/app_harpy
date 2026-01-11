@@ -1,13 +1,11 @@
-﻿import { Injectable } from '@nestjs/common'
-import { Inject } from '@nestjs/common'
+﻿import { Inject, Injectable } from '@nestjs/common'
 import type Redis from 'ioredis'
-import { REDIS_CLIENT } from 'src/infra/redis/redis.module'
-
+import { InjectionTokens } from 'src/infra/providers/injection-tokens'
 import type { IUserRepository } from '../app/user-repository'
 import type { User } from './domain/user'
 @Injectable()
 export class RedisUserRepository implements IUserRepository {
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
+  constructor(@Inject(InjectionTokens.RedisClient) private readonly redis: Redis) {}
   async findById(userId: string): Promise<User | null> {
     const data = await this.redis.get(`user:${userId}`)
     return data ? (JSON.parse(data) as User) : null

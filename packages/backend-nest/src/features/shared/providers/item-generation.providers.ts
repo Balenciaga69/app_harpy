@@ -8,13 +8,14 @@ import {
   ItemModifierAggregationService,
   ItemRollService,
 } from 'src/from-game-core'
+import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 export const itemGenerationProviders = [
   {
     provide: ItemConstraintService,
     useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new ItemConstraintService(config, snapshot)
     },
-    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {
@@ -22,7 +23,7 @@ export const itemGenerationProviders = [
     useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
       return new ItemModifierAggregationService(config, snapshot)
     },
-    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {
@@ -34,7 +35,7 @@ export const itemGenerationProviders = [
     ) => {
       return new ItemRollService(config, snapshot, constraintSvc)
     },
-    inject: [ItemConstraintService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [ItemConstraintService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {

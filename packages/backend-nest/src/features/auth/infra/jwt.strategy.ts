@@ -1,7 +1,6 @@
 ﻿import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
-
 import type { JwtPayload } from './jwt-token-provider'
 export interface AuthenticatedUser {
   userId: string

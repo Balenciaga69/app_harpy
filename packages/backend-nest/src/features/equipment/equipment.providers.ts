@@ -6,7 +6,7 @@ import {
   EquipmentService as GameCoreEquipmentService,
   IContextSnapshotAccessor,
 } from 'src/from-game-core'
-
+import { InjectionTokens } from '../../infra/providers/injection-tokens'
 import { EquipmentService } from './equipment.service'
 export const equipmentFeatureProviders = [
   {
@@ -14,7 +14,7 @@ export const equipmentFeatureProviders = [
     useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new EquipmentContextHandler(snapshot, converter, uow)
     },
-    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextToDomainConverter, ContextUnitOfWork],
     scope: Scope.REQUEST,
   },
   {

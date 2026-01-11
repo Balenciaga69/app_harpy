@@ -2,7 +2,6 @@
 import { Request } from 'express'
 import { from, Observable } from 'rxjs'
 import { switchMap } from 'rxjs/operators'
-
 import { ContextManager } from '../context/context-manager'
 import { getRunIdFromRequest } from '../helpers/request-utils'
 @Injectable()
@@ -38,5 +37,4 @@ export class ContextInitializationInterceptor implements NestInterceptor {
   private static isPathIgnored(request: Request): boolean {
     return ContextInitializationInterceptor.IGNORED_ENDPOINTS.has(request.path)
   }
-  // ...existing code...
 }

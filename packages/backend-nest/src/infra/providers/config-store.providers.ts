@@ -7,9 +7,10 @@
   InternalShopConfigLoader,
   InternalUltimateConfigLoader,
 } from 'src/from-game-core'
+import { InjectionTokens } from './injection-tokens'
 export const configStoreProviders = [
   {
-    provide: 'CONFIG_STORE',
+    provide: InjectionTokens.ConfigStore,
     useFactory: async () => {
       const assembler = new GameConfigAssembler(
         new InternalEnemyConfigLoader(),

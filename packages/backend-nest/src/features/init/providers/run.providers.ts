@@ -18,13 +18,14 @@ import {
   StageNodeGenerationService,
   UltimateEntityService,
 } from 'src/from-game-core'
+import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,
     useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new RunContextHandler(snapshot, converter, uow)
     },
-    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextToDomainConverter, ContextUnitOfWork],
     scope: Scope.REQUEST,
   },
   {
@@ -40,7 +41,7 @@ export const runFeatureProviders = [
     useFactory: (configStore: IAppContext['configStore']) => {
       return new GameStartOptionsService(configStore.professionStore, configStore.itemStore)
     },
-    inject: ['CONFIG_STORE'],
+    inject: [InjectionTokens.ConfigStore],
     scope: Scope.REQUEST,
   },
   {
@@ -60,7 +61,12 @@ export const runFeatureProviders = [
     ) => {
       return new EnemyEntityService(affixEntityService, ultimateEntityService, configStoreAccessor, contextSnapshot)
     },
-    inject: [AffixEntityService, UltimateEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [
+      AffixEntityService,
+      UltimateEntityService,
+      InjectionTokens.ConfigStoreAccessor,
+      InjectionTokens.ContextSnapshotAccessor,
+    ],
     scope: Scope.REQUEST,
   },
   {
@@ -72,7 +78,7 @@ export const runFeatureProviders = [
     ) => {
       return new EnemyRandomGenerateService(enemyEntityService, configStoreAccessor, contextSnapshotAccessor)
     },
-    inject: [EnemyEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    inject: [EnemyEntityService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
     scope: Scope.REQUEST,
   },
   {
@@ -84,7 +90,7 @@ export const runFeatureProviders = [
     ) => {
       return new StageInitializationService(contextAccessor, unitOfWork, enemyRandomGenerateService)
     },
-    inject: ['IContextSnapshotAccessor', ContextUnitOfWork, EnemyRandomGenerateService],
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextUnitOfWork, EnemyRandomGenerateService],
     scope: Scope.REQUEST,
   },
   {
@@ -100,7 +106,7 @@ export const runFeatureProviders = [
     useFactory: (configStore: IAppContext['configStore']) => {
       return new AppContextRunAdapter(configStore)
     },
-    inject: ['CONFIG_STORE'],
+    inject: [InjectionTokens.ConfigStore],
     scope: Scope.REQUEST,
   },
   {

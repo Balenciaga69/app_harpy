@@ -1,6 +1,5 @@
 ﻿import { Injectable } from '@nestjs/common'
 import { Redis } from 'ioredis'
-
 import type { IRunRepository } from '../app/run-repository'
 import type { CreateRunRecordParams, RunRecord } from '../domain/run-record'
 import { RunStatus } from '../domain/run-record'

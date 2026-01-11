@@ -1,9 +1,9 @@
 ﻿import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
-
+import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 import type { IRunRepository } from '../app/run-repository'
 @Injectable()
 export class IsOwnRunGuard implements CanActivate {
-  constructor(@Inject('IRunRepository') private readonly runRepository: IRunRepository) {}
+  constructor(@Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const request = context.switchToHttp().getRequest()

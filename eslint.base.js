@@ -57,7 +57,7 @@ export default {
     '@typescript-eslint/no-explicit-any': 'warn', // 禁止 any
 
     // simple-import-sort 規則
-    'simple-import-sort/imports': 'warn', // import 排序
+    // 'simple-import-sort/imports': 'warn', // import 排序
     'simple-import-sort/exports': 'warn', // export 排序
 
     // sonarjs 規則（異味代碼）

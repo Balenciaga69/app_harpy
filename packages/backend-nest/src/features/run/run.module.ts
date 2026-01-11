@@ -1,6 +1,6 @@
 ﻿import { Module } from '@nestjs/common'
 import { Redis } from 'ioredis'
-
+import { InjectionTokens } from '../../infra/providers/injection-tokens'
 import { AuthModule } from '../auth/auth.module'
 import { IsOwnRunGuard } from './infra/is-own-run.guard'
 import { RedisRunRepository } from './infra/redis-run-repository'
@@ -8,12 +8,12 @@ import { RedisRunRepository } from './infra/redis-run-repository'
   imports: [AuthModule],
   providers: [
     {
-      provide: 'IRunRepository',
+      provide: InjectionTokens.RunRepository,
       useFactory: (redis: Redis) => new RedisRunRepository(redis),
-      inject: ['REDIS_CLIENT'],
+      inject: [InjectionTokens.RedisClient],
     },
     IsOwnRunGuard,
   ],
-  exports: ['IRunRepository', IsOwnRunGuard],
+  exports: [InjectionTokens.RunRepository, IsOwnRunGuard],
 })
 export class RunModule {}

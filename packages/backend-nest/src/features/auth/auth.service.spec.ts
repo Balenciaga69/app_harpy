@@ -1,7 +1,7 @@
 ﻿/* eslint-disable @typescript-eslint/unbound-method */
 import { BadRequestException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-
+import { InjectionTokens } from '../../infra/providers/injection-tokens'
 import { AuthService } from './app/auth.service'
 import type { IUserRepository } from './app/user-repository'
 import type { User } from './infra/domain/user'
@@ -25,7 +25,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
-          provide: 'IUserRepository',
+          provide: InjectionTokens.UserRepository,
           useValue: mockUserRepository,
         },
         {

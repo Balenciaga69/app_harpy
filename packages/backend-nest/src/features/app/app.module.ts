@@ -1,7 +1,6 @@
 ﻿import { Module } from '@nestjs/common'
 import { SharedAppModule } from 'src/features/shared/shared-app.module'
 import { SharedInfraModule } from 'src/infra/shared-infra.module'
-
 import { AuthModule } from '../auth/auth.module'
 import { EquipmentModule } from '../equipment/equipment.module'
 import { InitModule } from '../init/init.module'

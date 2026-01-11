@@ -1,13 +1,13 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
 import { RunInitializationService } from 'src/from-game-core'
-
+import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 import type { CreateRunRecordParams } from '../domain/run-record'
 import type { IRunRepository } from './run-repository'
 @Injectable()
 export class RunService {
   constructor(
     private readonly runInitializationService: RunInitializationService,
-    @Inject('IRunRepository') private readonly runRepository: IRunRepository
+    @Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository
   ) {}
   async initializeRunForUser(
     userId: string,

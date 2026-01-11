@@ -8,6 +8,7 @@ import {
   IContextSnapshotAccessor,
   ItemEntityService,
 } from 'src/from-game-core'
+import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 export const contextConverterProviders = [
   {
     provide: ContextToDomainConverter,
@@ -19,7 +20,12 @@ export const contextConverterProviders = [
     ) => {
       return new ContextToDomainConverter(itemSvc, charSvc, snapshot, config)
     },
-    inject: [ItemEntityService, CharacterAggregateService, 'IContextSnapshotAccessor', 'IConfigStoreAccessor'],
+    inject: [
+      ItemEntityService,
+      CharacterAggregateService,
+      InjectionTokens.ContextSnapshotAccessor,
+      InjectionTokens.ConfigStoreAccessor,
+    ],
     scope: Scope.REQUEST,
   },
   {
@@ -27,7 +33,7 @@ export const contextConverterProviders = [
     useFactory: (snapshot: IContextSnapshotAccessor, mutator: IContextMutator) => {
       return new ContextUnitOfWork(mutator, snapshot)
     },
-    inject: ['IContextSnapshotAccessor', 'IContextMutator'],
+    inject: [InjectionTokens.ContextSnapshotAccessor, InjectionTokens.ContextMutator],
     scope: Scope.REQUEST,
   },
 ]

@@ -7,13 +7,14 @@ import {
   ShopContextHandler,
   ShopService,
 } from 'src/from-game-core'
+import { InjectionTokens } from '../../infra/providers/injection-tokens'
 export const shopFeatureProviders = [
   {
     provide: ShopContextHandler,
     useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
       return new ShopContextHandler(snapshot, converter, uow)
     },
-    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextToDomainConverter, ContextUnitOfWork],
     scope: Scope.REQUEST,
   },
   {

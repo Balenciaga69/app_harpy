@@ -1,6 +1,5 @@
 ﻿import { Inject, Injectable, Logger } from '@nestjs/common'
 import Redis from 'ioredis'
-
 import {
   ICharacterContext,
   IContextBatchRepository,
@@ -9,12 +8,12 @@ import {
   IShopContext,
   IStashContext,
 } from '../../from-game-core'
-import { REDIS_CLIENT } from '../redis/redis.module'
+import { InjectionTokens } from '../providers/injection-tokens'
 @Injectable()
 export class RedisContextRepository implements IContextBatchRepository {
   private readonly logger = new Logger(RedisContextRepository.name)
   private readonly GLOBAL_VERSION_KEY = 'version:global'
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: InstanceType<typeof Redis>) {}
+  constructor(@Inject(InjectionTokens.RedisClient) private readonly redis: InstanceType<typeof Redis>) {}
   async updateBatch(
     updates: {
       run?: { context: IRunContext; expectedVersion: number }

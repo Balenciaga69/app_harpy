@@ -1,7 +1,7 @@
 ﻿import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-
+import { InjectionTokens } from '../../infra/providers/injection-tokens'
 import { AuthService } from './app/auth.service'
 import { AuthController } from './auth.controller'
 import { AllowAnonymousGuard, IsAuthenticatedGuard } from './infra/auth.guard'
@@ -19,7 +19,7 @@ import { RedisUserRepository } from './infra/redis-user-repository'
     AuthService,
     JwtTokenProvider,
     {
-      provide: 'IUserRepository',
+      provide: InjectionTokens.UserRepository,
       useClass: RedisUserRepository,
     },
     JwtStrategy,
@@ -27,6 +27,6 @@ import { RedisUserRepository } from './infra/redis-user-repository'
     AllowAnonymousGuard,
   ],
   controllers: [AuthController],
-  exports: [AuthService, IsAuthenticatedGuard, AllowAnonymousGuard, 'IUserRepository'],
+  exports: [AuthService, IsAuthenticatedGuard, AllowAnonymousGuard, InjectionTokens.UserRepository],
 })
 export class AuthModule {}

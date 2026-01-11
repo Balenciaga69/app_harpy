@@ -7,12 +7,12 @@ import {
   ContextSnapshotAccessorImpl,
   IAppContext,
 } from 'src/from-game-core'
-
 import { ContextManager } from '../context/context-manager'
 import { getRunIdFromRequest } from '../helpers/request-utils'
+import { InjectionTokens } from './injection-tokens'
 export const fineGrainedInterfaceProviders = [
   {
-    provide: 'IAppContext',
+    provide: InjectionTokens.AppContext,
     useFactory: async (contextManager: ContextManager, request: Request) => {
       const runId = getRunIdFromRequest(request)
       let currentContext: IAppContext | undefined
@@ -39,23 +39,23 @@ export const fineGrainedInterfaceProviders = [
     scope: Scope.REQUEST,
   },
   {
-    provide: 'IConfigStoreAccessor',
+    provide: InjectionTokens.ConfigStoreAccessor,
     useFactory: (context: IAppContext) => {
       return new ConfigStoreAccessorImpl(context)
     },
-    inject: ['IAppContext'],
+    inject: [InjectionTokens.AppContext],
     scope: Scope.REQUEST,
   },
   {
-    provide: 'IContextSnapshotAccessor',
+    provide: InjectionTokens.ContextSnapshotAccessor,
     useFactory: (context: IAppContext) => {
       return new ContextSnapshotAccessorImpl(context)
     },
-    inject: ['IAppContext'],
+    inject: [InjectionTokens.AppContext],
     scope: Scope.REQUEST,
   },
   {
-    provide: 'IContextMutator',
+    provide: InjectionTokens.ContextMutator,
     useFactory: (context: IAppContext, contextManager: ContextManager, request: Request) => {
       const onContextChange = async (next: IAppContext) => {
         const runId = getRunIdFromRequest(request)
@@ -65,7 +65,7 @@ export const fineGrainedInterfaceProviders = [
       }
       return new ContextMutatorImpl(onContextChange, context)
     },
-    inject: ['IAppContext', ContextManager, REQUEST],
+    inject: [InjectionTokens.AppContext, ContextManager, REQUEST],
     scope: Scope.REQUEST,
   },
 ]

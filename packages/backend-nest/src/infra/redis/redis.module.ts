@@ -2,21 +2,19 @@
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import type { RedisOptions } from 'ioredis'
 import Redis from 'ioredis'
-export const REDIS_CLIENT = 'REDIS_CLIENT'
+import { InjectionTokens } from '../providers/injection-tokens'
 @Global()
 @Module({
   imports: [ConfigModule],
   providers: [
     {
-      provide: REDIS_CLIENT,
+      provide: InjectionTokens.RedisClient,
       useFactory: (configService: ConfigService) => {
         const logger = new Logger('RedisModule')
-        // 從環境變數讀取設定
         const host = configService.get<string>('REDIS_HOST', 'localhost')
         const port = configService.get<number>('REDIS_PORT', 6379)
         const password = configService.get<string>('REDIS_PASSWORD')
         const db = configService.get<number>('REDIS_DB', 0)
-        // 連線配置
         const redisOptions: RedisOptions = {
           host,
           port,
@@ -38,12 +36,10 @@ export const REDIS_CLIENT = 'REDIS_CLIENT'
           // 是否啟用 offline 佇列（可選，預設 true）
           // enableOfflineQueue: true,
         }
-        // 若設定密碼則加入
         if (password) {
           redisOptions.password = password
         }
         const redis = new Redis(redisOptions)
-        // 事件監聽（除錯與監控）
         redis.on('connect', () => {
           logger.log(`✓ Redis 已連接 (${host}:${port}, db=${db})`)
         })
@@ -64,6 +60,6 @@ export const REDIS_CLIENT = 'REDIS_CLIENT'
       inject: [ConfigService],
     },
   ],
-  exports: [REDIS_CLIENT],
+  exports: [InjectionTokens.RedisClient],
 })
 export class RedisModule {}

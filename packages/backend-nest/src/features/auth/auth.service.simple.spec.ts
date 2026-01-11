@@ -1,6 +1,5 @@
 ﻿/* eslint-disable @typescript-eslint/unbound-method */
 import { BadRequestException } from '@nestjs/common'
-
 import { AuthService } from './app/auth.service'
 import type { IUserRepository } from './app/user-repository'
 import type { User } from './infra/domain/user'
