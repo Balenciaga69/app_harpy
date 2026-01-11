@@ -1,11 +1,11 @@
-﻿import { Injectable } from '@nestjs/common'
+﻿import { Injectable, Inject } from '@nestjs/common'
 import type { IUserRepository } from '../../auth/app/IUserRepository'
 import type { IRunRepository } from '../app/IRunRepository'
 @Injectable()
 export class UserMigrationService {
   constructor(
-    private readonly userRepository: IUserRepository,
-    private readonly runRepository: IRunRepository
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
+    @Inject('IRunRepository') private readonly runRepository: IRunRepository
   ) {}
   async migrateAnonRunsToAuthenticatedUser(
     anonymousUserId: string,

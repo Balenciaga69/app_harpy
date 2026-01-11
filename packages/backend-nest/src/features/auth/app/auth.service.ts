@@ -1,11 +1,11 @@
-﻿import { Injectable, BadRequestException } from '@nestjs/common'
+﻿import { Injectable, BadRequestException, Inject } from '@nestjs/common'
 import type { IUserRepository } from './IUserRepository'
-import type { JwtTokenProvider } from '../infra/jwt.token.provider'
+import { JwtTokenProvider } from '../infra/jwt.token.provider'
 import { randomUUID } from 'crypto'
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userRepository: IUserRepository,
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
     private readonly tokenProvider: JwtTokenProvider
   ) {}
   async createAnonymousSession(): Promise<{ token: string; userId: string }> {

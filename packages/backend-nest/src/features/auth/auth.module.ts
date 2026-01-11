@@ -26,6 +26,6 @@ import { AuthController } from './auth.controller'
     AllowAnonymousGuard,
   ],
   controllers: [AuthController],
-  exports: [AuthService, IsAuthenticatedGuard, AllowAnonymousGuard],
+  exports: [AuthService, IsAuthenticatedGuard, AllowAnonymousGuard, 'IUserRepository'],
 })
 export class AuthModule {}
