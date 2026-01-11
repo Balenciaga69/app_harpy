@@ -9,20 +9,13 @@ import {
   IStashContext,
 } from '../../from-game-core'
 import { InjectionTokens } from '../providers/injection-tokens'
+type Updates = Parameters<IContextBatchRepository['updateBatch']>[0]
 @Injectable()
 export class RedisContextRepository implements IContextBatchRepository {
   private readonly logger = new Logger(RedisContextRepository.name)
   private readonly GLOBAL_VERSION_KEY = 'version:global'
   constructor(@Inject(InjectionTokens.RedisClient) private readonly redis: InstanceType<typeof Redis>) {}
-  async updateBatch(
-    updates: {
-      run?: { context: IRunContext; expectedVersion: number }
-      stash?: { context: IStashContext; expectedVersion: number }
-      character?: { context: ICharacterContext; expectedVersion: number }
-      shop?: { context: IShopContext; expectedVersion: number }
-    },
-    globalVersion?: number
-  ): Promise<IContextUpdateResult | null> {
+  async updateBatch(updates: Updates, globalVersion?: number): Promise<IContextUpdateResult | null> {
     const runId =
       updates.run?.context.runId ||
       updates.character?.context.runId ||
@@ -33,22 +26,20 @@ export class RedisContextRepository implements IContextBatchRepository {
       return null
     }
     try {
-      const pipeline = this.redis.pipeline()
-      if (updates.run) {
-        pipeline.set(this.getRunContextKey(runId), JSON.stringify(updates.run.context), 'EX', this.getTTL())
-      }
-      if (updates.character) {
-        pipeline.set(this.getCharacterContextKey(runId), JSON.stringify(updates.character.context), 'EX', this.getTTL())
-      }
-      if (updates.stash) {
-        pipeline.set(this.getStashContextKey(runId), JSON.stringify(updates.stash.context), 'EX', this.getTTL())
-      }
-      if (updates.shop) {
-        pipeline.set(this.getShopContextKey(runId), JSON.stringify(updates.shop.context), 'EX', this.getTTL())
-      }
+      // multi: ensure atomicity
+      // pipeline: package multiple commands to improve performance
+      const useTransaction = true
+      const batch = useTransaction ? this.redis.multi() : this.redis.pipeline()
+      if (updates.run) batch.set(this.getRunContextKey(runId), JSON.stringify(updates.run.context), 'EX', this.getTTL())
+      if (updates.character)
+        batch.set(this.getCharacterContextKey(runId), JSON.stringify(updates.character.context), 'EX', this.getTTL())
+      if (updates.stash)
+        batch.set(this.getStashContextKey(runId), JSON.stringify(updates.stash.context), 'EX', this.getTTL())
+      if (updates.shop)
+        batch.set(this.getShopContextKey(runId), JSON.stringify(updates.shop.context), 'EX', this.getTTL())
       const nextVersion = (globalVersion || 0) + 1
-      pipeline.set(this.GLOBAL_VERSION_KEY, nextVersion.toString())
-      await pipeline.exec()
+      batch.set(this.GLOBAL_VERSION_KEY, nextVersion.toString())
+      await batch.exec()
       return {
         success: true,
         runContext: updates.run?.context,

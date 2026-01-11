@@ -27,33 +27,34 @@ import { InjectionTokens } from '../providers/injection-tokens'
           maxRetriesPerRequest: null,
           // 重試次數上限（可選）
           // maxRedisRetries: 10,
-          // 連線逾時時間（毫秒，可選）
+          // 連線逾時時間（毫秒, 可選）
           // connectTimeout: 10000,
-          // 命令逾時時間（毫秒，可選）
+          // 命令逾時時間（毫秒, 可選）
           // commandTimeout: 5000,
           // 是否自動重新連線（可選）
           // autoReconnect: true,
-          // 是否啟用 offline 佇列（可選，預設 true）
+          // 是否啟用 offline 佇列（可選, 預設 true）
           // enableOfflineQueue: true,
         }
         if (password) {
           redisOptions.password = password
         }
         const redis = new Redis(redisOptions)
+        const logPrefix = `[Redis][${host}:${port}][db=${db}]`
         redis.on('connect', () => {
-          logger.log(`✓ Redis 已連接 (${host}:${port}, db=${db})`)
+          logger.log(`${logPrefix} ✓ 已連接`)
         })
         redis.on('ready', () => {
-          logger.log('✓ Redis 已準備好')
+          logger.log(`${logPrefix} ✓ 已準備好`)
         })
         redis.on('error', (err: Error) => {
-          logger.error(`✗ Redis 錯誤: ${err.message}`, err.stack)
+          logger.error(`${logPrefix} ✗ 錯誤: ${err.message}`, err.stack)
         })
-        redis.on('reconnecting', () => {
-          logger.warn('⟳ Redis 正在重新連線...')
+        redis.on('reconnecting', (times: number) => {
+          logger.warn(`${logPrefix} ⟳ 正在重新連線...（第 ${times ?? '?'} 次）`)
         })
         redis.on('close', () => {
-          logger.warn('⊘ Redis 連線已關閉')
+          logger.warn(`${logPrefix} ⊘ 連線已關閉`)
         })
         return redis
       },

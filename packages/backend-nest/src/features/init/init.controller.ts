@@ -23,20 +23,6 @@ export class InitController {
   getProfessionRelics(@Param('id') id: string) {
     return this.initService.getSelectableStartingRelics(id)
   }
-  @Post('init')
-  @ApiOperation({ summary: '初始化新遊戲 (不綁定用戶，向後兼容)' })
-  @ApiBody({
-    schema: {
-      example: {
-        professionId: 'WARRIOR',
-        seed: 12345,
-        startingRelicIds: ['relic_warrior_resolute_heart'],
-      },
-    },
-  })
-  initializeRun(@Body() dto: InitRunDto) {
-    return this.initService.initializeRun(dto)
-  }
   @Post('init-for-user')
   @UseGuards(IsAuthenticatedGuard)
   @ApiBearerAuth('access-token')

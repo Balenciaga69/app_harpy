@@ -1,13 +1,12 @@
 ﻿import { BadRequestException, Injectable } from '@nestjs/common'
 import { RunService } from 'src/features/run/app/run.service'
-import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
+import { GameStartOptionsService } from 'src/from-game-core'
 import { ResultToExceptionMapper } from 'src/infra/mappers/result-to-exception-mapper'
 import { InitRunDto } from './dto/init-run.dto'
 @Injectable()
 export class InitService {
   constructor(
     private readonly gameStartOptionsService: GameStartOptionsService,
-    private readonly runInitializationService: RunInitializationService,
     private readonly runService: RunService
   ) {}
   getProfessions() {
@@ -70,28 +69,6 @@ export class InitService {
    */
   async initializeRunForUser(userId: string, dto: InitRunDto) {
     const result = await this.runService.initializeRunForUser(userId, {
-      professionId: dto.professionId,
-      seed: dto.seed,
-      startingRelicIds: dto.startingRelicIds,
-    })
-    ResultToExceptionMapper.throwIfFailure(result)
-    const appContext = result.value!
-    const runId = appContext.contexts.runContext.runId
-    return {
-      success: true,
-      data: {
-        runId,
-        professionId: appContext.contexts.characterContext.professionId,
-        seed: appContext.contexts.runContext.seed,
-      },
-    }
-  }
-  /**
-   * 不綁定用戶的初始化（向後兼容）
-   * @deprecated 使用 initializeRunForUser 代替
-   */
-  async initializeRun(dto: InitRunDto) {
-    const result = await this.runInitializationService.initialize({
       professionId: dto.professionId,
       seed: dto.seed,
       startingRelicIds: dto.startingRelicIds,

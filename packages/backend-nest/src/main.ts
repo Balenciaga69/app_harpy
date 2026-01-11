@@ -19,6 +19,6 @@ async function bootstrap() {
   // 啟動應用
   const port = process.env.PORT ?? 3000
   await app.listen(port)
-  logger.log(`應用已啟動，Swagger 文檔地址: http://localhost:${port}/api`)
+  logger.log(`應用已啟動, Swagger 文檔地址: http://localhost:${port}/api`)
 }
 void bootstrap()
