@@ -1,0 +1,81 @@
+Collecting workspace information# 專案功能審核
+
+## Q: 目前專案是否具備 Player/Account 機制？
+
+### A: **否，目前沒有實現**
+
+- 程式碼中**完全沒有** Player、Account、User 相關的實體或服務
+- 所有模組都是基於 `runId` 的無狀態操作
+- 沒有玩家身份驗證或識別機制
+
+---
+
+## Q: 多 Run 管理機制是否存在？
+
+### A: **否，目前未實現**
+
+- `Run.ts` 只管理單一進行中的遊戲進度
+- 沒有「每個玩家只能有 1 個活躍 Run」的限制邏輯
+- 沒有 Run 狀態管理來區分「活躍」vs「已結束」
+- `RunStatusGuard.ts` 只驗證 Run 本身的狀態轉移，不涉及玩家層級
+
+---
+
+## Q: 已結束內容的保護機制？
+
+### A: **部分實現，但不完整**
+
+- `Run.ts` 有 `status` 欄位（IDLE, PRE_COMBAT, IN_COMBAT, POST_COMBAT, COMPLETED）
+- 但**沒有權限檢查**防止修改已結束的 Run
+- 需要在每個操作前驗證「該 Run 是否屬於當前玩家」且「是否已完成」
+
+---
+
+## Q: 玩家隔離機制？
+
+### A: **否，目前沒有實現**
+
+- 系統只用 `runId` 標識進度
+- **沒有玩家身份驗證**，無法區分「這個 Run 屬於誰」
+- 任何人知道 `runId` 就能操作任何人的遊戲進度
+
+---
+
+## Q: 登入/訪客機制？
+
+### A: **否，完全沒有**
+
+- 沒有認證系統（User、Session、Token 等）
+- 沒有訪客模式的概念
+- 沒有區分「認證玩家」vs「匿名訪客」的邏輯
+
+---
+
+## Q: Game-Core 和 Backend 的職責劃分
+
+### Game-Core 應負責
+
+- ✅ **遊戲規則邏輯**：Run 狀態轉移、Combat 結算、Shop 交易、Equipment 裝備
+- ✅ **領域模型**：Character、Item、Run、Enemy 等實體
+- ✅ **內容生成**：ItemGeneration、EnemyGeneration、RewardFactory 等
+- ❌ **玩家身份驗證**（應由 Backend 負責）
+- ❌ **多 Run 管理**（應由 Backend/Database 層負責）
+- ❌ **權限檢查**（應由 Backend 負責）
+
+### Backend 應負責
+
+- 🔴 **玩家認證系統**：User、Account、Session
+- 🔴 **玩家 Run 管理**：「每個玩家 1 個活躍 Run」的業務規則
+- 🔴 **權限驗證**：確認「這個 Run 屬於該玩家」
+- 🔴 **訪客機制**：臨時 Session 或 Anonymous User
+- ✅ **API Gateway**：路由、請求驗證
+- ✅ **Database 層**：持久化、隔離
+
+---
+
+## 建議後續問題
+
+- **認證策略**：想採用 Session-based 還是 JWT Token？
+- **訪客 Run 存儲**：訪客的 Run 要永久保存還是臨時存放？
+- **玩家遷移**：訪客能否升級為正式玩家並保留進度？
+- **多裝置同步**：同一玩家在不同裝置是否要同步進度？

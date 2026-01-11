@@ -1,4 +1,4 @@
-import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
+﻿import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 import { DomainErrorCode } from '../../shared/result/ErrorCodes'
 import { Result } from '../../shared/result/Result'
 import { ItemRollModifier } from '../item/roll/ItemRollModifier'
@@ -64,31 +64,43 @@ export class Run implements IRunFields, IRunBehavior {
   get status(): RunStatus {
     return this._status
   }
+  private isRunEnded(): Result<void> {
+    if (this._status === 'COMPLETED') {
+      return Result.fail(DomainErrorCode.Run_已結束無法更改)
+    }
+    return Result.success(undefined)
+  }
   deductRetry(): Result<Run> {
+    if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)
     if (this._remainingFailRetries <= 0) {
       return Result.fail(DomainErrorCode.Run_重試次數不足)
     }
     return Result.success(this.createNewRun({ remainingFailRetries: this._remainingFailRetries - 1 }))
   }
   advanceToNextStage(stageNumber: number): Result<Run> {
+    if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)
     if (stageNumber <= this._currentStage) {
       return Result.fail(DomainErrorCode.Run_無法前進到相同或較早關卡)
     }
     return Result.success(this.createNewRun({ currentStage: stageNumber }))
   }
   changeStatus(newStatus: RunStatus): Result<Run> {
+    if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)
     return Result.success(this.createNewRun({ status: newStatus }))
   }
   addEncounteredEnemy(enemyId: string): Result<Run> {
+    if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)
     if (this._encounteredEnemyIds.includes(enemyId)) {
       return Result.fail(DomainErrorCode.Run_敵人已遭遇過)
     }
     return Result.success(this.createNewRun({ encounteredEnemyIds: [...this._encounteredEnemyIds, enemyId] }))
   }
   addRollModifier(modifier: ItemRollModifier): Result<Run> {
+    if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)
     return Result.success(this.createNewRun({ rollModifiers: [...this._rollModifiers, modifier] }))
   }
   endRun(): Result<Run> {
+    if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)
     return Result.success(this.createNewRun({ status: 'COMPLETED' }))
   }
   private createNewRun(updates: Partial<IRunFields>): Run {

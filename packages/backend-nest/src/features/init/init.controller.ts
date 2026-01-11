@@ -1,6 +1,8 @@
-﻿import { Body, Controller, Get, Param, Post } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger'
+﻿import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { ApiBody, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger'
 import { InitRunDto } from './dto/InitRunDto'
+import { IsAuthenticatedGuard } from 'src/features/auth/infra/auth.guard'
+import { GetUser } from 'src/features/auth/infra/GetUser.decorator'
 import { InitService } from './init.service'
 @Controller('api/run')
 export class InitController {
@@ -22,7 +24,7 @@ export class InitController {
     return this.initService.getSelectableStartingRelics(id)
   }
   @Post('init')
-  @ApiOperation({ summary: '初始化新遊戲 (可帶 professionId 與可選起始 relics)' })
+  @ApiOperation({ summary: '初始化新遊戲 (不綁定用戶，向後兼容)' })
   @ApiBody({
     schema: {
       example: {
@@ -34,5 +36,25 @@ export class InitController {
   })
   initializeRun(@Body() dto: InitRunDto) {
     return this.initService.initializeRun(dto)
+  }
+  @Post('init-for-user')
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '為認證用戶初始化新遊戲' })
+  @ApiBody({
+    schema: {
+      example: {
+        professionId: 'WARRIOR',
+        seed: 12345,
+        startingRelicIds: ['relic_warrior_resolute_heart'],
+      },
+    },
+  })
+  async initializeRunForUser(@GetUser() user: unknown, @Body() dto: InitRunDto) {
+    const userId = (user as { userId?: string }).userId
+    if (!userId) {
+      throw new Error('MISSING_USER_ID')
+    }
+    return this.initService.initializeRunForUser(userId, dto)
   }
 }
