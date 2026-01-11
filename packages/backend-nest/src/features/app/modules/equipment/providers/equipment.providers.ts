@@ -1,11 +1,12 @@
 ﻿import { Scope } from '@nestjs/common'
 import {
   EquipmentContextHandler,
-  EquipmentService,
+  EquipmentService as GameCoreEquipmentService,
   ContextToDomainConverter,
   ContextUnitOfWork,
   IContextSnapshotAccessor,
 } from 'src/from-game-core'
+import { EquipmentService } from '../equipment.service'
 export const equipmentFeatureProviders = [
   {
     provide: EquipmentContextHandler,
@@ -16,11 +17,19 @@ export const equipmentFeatureProviders = [
     scope: Scope.REQUEST,
   },
   {
-    provide: EquipmentService,
+    provide: GameCoreEquipmentService,
     useFactory: (handler: EquipmentContextHandler) => {
-      return new EquipmentService(handler)
+      return new GameCoreEquipmentService(handler)
     },
     inject: [EquipmentContextHandler],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EquipmentService,
+    useFactory: (gameCoreService: GameCoreEquipmentService) => {
+      return new EquipmentService(gameCoreService)
+    },
+    inject: [GameCoreEquipmentService],
     scope: Scope.REQUEST,
   },
 ]

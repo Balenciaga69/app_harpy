@@ -2,8 +2,10 @@
 import { SharedInfraModule } from 'src/infra/shared-infra.module'
 import { SharedAppModule } from '../../shared/shared-app.module'
 import { equipmentFeatureProviders } from './providers/equipment.providers'
+import { EquipmentController } from './equipment.controller'
 @Module({
   imports: [SharedInfraModule, SharedAppModule],
+  controllers: [EquipmentController],
   providers: [...equipmentFeatureProviders],
   exports: [...equipmentFeatureProviders],
 })

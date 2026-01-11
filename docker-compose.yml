@@ -9,10 +9,8 @@ services:
       - redis_data:/data
     command:
       - "redis-server"
-      - "--appendonly"
-      - "yes"
-      - "--appendfilename"
-      - "appendonly.aof"
+      # - "--appendonly"
+      # - "yes"
     # 其他常用配置（可選）：
     # - "--maxmemory" "256mb"           # 設定記憶體上限
     # - "--maxmemory-policy" "allkeys-lru"  # 超出記憶體時的淘汰策略

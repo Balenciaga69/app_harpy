@@ -108,6 +108,6 @@ export class RedisContextRepository implements IContextBatchRepository {
     return `shop:${runId}`
   }
   private getTTL(): number {
-    return 86400
+    return 1800
   }
 }
