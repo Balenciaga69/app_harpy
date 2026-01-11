@@ -1,7 +1,8 @@
-﻿import { Injectable, Inject } from '@nestjs/common'
+﻿import { Inject, Injectable } from '@nestjs/common'
 import { RunInitializationService } from 'src/from-game-core'
-import type { IRunRepository } from './IRunRepository'
-import type { CreateRunRecordParams } from '../domain/RunRecord'
+
+import type { CreateRunRecordParams } from '../domain/run-record'
+import type { IRunRepository } from './run-repository'
 @Injectable()
 export class RunService {
   constructor(

@@ -1,11 +1,12 @@
 ﻿import { Scope } from '@nestjs/common'
 import {
-  EquipmentContextHandler,
-  EquipmentService as GameCoreEquipmentService,
   ContextToDomainConverter,
   ContextUnitOfWork,
+  EquipmentContextHandler,
+  EquipmentService as GameCoreEquipmentService,
   IContextSnapshotAccessor,
 } from 'src/from-game-core'
+
 import { EquipmentService } from './equipment.service'
 export const equipmentFeatureProviders = [
   {

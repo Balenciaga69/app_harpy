@@ -1,11 +1,11 @@
 ﻿import {
   GameConfigAssembler,
+  InternalAffixConfigLoader,
   InternalEnemyConfigLoader,
   InternalItemConfigLoader,
   InternalProfessionConfigLoader,
-  InternalUltimateConfigLoader,
-  InternalAffixConfigLoader,
   InternalShopConfigLoader,
+  InternalUltimateConfigLoader,
 } from 'src/from-game-core'
 export const configStoreProviders = [
   {

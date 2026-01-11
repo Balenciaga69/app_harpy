@@ -1,7 +1,8 @@
-﻿import { Injectable, BadRequestException, Inject } from '@nestjs/common'
-import type { IUserRepository } from './IUserRepository'
-import { JwtTokenProvider } from '../infra/jwt.token.provider'
+﻿import { BadRequestException, Inject,Injectable } from '@nestjs/common'
 import { randomUUID } from 'crypto'
+
+import { JwtTokenProvider } from '../infra/jwt-token-provider'
+import type { IUserRepository } from './user-repository'
 @Injectable()
 export class AuthService {
   constructor(

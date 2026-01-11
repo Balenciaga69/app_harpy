@@ -1,12 +1,12 @@
 ﻿import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
-  UltimateEntityService,
+  CharacterAggregateService,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
   ItemEntityService,
   ProfessionEntityService,
-  CharacterAggregateService,
-  IContextSnapshotAccessor,
-  IConfigStoreAccessor,
+  UltimateEntityService,
 } from 'src/from-game-core'
 export const contentGenerationProviders = [
   {

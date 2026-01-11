@@ -1,8 +1,9 @@
 ﻿import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger'
-import { InitRunDto } from './dto/InitRunDto'
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger'
 import { IsAuthenticatedGuard } from 'src/features/auth/infra/auth.guard'
-import { GetUser } from 'src/features/auth/infra/GetUser.decorator'
+import { GetUser } from 'src/features/auth/infra/get-user.decorator'
+
+import { InitRunDto } from './dto/init-run.dto'
 import { InitService } from './init.service'
 @Controller('api/run')
 export class InitController {

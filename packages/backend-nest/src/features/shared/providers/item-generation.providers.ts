@@ -1,12 +1,12 @@
 ﻿import { Scope } from '@nestjs/common'
 import {
-  ItemConstraintService,
-  ItemModifierAggregationService,
-  ItemRollService,
-  ItemGenerationService,
-  ItemEntityService,
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
+  ItemConstraintService,
+  ItemEntityService,
+  ItemGenerationService,
+  ItemModifierAggregationService,
+  ItemRollService,
 } from 'src/from-game-core'
 export const itemGenerationProviders = [
   {

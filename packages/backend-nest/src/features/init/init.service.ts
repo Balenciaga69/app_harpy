@@ -1,8 +1,9 @@
 ﻿import { BadRequestException, Injectable } from '@nestjs/common'
+import { RunService } from 'src/features/run/app/run.service'
 import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
-import { InitRunDto } from './dto/InitRunDto'
-import { ResultToExceptionMapper } from 'src/infra/mappers/ResultToExceptionMapper'
-import { RunService } from 'src/features/run/app/RunService'
+import { ResultToExceptionMapper } from 'src/infra/mappers/result-to-exception-mapper'
+
+import { InitRunDto } from './dto/init-run.dto'
 @Injectable()
 export class InitService {
   constructor(

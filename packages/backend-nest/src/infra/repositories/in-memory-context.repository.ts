@@ -1,11 +1,12 @@
 ﻿import { Injectable } from '@nestjs/common'
+
 import {
   ICharacterContext,
   IContextBatchRepository,
+  IContextUpdateResult,
   IRunContext,
   IShopContext,
   IStashContext,
-  IContextUpdateResult,
 } from '../../from-game-core'
 @Injectable()
 export class InMemoryContextRepository implements IContextBatchRepository {

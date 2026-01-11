@@ -1,8 +1,9 @@
 ﻿import { Module } from '@nestjs/common'
-import { SharedInfraModule } from 'src/infra/shared-infra.module'
 import { SharedAppModule } from 'src/features/shared/shared-app.module'
-import { equipmentFeatureProviders } from './equipment.providers'
+import { SharedInfraModule } from 'src/infra/shared-infra.module'
+
 import { EquipmentController } from './equipment.controller'
+import { equipmentFeatureProviders } from './equipment.providers'
 @Module({
   imports: [SharedInfraModule, SharedAppModule],
   controllers: [EquipmentController],

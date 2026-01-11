@@ -1,8 +1,9 @@
 ﻿import { Module } from '@nestjs/common'
 import { Redis } from 'ioredis'
-import { RedisRunRepository } from './infra/RedisRunRepository'
-import { IsOwnRunGuard } from './infra/IsOwnRunGuard'
+
 import { AuthModule } from '../auth/auth.module'
+import { IsOwnRunGuard } from './infra/is-own-run.guard'
+import { RedisRunRepository } from './infra/redis-run-repository'
 @Module({
   imports: [AuthModule],
   providers: [

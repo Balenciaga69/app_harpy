@@ -1,9 +1,10 @@
-﻿import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common'
-import { Observable, from } from 'rxjs'
-import { switchMap } from 'rxjs/operators'
+﻿import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
 import { Request } from 'express'
-import { ContextManager } from '../context/ContextManager'
-import { getRunIdFromRequest } from '../helpers/RequestUtils'
+import { from, Observable } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
+
+import { ContextManager } from '../context/context-manager'
+import { getRunIdFromRequest } from '../helpers/request-utils'
 @Injectable()
 export class ContextInitializationInterceptor implements NestInterceptor {
   private static readonly IGNORED_ENDPOINTS = new Set(['/api/run/init'])

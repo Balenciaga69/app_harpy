@@ -1,6 +1,7 @@
-﻿import { Injectable, Inject } from '@nestjs/common'
-import type { IUserRepository } from '../../auth/app/IUserRepository'
-import type { IRunRepository } from '../app/IRunRepository'
+﻿import { Inject, Injectable } from '@nestjs/common'
+
+import type { IUserRepository } from '../../auth/app/user-repository'
+import type { IRunRepository } from './run-repository'
 @Injectable()
 export class UserMigrationService {
   constructor(

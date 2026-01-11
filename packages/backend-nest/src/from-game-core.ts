@@ -42,7 +42,6 @@ export * from '@game-core-layer/application/features/run/stage-progression/servi
 export * from '@game-core-layer/application/features/run/stage-progression/service/StageNodeGenerationService'
 export * from '@game-core-layer/application/features/shop/ShopContextHandler'
 export * from '@game-core-layer/application/features/shop/ShopService'
-export * from '@game-core-layer/shared/result/ErrorCodes'
 export * from '@game-core-layer/domain/character/Character'
 export * from '@game-core-layer/domain/item/Item'
 export * from '@game-core-layer/domain/post-combat/PostCombat'
@@ -55,4 +54,5 @@ export * from '@game-core-layer/infra/static-config/loader/InternalItemConfigLoa
 export * from '@game-core-layer/infra/static-config/loader/InternalProfessionConfigLoader'
 export * from '@game-core-layer/infra/static-config/loader/InternalShopConfigLoader'
 export * from '@game-core-layer/infra/static-config/loader/InternalUltimateConfigLoader'
+export * from '@game-core-layer/shared/result/ErrorCodes'
 export * from '@game-core-layer/shared/result/Result'

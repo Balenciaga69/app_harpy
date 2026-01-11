@@ -1,12 +1,13 @@
 ﻿import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
+
 import { AuthService } from './app/auth.service'
-import { JwtTokenProvider } from './infra/jwt.token.provider'
-import { RedisUserRepository } from './infra/RedisUserRepository'
-import { JwtStrategy } from './infra/jwt.strategy'
-import { IsAuthenticatedGuard, AllowAnonymousGuard } from './infra/auth.guard'
 import { AuthController } from './auth.controller'
+import { AllowAnonymousGuard, IsAuthenticatedGuard } from './infra/auth.guard'
+import { JwtTokenProvider } from './infra/jwt-token-provider'
+import { JwtStrategy } from './infra/jwt.strategy'
+import { RedisUserRepository } from './infra/redis-user-repository'
 @Module({
   imports: [
     PassportModule,

@@ -1,12 +1,12 @@
 ﻿import { Scope } from '@nestjs/common'
 import {
+  CharacterAggregateService,
   ContextToDomainConverter,
   ContextUnitOfWork,
-  ItemEntityService,
-  CharacterAggregateService,
-  IContextSnapshotAccessor,
   IConfigStoreAccessor,
   IContextMutator,
+  IContextSnapshotAccessor,
+  ItemEntityService,
 } from 'src/from-game-core'
 export const contextConverterProviders = [
   {

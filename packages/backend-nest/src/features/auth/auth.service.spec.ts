@@ -1,10 +1,11 @@
 ﻿/* eslint-disable @typescript-eslint/unbound-method */
-import { Test, TestingModule } from '@nestjs/testing'
-import { AuthService } from './app/auth.service'
-import type { IUserRepository } from './app/IUserRepository'
-import { JwtTokenProvider } from './infra/jwt.token.provider'
-import type { User } from './infra/domain/User'
 import { BadRequestException } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+
+import { AuthService } from './app/auth.service'
+import type { IUserRepository } from './app/user-repository'
+import type { User } from './infra/domain/user'
+import { JwtTokenProvider } from './infra/jwt-token-provider'
 describe('AuthService', () => {
   let service: AuthService
   let mockUserRepository: jest.Mocked<IUserRepository>

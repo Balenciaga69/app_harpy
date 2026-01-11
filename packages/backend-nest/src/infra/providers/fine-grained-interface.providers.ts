@@ -1,14 +1,15 @@
 ﻿import { Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { Request } from 'express'
-import { getRunIdFromRequest } from '../helpers/RequestUtils'
 import {
   ConfigStoreAccessorImpl,
   ContextMutatorImpl,
   ContextSnapshotAccessorImpl,
   IAppContext,
 } from 'src/from-game-core'
-import { ContextManager } from '../context/ContextManager'
+
+import { ContextManager } from '../context/context-manager'
+import { getRunIdFromRequest } from '../helpers/request-utils'
 export const fineGrainedInterfaceProviders = [
   {
     provide: 'IAppContext',

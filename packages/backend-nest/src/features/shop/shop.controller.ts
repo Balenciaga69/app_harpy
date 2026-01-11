@@ -1,10 +1,11 @@
-﻿import { Controller, Post, Body, UseInterceptors, Get, Query } from '@nestjs/common'
-import { ApiOperation, ApiBody } from '@nestjs/swagger'
-import { BuyItemDto } from './dto/BuyItemDto'
-import { SellItemDto } from './dto/SellItemDto'
-import { RefreshShopDto } from './dto/RefreshShopDto'
+﻿import { Body, Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common'
+import { ApiBody, ApiOperation } from '@nestjs/swagger'
+import { ContextInitializationInterceptor } from 'src/infra/interceptors/context-initialization.interceptor'
+
+import { BuyItemDto } from './dto/buy-item.dto'
+import { RefreshShopDto } from './dto/refresh-shop.dto'
+import { SellItemDto } from './dto/sell-item.dto'
 import { ShopNestService } from './shop.service'
-import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
 @UseInterceptors(ContextInitializationInterceptor)
 @Controller('api/run')
 export class ShopController {

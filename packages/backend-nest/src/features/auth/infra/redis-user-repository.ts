@@ -1,9 +1,10 @@
 ﻿import { Injectable } from '@nestjs/common'
-import type { User } from './domain/User'
-import type { IUserRepository } from '../app/IUserRepository'
 import { Inject } from '@nestjs/common'
-import { REDIS_CLIENT } from 'src/infra/redis/redis.module'
 import type Redis from 'ioredis'
+import { REDIS_CLIENT } from 'src/infra/redis/redis.module'
+
+import type { IUserRepository } from '../app/user-repository'
+import type { User } from './domain/user'
 @Injectable()
 export class RedisUserRepository implements IUserRepository {
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
