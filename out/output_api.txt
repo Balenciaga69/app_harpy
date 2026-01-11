@@ -1,0 +1,2397 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where comments have been removed.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.ts
+- Files matching these patterns are excluded: data/**, **/__tests__/**, **/*.spec.ts
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Code comments have been removed from supported file types
+- Files are sorted by Git change count (files with more changes are at the bottom)
+
+
+================================================================
+Directory Structure
+================================================================
+features/app/app.controller.ts
+features/app/app.module.ts
+features/app/modules/equipment/equipment.controller.ts
+features/app/modules/equipment/equipment.module.ts
+features/app/modules/equipment/equipment.service.ts
+features/app/modules/equipment/providers/equipment.providers.ts
+features/app/modules/init/dto/InitRunDto.ts
+features/app/modules/init/init.controller.ts
+features/app/modules/init/init.module.ts
+features/app/modules/init/init.service.ts
+features/app/modules/init/providers/run.providers.ts
+features/app/modules/shop/dto/BuyItemDto.ts
+features/app/modules/shop/dto/RefreshShopDto.ts
+features/app/modules/shop/dto/SellItemDto.ts
+features/app/modules/shop/providers/shop.providers.ts
+features/app/modules/shop/shop.controller.ts
+features/app/modules/shop/shop.module.ts
+features/app/modules/shop/shop.service.ts
+features/app/shared/providers/common-context-package.ts
+features/app/shared/providers/content-generation.providers.ts
+features/app/shared/providers/context-converter.providers.ts
+features/app/shared/providers/item-generation.providers.ts
+features/app/shared/shared-app.module.ts
+features/auth/app/auth.service.ts
+features/auth/app/IUserRepository.ts
+features/auth/auth.controller.ts
+features/auth/auth.module.ts
+features/auth/domain/User.ts
+features/auth/infra/auth.guard.ts
+features/auth/infra/GetUser.decorator.ts
+features/auth/infra/jwt.strategy.ts
+features/auth/infra/jwt.token.provider.ts
+features/auth/infra/RedisUserRepository.ts
+features/run/app/IRunRepository.ts
+features/run/app/RunService.ts
+features/run/app/UserMigrationService.ts
+features/run/domain/RunRecord.ts
+features/run/infra/IsOwnRunGuard.ts
+features/run/infra/RedisRunRepository.ts
+features/run/run.module.ts
+from-game-core.ts
+infra/context/ContextManager.ts
+infra/filters/AllExceptionsFilter.ts
+infra/helpers/RequestUtils.ts
+infra/interceptors/ContextInitializationInterceptor.ts
+infra/mappers/ResultToExceptionMapper.ts
+infra/providers/config-store.providers.ts
+infra/providers/fine-grained-interface.providers.ts
+infra/redis/redis.module.ts
+infra/repositories/InMemoryContextRepository.ts
+infra/repositories/RedisContextRepository.ts
+infra/shared-infra.module.ts
+main.ts
+
+================================================================
+Files
+================================================================
+
+================
+File: features/app/app.controller.ts
+================
+import { Controller, Get } from '@nestjs/common'
+@Controller('health')
+export class HealthController {
+  @Get()
+  check() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    }
+  }
+}
+
+================
+File: features/app/app.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { HealthController } from './app.controller'
+import { EquipmentModule } from './modules/equipment/equipment.module'
+import { InitModule } from './modules/init/init.module'
+import { ShopModule } from './modules/shop/shop.module'
+import { SharedAppModule } from './shared/shared-app.module'
+import { AuthModule } from '../auth/auth.module'
+import { RunModule } from '../run/run.module'
+@Module({
+  imports: [SharedInfraModule, SharedAppModule, AuthModule, RunModule, InitModule, ShopModule, EquipmentModule],
+  controllers: [HealthController],
+  providers: [],
+})
+export class AppModule {}
+
+================
+File: features/app/modules/equipment/equipment.controller.ts
+================
+import { Body, Controller, Post } from '@nestjs/common'
+import { ApiOperation } from '@nestjs/swagger'
+import { EquipmentService } from './equipment.service'
+@Controller('api/run/equipment')
+export class EquipmentController {
+  constructor(private readonly equipmentService: EquipmentService) {}
+  @Post('equip')
+  @ApiOperation({ summary: '蝛蹂??' })
+  equipRelic(@Body() dto: { runId: string; relicId: string }): {
+    success: boolean
+    data: { message: string; relicId: string }
+  } {
+    return this.equipmentService.equipRelic(dto.relicId)
+  }
+  @Post('unequip')
+  @ApiOperation({ summary: '?思??' })
+  unequipRelic(@Body() dto: { runId: string; relicId: string }): {
+    success: boolean
+    data: { message: string; relicId: string }
+  } {
+    return this.equipmentService.unequipRelic(dto.relicId)
+  }
+}
+
+================
+File: features/app/modules/equipment/equipment.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { SharedAppModule } from '../../shared/shared-app.module'
+import { equipmentFeatureProviders } from './providers/equipment.providers'
+import { EquipmentController } from './equipment.controller'
+@Module({
+  imports: [SharedInfraModule, SharedAppModule],
+  controllers: [EquipmentController],
+  providers: [...equipmentFeatureProviders],
+  exports: [...equipmentFeatureProviders],
+})
+export class EquipmentModule {}
+
+================
+File: features/app/modules/equipment/equipment.service.ts
+================
+import { Injectable } from '@nestjs/common'
+import { EquipmentService as GameCoreEquipmentService } from 'src/from-game-core'
+import { ResultToExceptionMapper } from 'src/infra/mappers/ResultToExceptionMapper'
+@Injectable()
+export class EquipmentService {
+  constructor(private readonly gameCoreEquipmentService: GameCoreEquipmentService) {}
+  equipRelic(relicId: string): { success: boolean; data: { message: string; relicId: string } } {
+    const result = this.gameCoreEquipmentService.equipRelicAndUpdateContexts(relicId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      data: {
+        message: '?蝛蹂???',
+        relicId,
+      },
+    }
+  }
+  unequipRelic(relicId: string): { success: boolean; data: { message: string; relicId: string } } {
+    const result = this.gameCoreEquipmentService.unequipRelicAndUpdateContexts(relicId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      data: {
+        message: '??思???',
+        relicId,
+      },
+    }
+  }
+}
+
+================
+File: features/app/modules/equipment/providers/equipment.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  EquipmentContextHandler,
+  EquipmentService as GameCoreEquipmentService,
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  IContextSnapshotAccessor,
+} from 'src/from-game-core'
+import { EquipmentService } from '../equipment.service'
+export const equipmentFeatureProviders = [
+  {
+    provide: EquipmentContextHandler,
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+      return new EquipmentContextHandler(snapshot, converter, uow)
+    },
+    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: GameCoreEquipmentService,
+    useFactory: (handler: EquipmentContextHandler) => {
+      return new GameCoreEquipmentService(handler)
+    },
+    inject: [EquipmentContextHandler],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EquipmentService,
+    useFactory: (gameCoreService: GameCoreEquipmentService) => {
+      return new EquipmentService(gameCoreService)
+    },
+    inject: [GameCoreEquipmentService],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/app/modules/init/dto/InitRunDto.ts
+================
+import { IsString, IsOptional, IsNumber, IsArray, MinLength } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+export class InitRunDto {
+  @ApiProperty({
+    description: '職業 ID (例如: WARRIOR, MAGE, ROGUE)',
+    example: 'WARRIOR',
+  })
+  @IsString({ message: '職業 ID 必須是字串' })
+  @MinLength(1, { message: '職業 ID 不能為空' })
+  declare professionId: string
+  @ApiPropertyOptional({
+    description: '隨機種子，用於重現同樣的遊戲進度。若不提供則隨機生成',
+    example: 12345,
+    type: 'number',
+  })
+  @IsOptional()
+  @IsNumber({}, { message: '種子必須是數字' })
+  seed?: number
+  @ApiPropertyOptional({
+    description: '起始聖物 ID 列表（目前只允許最多一個）。若提供則替換職業預設聖物',
+    example: ['relic_warrior_resolute_heart'],
+    isArray: true,
+    type: 'string',
+  })
+  @IsOptional()
+  @IsArray({ message: '起始聖物 ID 必須是陣列' })
+  @IsString({ each: true, message: '每個聖物 ID 必須是字串' })
+  startingRelicIds?: string[]
+}
+
+================
+File: features/app/modules/init/init.controller.ts
+================
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { ApiBody, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger'
+import { InitRunDto } from './dto/InitRunDto'
+import { InitService } from './init.service'
+import { IsAuthenticatedGuard } from '../../../auth/infra/auth.guard'
+import { GetUser } from '../../../auth/infra/GetUser.decorator'
+@Controller('api/run')
+export class InitController {
+  constructor(private readonly initService: InitService) {}
+  @Get('professions')
+  @ApiOperation({ summary: '取得職業列表' })
+  getProfessions() {
+    return this.initService.getProfessions()
+  }
+  @Get('relics')
+  @ApiOperation({ summary: '取得所有聖物模板' })
+  getRelicTemplates() {
+    return this.initService.getRelicTemplates()
+  }
+  @Get('professions/:id/started-relics')
+  @ApiOperation({ summary: '取得指定職業的可選起始聖物' })
+  @ApiParam({ name: 'id', description: '職業 id (e.g., WARRIOR)' })
+  getProfessionRelics(@Param('id') id: string) {
+    return this.initService.getSelectableStartingRelics(id)
+  }
+  @Post('init')
+  @ApiOperation({ summary: '初始化新遊戲 (不綁定用戶，向後兼容)' })
+  @ApiBody({
+    schema: {
+      example: {
+        professionId: 'WARRIOR',
+        seed: 12345,
+        startingRelicIds: ['relic_warrior_resolute_heart'],
+      },
+    },
+  })
+  initializeRun(@Body() dto: InitRunDto) {
+    return this.initService.initializeRun(dto)
+  }
+  @Post('init-for-user')
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '為認證用戶初始化新遊戲' })
+  @ApiBody({
+    schema: {
+      example: {
+        professionId: 'WARRIOR',
+        seed: 12345,
+        startingRelicIds: ['relic_warrior_resolute_heart'],
+      },
+    },
+  })
+  async initializeRunForUser(@GetUser() user: unknown, @Body() dto: InitRunDto) {
+    const userId = (user as { userId?: string }).userId
+    if (!userId) {
+      throw new Error('MISSING_USER_ID')
+    }
+    return this.initService.initializeRunForUser(userId, dto)
+  }
+}
+
+================
+File: features/app/modules/init/init.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { SharedAppModule } from '../../shared/shared-app.module'
+import { runFeatureProviders } from './providers/run.providers'
+import { InitController } from './init.controller'
+import { InitService } from './init.service'
+import { RunModule } from '../../../run/run.module'
+import { AuthModule } from '../../../auth/auth.module'
+import { RunService } from '../../../run/app/RunService'
+import { UserMigrationService } from '../../../run/app/UserMigrationService'
+@Module({
+  imports: [SharedInfraModule, SharedAppModule, RunModule, AuthModule],
+  controllers: [InitController],
+  providers: [InitService, RunService, UserMigrationService, ...runFeatureProviders],
+  exports: [InitService, RunService, UserMigrationService],
+})
+export class InitModule {}
+
+================
+File: features/app/modules/init/init.service.ts
+================
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
+import { InitRunDto } from './dto/InitRunDto'
+import { ResultToExceptionMapper } from 'src/infra/mappers/ResultToExceptionMapper'
+import { RunService } from '../../../run/app/RunService'
+@Injectable()
+export class InitService {
+  constructor(
+    private readonly gameStartOptionsService: GameStartOptionsService,
+    private readonly runInitializationService: RunInitializationService,
+    private readonly runService: RunService
+  ) {}
+  getProfessions() {
+    const professions = this.gameStartOptionsService.getAvailableProfessions()
+    return {
+      success: true,
+      data: professions.map((prof) => ({
+        id: prof.id,
+        name: prof.name,
+        desc: prof.desc,
+      })),
+    }
+  }
+  getRelicTemplates() {
+    const professions = this.gameStartOptionsService.getAvailableProfessions()
+    const allRelics = professions.flatMap((prof) => this.gameStartOptionsService.getSelectableStartingRelics(prof.id))
+    return {
+      success: true,
+      data: allRelics.map((relic) => ({
+        id: relic.id,
+        name: relic.name,
+        desc: relic.desc,
+        itemType: relic.itemType,
+        rarity: relic.rarity,
+        affixIds: relic.affixIds,
+        tags: relic.tags,
+        loadCost: relic.loadCost,
+        maxStacks: relic.maxStacks,
+      })),
+    }
+  }
+  getSelectableStartingRelics(professionId: string) {
+    try {
+      const relics = this.gameStartOptionsService.getSelectableStartingRelics(professionId)
+      return {
+        success: true,
+        data: relics.map((relic) => ({
+          id: relic.id,
+          name: relic.name,
+          desc: relic.desc,
+          itemType: relic.itemType,
+          rarity: relic.rarity,
+          affixIds: relic.affixIds,
+          tags: relic.tags,
+          loadCost: relic.loadCost,
+          maxStacks: relic.maxStacks,
+        })),
+      }
+    } catch {
+      throw new BadRequestException({
+        error: 'PROFESSION_NOT_FOUND',
+        message: '職業不存在或獲取起始聖物失敗',
+      })
+    }
+  }
+
+
+
+
+
+  async initializeRunForUser(userId: string, dto: InitRunDto) {
+    const result = await this.runService.initializeRunForUser(userId, {
+      professionId: dto.professionId,
+      seed: dto.seed,
+      startingRelicIds: dto.startingRelicIds,
+    })
+    ResultToExceptionMapper.throwIfFailure(result)
+    const appContext = result.value!
+    const runId = appContext.contexts.runContext.runId
+    return {
+      success: true,
+      data: {
+        runId,
+        professionId: appContext.contexts.characterContext.professionId,
+        seed: appContext.contexts.runContext.seed,
+      },
+    }
+  }
+
+
+
+
+  async initializeRun(dto: InitRunDto) {
+    const result = await this.runInitializationService.initialize({
+      professionId: dto.professionId,
+      seed: dto.seed,
+      startingRelicIds: dto.startingRelicIds,
+    })
+    ResultToExceptionMapper.throwIfFailure(result)
+    const appContext = result.value!
+    const runId = appContext.contexts.runContext.runId
+    return {
+      success: true,
+      data: {
+        runId,
+        professionId: appContext.contexts.characterContext.professionId,
+        seed: appContext.contexts.runContext.seed,
+      },
+    }
+  }
+}
+
+================
+File: features/app/modules/init/providers/run.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  AffixEntityService,
+  AppContextRunAdapter,
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  EnemyEntityService,
+  EnemyRandomGenerateService,
+  GameStartOptionsService,
+  IAppContext,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+  RunContextHandler,
+  RunCoordinationService,
+  RunInitializationService,
+  RunService,
+  StageInitializationService,
+  StageNodeGenerationService,
+  UltimateEntityService,
+} from 'src/from-game-core'
+export const runFeatureProviders = [
+  {
+    provide: RunContextHandler,
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+      return new RunContextHandler(snapshot, converter, uow)
+    },
+    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunService,
+    useFactory: (handler: RunContextHandler) => {
+      return new RunService(handler)
+    },
+    inject: [RunContextHandler],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: GameStartOptionsService,
+    useFactory: (configStore: IAppContext['configStore']) => {
+      return new GameStartOptionsService(configStore.professionStore, configStore.itemStore)
+    },
+    inject: ['CONFIG_STORE'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: StageNodeGenerationService,
+    useFactory: () => {
+      return new StageNodeGenerationService()
+    },
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EnemyEntityService,
+    useFactory: (
+      affixEntityService: AffixEntityService,
+      ultimateEntityService: UltimateEntityService,
+      configStoreAccessor: IConfigStoreAccessor,
+      contextSnapshot: IContextSnapshotAccessor
+    ) => {
+      return new EnemyEntityService(affixEntityService, ultimateEntityService, configStoreAccessor, contextSnapshot)
+    },
+    inject: [AffixEntityService, UltimateEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EnemyRandomGenerateService,
+    useFactory: (
+      enemyEntityService: EnemyEntityService,
+      configStoreAccessor: IConfigStoreAccessor,
+      contextSnapshotAccessor: IContextSnapshotAccessor
+    ) => {
+      return new EnemyRandomGenerateService(enemyEntityService, configStoreAccessor, contextSnapshotAccessor)
+    },
+    inject: [EnemyEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: StageInitializationService,
+    useFactory: (
+      contextAccessor: IContextSnapshotAccessor,
+      unitOfWork: ContextUnitOfWork,
+      enemyRandomGenerateService: EnemyRandomGenerateService
+    ) => {
+      return new StageInitializationService(contextAccessor, unitOfWork, enemyRandomGenerateService)
+    },
+    inject: ['IContextSnapshotAccessor', ContextUnitOfWork, EnemyRandomGenerateService],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunCoordinationService,
+    useFactory: (runHandler: RunContextHandler, stageInitService: StageInitializationService) => {
+      return new RunCoordinationService(runHandler, stageInitService)
+    },
+    inject: [RunContextHandler, StageInitializationService],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: AppContextRunAdapter,
+    useFactory: (configStore: IAppContext['configStore']) => {
+      return new AppContextRunAdapter(configStore)
+    },
+    inject: ['CONFIG_STORE'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunInitializationService,
+    useFactory: (
+      appContextRunAdapter: AppContextRunAdapter,
+      stageGenerator: StageNodeGenerationService,
+      unitOfWork: ContextUnitOfWork
+    ) => {
+      return new RunInitializationService(appContextRunAdapter, unitOfWork, stageGenerator)
+    },
+    inject: [AppContextRunAdapter, StageNodeGenerationService, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/app/modules/shop/dto/BuyItemDto.ts
+================
+import { IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+export class BuyItemDto {
+  @ApiProperty({
+    description: '遊戲進度 ID',
+    example: 'run_abc123',
+  })
+  @IsString({ message: '遊戲進度 ID 必須是字串' })
+  declare runId: string
+  @ApiProperty({
+    description: '商品 ID (例如: relic_xxxx)',
+    example: 'relic_warrior_resolute_heart',
+  })
+  @IsString({ message: '商品 ID 必須是字串' })
+  declare itemId: string
+}
+
+================
+File: features/app/modules/shop/dto/RefreshShopDto.ts
+================
+import { IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+export class RefreshShopDto {
+  @ApiProperty({
+    description: '遊戲進度 ID',
+    example: 'run_abc123',
+  })
+  @IsString({ message: '遊戲進度 ID 必須是字串' })
+  declare runId: string
+}
+
+================
+File: features/app/modules/shop/dto/SellItemDto.ts
+================
+import { IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+export class SellItemDto {
+  @ApiProperty({
+    description: '遊戲進度 ID',
+    example: 'run_abc123',
+  })
+  @IsString({ message: '遊戲進度 ID 必須是字串' })
+  declare runId: string
+  @ApiProperty({
+    description: '商品 ID (例如: relic_xxxx)',
+    example: 'relic_warrior_resolute_heart',
+  })
+  @IsString({ message: '商品 ID 必須是字串' })
+  declare itemId: string
+}
+
+================
+File: features/app/modules/shop/providers/shop.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  IContextSnapshotAccessor,
+  ItemGenerationService,
+  ShopContextHandler,
+  ShopService,
+} from 'src/from-game-core'
+export const shopFeatureProviders = [
+  {
+    provide: ShopContextHandler,
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+      return new ShopContextHandler(snapshot, converter, uow)
+    },
+    inject: ['IContextSnapshotAccessor', ContextToDomainConverter, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ShopService,
+    useFactory: (itemGenSvc: ItemGenerationService, shopHandler: ShopContextHandler) => {
+      return new ShopService(itemGenSvc, shopHandler)
+    },
+    inject: [ItemGenerationService, ShopContextHandler],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/app/modules/shop/shop.controller.ts
+================
+import { Controller, Post, Body, UseInterceptors, Get, Query } from '@nestjs/common'
+import { ApiOperation, ApiBody } from '@nestjs/swagger'
+import { BuyItemDto } from './dto/BuyItemDto'
+import { SellItemDto } from './dto/SellItemDto'
+import { RefreshShopDto } from './dto/RefreshShopDto'
+import { ShopNestService } from './shop.service'
+import { ContextInitializationInterceptor } from 'src/infra/interceptors/ContextInitializationInterceptor'
+@UseInterceptors(ContextInitializationInterceptor)
+@Controller('api/run')
+export class ShopController {
+  constructor(private readonly shopService: ShopNestService) {}
+  @Get('shop/items')
+  getShopItems(@Query('runId') runId: string) {
+    return this.shopService.getShopItems({ runId })
+  }
+  @Post('shop/buy')
+  @ApiOperation({ summary: '購買物品' })
+  @ApiBody({
+    schema: {
+      example: {
+        runId: 'run_abc123',
+        itemId: 'relic_warrior_resolute_heart',
+      },
+    },
+  })
+  buyItem(@Body() dto: BuyItemDto) {
+    return this.shopService.buyItem(dto)
+  }
+  @Post('shop/sell')
+  @ApiOperation({ summary: '賣出物品' })
+  @ApiBody({
+    schema: {
+      example: {
+        runId: 'run_abc123',
+        itemId: 'relic_warrior_resolute_heart',
+      },
+    },
+  })
+  sellItem(@Body() dto: SellItemDto) {
+    return this.shopService.sellItem(dto)
+  }
+  @Post('shop/refresh')
+  @ApiOperation({ summary: '刷新商店' })
+  @ApiBody({
+    schema: {
+      example: {
+        runId: 'run_abc123',
+      },
+    },
+  })
+  refreshShop(@Body() dto: RefreshShopDto) {
+    return this.shopService.refreshShop(dto)
+  }
+}
+
+================
+File: features/app/modules/shop/shop.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { SharedAppModule } from '../../shared/shared-app.module'
+import { shopFeatureProviders } from './providers/shop.providers'
+import { ShopController } from './shop.controller'
+import { ShopNestService } from './shop.service'
+@Module({
+  imports: [SharedInfraModule, SharedAppModule],
+  controllers: [ShopController],
+  providers: [ShopNestService, ...shopFeatureProviders],
+  exports: [ShopNestService],
+})
+export class ShopModule {}
+
+================
+File: features/app/modules/shop/shop.service.ts
+================
+import { Injectable, BadRequestException, Optional } from '@nestjs/common'
+import { ShopService } from 'src/from-game-core'
+import { BuyItemDto } from './dto/BuyItemDto'
+import { SellItemDto } from './dto/SellItemDto'
+import { RefreshShopDto } from './dto/RefreshShopDto'
+import { ContextManager } from 'src/infra/context/ContextManager'
+import { ResultToExceptionMapper } from 'src/infra/mappers/ResultToExceptionMapper'
+interface GetShopItemsDto {
+  runId: string
+}
+@Injectable()
+export class ShopNestService {
+  constructor(
+    @Optional() private readonly shopService: ShopService,
+    private readonly ctxManager: ContextManager
+  ) {}
+  async getShopItems(dto: GetShopItemsDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const context = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    const shopContext = context.contexts.shopContext
+    if (!shopContext) {
+      throw new BadRequestException({ error: 'SHOP_CONTEXT_NOT_FOUND', message: '找不到商店上下文' })
+    }
+    return {
+      success: true,
+      data: shopContext,
+    }
+  }
+  async buyItem(dto: BuyItemDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const contextBefore = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!contextBefore) {
+      throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    }
+    const result = this.shopService.buyItem(dto.itemId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      message: '購買成功',
+      data: {
+        runId: dto.runId,
+        itemId: dto.itemId,
+      },
+    }
+  }
+  async sellItem(dto: SellItemDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const contextBefore = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!contextBefore) {
+      throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    }
+    const result = this.shopService.sellItem(dto.itemId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      message: '賣出成功',
+      data: {
+        runId: dto.runId,
+        itemId: dto.itemId,
+      },
+    }
+  }
+  async refreshShop(dto: RefreshShopDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const contextBefore = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!contextBefore) {
+      throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    }
+    const refreshResult = this.shopService.refreshShopItems()
+    ResultToExceptionMapper.throwIfFailure(refreshResult)
+    return {
+      success: true,
+      message: '刷新成功',
+      data: {
+        runId: dto.runId,
+      },
+    }
+  }
+}
+
+================
+File: features/app/shared/providers/common-context-package.ts
+================
+import { contentGenerationProviders } from './content-generation.providers'
+import { contextConverterProviders } from './context-converter.providers'
+import { itemGenerationProviders } from './item-generation.providers'
+export const sharedAppProviders = [
+  ...contentGenerationProviders,
+  ...contextConverterProviders,
+  ...itemGenerationProviders,
+]
+
+================
+File: features/app/shared/providers/content-generation.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  AffixEntityService,
+  UltimateEntityService,
+  ItemEntityService,
+  ProfessionEntityService,
+  CharacterAggregateService,
+  IContextSnapshotAccessor,
+  IConfigStoreAccessor,
+} from 'src/from-game-core'
+export const contentGenerationProviders = [
+  {
+    provide: AffixEntityService,
+    useFactory: (configStoreAccessor: IConfigStoreAccessor, contextSnapshot: IContextSnapshotAccessor) => {
+      return new AffixEntityService(configStoreAccessor, contextSnapshot)
+    },
+    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: UltimateEntityService,
+    useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new UltimateEntityService(affixSvc, config, snapshot)
+    },
+    inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemEntityService,
+    useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new ItemEntityService(config, snapshot, affixSvc)
+    },
+    inject: [AffixEntityService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ProfessionEntityService,
+    useFactory: (config: IConfigStoreAccessor) => {
+      return new ProfessionEntityService(config)
+    },
+    inject: ['IConfigStoreAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: CharacterAggregateService,
+    useFactory: (profSvc: ProfessionEntityService, itemSvc: ItemEntityService, ultimateSvc: UltimateEntityService) => {
+      return new CharacterAggregateService(profSvc, itemSvc, ultimateSvc)
+    },
+    inject: [ProfessionEntityService, ItemEntityService, UltimateEntityService],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/app/shared/providers/context-converter.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  ItemEntityService,
+  CharacterAggregateService,
+  IContextSnapshotAccessor,
+  IConfigStoreAccessor,
+  IContextMutator,
+} from 'src/from-game-core'
+export const contextConverterProviders = [
+  {
+    provide: ContextToDomainConverter,
+    useFactory: (
+      itemSvc: ItemEntityService,
+      charSvc: CharacterAggregateService,
+      snapshot: IContextSnapshotAccessor,
+      config: IConfigStoreAccessor
+    ) => {
+      return new ContextToDomainConverter(itemSvc, charSvc, snapshot, config)
+    },
+    inject: [ItemEntityService, CharacterAggregateService, 'IContextSnapshotAccessor', 'IConfigStoreAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ContextUnitOfWork,
+    useFactory: (snapshot: IContextSnapshotAccessor, mutator: IContextMutator) => {
+      return new ContextUnitOfWork(mutator, snapshot)
+    },
+    inject: ['IContextSnapshotAccessor', 'IContextMutator'],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/app/shared/providers/item-generation.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  ItemConstraintService,
+  ItemModifierAggregationService,
+  ItemRollService,
+  ItemGenerationService,
+  ItemEntityService,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+} from 'src/from-game-core'
+export const itemGenerationProviders = [
+  {
+    provide: ItemConstraintService,
+    useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new ItemConstraintService(config, snapshot)
+    },
+    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemModifierAggregationService,
+    useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new ItemModifierAggregationService(config, snapshot)
+    },
+    inject: ['IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemRollService,
+    useFactory: (
+      constraintSvc: ItemConstraintService,
+      config: IConfigStoreAccessor,
+      snapshot: IContextSnapshotAccessor
+    ) => {
+      return new ItemRollService(config, snapshot, constraintSvc)
+    },
+    inject: [ItemConstraintService, 'IConfigStoreAccessor', 'IContextSnapshotAccessor'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemGenerationService,
+    useFactory: (
+      itemSvc: ItemEntityService,
+      constraintSvc: ItemConstraintService,
+      modifierSvc: ItemModifierAggregationService,
+      rollSvc: ItemRollService
+    ) => {
+      return new ItemGenerationService(itemSvc, constraintSvc, modifierSvc, rollSvc)
+    },
+    inject: [ItemEntityService, ItemConstraintService, ItemModifierAggregationService, ItemRollService],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/app/shared/shared-app.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedInfraModule } from 'src/infra/shared-infra.module'
+import { sharedAppProviders } from './providers/common-context-package'
+@Module({
+  imports: [SharedInfraModule],
+  providers: [...sharedAppProviders],
+  exports: [...sharedAppProviders],
+})
+export class SharedAppModule {}
+
+================
+File: features/auth/app/auth.service.ts
+================
+import { Injectable, BadRequestException, Inject } from '@nestjs/common'
+import type { IUserRepository } from './IUserRepository'
+import { JwtTokenProvider } from '../infra/jwt.token.provider'
+import { randomUUID } from 'crypto'
+@Injectable()
+export class AuthService {
+  constructor(
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
+    private readonly tokenProvider: JwtTokenProvider
+  ) {}
+  async createAnonymousSession(): Promise<{ token: string; userId: string }> {
+    const userId = randomUUID()
+    const user = await this.userRepository.getOrCreateAnonymous(userId)
+    const token = this.tokenProvider.sign({
+      sub: user.userId,
+      is_anon: true,
+      ver: 1,
+    })
+    return { token, userId }
+  }
+  async login(username: string, password: string): Promise<{ accessToken: string; refreshToken: string }> {
+    if (password !== '12345') {
+      throw new BadRequestException('PASSWORD_INVALID')
+    }
+    let user = await this.userRepository.findByUsername(username)
+    if (!user) {
+      user = {
+        userId: randomUUID(),
+        username,
+        isAnonymous: false,
+        createdAt: Date.now(),
+      }
+      await this.userRepository.save(user)
+    }
+    const accessToken = this.tokenProvider.sign(
+      {
+        sub: user.userId,
+        is_anon: false,
+        ver: 1,
+      },
+      { expiresIn: '15m' }
+    )
+    const refreshToken = this.tokenProvider.sign(
+      {
+        sub: user.userId,
+        is_anon: false,
+        ver: 1,
+      },
+      { expiresIn: '7d' }
+    )
+    return { accessToken, refreshToken }
+  }
+  refreshAccessToken(refreshToken: string): string {
+    let payload
+    try {
+      payload = this.tokenProvider.verify(refreshToken)
+    } catch {
+      throw new BadRequestException('INVALID_REFRESH_TOKEN')
+    }
+    const typedPayload = payload as { sub: string; is_anon: boolean; ver: number }
+    return this.tokenProvider.sign(
+      {
+        sub: typedPayload.sub,
+        is_anon: typedPayload.is_anon,
+        ver: typedPayload.ver,
+      },
+      { expiresIn: '15m' }
+    )
+  }
+  async upgradeAnonymousToAuthenticated(
+    anonUserId: string,
+    username: string
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const anonUser = await this.userRepository.findById(anonUserId)
+    if (!anonUser || !anonUser.isAnonymous) {
+      throw new BadRequestException('INVALID_ANONYMOUS_USER')
+    }
+    let authenticatedUser = await this.userRepository.findByUsername(username)
+    if (!authenticatedUser) {
+      authenticatedUser = {
+        userId: randomUUID(),
+        username,
+        isAnonymous: false,
+        createdAt: Date.now(),
+      }
+      await this.userRepository.save(authenticatedUser)
+    }
+    const accessToken = this.tokenProvider.sign(
+      {
+        sub: authenticatedUser.userId,
+        is_anon: false,
+        ver: 1,
+      },
+      { expiresIn: '15m' }
+    )
+    const refreshToken = this.tokenProvider.sign(
+      {
+        sub: authenticatedUser.userId,
+        is_anon: false,
+        ver: 1,
+      },
+      { expiresIn: '7d' }
+    )
+    return { accessToken, refreshToken }
+  }
+}
+
+================
+File: features/auth/app/IUserRepository.ts
+================
+import type { User } from '../domain/User'
+export interface IUserRepository {
+  findById(userId: string): Promise<User | null>
+  findByUsername(username: string): Promise<User | null>
+  save(user: User): Promise<void>
+  getOrCreateAnonymous(userId: string): Promise<User>
+}
+
+================
+File: features/auth/auth.controller.ts
+================
+import { Controller, Post, Body, Get, UseGuards, Request, Res, HttpCode } from '@nestjs/common'
+import { AuthService } from './app/auth.service'
+import { IsAuthenticatedGuard } from './infra/auth.guard'
+import type { Response } from 'express'
+import type { AuthenticatedUser } from './infra/jwt.strategy'
+@Controller('api/auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+  @Post('guest')
+  @HttpCode(200)
+  async createGuest() {
+    const { token, userId } = await this.authService.createAnonymousSession()
+    return {
+      success: true,
+      data: {
+        accessToken: token,
+        userId,
+      },
+    }
+  }
+  @Post('login')
+  @HttpCode(200)
+  async login(@Body() body: { username: string; password: string }, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.login(body.username, body.password)
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    return {
+      success: true,
+      data: { accessToken: result.accessToken },
+    }
+  }
+  @Post('refresh')
+  @HttpCode(200)
+  refresh(@Body() body: { refreshToken: string }) {
+    const accessToken = this.authService.refreshAccessToken(body.refreshToken)
+    return {
+      success: true,
+      data: { accessToken },
+    }
+  }
+  @Post('upgrade')
+  @UseGuards(IsAuthenticatedGuard)
+  @HttpCode(200)
+  async upgrade(
+    @Request() req: { user: AuthenticatedUser },
+    @Body() body: { username: string },
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const result = await this.authService.upgradeAnonymousToAuthenticated(req.user.userId, body.username)
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    return {
+      success: true,
+      data: { accessToken: result.accessToken },
+    }
+  }
+  @Get('me')
+  @UseGuards(IsAuthenticatedGuard)
+  getCurrentUser(@Request() req: { user: AuthenticatedUser }) {
+    return {
+      success: true,
+      data: req.user,
+    }
+  }
+}
+
+================
+File: features/auth/auth.module.ts
+================
+import { Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport'
+import { AuthService } from './app/auth.service'
+import { JwtTokenProvider } from './infra/jwt.token.provider'
+import { RedisUserRepository } from './infra/RedisUserRepository'
+import { JwtStrategy } from './infra/jwt.strategy'
+import { IsAuthenticatedGuard, AllowAnonymousGuard } from './infra/auth.guard'
+import { AuthController } from './auth.controller'
+@Module({
+  imports: [
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'dev-secret-key',
+    }),
+  ],
+  providers: [
+    AuthService,
+    JwtTokenProvider,
+    {
+      provide: 'IUserRepository',
+      useClass: RedisUserRepository,
+    },
+    JwtStrategy,
+    IsAuthenticatedGuard,
+    AllowAnonymousGuard,
+  ],
+  controllers: [AuthController],
+  exports: [AuthService, IsAuthenticatedGuard, AllowAnonymousGuard, 'IUserRepository'],
+})
+export class AuthModule {}
+
+================
+File: features/auth/domain/User.ts
+================
+export interface User {
+  userId: string
+  username?: string
+  isAnonymous: boolean
+  createdAt: number
+}
+
+================
+File: features/auth/infra/auth.guard.ts
+================
+import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { AuthGuard as PassportAuthGuard } from '@nestjs/passport'
+@Injectable()
+export class IsAuthenticatedGuard extends PassportAuthGuard('jwt') {
+
+  override handleRequest(err: unknown, user: unknown): unknown {
+    if (err || !user) {
+      throw err instanceof Error ? err : new UnauthorizedException('UNAUTHORIZED')
+    }
+    return user
+  }
+}
+@Injectable()
+export class AllowAnonymousGuard extends PassportAuthGuard('jwt') {
+
+  override handleRequest(_err: unknown, user: unknown): unknown {
+    return user || null
+  }
+}
+
+================
+File: features/auth/infra/GetUser.decorator.ts
+================
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+export const GetUser = createParamDecorator((_data: unknown, ctx: ExecutionContext) => {
+
+  const request = ctx.switchToHttp().getRequest()
+  return (request as unknown as { user?: unknown }).user
+})
+
+================
+File: features/auth/infra/jwt.strategy.ts
+================
+import { Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import { Strategy } from 'passport-jwt'
+import type { JwtPayload } from './jwt.token.provider'
+export interface AuthenticatedUser {
+  userId: string
+  isAnonymous: boolean
+  version: number
+}
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+
+    super({
+      jwtFromRequest: (req: unknown): string | null => {
+        const authHeader = (req as { headers?: { authorization?: string } }).headers?.authorization
+        if (!authHeader?.startsWith('Bearer ')) return null
+        return authHeader.substring(7)
+      },
+      ignoreExpiration: false,
+      secretOrKey: process.env.JWT_SECRET || 'dev-secret-key',
+    })
+  }
+  validate(payload: JwtPayload): AuthenticatedUser {
+    return {
+      userId: payload.sub,
+      isAnonymous: payload.is_anon,
+      version: payload.ver,
+    }
+  }
+}
+
+================
+File: features/auth/infra/jwt.token.provider.ts
+================
+import { Injectable } from '@nestjs/common'
+import { sign, verify } from 'jsonwebtoken'
+export interface JwtPayload {
+  sub: string
+  is_anon: boolean
+  ver: number
+}
+@Injectable()
+export class JwtTokenProvider {
+  private readonly secret = process.env.JWT_SECRET || 'dev-secret-key'
+  sign(payload: JwtPayload, options?: { expiresIn?: string }): string {
+    const token = (sign as unknown as (payload: JwtPayload, secret: string, options: unknown) => string)(
+      payload,
+      this.secret,
+      { expiresIn: options?.expiresIn || '15m' }
+    )
+    return token
+  }
+  verify(token: string): JwtPayload {
+    const decoded = (verify as unknown as (token: string, secret: string) => unknown)(token, this.secret)
+    return (decoded && typeof decoded === 'object' ? decoded : {}) as JwtPayload
+  }
+}
+
+================
+File: features/auth/infra/RedisUserRepository.ts
+================
+import { Injectable } from '@nestjs/common'
+import type { User } from '../domain/User'
+import type { IUserRepository } from '../app/IUserRepository'
+import { Inject } from '@nestjs/common'
+import { REDIS_CLIENT } from 'src/infra/redis/redis.module'
+import type Redis from 'ioredis'
+@Injectable()
+export class RedisUserRepository implements IUserRepository {
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
+  async findById(userId: string): Promise<User | null> {
+    const data = await this.redis.get(`user:${userId}`)
+    return data ? (JSON.parse(data) as User) : null
+  }
+  async findByUsername(username: string): Promise<User | null> {
+    const userId = await this.redis.get(`username:${username}`)
+    if (!userId) return null
+    return this.findById(userId)
+  }
+  async save(user: User): Promise<void> {
+    await this.redis.setex(`user:${user.userId}`, 86400 * 365, JSON.stringify(user))
+    if (user.username) {
+      await this.redis.setex(`username:${user.username}`, 86400 * 365, user.userId)
+    }
+  }
+  async getOrCreateAnonymous(userId: string): Promise<User> {
+    let user = await this.findById(userId)
+    if (!user) {
+      user = {
+        userId,
+        isAnonymous: true,
+        createdAt: Date.now(),
+      }
+      await this.redis.setex(`user:${userId}`, 3600, JSON.stringify(user))
+    }
+    return user
+  }
+}
+
+================
+File: features/run/app/IRunRepository.ts
+================
+import type { RunRecord, CreateRunRecordParams } from '../domain/RunRecord'
+export interface IRunRepository {
+  createRunRecord(params: CreateRunRecordParams): Promise<RunRecord>
+  getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null>
+  getRunsByUserId(userId: string): Promise<RunRecord[]>
+  getActiveRunByUserId(userId: string): Promise<RunRecord | null>
+  updateRunStatus(runId: string, status: string): Promise<void>
+  deleteRunRecord(runId: string): Promise<void>
+}
+
+================
+File: features/run/app/RunService.ts
+================
+import { Injectable, Inject } from '@nestjs/common'
+import { RunInitializationService } from 'src/from-game-core'
+import type { IRunRepository } from './IRunRepository'
+import type { CreateRunRecordParams } from '../domain/RunRecord'
+@Injectable()
+export class RunService {
+  constructor(
+    private readonly runInitializationService: RunInitializationService,
+    @Inject('IRunRepository') private readonly runRepository: IRunRepository
+  ) {}
+  async initializeRunForUser(
+    userId: string,
+    params: { professionId: string; seed?: number; startingRelicIds?: string[] }
+  ) {
+    const result = await this.runInitializationService.initialize({
+      professionId: params.professionId,
+      seed: params.seed,
+      startingRelicIds: params.startingRelicIds,
+    })
+    if (result.isFailure) {
+      return result
+    }
+    const appContext = result.value!
+    const runId = appContext.contexts.runContext.runId
+    const runRecord: CreateRunRecordParams = {
+      runId,
+      userId,
+    }
+    await this.runRepository.createRunRecord(runRecord)
+    return result
+  }
+  async verifyRunOwnership(runId: string, userId: string): Promise<boolean> {
+    const record = await this.runRepository.getRunIfOwner(runId, userId)
+    return record !== null
+  }
+  async getUserRuns(userId: string) {
+    return this.runRepository.getRunsByUserId(userId)
+  }
+  async getUserActiveRun(userId: string) {
+    return this.runRepository.getActiveRunByUserId(userId)
+  }
+}
+
+================
+File: features/run/app/UserMigrationService.ts
+================
+import { Injectable, Inject } from '@nestjs/common'
+import type { IUserRepository } from '../../auth/app/IUserRepository'
+import type { IRunRepository } from '../app/IRunRepository'
+@Injectable()
+export class UserMigrationService {
+  constructor(
+    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
+    @Inject('IRunRepository') private readonly runRepository: IRunRepository
+  ) {}
+  async migrateAnonRunsToAuthenticatedUser(
+    anonymousUserId: string,
+    authenticatedUserId: string
+  ): Promise<{ migratedRunCount: number }> {
+    const anonRuns = await this.runRepository.getRunsByUserId(anonymousUserId)
+    let migratedCount = 0
+    for (const run of anonRuns) {
+      try {
+        await this.runRepository.deleteRunRecord(run.runId)
+        await this.runRepository.createRunRecord({
+          runId: run.runId,
+          userId: authenticatedUserId,
+        })
+        migratedCount++
+      } catch {
+        continue
+      }
+    }
+    return { migratedRunCount: migratedCount }
+  }
+  async cleanupAnonUser(userId: string): Promise<void> {
+    const user = await this.userRepository.findById(userId)
+    if (!user || !user.isAnonymous) {
+      return
+    }
+    const runs = await this.runRepository.getRunsByUserId(userId)
+    for (const run of runs) {
+      await this.runRepository.deleteRunRecord(run.runId)
+    }
+  }
+}
+
+================
+File: features/run/domain/RunRecord.ts
+================
+export interface RunRecord {
+  readonly runId: string
+  readonly userId: string
+  readonly createdAt: number
+  readonly updatedAt: number
+  readonly status: RunStatus
+}
+export enum RunStatus {
+  Active = 'ACTIVE',
+  Ended = 'ENDED',
+  Abandoned = 'ABANDONED',
+}
+export interface CreateRunRecordParams {
+  runId: string
+  userId: string
+}
+
+================
+File: features/run/infra/IsOwnRunGuard.ts
+================
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Inject } from '@nestjs/common'
+import type { IRunRepository } from '../app/IRunRepository'
+@Injectable()
+export class IsOwnRunGuard implements CanActivate {
+  constructor(@Inject('IRunRepository') private readonly runRepository: IRunRepository) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+
+    const request = context.switchToHttp().getRequest()
+    const runId = (request as unknown as { params?: { runId?: string } }).params?.runId
+    const userId = (request as unknown as { user?: { userId?: string } }).user?.userId
+    if (!runId || !userId) {
+      throw new UnauthorizedException('MISSING_RUN_OR_USER_ID')
+    }
+    const record = await this.runRepository.getRunIfOwner(runId, userId)
+    if (!record) {
+      throw new UnauthorizedException('RUN_NOT_OWNED_BY_USER')
+    }
+    return true
+  }
+}
+
+================
+File: features/run/infra/RedisRunRepository.ts
+================
+import { Injectable } from '@nestjs/common'
+import { Redis } from 'ioredis'
+import type { IRunRepository } from '../app/IRunRepository'
+import type { RunRecord, CreateRunRecordParams } from '../domain/RunRecord'
+import { RunStatus } from '../domain/RunRecord'
+@Injectable()
+export class RedisRunRepository implements IRunRepository {
+  constructor(private readonly redis: Redis) {}
+  async createRunRecord(params: CreateRunRecordParams): Promise<RunRecord> {
+    const record: RunRecord = {
+      runId: params.runId,
+      userId: params.userId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status: RunStatus.Active,
+    }
+    await this.redis.set(`run:${params.runId}`, JSON.stringify(record))
+    await this.redis.sadd(`user:${params.userId}:runs`, params.runId)
+    await this.redis.setex(`user:${params.userId}:active-run`, 86400 * 10, params.runId)
+    return record
+  }
+  async getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null> {
+    const data = await this.redis.get(`run:${runId}`)
+    if (!data) return null
+    const record = JSON.parse(data) as RunRecord
+    return record.userId === userId ? record : null
+  }
+  async getRunsByUserId(userId: string): Promise<RunRecord[]> {
+    const runIds = await this.redis.smembers(`user:${userId}:runs`)
+    const records: RunRecord[] = []
+    for (const runId of runIds) {
+      const data = await this.redis.get(`run:${runId}`)
+      if (data) {
+        records.push(JSON.parse(data) as RunRecord)
+      }
+    }
+    return records
+  }
+  async getActiveRunByUserId(userId: string): Promise<RunRecord | null> {
+    const runId = await this.redis.get(`user:${userId}:active-run`)
+    if (!runId) return null
+    return this.getRunIfOwner(runId, userId)
+  }
+  async updateRunStatus(runId: string, status: string): Promise<void> {
+    const data = await this.redis.get(`run:${runId}`)
+    if (!data) return
+    const record = JSON.parse(data) as RunRecord
+    const updatedRecord: RunRecord = {
+      ...record,
+      status: status as RunStatus,
+      updatedAt: Date.now(),
+    }
+    await this.redis.set(`run:${runId}`, JSON.stringify(updatedRecord))
+  }
+  async deleteRunRecord(runId: string): Promise<void> {
+    const data = await this.redis.get(`run:${runId}`)
+    if (!data) return
+    const record = JSON.parse(data) as RunRecord
+    await Promise.all([
+      this.redis.del(`run:${runId}`),
+      this.redis.srem(`user:${record.userId}:runs`, runId),
+      this.redis.del(`user:${record.userId}:active-run`),
+    ])
+  }
+}
+
+================
+File: features/run/run.module.ts
+================
+import { Module } from '@nestjs/common'
+import { Redis } from 'ioredis'
+import { RedisRunRepository } from './infra/RedisRunRepository'
+import { IsOwnRunGuard } from './infra/IsOwnRunGuard'
+import { AuthModule } from '../auth/auth.module'
+@Module({
+  imports: [AuthModule],
+  providers: [
+    {
+      provide: 'IRunRepository',
+      useFactory: (redis: Redis) => new RedisRunRepository(redis),
+      inject: ['REDIS_CLIENT'],
+    },
+    IsOwnRunGuard,
+  ],
+  exports: ['IRunRepository', IsOwnRunGuard],
+})
+export class RunModule {}
+
+================
+File: from-game-core.ts
+================
+export * from '@game-core-layer/application/content-generation/service/affix/AffixEntityService'
+export * from '@game-core-layer/application/content-generation/service/character/CharacterAggregateService'
+export * from '@game-core-layer/application/content-generation/service/enemy/EnemyEntityService'
+export * from '@game-core-layer/application/content-generation/service/enemy/EnemyRandomGenerateService'
+export * from '@game-core-layer/application/content-generation/service/item/item-roll-modifier/ItemModifierAggregationService'
+export * from '@game-core-layer/application/content-generation/service/item/ItemEntityService'
+export * from '@game-core-layer/application/content-generation/service/item/ItemGenerationService'
+export * from '@game-core-layer/application/content-generation/service/item/sub-service/ItemConstraintService'
+export * from '@game-core-layer/application/content-generation/service/item/sub-service/ItemRollService'
+export * from '@game-core-layer/application/content-generation/service/profession/ProfessionEntityService'
+export * from '@game-core-layer/application/content-generation/service/ultimate/UltimateEntityService'
+export * from '@game-core-layer/application/core-infrastructure/context/helper/ContextToDomainConverter'
+export * from '@game-core-layer/application/core-infrastructure/context/interface/IAppContext'
+export * from '@game-core-layer/application/core-infrastructure/context/interface/ICharacterContext'
+export * from '@game-core-layer/application/core-infrastructure/context/interface/IRunContext'
+export * from '@game-core-layer/application/core-infrastructure/context/interface/IShopContext'
+export * from '@game-core-layer/application/core-infrastructure/context/interface/IStashContext'
+export * from '@game-core-layer/application/core-infrastructure/context/interface/WithRunIdAndVersion'
+export * from '@game-core-layer/application/core-infrastructure/context/service/AppContextService'
+export * from '@game-core-layer/application/core-infrastructure/context/service/ContextUnitOfWork'
+export * from '@game-core-layer/application/core-infrastructure/id/idGeneratorHelpers'
+export * from '@game-core-layer/application/core-infrastructure/repository/IRepositories'
+export * from '@game-core-layer/application/core-infrastructure/run-status/RunStatusGuard'
+export * from '@game-core-layer/application/features/equipment/EquipmentContextHandler'
+export * from '@game-core-layer/application/features/equipment/EquipmentService'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatContextAccessor'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatContextHandler'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatCoordinationService'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatDomainConverter'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatProcessor'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatTransactionManager'
+export * from '@game-core-layer/application/features/post-combat/core/PostCombatValidator'
+export * from '@game-core-layer/application/features/post-combat/reward/Reward'
+export * from '@game-core-layer/application/features/post-combat/reward/RewardFactory'
+export * from '@game-core-layer/application/features/run/coordinator/RunCoordinationService'
+export * from '@game-core-layer/application/features/run/GameStartOptionsService'
+export * from '@game-core-layer/application/features/run/init/RunExternalAdapter'
+export * from '@game-core-layer/application/features/run/init/RunInitializationService'
+export * from '@game-core-layer/application/features/run/RunContextHandler'
+export * from '@game-core-layer/application/features/run/RunService'
+export * from '@game-core-layer/application/features/run/stage-progression/service/StageInitializationService'
+export * from '@game-core-layer/application/features/run/stage-progression/service/StageNodeGenerationService'
+export * from '@game-core-layer/application/features/shop/ShopContextHandler'
+export * from '@game-core-layer/application/features/shop/ShopService'
+export * from '@game-core-layer/shared/result/ErrorCodes'
+export * from '@game-core-layer/domain/character/Character'
+export * from '@game-core-layer/domain/item/Item'
+export * from '@game-core-layer/domain/post-combat/PostCombat'
+export * from '@game-core-layer/domain/shop/Shop'
+export * from '@game-core-layer/domain/stash/Stash'
+export * from '@game-core-layer/infra/static-config/assembler/GameConfigAssembler'
+export * from '@game-core-layer/infra/static-config/loader/InternalAffixConfigLoader'
+export * from '@game-core-layer/infra/static-config/loader/InternalEnemyConfigLoader'
+export * from '@game-core-layer/infra/static-config/loader/InternalItemConfigLoader'
+export * from '@game-core-layer/infra/static-config/loader/InternalProfessionConfigLoader'
+export * from '@game-core-layer/infra/static-config/loader/InternalShopConfigLoader'
+export * from '@game-core-layer/infra/static-config/loader/InternalUltimateConfigLoader'
+export * from '@game-core-layer/shared/result/Result'
+
+================
+File: infra/context/ContextManager.ts
+================
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { IAppContext, IContextBatchRepository } from '../../from-game-core'
+type IConfigStore = IAppContext['configStore']
+@Injectable()
+export class ContextManager {
+  private globalConfigStore: IConfigStore
+  private readonly logger = new Logger(ContextManager.name)
+  constructor(
+    configStore: IConfigStore,
+    @Inject('IContextBatchRepository') private readonly repository: IContextBatchRepository
+  ) {
+    this.globalConfigStore = configStore
+  }
+  async saveContext(appContext: IAppContext): Promise<void> {
+    const runId = appContext.contexts.runContext.runId
+    if (!runId) {
+      throw new Error('AppContext must have a valid runId')
+    }
+    const contexts = appContext.contexts
+    try {
+      await this.repository.updateBatch({
+        run: { context: contexts.runContext, expectedVersion: 0 },
+        character: { context: contexts.characterContext, expectedVersion: 0 },
+        stash: { context: contexts.stashContext, expectedVersion: 0 },
+        shop: { context: contexts.shopContext, expectedVersion: 0 },
+      })
+    } catch (error) {
+      this.logger.error(`saveContext 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      throw error
+    }
+  }
+  async getContextByRunId(runId: string): Promise<IAppContext | null> {
+    if (!runId) {
+      return null
+    }
+    try {
+      const result = await this.repository.getByRunId(runId)
+      if (!result?.success || !result.runContext) {
+        return null
+      }
+      return {
+        configStore: this.globalConfigStore,
+        contexts: {
+          runContext: result.runContext,
+          characterContext: result.characterContext ?? ({} as IAppContext['contexts']['characterContext']),
+          stashContext: result.stashContext ?? ({} as IAppContext['contexts']['stashContext']),
+          shopContext: result.shopContext ?? ({} as IAppContext['contexts']['shopContext']),
+        },
+      }
+    } catch (error) {
+      this.logger.error(
+        `getContextByRunId 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`
+      )
+      return null
+    }
+  }
+  getConfigStore(): IConfigStore {
+    return this.globalConfigStore
+  }
+}
+
+================
+File: infra/filters/AllExceptionsFilter.ts
+================
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common'
+import { Request, Response } from 'express'
+interface ApiErrorResponse {
+  success: false
+  error: string
+  message: string
+  details?: unknown
+  timestamp: string
+  path: string
+}
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger('AllExceptionsFilter')
+  catch(exception: unknown, host: ArgumentsHost): void {
+    const ctx = host.switchToHttp()
+    const request = ctx.getRequest<Request>()
+    const response = ctx.getResponse<Response>()
+    const status = this.getStatus(exception)
+    const errorResponse = this.buildErrorResponse(exception, request)
+    this.logError(exception, request, status)
+    response.status(status).json(errorResponse)
+  }
+  private getStatus(exception: unknown): number {
+    if (exception instanceof HttpException) {
+      return exception.getStatus()
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR
+  }
+  private buildErrorResponse(exception: unknown, request: Request): ApiErrorResponse {
+    const now = new Date().toISOString()
+    const path = request.url
+    if (exception instanceof HttpException) {
+      const exceptionResponse = exception.getResponse()
+      if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+        const response = exceptionResponse as Record<string, unknown>
+        return {
+          success: false,
+          error: (response.error as string) || 'HTTP_ERROR',
+          message: (response.message as string) || exception.message,
+          details: response.details,
+          timestamp: now,
+          path,
+        }
+      }
+      return {
+        success: false,
+        error: 'HTTP_ERROR',
+        message: exception.message,
+        timestamp: now,
+        path,
+      }
+    }
+    const message = exception instanceof Error ? exception.message : String(exception)
+    return {
+      success: false,
+      error: 'INTERNAL_SERVER_ERROR',
+      message,
+      timestamp: now,
+      path,
+    }
+  }
+  private logError(exception: unknown, request: Request, status: number): void {
+    const method = request.method
+    const path = request.url
+    const ip = request.ip
+    if (status >= 500) {
+      this.logger.error(
+        `Server Error: ${method} ${path} | IP: ${ip}`,
+        exception instanceof Error ? exception.stack : String(exception)
+      )
+    } else if (status >= 400) {
+      this.logger.warn(`Client Error: ${method} ${path} | IP: ${ip} | Status: ${status}`)
+    }
+  }
+}
+
+================
+File: infra/helpers/RequestUtils.ts
+================
+import { Request } from 'express'
+export function getRunIdFromRequest(request: Request): string | undefined {
+  if (request.body && typeof request.body === 'object' && 'runId' in request.body) {
+    const val = (request.body as Record<string, unknown>).runId
+    if (typeof val === 'string') return val
+  }
+  if (request.query && typeof request.query === 'object' && 'runId' in request.query) {
+    const val = (request.query as Record<string, unknown>).runId
+    if (typeof val === 'string') return val
+  }
+  return undefined
+}
+
+================
+File: infra/interceptors/ContextInitializationInterceptor.ts
+================
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common'
+import { Observable, from } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
+import { Request } from 'express'
+import { ContextManager } from '../context/ContextManager'
+import { getRunIdFromRequest } from '../helpers/RequestUtils'
+@Injectable()
+export class ContextInitializationInterceptor implements NestInterceptor {
+  private static readonly IGNORED_ENDPOINTS = new Set(['/api/run/init'])
+  private static readonly ERROR_MISSING_RUN_ID = {
+    error: 'MISSING_RUN_ID',
+    message: '請求必須包含有效的 runId',
+  }
+  private static readonly ERROR_RUN_NOT_FOUND = (runId: string) => ({
+    error: 'RUN_NOT_FOUND',
+    message: `運行 ${runId} 不存在`,
+  })
+  constructor(private readonly contextManager: ContextManager) {}
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const request = context.switchToHttp().getRequest<Request>()
+    if (ContextInitializationInterceptor.isPathIgnored(request)) {
+      return next.handle()
+    }
+    const runId = getRunIdFromRequest(request)
+    if (!runId) {
+      throw new BadRequestException(ContextInitializationInterceptor.ERROR_MISSING_RUN_ID)
+    }
+    return from(this.contextManager.getContextByRunId(runId)).pipe(
+      switchMap((appContext) => {
+        if (!appContext) {
+          throw new BadRequestException(ContextInitializationInterceptor.ERROR_RUN_NOT_FOUND(runId))
+        }
+        return next.handle()
+      })
+    )
+  }
+  private static isPathIgnored(request: Request): boolean {
+    return ContextInitializationInterceptor.IGNORED_ENDPOINTS.has(request.path)
+  }
+
+}
+
+================
+File: infra/mappers/ResultToExceptionMapper.ts
+================
+import { BadRequestException } from '@nestjs/common'
+import { ApplicationErrorCode, DomainErrorCode, Result, getErrorMessage } from 'src/from-game-core'
+type KnownErrorCode = DomainErrorCode | ApplicationErrorCode | string
+export class ResultToExceptionMapper {
+  static throwIfFailure<T>(result: Result<T>): void {
+    if (result.isFailure) {
+      const errorCode = result.error || 'UNKNOWN_ERROR'
+      const message = this.getErrorMessage(errorCode)
+      throw new BadRequestException({
+        error: errorCode,
+        message: message || '未知的錯誤',
+      })
+    }
+  }
+  private static getErrorMessage(errorCode: KnownErrorCode): string {
+    if (errorCode in DomainErrorCode || errorCode in ApplicationErrorCode) {
+      return getErrorMessage(errorCode as DomainErrorCode | ApplicationErrorCode)
+    }
+    return ''
+  }
+}
+
+================
+File: infra/providers/config-store.providers.ts
+================
+import {
+  GameConfigAssembler,
+  InternalEnemyConfigLoader,
+  InternalItemConfigLoader,
+  InternalProfessionConfigLoader,
+  InternalUltimateConfigLoader,
+  InternalAffixConfigLoader,
+  InternalShopConfigLoader,
+} from 'src/from-game-core'
+export const configStoreProviders = [
+  {
+    provide: 'CONFIG_STORE',
+    useFactory: async () => {
+      const assembler = new GameConfigAssembler(
+        new InternalEnemyConfigLoader(),
+        new InternalItemConfigLoader(),
+        new InternalProfessionConfigLoader(),
+        new InternalUltimateConfigLoader(),
+        new InternalAffixConfigLoader(),
+        new InternalShopConfigLoader()
+      )
+      await assembler.assembleAllConfigs()
+      return {
+        enemyStore: assembler.getEnemyStore(),
+        itemStore: assembler.getItemStore(),
+        professionStore: assembler.getProfessionStore(),
+        ultimateStore: assembler.getUltimateStore(),
+        affixStore: assembler.getAffixStore(),
+        shopStore: assembler.getShopStore(),
+      }
+    },
+  },
+]
+
+================
+File: infra/providers/fine-grained-interface.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
+import { Request } from 'express'
+import { getRunIdFromRequest } from '../helpers/RequestUtils'
+import {
+  ConfigStoreAccessorImpl,
+  ContextMutatorImpl,
+  ContextSnapshotAccessorImpl,
+  IAppContext,
+} from 'src/from-game-core'
+import { ContextManager } from '../context/ContextManager'
+export const fineGrainedInterfaceProviders = [
+  {
+    provide: 'IAppContext',
+    useFactory: async (contextManager: ContextManager, request: Request) => {
+      const runId = getRunIdFromRequest(request)
+      let currentContext: IAppContext | undefined
+      if (runId && typeof runId === 'string') {
+        const persistedContext = await contextManager.getContextByRunId(runId)
+        if (persistedContext) {
+          currentContext = persistedContext
+        }
+      }
+      if (!currentContext) {
+        currentContext = {
+          configStore: contextManager.getConfigStore(),
+          contexts: {
+            runContext: {} as IAppContext['contexts']['runContext'],
+            characterContext: {} as IAppContext['contexts']['characterContext'],
+            stashContext: {} as IAppContext['contexts']['stashContext'],
+            shopContext: {} as IAppContext['contexts']['shopContext'],
+          },
+        }
+      }
+      return currentContext
+    },
+    inject: [ContextManager, REQUEST],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: 'IConfigStoreAccessor',
+    useFactory: (context: IAppContext) => {
+      return new ConfigStoreAccessorImpl(context)
+    },
+    inject: ['IAppContext'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: 'IContextSnapshotAccessor',
+    useFactory: (context: IAppContext) => {
+      return new ContextSnapshotAccessorImpl(context)
+    },
+    inject: ['IAppContext'],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: 'IContextMutator',
+    useFactory: (context: IAppContext, contextManager: ContextManager, request: Request) => {
+      const onContextChange = async (next: IAppContext) => {
+        const runId = getRunIdFromRequest(request)
+        if (runId && typeof runId === 'string') {
+          await contextManager.saveContext(next)
+        }
+      }
+      return new ContextMutatorImpl(onContextChange, context)
+    },
+    inject: ['IAppContext', ContextManager, REQUEST],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: infra/redis/redis.module.ts
+================
+import { Module, Global, Logger } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import Redis from 'ioredis'
+import type { RedisOptions } from 'ioredis'
+export const REDIS_CLIENT = 'REDIS_CLIENT'
+@Global()
+@Module({
+  imports: [ConfigModule],
+  providers: [
+    {
+      provide: REDIS_CLIENT,
+      useFactory: (configService: ConfigService) => {
+        const logger = new Logger('RedisModule')
+
+        const host = configService.get<string>('REDIS_HOST', 'localhost')
+        const port = configService.get<number>('REDIS_PORT', 6379)
+        const password = configService.get<string>('REDIS_PASSWORD')
+        const db = configService.get<number>('REDIS_DB', 0)
+
+        const redisOptions: RedisOptions = {
+          host,
+          port,
+          db,
+          retryStrategy: (times: number) => {
+
+            const delay = Math.min(times * 50, 2000)
+            return delay
+          },
+          maxRetriesPerRequest: null,
+
+
+
+
+
+
+
+
+
+
+        }
+
+        if (password) {
+          redisOptions.password = password
+        }
+        const redis = new Redis(redisOptions)
+
+        redis.on('connect', () => {
+          logger.log(`✓ Redis 已連接 (${host}:${port}, db=${db})`)
+        })
+        redis.on('ready', () => {
+          logger.log('✓ Redis 已準備好')
+        })
+        redis.on('error', (err: Error) => {
+          logger.error(`✗ Redis 錯誤: ${err.message}`, err.stack)
+        })
+        redis.on('reconnecting', () => {
+          logger.warn('⟳ Redis 正在重新連線...')
+        })
+        redis.on('close', () => {
+          logger.warn('⊘ Redis 連線已關閉')
+        })
+        return redis
+      },
+      inject: [ConfigService],
+    },
+  ],
+  exports: [REDIS_CLIENT],
+})
+export class RedisModule {}
+
+================
+File: infra/repositories/InMemoryContextRepository.ts
+================
+import { Injectable } from '@nestjs/common'
+import {
+  ICharacterContext,
+  IContextBatchRepository,
+  IRunContext,
+  IShopContext,
+  IStashContext,
+  IContextUpdateResult,
+} from '../../from-game-core'
+@Injectable()
+export class InMemoryContextRepository implements IContextBatchRepository {
+  private store = new Map<string, unknown>()
+  async updateBatch(
+    updates: {
+      run?: { context: IRunContext; expectedVersion: number }
+      stash?: { context: IStashContext; expectedVersion: number }
+      character?: { context: ICharacterContext; expectedVersion: number }
+      shop?: { context: IShopContext; expectedVersion: number }
+    },
+    globalVersion?: number
+  ): Promise<IContextUpdateResult | null> {
+    const runId =
+      updates.run?.context.runId ||
+      updates.character?.context.runId ||
+      updates.stash?.context.runId ||
+      updates.shop?.context.runId
+    if (!runId) {
+      return null
+    }
+    if (updates.run) {
+      this.store.set(`run:${runId}`, updates.run.context)
+    }
+    if (updates.character) {
+      this.store.set(`character:${runId}`, updates.character.context)
+    }
+    if (updates.stash) {
+      this.store.set(`stash:${runId}`, updates.stash.context)
+    }
+    if (updates.shop) {
+      this.store.set(`shop:${runId}`, updates.shop.context)
+    }
+    return Promise.resolve({
+      success: true,
+      runContext: updates.run?.context,
+      stashContext: updates.stash?.context,
+      characterContext: updates.character?.context,
+      shopContext: updates.shop?.context,
+      globalVersion: (globalVersion || 0) + 1,
+    })
+  }
+  getByKey(key: string): unknown {
+    return this.store.get(key) ?? null
+  }
+  async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
+    if (!runId) {
+      return null
+    }
+    const runContext = this.store.get(`run:${runId}`) as IRunContext | undefined
+    if (!runContext) {
+      return null
+    }
+    return Promise.resolve({
+      success: true,
+      runContext,
+      characterContext: (this.store.get(`character:${runId}`) as ICharacterContext | undefined) ?? undefined,
+      stashContext: (this.store.get(`stash:${runId}`) as IStashContext | undefined) ?? undefined,
+      shopContext: (this.store.get(`shop:${runId}`) as IShopContext | undefined) ?? undefined,
+    })
+  }
+}
+
+================
+File: infra/repositories/RedisContextRepository.ts
+================
+import { Injectable, Inject, Logger } from '@nestjs/common'
+import Redis from 'ioredis'
+import {
+  ICharacterContext,
+  IContextBatchRepository,
+  IRunContext,
+  IShopContext,
+  IStashContext,
+  IContextUpdateResult,
+} from '../../from-game-core'
+import { REDIS_CLIENT } from '../redis/redis.module'
+@Injectable()
+export class RedisContextRepository implements IContextBatchRepository {
+  private readonly logger = new Logger(RedisContextRepository.name)
+  private readonly GLOBAL_VERSION_KEY = 'version:global'
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: InstanceType<typeof Redis>) {}
+  async updateBatch(
+    updates: {
+      run?: { context: IRunContext; expectedVersion: number }
+      stash?: { context: IStashContext; expectedVersion: number }
+      character?: { context: ICharacterContext; expectedVersion: number }
+      shop?: { context: IShopContext; expectedVersion: number }
+    },
+    globalVersion?: number
+  ): Promise<IContextUpdateResult | null> {
+    const runId =
+      updates.run?.context.runId ||
+      updates.character?.context.runId ||
+      updates.stash?.context.runId ||
+      updates.shop?.context.runId
+    if (!runId) {
+      this.logger.warn('updateBatch: 無法提取 runId，操作被拒絕')
+      return null
+    }
+    try {
+      const pipeline = this.redis.pipeline()
+      if (updates.run) {
+        pipeline.set(this.getRunContextKey(runId), JSON.stringify(updates.run.context), 'EX', this.getTTL())
+      }
+      if (updates.character) {
+        pipeline.set(this.getCharacterContextKey(runId), JSON.stringify(updates.character.context), 'EX', this.getTTL())
+      }
+      if (updates.stash) {
+        pipeline.set(this.getStashContextKey(runId), JSON.stringify(updates.stash.context), 'EX', this.getTTL())
+      }
+      if (updates.shop) {
+        pipeline.set(this.getShopContextKey(runId), JSON.stringify(updates.shop.context), 'EX', this.getTTL())
+      }
+      const nextVersion = (globalVersion || 0) + 1
+      pipeline.set(this.GLOBAL_VERSION_KEY, nextVersion.toString())
+      await pipeline.exec()
+      return {
+        success: true,
+        runContext: updates.run?.context,
+        stashContext: updates.stash?.context,
+        characterContext: updates.character?.context,
+        shopContext: updates.shop?.context,
+        globalVersion: nextVersion,
+      }
+    } catch (error) {
+      this.logger.error(`updateBatch 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      return null
+    }
+  }
+  getByKey(key: string): unknown {
+    this.logger.warn(`getByKey 為同步方法，不支持 Redis 操作，建議改用非同步方法 (key: ${key})`)
+    return null
+  }
+  async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
+    if (!runId) {
+      this.logger.warn('getByRunId: runId 為空，操作被拒絕')
+      return null
+    }
+    try {
+      const [runData, characterData, stashData, shopData, globalVersionStr] = await Promise.all([
+        this.redis.get(this.getRunContextKey(runId)),
+        this.redis.get(this.getCharacterContextKey(runId)),
+        this.redis.get(this.getStashContextKey(runId)),
+        this.redis.get(this.getShopContextKey(runId)),
+        this.redis.get(this.GLOBAL_VERSION_KEY),
+      ])
+      if (!runData) {
+        return null
+      }
+      return {
+        success: true,
+        runContext: JSON.parse(runData) as IRunContext,
+        characterContext: characterData ? (JSON.parse(characterData) as ICharacterContext) : undefined,
+        stashContext: stashData ? (JSON.parse(stashData) as IStashContext) : undefined,
+        shopContext: shopData ? (JSON.parse(shopData) as IShopContext) : undefined,
+        globalVersion: globalVersionStr ? parseInt(globalVersionStr, 10) : 0,
+      }
+    } catch (error) {
+      this.logger.error(`getByRunId 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      return null
+    }
+  }
+  private getRunContextKey(runId: string): string {
+    return `run:${runId}`
+  }
+  private getCharacterContextKey(runId: string): string {
+    return `character:${runId}`
+  }
+  private getStashContextKey(runId: string): string {
+    return `stash:${runId}`
+  }
+  private getShopContextKey(runId: string): string {
+    return `shop:${runId}`
+  }
+  private getTTL(): number {
+    return 1800
+  }
+}
+
+================
+File: infra/shared-infra.module.ts
+================
+import { Module, Scope } from '@nestjs/common'
+import { ContextManager } from './context/ContextManager'
+import { RedisContextRepository } from './repositories/RedisContextRepository'
+import { configStoreProviders } from './providers/config-store.providers'
+import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
+import { RedisModule } from './redis/redis.module'
+type ConfigStore = ConstructorParameters<typeof ContextManager>[0]
+@Module({
+  imports: [RedisModule],
+  providers: [
+    ...configStoreProviders,
+    {
+      provide: 'IContextBatchRepository',
+      useClass: RedisContextRepository,
+    },
+    {
+      provide: ContextManager,
+      useFactory: (configStore: ConfigStore, repo: RedisContextRepository) => {
+        return new ContextManager(configStore, repo)
+      },
+      inject: ['CONFIG_STORE', 'IContextBatchRepository'],
+      scope: Scope.DEFAULT,
+    },
+    ...fineGrainedInterfaceProviders,
+  ],
+  exports: [
+    ContextManager,
+    'IContextBatchRepository',
+    'IConfigStoreAccessor',
+    'IContextSnapshotAccessor',
+    'IContextMutator',
+    'CONFIG_STORE',
+  ],
+})
+export class SharedInfraModule {}
+
+================
+File: main.ts
+================
+import { NestFactory } from '@nestjs/core'
+import { Logger } from '@nestjs/common'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { AppModule } from './features/app/app.module'
+import { AllExceptionsFilter } from './infra/filters/AllExceptionsFilter'
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule)
+  const logger = new Logger('Bootstrap')
+
+  app.useGlobalFilters(new AllExceptionsFilter())
+
+  const config = new DocumentBuilder()
+    .setTitle('Game Core API')
+    .setDescription('遊戲核心 API 文檔')
+    .setVersion('1.0')
+    .build()
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('api', app, document)
+
+  const port = process.env.PORT ?? 3000
+  await app.listen(port)
+  logger.log(`應用已啟動，Swagger 文檔地址: http://localhost:${port}/api`)
+}
+void bootstrap()
+
+
+
+
+
+================================================================
+End of Codebase
+================================================================

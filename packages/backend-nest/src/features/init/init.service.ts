@@ -2,7 +2,7 @@
 import { GameStartOptionsService, RunInitializationService } from 'src/from-game-core'
 import { InitRunDto } from './dto/InitRunDto'
 import { ResultToExceptionMapper } from 'src/infra/mappers/ResultToExceptionMapper'
-import { RunService } from '../../../run/app/RunService'
+import { RunService } from 'src/features/run/app/RunService'
 @Injectable()
 export class InitService {
   constructor(

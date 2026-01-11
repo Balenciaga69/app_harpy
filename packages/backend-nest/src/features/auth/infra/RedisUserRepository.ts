@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@nestjs/common'
-import type { User } from '../domain/User'
+import type { User } from './domain/User'
 import type { IUserRepository } from '../app/IUserRepository'
 import { Inject } from '@nestjs/common'
 import { REDIS_CLIENT } from 'src/infra/redis/redis.module'

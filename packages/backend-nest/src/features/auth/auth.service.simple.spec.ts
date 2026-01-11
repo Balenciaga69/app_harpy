@@ -2,7 +2,7 @@
 import { AuthService } from './app/auth.service'
 import type { IUserRepository } from './app/IUserRepository'
 import { JwtTokenProvider } from './infra/jwt.token.provider'
-import type { User } from './domain/User'
+import type { User } from './infra/domain/User'
 import { BadRequestException } from '@nestjs/common'
 describe('AuthService - Simple Unit Tests', () => {
   let service: AuthService
