@@ -1,4 +1,4 @@
-﻿import { Scope } from '@nestjs/common'
+import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
   AppContextRunAdapter,

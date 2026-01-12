@@ -7,8 +7,7 @@
 }
 export enum RunStatus {
   Active = 'ACTIVE',
-  Ended = 'ENDED',
-  Abandoned = 'ABANDONED',
+  Completed = 'COMPLETED',
 }
 export interface CreateRunRecordParams {
   runId: string
