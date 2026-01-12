@@ -6,7 +6,8 @@ import {
   IRunContext,
   IShopContext,
   IStashContext,
-} from '../../from-game-core'
+} from '../from-game-core'
+
 @Injectable()
 export class InMemoryContextRepository implements IContextBatchRepository {
   private store = new Map<string, unknown>()

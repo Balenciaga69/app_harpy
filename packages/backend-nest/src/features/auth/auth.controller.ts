@@ -1,8 +1,8 @@
 ﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards } from '@nestjs/common'
 import type { Response } from 'express'
-import { AuthService } from './app/auth.service'
-import { IsAuthenticatedGuard } from './infra/auth.guard'
-import type { AuthenticatedUser } from './infra/jwt.strategy'
+import { IsAuthenticatedGuard } from './auth.guard'
+import { AuthService } from './auth.service'
+import type { AuthenticatedUser } from './jwt.strategy'
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

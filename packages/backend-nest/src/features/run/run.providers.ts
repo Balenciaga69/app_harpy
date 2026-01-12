@@ -18,7 +18,7 @@ import {
   StageNodeGenerationService,
   UltimateEntityService,
 } from 'src/features/shared/from-game-core'
-import { InjectionTokens } from '../../shared/providers/injection-tokens'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
 export const runFeatureProviders = [
   {
     provide: RunContextHandler,

@@ -1,4 +1,4 @@
-﻿import { User } from '../infra/domain/user'
+﻿import { User } from '../model/user'
 
 export interface IUserRepository {
   findById(userId: string): Promise<User | null>

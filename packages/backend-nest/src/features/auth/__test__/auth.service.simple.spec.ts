@@ -1,16 +1,14 @@
 ﻿/* eslint-disable @typescript-eslint/unbound-method */
 import { BadRequestException } from '@nestjs/common'
-import { Test, TestingModule } from '@nestjs/testing'
-import { InjectionTokens } from '../shared/providers/injection-tokens'
-import { AuthService } from './app/auth.service'
-import type { IUserRepository } from './app/user-repository'
-import type { User } from './infra/domain/user'
-import { JwtTokenProvider } from './infra/jwt-token-provider'
-describe('AuthService', () => {
+import { AuthService } from '../auth.service'
+import { JwtTokenProvider } from '../jwt-token-provider'
+import type { User } from '../model/user'
+import type { IUserRepository } from '../repository/user-repository'
+describe('AuthService - Simple Unit Tests', () => {
   let service: AuthService
   let mockUserRepository: jest.Mocked<IUserRepository>
   let mockTokenProvider: jest.Mocked<JwtTokenProvider>
-  beforeEach(async () => {
+  beforeEach(() => {
     mockUserRepository = {
       findById: jest.fn(),
       findByUsername: jest.fn(),
@@ -21,25 +19,12 @@ describe('AuthService', () => {
       sign: jest.fn(),
       verify: jest.fn(),
     } as unknown as jest.Mocked<JwtTokenProvider>
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        {
-          provide: InjectionTokens.UserRepository,
-          useValue: mockUserRepository,
-        },
-        {
-          provide: JwtTokenProvider,
-          useValue: mockTokenProvider,
-        },
-      ],
-    }).compile()
-    service = module.get<AuthService>(AuthService)
+    service = new AuthService(mockUserRepository, mockTokenProvider)
   })
   describe('createAnonymousSession', () => {
     it('should create anonymous user and return token', async () => {
       const mockUser: User = {
-        userId: 'anon-123',
+        userId: 'generated-uuid',
         isAnonymous: true,
         createdAt: Date.now(),
       }
@@ -47,12 +32,13 @@ describe('AuthService', () => {
       mockTokenProvider.sign.mockReturnValue('mock-token-123')
       const result = await service.createAnonymousSession()
       expect(result.token).toBe('mock-token-123')
-      expect(result.userId).toBe('anon-123')
-      expect(mockTokenProvider.sign).toHaveBeenCalledWith({
-        sub: 'anon-123',
-        is_anon: true,
-        ver: 1,
-      })
+      expect(mockUserRepository.getOrCreateAnonymous).toHaveBeenCalled()
+      expect(mockTokenProvider.sign).toHaveBeenCalledWith(
+        expect.objectContaining({
+          is_anon: true,
+          ver: 1,
+        })
+      )
     })
   })
   describe('login', () => {

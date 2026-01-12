@@ -1,5 +1,5 @@
 ﻿import { Inject, Injectable, Logger } from '@nestjs/common'
-import { IAppContext, IContextBatchRepository } from '../../from-game-core'
+import { IAppContext, IContextBatchRepository } from '../from-game-core'
 import { InjectionTokens } from '../providers/injection-tokens'
 type IConfigStore = IAppContext['configStore']
 @Injectable()

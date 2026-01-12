@@ -1,15 +1,15 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
 import { RunInitializationService } from 'src/features/shared/from-game-core'
 import { InjectionTokens } from '../../shared/providers/injection-tokens'
-import type { CreateRunRecordParams } from '../domain/run-record'
-import type { IRunRepository } from './run-repository'
+import { CreateRunRecordParams } from '../model/run-record'
+import type { IRunRepository } from '../repository/run-repository'
 type InitializeRunForUserParams = {
   professionId: string
   seed?: number
   startingRelicIds?: string[]
 }
 @Injectable()
-export class RunService {
+export class RunApiService {
   constructor(
     private readonly runInitializationService: RunInitializationService,
     @Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository

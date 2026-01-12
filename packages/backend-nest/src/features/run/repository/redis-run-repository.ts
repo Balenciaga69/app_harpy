@@ -1,8 +1,7 @@
 ﻿import { Injectable } from '@nestjs/common'
 import { Redis } from 'ioredis'
-import type { IRunRepository } from '../app/run-repository'
-import type { CreateRunRecordParams, RunRecord } from '../domain/run-record'
-import { RunStatus } from '../domain/run-record'
+import { CreateRunRecordParams, RunRecord, RunStatus } from '../model/run-record'
+import { IRunRepository } from './run-repository'
 @Injectable()
 export class RedisRunRepository implements IRunRepository {
   constructor(private readonly redis: Redis) {}
