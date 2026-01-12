@@ -14,8 +14,11 @@ import { RedisUserRepository } from './repository/redis-user-repository'
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'dev-secret-key',
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET', 'dev-secret-key'),
+      }),
     }),
   ],
   providers: [

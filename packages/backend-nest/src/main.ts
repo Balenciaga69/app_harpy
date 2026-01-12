@@ -15,6 +15,17 @@ async function bootstrap() {
     .setTitle('Game Core API')
     .setDescription('遊戲核心 API 文檔')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: '請輸入 JWT Token',
+        in: 'header',
+      },
+      'access-token'
+    )
     .build()
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document)

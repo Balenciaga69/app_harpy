@@ -1,4 +1,5 @@
 ﻿import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 import type { JwtPayload } from './jwt-token-provider'
@@ -9,7 +10,7 @@ export interface AuthenticatedUser {
 }
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(configService: ConfigService) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
       /** 從 header 取 token */
@@ -20,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         return authHeader.substring(7)
       },
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'dev-secret-key',
+      secretOrKey: configService.get<string>('JWT_SECRET', 'dev-secret-key'),
     })
   }
   validate(payload: JwtPayload): AuthenticatedUser {
