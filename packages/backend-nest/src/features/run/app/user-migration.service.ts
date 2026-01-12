@@ -1,5 +1,5 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
-import { InjectionTokens } from '../../../infra/providers/injection-tokens'
+import { InjectionTokens } from '../../shared/providers/injection-tokens'
 import type { IUserRepository } from '../../auth/app/user-repository'
 import type { IRunRepository } from './run-repository'
 @Injectable()

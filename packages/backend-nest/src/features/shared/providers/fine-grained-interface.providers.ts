@@ -6,7 +6,7 @@ import {
   ContextMutatorImpl,
   ContextSnapshotAccessorImpl,
   IAppContext,
-} from 'src/from-game-core'
+} from 'src/features/shared/from-game-core'
 import { ContextManager } from '../context/context-manager'
 import { getRunIdFromRequest } from '../helpers/request-utils'
 import { InjectionTokens } from './injection-tokens'

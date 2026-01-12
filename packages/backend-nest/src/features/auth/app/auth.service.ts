@@ -1,6 +1,6 @@
 ﻿import { randomUUID } from 'crypto'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { InjectionTokens } from '../../../infra/providers/injection-tokens'
+import { InjectionTokens } from '../../shared/providers/injection-tokens'
 import { JwtTokenProvider } from '../infra/jwt-token-provider'
 import type { IUserRepository } from './user-repository'
 @Injectable()

@@ -1,5 +1,5 @@
 ﻿import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
-import { InjectionTokens } from '../../../infra/providers/injection-tokens'
+import { InjectionTokens } from '../../shared/providers/injection-tokens'
 import type { IRunRepository } from '../app/run-repository'
 @Injectable()
 export class IsOwnRunGuard implements CanActivate {

@@ -1,6 +1,6 @@
 ﻿import { Module } from '@nestjs/common'
 import { Redis } from 'ioredis'
-import { InjectionTokens } from '../../infra/providers/injection-tokens'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { AuthModule } from '../auth/auth.module'
 import { SharedAppModule } from '../shared/shared-app.module'
 import { RunOptionsService } from './app/run-options.service'

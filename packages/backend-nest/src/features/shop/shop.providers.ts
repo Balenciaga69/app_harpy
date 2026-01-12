@@ -6,8 +6,8 @@ import {
   ItemGenerationService,
   ShopContextHandler,
   ShopService,
-} from 'src/from-game-core'
-import { InjectionTokens } from '../../infra/providers/injection-tokens'
+} from 'src/features/shared/from-game-core'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
 export const shopFeatureProviders = [
   {
     provide: ShopContextHandler,

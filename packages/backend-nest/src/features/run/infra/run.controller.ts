@@ -11,7 +11,7 @@
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger'
 import { IsAuthenticatedGuard } from 'src/features/auth/infra/auth.guard'
 import { GetUser } from 'src/features/auth/infra/get-user.decorator'
-import { ResultToExceptionMapper } from 'src/infra/mappers/result-to-exception-mapper'
+import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
 import { RunOptionsService } from '../app/run-options.service'
 import { RunService } from '../app/run.service'
 import { InitRunDto } from '../dto/init-run.dto'

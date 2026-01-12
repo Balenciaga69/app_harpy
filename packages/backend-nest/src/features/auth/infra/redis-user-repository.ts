@@ -1,6 +1,6 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
 import type Redis from 'ioredis'
-import { InjectionTokens } from 'src/infra/providers/injection-tokens'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import type { IUserRepository } from '../app/user-repository'
 import type { User } from './domain/user'
 @Injectable()
