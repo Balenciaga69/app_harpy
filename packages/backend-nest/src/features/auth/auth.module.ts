@@ -1,13 +1,16 @@
 ﻿import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { InjectionTokens } from '../../infra/providers/injection-tokens'
-import { AuthService } from './app/auth.service'
+import Redis from 'ioredis'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { AuthController } from './auth.controller'
-import { AllowAnonymousGuard, IsAuthenticatedGuard } from './infra/auth.guard'
-import { JwtTokenProvider } from './infra/jwt-token-provider'
-import { JwtStrategy } from './infra/jwt.strategy'
-import { RedisUserRepository } from './infra/redis-user-repository'
+import { AllowAnonymousGuard, IsAuthenticatedGuard } from './auth.guard'
+import { AuthService } from './auth.service'
+import { JwtTokenProvider } from './jwt-token-provider'
+import { JwtStrategy } from './jwt.strategy'
+import { InMemoryUserRepository } from './repository/in-memory-user-repository'
+import { RedisUserRepository } from './repository/redis-user-repository'
 @Module({
   imports: [
     PassportModule,
@@ -20,7 +23,17 @@ import { RedisUserRepository } from './infra/redis-user-repository'
     JwtTokenProvider,
     {
       provide: InjectionTokens.UserRepository,
-      useClass: RedisUserRepository,
+      useFactory: (configService: ConfigService, redis?: Redis) => {
+        const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
+        if (storageType === 'memory') {
+          return new InMemoryUserRepository()
+        }
+        if (!redis) {
+          throw new Error('Redis client is not available. Please check your STORAGE_TYPE configuration.')
+        }
+        return new RedisUserRepository(redis)
+      },
+      inject: [ConfigService, { token: InjectionTokens.RedisClient, optional: true }],
     },
     JwtStrategy,
     IsAuthenticatedGuard,

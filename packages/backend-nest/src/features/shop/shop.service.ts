@@ -1,10 +1,10 @@
 ﻿import { BadRequestException, Injectable, Optional } from '@nestjs/common'
-import { ShopService } from 'src/from-game-core'
-import { ContextManager } from 'src/infra/context/context-manager'
-import { ResultToExceptionMapper } from 'src/infra/mappers/result-to-exception-mapper'
-import { BuyItemDto } from './dto/buy-item.dto'
-import { RefreshShopDto } from './dto/refresh-shop.dto'
-import { SellItemDto } from './dto/sell-item.dto'
+import { ContextManager } from 'src/features/shared/context/context-manager'
+import { ShopService } from 'src/features/shared/from-game-core'
+import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import { BuyItemDto } from './model/buy-item.dto'
+import { RefreshShopDto } from './model/refresh-shop.dto'
+import { SellItemDto } from './model/sell-item.dto'
 interface GetShopItemsDto {
   runId: string
 }

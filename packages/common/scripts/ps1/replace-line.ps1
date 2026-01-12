@@ -1,8 +1,7 @@
 $paths = @(
-   "g:\Coding\app_harpy\packages\backend-nest\src",
-   "g:\Coding\app_harpy\packages\game-core\src"
+   "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\backend-nest\src",
+   "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\game-core\src"
 )
-
 foreach ($path in $paths) {
    if (-not (Test-Path $path)) {
       Write-Host "Path not found: $path" -ForegroundColor Yellow

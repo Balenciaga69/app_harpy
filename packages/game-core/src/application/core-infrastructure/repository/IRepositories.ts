@@ -36,5 +36,5 @@ export interface IContextBatchRepository {
     },
     globalVersion?: number
   ): Promise<IContextUpdateResult | null>
-  getByRunId(runId: string): Promise<IContextUpdateResult | null> //TODO: IRepository.getById   高度可能等於 getByRunId
+  getByRunId(runId: string): Promise<IContextUpdateResult | null>
 }

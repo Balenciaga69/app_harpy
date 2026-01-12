@@ -110,7 +110,7 @@ applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
   - localforage
   - zustand
 
-#### 模組內的開發守則
+#### game-core 模組內的開發守則
 
 - 因為我安裝了 eslint-plugin-boundaries
 - 我要讓內部遵循單向依賴規則 - 箭頭永遠指向內層
@@ -132,6 +132,11 @@ applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
   - 內層絕不能直接引用外層的實作, 若需要外層的能力必須依賴外層定義的介面
 - 介面是非常重要的, 這樣我們才能解耦與替換實作與測試
 - 其餘地方不會有任何 index.ts
+
+### backend 開發守則
+
+- feature -> 攤平擺放, 無須分層, 這專案輕量好找為主
+- 命名一律小寫與 kebab-case
 
 ### 關於如何閱讀
 
