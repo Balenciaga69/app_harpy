@@ -23,14 +23,17 @@ import { RedisUserRepository } from './repository/redis-user-repository'
     JwtTokenProvider,
     {
       provide: InjectionTokens.UserRepository,
-      useFactory: (configService: ConfigService, redis: Redis) => {
+      useFactory: (configService: ConfigService, redis?: Redis) => {
         const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
         if (storageType === 'memory') {
           return new InMemoryUserRepository()
         }
+        if (!redis) {
+          throw new Error('Redis client is not available. Please check your STORAGE_TYPE configuration.')
+        }
         return new RedisUserRepository(redis)
       },
-      inject: [ConfigService, InjectionTokens.RedisClient],
+      inject: [ConfigService, { token: InjectionTokens.RedisClient, optional: true }],
     },
     JwtStrategy,
     IsAuthenticatedGuard,

@@ -19,14 +19,17 @@ import { UserMigrationService } from './service/user-migration.service'
   providers: [
     {
       provide: InjectionTokens.RunRepository,
-      useFactory: (configService: ConfigService, redis: Redis) => {
+      useFactory: (configService: ConfigService, redis?: Redis) => {
         const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
         if (storageType === 'memory') {
           return new InMemoryRunRepository()
         }
+        if (!redis) {
+          throw new Error('Redis client is not available. Please check your STORAGE_TYPE configuration.')
+        }
         return new RedisRunRepository(redis)
       },
-      inject: [ConfigService, InjectionTokens.RedisClient],
+      inject: [ConfigService, { token: InjectionTokens.RedisClient, optional: true }],
     },
     IsOwnRunGuard,
     RunOptionsService,

@@ -1,11 +1,15 @@
 ﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import type { Response } from 'express'
 import { IsAuthenticatedGuard } from './auth.guard'
 import { AuthService } from './auth.service'
 import type { AuthenticatedUser } from './jwt.strategy'
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService
+  ) {}
   @Post('guest')
   @HttpCode(200)
   // 建立訪客/匿名用戶
@@ -26,7 +30,7 @@ export class AuthController {
     const result = await this.authService.login(body.username, body.password)
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
@@ -57,7 +61,7 @@ export class AuthController {
     const result = await this.authService.upgradeAnonymousToAuthenticated(req.user.userId, body.username)
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })

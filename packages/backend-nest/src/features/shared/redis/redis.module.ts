@@ -11,6 +11,11 @@ import { InjectionTokens } from '../providers/injection-tokens'
       provide: InjectionTokens.RedisClient,
       useFactory: (configService: ConfigService) => {
         const logger = new Logger('RedisModule')
+        const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
+        if (storageType !== 'redis') {
+          logger.log('Storage type is not redis, skipping connection.')
+          return null
+        }
         const host = configService.get<string>('REDIS_HOST', 'localhost')
         const port = configService.get<number>('REDIS_PORT', 6379)
         const password = configService.get<string>('REDIS_PASSWORD')
