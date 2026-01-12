@@ -12,6 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
+      /** 從 header 取 token */
       jwtFromRequest: (req: unknown): string | null => {
         const request = req as { headers?: { authorization?: string } }
         const authHeader = request.headers?.authorization

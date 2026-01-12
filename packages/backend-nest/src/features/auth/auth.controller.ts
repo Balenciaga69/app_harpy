@@ -8,6 +8,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('guest')
   @HttpCode(200)
+  // 建立訪客/匿名用戶
   async createGuest() {
     const { token, userId } = await this.authService.createAnonymousSession()
     return {
@@ -20,6 +21,7 @@ export class AuthController {
   }
   @Post('login')
   @HttpCode(200)
+  // 登入
   async login(@Body() body: { username: string; password: string }, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.login(body.username, body.password)
     res.cookie('refreshToken', result.refreshToken, {
@@ -35,6 +37,7 @@ export class AuthController {
   }
   @Post('refresh')
   @HttpCode(200)
+  // 刷新 access token
   refresh(@Body() body: { refreshToken: string }) {
     const accessToken = this.authService.refreshAccessToken(body.refreshToken)
     return {
@@ -45,6 +48,7 @@ export class AuthController {
   @Post('upgrade')
   @UseGuards(IsAuthenticatedGuard)
   @HttpCode(200)
+  // 將 anonymous 轉為 authenticated
   async upgrade(
     @Request() req: { user: AuthenticatedUser },
     @Body() body: { username: string },
@@ -63,6 +67,7 @@ export class AuthController {
     }
   }
   @Get('me')
+  // 取得 current user
   @UseGuards(IsAuthenticatedGuard)
   getCurrentUser(@Request() req: { user: AuthenticatedUser }) {
     return {
