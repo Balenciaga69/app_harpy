@@ -8,12 +8,13 @@ export class UserMigrationService {
     @Inject(InjectionTokens.UserRepository) private readonly userRepository: IUserRepository,
     @Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository
   ) {}
+  /** 將 anonymous 紀錄遷移到 authenticated user */
   async migrateAnonRunsToAuthenticatedUser(
     anonymousUserId: string,
     authenticatedUserId: string
   ): Promise<{ migratedRunCount: number }> {
     const anonRuns = await this.runRepository.getRunsByUserId(anonymousUserId)
-    let migratedCount = 0
+    let migratedRunCount = 0
     for (const run of anonRuns) {
       try {
         await this.runRepository.deleteRunRecord(run.runId)
@@ -21,18 +22,17 @@ export class UserMigrationService {
           runId: run.runId,
           userId: authenticatedUserId,
         })
-        migratedCount++
+        migratedRunCount++
       } catch {
         continue
       }
     }
-    return { migratedRunCount: migratedCount }
+    return { migratedRunCount }
   }
+  /** 清除 anonymous user 資料 */
   async cleanupAnonUser(userId: string): Promise<void> {
     const user = await this.userRepository.findById(userId)
-    if (!user || !user.isAnonymous) {
-      return
-    }
+    if (!user || !user.isAnonymous) return
     const runs = await this.runRepository.getRunsByUserId(userId)
     for (const run of runs) {
       await this.runRepository.deleteRunRecord(run.runId)

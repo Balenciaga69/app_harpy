@@ -3,24 +3,24 @@ import { RunInitializationService } from 'src/from-game-core'
 import { InjectionTokens } from '../../../infra/providers/injection-tokens'
 import type { CreateRunRecordParams } from '../domain/run-record'
 import type { IRunRepository } from './run-repository'
+type InitializeRunForUserParams = {
+  professionId: string
+  seed?: number
+  startingRelicIds?: string[]
+}
 @Injectable()
 export class RunService {
   constructor(
     private readonly runInitializationService: RunInitializationService,
     @Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository
   ) {}
-  async initializeRunForUser(
-    userId: string,
-    params: { professionId: string; seed?: number; startingRelicIds?: string[] }
-  ) {
+  async initializeRunForUser(userId: string, params: InitializeRunForUserParams) {
     const result = await this.runInitializationService.initialize({
       professionId: params.professionId,
       seed: params.seed,
       startingRelicIds: params.startingRelicIds,
     })
-    if (result.isFailure) {
-      return result
-    }
+    if (result.isFailure) return result
     const appContext = result.value!
     const runId = appContext.contexts.runContext.runId
     const runRecord: CreateRunRecordParams = {

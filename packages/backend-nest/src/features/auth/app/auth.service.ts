@@ -39,7 +39,7 @@ export class AuthService {
         is_anon: false,
         ver: 1,
       },
-      { expiresIn: '15m' }
+      '15m'
     )
     const refreshToken = this.tokenProvider.sign(
       {
@@ -47,7 +47,7 @@ export class AuthService {
         is_anon: false,
         ver: 1,
       },
-      { expiresIn: '7d' }
+      '7d'
     )
     return { accessToken, refreshToken }
   }
@@ -65,7 +65,7 @@ export class AuthService {
         is_anon: typedPayload.is_anon,
         ver: typedPayload.ver,
       },
-      { expiresIn: '15m' }
+      '15m'
     )
   }
   async upgradeAnonymousToAuthenticated(
@@ -92,7 +92,7 @@ export class AuthService {
         is_anon: false,
         ver: 1,
       },
-      { expiresIn: '15m' }
+      '15m'
     )
     const refreshToken = this.tokenProvider.sign(
       {
@@ -100,7 +100,7 @@ export class AuthService {
         is_anon: false,
         ver: 1,
       },
-      { expiresIn: '7d' }
+      '7d'
     )
     return { accessToken, refreshToken }
   }
