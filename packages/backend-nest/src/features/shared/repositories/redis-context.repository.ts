@@ -1,6 +1,5 @@
 ﻿import { Inject, Injectable, Logger } from '@nestjs/common'
 import Redis from 'ioredis'
-
 import {
   ICharacterContext,
   IContextBatchRepository,

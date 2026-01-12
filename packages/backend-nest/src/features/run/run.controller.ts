@@ -15,7 +15,6 @@ import { ResultToExceptionMapper } from '../shared/mappers/result-to-exception-m
 import { InitRunDto } from './model/init-run.dto'
 import { RunApiService } from './service/run-api.service'
 import { RunOptionsService } from './service/run-options.service'
-
 @Controller('api/run')
 export class RunController {
   constructor(

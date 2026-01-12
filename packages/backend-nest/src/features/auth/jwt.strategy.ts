@@ -2,13 +2,11 @@
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 import type { JwtPayload } from './jwt-token-provider'
-
 export interface AuthenticatedUser {
   userId: string
   isAnonymous: boolean
   version: number
 }
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
@@ -24,7 +22,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET || 'dev-secret-key',
     })
   }
-
   validate(payload: JwtPayload): AuthenticatedUser {
     return {
       userId: payload.sub,

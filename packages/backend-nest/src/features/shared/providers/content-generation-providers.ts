@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common'
+﻿import { Scope } from '@nestjs/common'
 import {
   AffixEntityService,
   IConfigStoreAccessor,
@@ -9,7 +9,6 @@ import {
   CharacterAggregateService,
 } from '../from-game-core'
 import { InjectionTokens } from './injection-tokens'
-
 export const contentGenerationProviders = [
   {
     provide: AffixEntityService,

@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common'
+﻿import { Scope } from '@nestjs/common'
 import {
   ContextToDomainConverter,
   ItemEntityService,
@@ -9,7 +9,6 @@ import {
   IContextMutator,
 } from '../from-game-core'
 import { InjectionTokens } from './injection-tokens'
-
 export const contextConverterProviders = [
   {
     provide: ContextToDomainConverter,

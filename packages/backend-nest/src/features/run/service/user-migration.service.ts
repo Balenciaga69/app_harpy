@@ -2,7 +2,6 @@
 import { IUserRepository } from 'src/features/auth/repository/user-repository'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { IRunRepository } from '../repository/run-repository'
-
 @Injectable()
 export class UserMigrationService {
   constructor(
