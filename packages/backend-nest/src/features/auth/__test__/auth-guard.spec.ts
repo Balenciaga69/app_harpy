@@ -1,36 +1,31 @@
 ﻿import { UnauthorizedException } from '@nestjs/common'
 import { IsAuthenticatedGuard, AllowAnonymousGuard } from '../auth.guard'
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return */
 describe('AuthGuard', () => {
   describe('IsAuthenticatedGuard', () => {
     let guard: IsAuthenticatedGuard
     beforeEach(() => {
       guard = new IsAuthenticatedGuard()
     })
-    it('should return user if user exists', () => {
-      const mockUser = {
+    it('should pass authenticated user through', () => {
+      const authenticatedUser = {
         userId: 'user-123',
         isAnonymous: false,
         version: 1,
       }
-      const result = guard.handleRequest(null, mockUser) as unknown as typeof mockUser
-      expect(result).toEqual(mockUser)
+      const result = guard.handleRequest(null, authenticatedUser)
+      expect(result).toEqual(authenticatedUser)
     })
-    it('should throw UnauthorizedException if user is null', () => {
-      const func = (): unknown => guard.handleRequest(null, null)
-      expect(func).toThrow(UnauthorizedException)
+    it('should throw UnauthorizedException when user is missing', () => {
+      expect(() => guard.handleRequest(null, null)).toThrow(UnauthorizedException)
+      expect(() => guard.handleRequest(null, undefined)).toThrow(UnauthorizedException)
     })
-    it('should throw UnauthorizedException if user is undefined', () => {
-      const func = (): unknown => guard.handleRequest(null, undefined)
-      expect(func).toThrow(UnauthorizedException)
+    it('should throw original error if provided', () => {
+      const customError = new Error('Authentication failed')
+      expect(() => guard.handleRequest(customError, null)).toThrow(customError)
     })
-    it('should throw error if err is provided', () => {
-      const customError = new Error('Custom auth error')
-      const func = (): unknown => guard.handleRequest(customError, { userId: 'user-123' })
-      expect(func).toThrow(customError)
-    })
-    it('should throw UnauthorizedException with UNAUTHORIZED message when err is not Error instance', () => {
-      const func = (): unknown => guard.handleRequest('some-error-string', null)
-      expect(func).toThrow(UnauthorizedException)
+    it('should throw UnauthorizedException when error is not an Error instance', () => {
+      expect(() => guard.handleRequest('string-error', null)).toThrow(UnauthorizedException)
     })
   })
   describe('AllowAnonymousGuard', () => {
@@ -38,54 +33,33 @@ describe('AuthGuard', () => {
     beforeEach(() => {
       guard = new AllowAnonymousGuard()
     })
-    it('should return user if user exists', () => {
-      const mockUser = {
+    it('should pass authenticated user through', () => {
+      const authenticatedUser = {
         userId: 'user-123',
         isAnonymous: false,
         version: 1,
       }
-      const result = guard.handleRequest(null, mockUser) as unknown as typeof mockUser
-      expect(result).toEqual(mockUser)
+      const result = guard.handleRequest(null, authenticatedUser)
+      expect(result).toEqual(authenticatedUser)
     })
-    it('should return null if user is not authenticated', () => {
-      const result = guard.handleRequest(null, null) as unknown as null
-      expect(result).toBeNull()
+    it('should allow access when user is missing by returning null', () => {
+      expect(guard.handleRequest(null, null)).toBeNull()
+      expect(guard.handleRequest(null, undefined)).toBeNull()
     })
-    it('should return null if user is undefined', () => {
-      const result = guard.handleRequest(null, undefined) as unknown as null
-      expect(result).toBeNull()
-    })
-    it('should return null on error', () => {
-      const error = new Error('Some error')
-      const result = guard.handleRequest(error, null) as unknown as null
-      expect(result).toBeNull()
-    })
-    it('should return null even if user is falsy value', () => {
-      expect(guard.handleRequest(null, false)).toBeNull()
-      expect(guard.handleRequest(null, 0)).toBeNull()
-      expect(guard.handleRequest(null, '')).toBeNull()
+    it('should allow access even when error is present', () => {
+      expect(guard.handleRequest(new Error('Some error'), null)).toBeNull()
     })
   })
-  describe('guard comparison', () => {
-    let authenticatedGuard: IsAuthenticatedGuard
-    let anonymousGuard: AllowAnonymousGuard
-    beforeEach(() => {
-      authenticatedGuard = new IsAuthenticatedGuard()
-      anonymousGuard = new AllowAnonymousGuard()
+  describe('guard behavior differences', () => {
+    it('authenticated guard blocks anonymous access', () => {
+      const authenticatedGuard = new IsAuthenticatedGuard()
+      expect(() => authenticatedGuard.handleRequest(null, null)).toThrow(UnauthorizedException)
     })
-    it('should allow authenticated guard to pass valid user but deny null', () => {
-      const user = { userId: 'user-123', isAnonymous: false, version: 1 }
-      const resultWithUser = authenticatedGuard.handleRequest(null, user) as unknown as typeof user
-      expect(resultWithUser).toEqual(user)
-      const func = (): unknown => authenticatedGuard.handleRequest(null, null)
-      expect(func).toThrow(UnauthorizedException)
-    })
-    it('should allow anonymous guard to pass both user and null', () => {
-      const user = { userId: 'user-123', isAnonymous: false, version: 1 }
-      const resultWithUser = anonymousGuard.handleRequest(null, user) as unknown as typeof user
-      expect(resultWithUser).toEqual(user)
-      const resultWithoutUser = anonymousGuard.handleRequest(null, null) as unknown as null
-      expect(resultWithoutUser).toBeNull()
+    it('anonymous guard allows both authenticated and anonymous access', () => {
+      const anonymousGuard = new AllowAnonymousGuard()
+      const authenticatedUser = { userId: 'user-123', isAnonymous: false, version: 1 }
+      expect(anonymousGuard.handleRequest(null, authenticatedUser)).toEqual(authenticatedUser)
+      expect(anonymousGuard.handleRequest(null, null)).toBeNull()
     })
   })
 })

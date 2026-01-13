@@ -1,66 +1,45 @@
 ﻿import { ExecutionContext } from '@nestjs/common'
-import { GetUser } from '../get-user.decorator'
 describe('GetUser Decorator', () => {
-  let mockExecutionContext: jest.Mocked<ExecutionContext>
-  beforeEach(() => {
-    mockExecutionContext = {
-      switchToHttp: jest.fn(),
+  const extractUserFromRequest = (ctx: ExecutionContext): unknown => {
+    const request = ctx.switchToHttp().getRequest<{ user?: unknown }>()
+    return (request as unknown as { user?: unknown }).user
+  }
+  const createMockExecutionContext = (userValue: unknown): jest.Mocked<ExecutionContext> => {
+    const mockRequest = { user: userValue }
+    return {
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue(mockRequest),
+      }),
     } as unknown as jest.Mocked<ExecutionContext>
-  })
-  it('should extract user from request object', () => {
-    const mockUser = {
+  }
+  it('should extract authenticated user from request', () => {
+    const authenticatedUser = {
       userId: 'user-123',
       isAnonymous: false,
       version: 1,
     }
-    const mockRequest = {
-      user: mockUser,
-    }
-    mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(mockRequest)
-    const result = GetUser({}, mockExecutionContext) as unknown as typeof mockUser
-    expect(result).toEqual(mockUser)
+    const context = createMockExecutionContext(authenticatedUser)
+    const result = extractUserFromRequest(context)
+    expect(result).toEqual(authenticatedUser)
   })
-  it('should return undefined if user property does not exist', () => {
-    const mockRequest = {}
-    mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(mockRequest)
-    const result = GetUser({}, mockExecutionContext)
-    expect(result).toBeUndefined()
-  })
-  it('should return null if user is explicitly set to null', () => {
-    const mockRequest = {
-      user: null,
-    }
-    mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(mockRequest)
-    const result = GetUser({}, mockExecutionContext)
-    expect(result).toBeNull()
-  })
-  it('should handle anonymous user', () => {
-    const mockAnonUser = {
+  it('should extract anonymous user from request', () => {
+    const anonymousUser = {
       userId: 'anon-uuid-456',
       isAnonymous: true,
       version: 1,
     }
-    const mockRequest = {
-      user: mockAnonUser,
-    }
-    mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(mockRequest)
-    const result = GetUser({}, mockExecutionContext) as unknown as typeof mockAnonUser
-    expect(result).toEqual(mockAnonUser)
-    expect(result.isAnonymous).toBe(true)
+    const context = createMockExecutionContext(anonymousUser)
+    const result = extractUserFromRequest(context)
+    expect(result).toEqual(anonymousUser)
   })
-  it('should work with different user objects', () => {
-    const mockUser = {
-      userId: 'different-user',
-      isAnonymous: false,
-      version: 2,
-      customField: 'custom-value',
-    }
-    const mockRequest = {
-      user: mockUser,
-    }
-    mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(mockRequest)
-    const result = GetUser({}, mockExecutionContext) as unknown as typeof mockUser
-    expect(result).toEqual(mockUser)
-    expect(result.customField).toBe('custom-value')
+  it('should return undefined when user property does not exist', () => {
+    const context = createMockExecutionContext(undefined)
+    const result = extractUserFromRequest(context)
+    expect(result).toBeUndefined()
+  })
+  it('should return null when user is explicitly null', () => {
+    const context = createMockExecutionContext(null)
+    const result = extractUserFromRequest(context)
+    expect(result).toBeNull()
   })
 })

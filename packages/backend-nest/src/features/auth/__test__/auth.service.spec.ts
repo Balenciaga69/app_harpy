@@ -39,7 +39,7 @@ describe('AuthService', () => {
   describe('createAnonymousSession', () => {
     it('should create anonymous user and return token', async () => {
       const mockUser: User = {
-        userId: 'anon-123',
+        userId: 'anon-uuid-123',
         isAnonymous: true,
         createdAt: Date.now(),
       }
@@ -47,9 +47,9 @@ describe('AuthService', () => {
       mockTokenProvider.sign.mockReturnValue('mock-token-123')
       const result = await service.createAnonymousSession()
       expect(result.token).toBe('mock-token-123')
-      expect(result.userId).toBe('anon-123')
+      expect(result.userId).toBe('anon-uuid-123')
       expect(mockTokenProvider.sign).toHaveBeenCalledWith({
-        sub: 'anon-123',
+        sub: 'anon-uuid-123',
         is_anon: true,
         ver: 1,
       })
@@ -69,16 +69,37 @@ describe('AuthService', () => {
       expect(result.accessToken).toBe('mock-token')
       expect(result.refreshToken).toBe('mock-token')
       expect(mockTokenProvider.sign).toHaveBeenCalledTimes(2)
+      expect(mockTokenProvider.sign).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          sub: 'user-123',
+          is_anon: false,
+        }),
+        '15m'
+      )
+      expect(mockTokenProvider.sign).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          sub: 'user-123',
+          is_anon: false,
+        }),
+        '7d'
+      )
     })
-    it('should create new user if not exists', async () => {
+    it('should create new user if username does not exist', async () => {
       mockUserRepository.findByUsername.mockResolvedValue(null)
       mockUserRepository.save.mockResolvedValue(undefined)
       mockTokenProvider.sign.mockReturnValue('mock-token')
       const result = await service.login('newuser', '12345')
+      expect(mockUserRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          username: 'newuser',
+          isAnonymous: false,
+        })
+      )
       expect(result.accessToken).toBe('mock-token')
-      expect(mockUserRepository.save).toHaveBeenCalled()
     })
-    it('should throw error on wrong password', async () => {
+    it('should reject login with wrong password', async () => {
       await expect(service.login('testuser', 'wrongpass')).rejects.toThrow(BadRequestException)
     })
   })
@@ -94,6 +115,13 @@ describe('AuthService', () => {
       const result = service.refreshAccessToken('valid-refresh-token')
       expect(result).toBe('new-access-token')
       expect(mockTokenProvider.verify).toHaveBeenCalledWith('valid-refresh-token')
+      expect(mockTokenProvider.sign).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sub: 'user-123',
+          is_anon: false,
+        }),
+        '15m'
+      )
     })
     it('should throw error on invalid refresh token', () => {
       mockTokenProvider.verify.mockImplementation(() => {
@@ -103,7 +131,7 @@ describe('AuthService', () => {
     })
   })
   describe('upgradeAnonymousToAuthenticated', () => {
-    it('should upgrade anonymous user to authenticated', async () => {
+    it('should upgrade anonymous user to authenticated user', async () => {
       const anonUser: User = {
         userId: 'anon-123',
         isAnonymous: true,
@@ -115,9 +143,14 @@ describe('AuthService', () => {
       mockTokenProvider.sign.mockReturnValue('mock-token')
       const result = await service.upgradeAnonymousToAuthenticated('anon-123', 'newuser')
       expect(result.accessToken).toBe('mock-token')
-      expect(mockUserRepository.save).toHaveBeenCalled()
+      expect(mockUserRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          username: 'newuser',
+          isAnonymous: false,
+        })
+      )
     })
-    it('should throw error if user is not anonymous', async () => {
+    it('should reject upgrade if user is not anonymous', async () => {
       const authenticatedUser: User = {
         userId: 'user-123',
         username: 'existing',
@@ -127,7 +160,7 @@ describe('AuthService', () => {
       mockUserRepository.findById.mockResolvedValue(authenticatedUser)
       await expect(service.upgradeAnonymousToAuthenticated('user-123', 'newuser')).rejects.toThrow(BadRequestException)
     })
-    it('should throw error if user not found', async () => {
+    it('should reject upgrade if user not found', async () => {
       mockUserRepository.findById.mockResolvedValue(null)
       await expect(service.upgradeAnonymousToAuthenticated('nonexistent', 'newuser')).rejects.toThrow(
         BadRequestException

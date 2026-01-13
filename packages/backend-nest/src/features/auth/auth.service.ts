@@ -17,7 +17,7 @@ export class AuthService {
       is_anon: true,
       ver: 1,
     })
-    return { token, userId }
+    return { token, userId: user.userId }
   }
   async login(username: string, password: string): Promise<{ accessToken: string; refreshToken: string }> {
     if (password !== '12345') {
