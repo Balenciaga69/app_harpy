@@ -1,14 +1,17 @@
-﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards } from '@nestjs/common'
+﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { Response } from 'express'
 import { IsAuthenticatedGuard } from './auth.guard'
 import { AuthService } from './auth.service'
 import type { AuthenticatedUser } from './jwt.strategy'
+import { LoginRateLimitInterceptor } from './rate-limit.interceptor'
+import { TokenBlacklistService } from './token-blacklist.service'
 @Controller('api/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly tokenBlacklist: TokenBlacklistService
   ) {}
   @Post('guest')
   @HttpCode(200)
@@ -24,6 +27,7 @@ export class AuthController {
     }
   }
   @Post('login')
+  @UseInterceptors(LoginRateLimitInterceptor)
   @HttpCode(200)
   // 登入
   async login(@Body() body: { username: string; password: string }, @Res({ passthrough: true }) res: Response) {
@@ -77,6 +81,24 @@ export class AuthController {
     return {
       success: true,
       data: req.user,
+    }
+  }
+  @Post('logout')
+  @UseGuards(IsAuthenticatedGuard)
+  @HttpCode(200)
+  // 登出：將 token 加入黑名單
+  async logout(@Request() req: { headers: Record<string, string> }) {
+    const authHeader = req.headers.authorization ?? ''
+    const token = authHeader.replace('Bearer ', '')
+    if (token) {
+      // 計算 token 摘要並加入黑名單
+      // 使用 7 天（access token 通常 15 分鐘，refresh token 7 天，這裡取 7 天以防 refresh）
+      const tokenDigest = token.substring(0, Math.min(32, token.length))
+      await this.tokenBlacklist.addToBlacklist(tokenDigest, 7 * 24 * 60 * 60)
+    }
+    return {
+      success: true,
+      data: { message: 'Logged out successfully' },
     }
   }
 }

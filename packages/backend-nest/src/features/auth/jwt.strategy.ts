@@ -11,6 +11,10 @@ export interface AuthenticatedUser {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
+    const secret = configService.get<string>('JWT_SECRET')
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is required')
+    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
       /** 從 header 取 token */
@@ -21,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         return authHeader.substring(7)
       },
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'dev-secret-key'),
+      secretOrKey: secret,
     })
   }
   validate(payload: JwtPayload): AuthenticatedUser {

@@ -10,7 +10,14 @@ export interface JwtPayload {
 export class JwtTokenProvider {
   private readonly secret: string
   constructor(private readonly configService: ConfigService) {
-    this.secret = this.configService.get<string>('JWT_SECRET', 'dev-secret-key')
+    const secret = this.configService.get<string>('JWT_SECRET')
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is required and must not be empty')
+    }
+    if (secret.length < 32) {
+      throw new Error('JWT_SECRET must be at least 32 characters long')
+    }
+    this.secret = secret
   }
   sign(payload: JwtPayload, expiresIn: jwt.SignOptions['expiresIn'] = '15m'): string {
     const token = jwt.sign(payload, this.secret, { expiresIn })
@@ -18,8 +25,10 @@ export class JwtTokenProvider {
   }
   verify(token: string): JwtPayload {
     try {
-      const decoded = jwt.verify(token, this.secret)
-      return decoded as unknown as JwtPayload // 返回解碼後的 payload
+      const decoded = jwt.verify(token, this.secret, {
+        algorithms: ['HS256'],
+      })
+      return decoded as unknown as JwtPayload
     } catch {
       throw new UnauthorizedException('無效或過期的 Token')
     }

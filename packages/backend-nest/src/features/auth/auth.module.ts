@@ -9,21 +9,31 @@ import { AllowAnonymousGuard, IsAuthenticatedGuard } from './auth.guard'
 import { AuthService } from './auth.service'
 import { JwtTokenProvider } from './jwt-token-provider'
 import { JwtStrategy } from './jwt.strategy'
+import { PasswordHasher } from './password-hasher'
 import { InMemoryUserRepository } from './repository/in-memory-user-repository'
 import { RedisUserRepository } from './repository/redis-user-repository'
+import { TokenBlacklistService } from './token-blacklist.service'
 @Module({
   imports: [
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET', 'dev-secret-key'),
-      }),
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('JWT_SECRET')
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is required')
+        }
+        return {
+          secret,
+        }
+      },
     }),
   ],
   providers: [
     AuthService,
     JwtTokenProvider,
+    PasswordHasher,
+    TokenBlacklistService,
     {
       provide: InjectionTokens.UserRepository,
       useFactory: (configService: ConfigService, redis?: Redis) => {
@@ -43,6 +53,12 @@ import { RedisUserRepository } from './repository/redis-user-repository'
     AllowAnonymousGuard,
   ],
   controllers: [AuthController],
-  exports: [AuthService, IsAuthenticatedGuard, AllowAnonymousGuard, InjectionTokens.UserRepository],
+  exports: [
+    AuthService,
+    IsAuthenticatedGuard,
+    AllowAnonymousGuard,
+    InjectionTokens.UserRepository,
+    TokenBlacklistService,
+  ],
 })
 export class AuthModule {}

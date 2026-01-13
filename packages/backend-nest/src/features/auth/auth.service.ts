@@ -2,9 +2,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { JwtTokenProvider } from './jwt-token-provider'
+import { PasswordHasher } from './password-hasher'
 import type { IUserRepository } from './repository/user-repository'
 @Injectable()
 export class AuthService {
+  private readonly passwordHasher = new PasswordHasher()
   constructor(
     @Inject(InjectionTokens.UserRepository) private readonly userRepository: IUserRepository,
     private readonly tokenProvider: JwtTokenProvider
@@ -20,18 +22,24 @@ export class AuthService {
     return { token, userId: user.userId }
   }
   async login(username: string, password: string): Promise<{ accessToken: string; refreshToken: string }> {
-    if (password !== '12345') {
+    // 防止使用者列舉攻擊：始終執行密碼驗證
+    // 對於不存在的用戶，也會耗費相同的計算時間
+    const mockHash = this.passwordHasher.hash('nonexistent')
+    const user = await this.userRepository.findByUsername(username)
+    const userType = user as unknown as { passwordHash?: string }
+    const hashedPasswordToCheck = user ? userType.passwordHash || mockHash : mockHash
+    try {
+      const isPasswordValid = this.passwordHasher.verify(password, hashedPasswordToCheck)
+      if (!isPasswordValid) {
+        throw new BadRequestException('PASSWORD_INVALID')
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error
       throw new BadRequestException('PASSWORD_INVALID')
     }
-    let user = await this.userRepository.findByUsername(username)
+    // 用戶不存在時拒絕登入
     if (!user) {
-      user = {
-        userId: randomUUID(),
-        username,
-        isAnonymous: false,
-        createdAt: Date.now(),
-      }
-      await this.userRepository.save(user)
+      throw new BadRequestException('USER_NOT_FOUND')
     }
     const accessToken = this.tokenProvider.sign(
       {
