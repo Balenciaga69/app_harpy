@@ -7,7 +7,7 @@ import {
   ItemRollService,
   ItemGenerationService,
   ItemEntityService,
-} from '../from-game-core'
+} from '../../../from-game-core'
 import { InjectionTokens } from './injection-tokens'
 export const itemGenerationProviders = [
   {

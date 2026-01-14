@@ -1,104 +1,61 @@
-﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards, UseInterceptors } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import type { Response } from 'express'
-import { IsAuthenticatedGuard } from './auth.guard'
-import { AuthService } from './auth.service'
-import type { AuthenticatedUser } from './jwt.strategy'
-import { LoginRateLimitInterceptor } from './rate-limit.interceptor'
-import { TokenBlacklistService } from './token-blacklist.service'
-@Controller('api/auth')
+import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { GetUser } from './get-user.decorator'
+import { GuestService } from './guest/guest.service'
+import { RegisterDto } from './user/dto/register.dto'
+import { JwtAuthGuard } from './user/jwt-auth.guard'
+import { UserService } from './user/user.service'
+interface AuthenticatedRequest {
+  user: {
+    userId: string
+    username: string
+  }
+}
+@Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-    private readonly tokenBlacklist: TokenBlacklistService
+    private readonly userService: UserService,
+    private readonly guestService: GuestService
   ) {}
-  @Post('guest')
-  @HttpCode(200)
-  // 建立訪客/匿名用戶
-  async createGuest() {
-    const { token, userId } = await this.authService.createAnonymousSession()
-    return {
-      success: true,
-      data: {
-        accessToken: token,
-        userId,
-      },
-    }
+  @Post('register')
+  async register(@Body() dto: RegisterDto) {
+    const result = await this.userService.register(dto.username, dto.password)
+    return { userId: result.userId, message: '註冊成功' }
   }
   @Post('login')
-  @UseInterceptors(LoginRateLimitInterceptor)
+  @UseGuards(AuthGuard('local'))
   @HttpCode(200)
-  // 登入
-  async login(@Body() body: { username: string; password: string }, @Res({ passthrough: true }) res: Response) {
-    const result = await this.authService.login(body.username, body.password)
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+  async login(@Request() req: AuthenticatedRequest) {
+    const tokens = await this.userService.login(req.user.userId, req.user.username)
     return {
-      success: true,
-      data: { accessToken: result.accessToken },
+      ...tokens,
+      user: {
+        userId: req.user.userId,
+        username: req.user.username,
+      },
     }
   }
   @Post('refresh')
   @HttpCode(200)
-  // 刷新 access token
-  refresh(@Body() body: { refreshToken: string }) {
-    const accessToken = this.authService.refreshAccessToken(body.refreshToken)
-    return {
-      success: true,
-      data: { accessToken },
-    }
-  }
-  @Post('upgrade')
-  @UseGuards(IsAuthenticatedGuard)
-  @HttpCode(200)
-  // 將 anonymous 轉為 authenticated
-  async upgrade(
-    @Request() req: { user: AuthenticatedUser },
-    @Body() body: { username: string },
-    @Res({ passthrough: true }) res: Response
-  ) {
-    const result = await this.authService.upgradeAnonymousToAuthenticated(req.user.userId, body.username)
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-    return {
-      success: true,
-      data: { accessToken: result.accessToken },
-    }
-  }
-  @Get('me')
-  // 取得 current user
-  @UseGuards(IsAuthenticatedGuard)
-  getCurrentUser(@Request() req: { user: AuthenticatedUser }) {
-    return {
-      success: true,
-      data: req.user,
-    }
+  @UseGuards(JwtAuthGuard)
+  async refresh(@GetUser() user: { userId: string; username: string; jti: string }) {
+    const tokens = await this.userService.refreshAccessToken(user.jti, user.userId, user.username)
+    return tokens
   }
   @Post('logout')
-  @UseGuards(IsAuthenticatedGuard)
-  @HttpCode(200)
-  // 登出：將 token 加入黑名單
-  async logout(@Request() req: { headers: Record<string, string> }) {
-    const authHeader = req.headers.authorization ?? ''
-    const token = authHeader.replace('Bearer ', '')
-    if (token) {
-      // 計算 token 摘要並加入黑名單
-      // 使用 7 天（access token 通常 15 分鐘，refresh token 7 天，這裡取 7 天以防 refresh）
-      const tokenDigest = token.substring(0, Math.min(32, token.length))
-      await this.tokenBlacklist.addToBlacklist(tokenDigest, 7 * 24 * 60 * 60)
-    }
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
+  async logout(@Request() req: AuthenticatedRequest) {
+    await this.userService.logout(req.user.userId)
+  }
+  @Post('guest')
+  @HttpCode(201)
+  async createGuestSession() {
+    const session = await this.guestService.createGuestSession()
     return {
-      success: true,
-      data: { message: 'Logged out successfully' },
+      guestId: session.guestId,
+      expiresAt: session.expiresAt,
+      expiresIn: Math.floor((session.expiresAt.getTime() - Date.now()) / 1000),
     }
   }
 }

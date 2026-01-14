@@ -2,6 +2,7 @@
 import { ConfigModule } from '@nestjs/config'
 import { SharedAppModule } from 'src/features/shared/shared-app.module'
 import { SharedInfraModule } from 'src/features/shared/shared-infra.module'
+import { AppThrottlerModule } from 'src/features/shared/throttler/throttler.module'
 import { AuthModule } from '../auth/auth.module'
 import { EquipmentModule } from '../equipment/equipment.module'
 import { RunModule } from '../run/run.module'
@@ -13,6 +14,7 @@ import { HealthController } from './app.controller'
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development',
     }),
+    AppThrottlerModule,
     SharedInfraModule,
     SharedAppModule,
     AuthModule,

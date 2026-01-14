@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@nestjs/common'
-import { GameStartOptionsService } from 'src/features/shared/from-game-core'
+import { GameStartOptionsService } from 'src/from-game-core'
 @Injectable()
 export class RunOptionsService {
   constructor(private readonly gameStartOptionsService: GameStartOptionsService) {}

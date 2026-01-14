@@ -8,7 +8,7 @@
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiParam } from '@nestjs/swagger'
 import { IsAuthenticatedGuard } from '../auth/auth.guard'
 import { GetUser } from '../auth/get-user.decorator'
 import { ResultToExceptionMapper } from '../shared/mappers/result-to-exception-mapper'
@@ -22,7 +22,6 @@ export class RunController {
     private readonly runService: RunApiService
   ) {}
   @Get('professions')
-  @ApiOperation({ summary: '取得職業列表' })
   getProfessions() {
     const professions = this.runOptionsService.getAvailableProfessions()
     return {
@@ -31,7 +30,6 @@ export class RunController {
     }
   }
   @Get('relics')
-  @ApiOperation({ summary: '取得所有聖物模板' })
   getRelicTemplates() {
     const relics = this.runOptionsService.getAllRelicTemplates()
     return {
@@ -40,7 +38,6 @@ export class RunController {
     }
   }
   @Get('professions/:id/started-relics')
-  @ApiOperation({ summary: '取得指定職業的可選起始聖物' })
   @ApiParam({ name: 'id', description: '職業 id (e.g., WARRIOR)' })
   getProfessionRelics(@Param('id') id: string) {
     try {
@@ -59,7 +56,6 @@ export class RunController {
   @Post('init-for-user')
   @UseGuards(IsAuthenticatedGuard)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: '為認證用戶初始化新遊戲' })
   @ApiBody({
     schema: {
       example: {

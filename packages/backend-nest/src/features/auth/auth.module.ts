@@ -1,64 +1,35 @@
-﻿import { Module } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import Redis from 'ioredis'
-import { InjectionTokens } from '../shared/providers/injection-tokens'
+import { JWT_CONFIG } from './auth.config'
 import { AuthController } from './auth.controller'
-import { AllowAnonymousGuard, IsAuthenticatedGuard } from './auth.guard'
-import { AuthService } from './auth.service'
-import { JwtTokenProvider } from './jwt-token-provider'
-import { JwtStrategy } from './jwt.strategy'
-import { PasswordHasher } from './password-hasher'
-import { InMemoryUserRepository } from './repository/in-memory-user-repository'
-import { RedisUserRepository } from './repository/redis-user-repository'
-import { TokenBlacklistService } from './token-blacklist.service'
+import { RedisGuestRepository } from './guest/guest.repository'
+import { GuestService } from './guest/guest.service'
+import { JwtAuthGuard } from './user/jwt-auth.guard'
+import { RedisRefreshTokenRepository } from './user/repository/refresh-token.repository'
+import { RedisUserRepository } from './user/repository/user.repository'
+import { JwtStrategy } from './user/strategy/jwt.strategy'
+import { LocalStrategy } from './user/strategy/local.strategy'
+import { UserService } from './user/user.service'
 @Module({
   imports: [
     PassportModule,
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const secret = config.get<string>('JWT_SECRET')
-        if (!secret) {
-          throw new Error('JWT_SECRET environment variable is required')
-        }
-        return {
-          secret,
-        }
-      },
+    JwtModule.register({
+      secret: JWT_CONFIG.SECRET,
+      signOptions: { expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS },
     }),
   ],
-  providers: [
-    AuthService,
-    JwtTokenProvider,
-    PasswordHasher,
-    TokenBlacklistService,
-    {
-      provide: InjectionTokens.UserRepository,
-      useFactory: (configService: ConfigService, redis?: Redis) => {
-        const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
-        if (storageType === 'memory') {
-          return new InMemoryUserRepository()
-        }
-        if (!redis) {
-          throw new Error('Redis client is not available. Please check your STORAGE_TYPE configuration.')
-        }
-        return new RedisUserRepository(redis)
-      },
-      inject: [ConfigService, { token: InjectionTokens.RedisClient, optional: true }],
-    },
-    JwtStrategy,
-    IsAuthenticatedGuard,
-    AllowAnonymousGuard,
-  ],
   controllers: [AuthController],
-  exports: [
-    AuthService,
-    IsAuthenticatedGuard,
-    AllowAnonymousGuard,
-    InjectionTokens.UserRepository,
-    TokenBlacklistService,
+  providers: [
+    UserService,
+    GuestService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtAuthGuard,
+    RedisUserRepository,
+    RedisGuestRepository,
+    RedisRefreshTokenRepository,
   ],
+  exports: [UserService, GuestService, JwtAuthGuard],
 })
 export class AuthModule {}

@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@nestjs/common'
-import { EquipmentService as GameCoreEquipmentService } from 'src/features/shared/from-game-core'
+import { EquipmentService as GameCoreEquipmentService } from 'src/from-game-core'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
 @Injectable()
 export class EquipmentService {

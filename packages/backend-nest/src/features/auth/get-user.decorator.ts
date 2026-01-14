@@ -1,7 +1,8 @@
-﻿import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import type { Request } from 'express'
-/** 從 `getRequest` 取得 `user` */
-export const GetUser = createParamDecorator((_data: unknown, ctx: ExecutionContext): unknown => {
-  const request = ctx.switchToHttp().getRequest<Request>()
-  return (request as unknown as { user?: unknown }).user
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { AuthenticatedUser } from './user/model/authenticated-user.ts'
+export const GetUser = createParamDecorator((_data: unknown, ctx: ExecutionContext): AuthenticatedUser => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const user = ctx.switchToHttp().getRequest().user
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return user
 })
