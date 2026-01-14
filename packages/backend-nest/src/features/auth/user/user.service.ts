@@ -1,4 +1,4 @@
-﻿import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { nanoid } from 'nanoid'
@@ -77,7 +77,6 @@ export class UserService {
     ) {
       throw new UnauthorizedException('無效的 Token 刷新請求')
     }
-
     const isBlacklisted = await this.refreshTokenRepository.isBlacklisted(jti)
     if (isBlacklisted) {
       throw new UnauthorizedException('Token 已被撤銷')

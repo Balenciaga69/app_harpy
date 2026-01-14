@@ -1,10 +1,8 @@
-﻿import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common'
 import { GuestService } from './guest.service'
-
 @Injectable()
 export class GuestOrUserGuard implements CanActivate {
   constructor(private readonly guestService: GuestService) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const request = context.switchToHttp().getRequest()
@@ -24,7 +22,6 @@ export class GuestOrUserGuard implements CanActivate {
     request.guest = { guestId: session.guestId }
     return true
   }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractGuestId(request: any): string | null {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment

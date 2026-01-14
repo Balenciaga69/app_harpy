@@ -5,27 +5,23 @@ import { GuestService } from './guest/guest.service'
 import { RegisterDto } from './user/dto/register.dto'
 import { JwtAuthGuard } from './user/jwt-auth.guard'
 import { UserService } from './user/user.service'
-
 interface AuthenticatedRequest {
   user: {
     userId: string
     username: string
   }
 }
-
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly guestService: GuestService
   ) {}
-
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     const result = await this.userService.register(dto.username, dto.password)
     return { userId: result.userId, message: '註冊成功' }
   }
-
   @Post('login')
   @UseGuards(AuthGuard('local'))
   @HttpCode(200)
@@ -39,7 +35,6 @@ export class AuthController {
       },
     }
   }
-
   @Post('refresh')
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
@@ -47,14 +42,12 @@ export class AuthController {
     const tokens = await this.userService.refreshAccessToken(user.jti, user.userId, user.username)
     return tokens
   }
-
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async logout(@Request() req: AuthenticatedRequest) {
     await this.userService.logout(req.user.userId)
   }
-
   @Post('guest')
   @HttpCode(201)
   async createGuestSession() {

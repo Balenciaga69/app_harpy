@@ -11,7 +11,7 @@ foreach ($path in $paths) {
    }
 
    Get-ChildItem -Path $path -Recurse -Include *.ts | ForEach-Object {
-      $content = Get-Content $_.FullName -Raw
+      $content = Get-Content $_.FullName -Raw -Encoding utf8
 
       if ([string]::IsNullOrWhiteSpace($content)) {
          return
@@ -20,8 +20,8 @@ foreach ($path in $paths) {
       $newContent = $content -replace '(\r?\n)\r?\n', '$1'
 
       if ($content -ne $newContent) {
-         $utf8WithBom = [System.Text.UTF8Encoding]::new($true)
-         [System.IO.File]::WriteAllText($_.FullName, $newContent, $utf8WithBom)
+         $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+         [System.IO.File]::WriteAllText($_.FullName, $newContent, $utf8NoBom)
          Write-Host "Updated: $($_.FullName)" -ForegroundColor Green
       }
    }

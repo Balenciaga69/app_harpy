@@ -1,10 +1,9 @@
-﻿import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import * as bcrypt from 'bcrypt'
 import { Strategy } from 'passport-local'
 import { AuthenticatedUser } from '../model/authenticated-user.ts'
 import { RedisUserRepository } from '../repository/user.repository'
-
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userRepository: RedisUserRepository) {
@@ -13,7 +12,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       passwordField: 'password',
     })
   }
-
   async validate(username: string, password: string): Promise<AuthenticatedUser> {
     const user = await this.userRepository.findActiveByUsername(username)
     if (!user) {

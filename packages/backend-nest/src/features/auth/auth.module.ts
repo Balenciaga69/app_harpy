@@ -1,4 +1,4 @@
-﻿import { Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { JWT_CONFIG } from './auth.config'
@@ -11,7 +11,6 @@ import { RedisUserRepository } from './user/repository/user.repository'
 import { JwtStrategy } from './user/strategy/jwt.strategy'
 import { LocalStrategy } from './user/strategy/local.strategy'
 import { UserService } from './user/user.service'
-
 @Module({
   imports: [
     PassportModule,
