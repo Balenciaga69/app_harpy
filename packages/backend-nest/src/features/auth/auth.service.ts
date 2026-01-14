@@ -22,8 +22,6 @@ export class AuthService {
     return { token, userId: user.userId }
   }
   async login(username: string, password: string): Promise<{ accessToken: string; refreshToken: string }> {
-    // 防止使用者列舉攻擊：始終執行密碼驗證
-    // 對於不存在的用戶，也會耗費相同的計算時間
     const mockHash = this.passwordHasher.hash('nonexistent')
     const user = await this.userRepository.findByUsername(username)
     const userType = user as unknown as { passwordHash?: string }
