@@ -86,13 +86,10 @@ export class AuthController {
   @Post('logout')
   @UseGuards(IsAuthenticatedGuard)
   @HttpCode(200)
-  // 登出：將 token 加入黑名單
   async logout(@Request() req: { headers: Record<string, string> }) {
     const authHeader = req.headers.authorization ?? ''
     const token = authHeader.replace('Bearer ', '')
     if (token) {
-      // 計算 token 摘要並加入黑名單
-      // 使用 7 天（access token 通常 15 分鐘，refresh token 7 天，這裡取 7 天以防 refresh）
       const tokenDigest = token.substring(0, Math.min(32, token.length))
       await this.tokenBlacklist.addToBlacklist(tokenDigest, 7 * 24 * 60 * 60)
     }
