@@ -2,7 +2,8 @@
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
-import type { JwtPayload } from './jwt-token-provider'
+import type { JwtPayload } from './auth.service'
+
 export interface AuthenticatedUser {
   userId: string
   isAnonymous: boolean

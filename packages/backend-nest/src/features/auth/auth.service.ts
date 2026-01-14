@@ -1,20 +1,27 @@
 ﻿import { randomUUID } from 'crypto'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 import { InjectionTokens } from '../shared/providers/injection-tokens'
-import { JwtTokenProvider } from './jwt-token-provider'
-import { PasswordHasher } from './password-hasher'
+import { PasswordService } from './password.service'
 import type { IUserRepository } from './repository/user-repository'
+
+export interface JwtPayload {
+  sub: string
+  is_anon: boolean
+  ver: number
+}
+
 @Injectable()
 export class AuthService {
-  private readonly passwordHasher = new PasswordHasher()
   constructor(
     @Inject(InjectionTokens.UserRepository) private readonly userRepository: IUserRepository,
-    private readonly tokenProvider: JwtTokenProvider
+    private readonly jwtService: JwtService,
+    private readonly passwordService: PasswordService
   ) {}
   async createAnonymousSession(): Promise<{ token: string; userId: string }> {
     const userId = randomUUID()
     const user = await this.userRepository.getOrCreateAnonymous(userId)
-    const token = this.tokenProvider.sign({
+    const token = this.jwtService.sign({
       sub: user.userId,
       is_anon: true,
       ver: 1,
@@ -22,92 +29,69 @@ export class AuthService {
     return { token, userId: user.userId }
   }
   async login(username: string, password: string): Promise<{ accessToken: string; refreshToken: string }> {
-    const mockHash = this.passwordHasher.hash('nonexistent')
     const user = await this.userRepository.findByUsername(username)
-    const userType = user as unknown as { passwordHash?: string }
-    const hashedPasswordToCheck = user ? userType.passwordHash || mockHash : mockHash
-    try {
-      const isPasswordValid = this.passwordHasher.verify(password, hashedPasswordToCheck)
-      if (!isPasswordValid) {
-        throw new BadRequestException('PASSWORD_INVALID')
-      }
-    } catch (error) {
-      if (error instanceof BadRequestException) throw error
-      throw new BadRequestException('PASSWORD_INVALID')
-    }
-    // 用戶不存在時拒絕登入
+
     if (!user) {
-      throw new BadRequestException('USER_NOT_FOUND')
+      throw new UnauthorizedException('Invalid credentials')
     }
-    const accessToken = this.tokenProvider.sign(
-      {
-        sub: user.userId,
-        is_anon: false,
-        ver: 1,
-      },
-      '15m'
-    )
-    const refreshToken = this.tokenProvider.sign(
-      {
-        sub: user.userId,
-        is_anon: false,
-        ver: 1,
-      },
-      '7d'
-    )
+
+    const userWithPassword = user as unknown as { passwordHash?: string }
+    const isPasswordValid = await this.passwordService.verify(password, userWithPassword.passwordHash || '')
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials')
+    }
+
+    const payload: JwtPayload = {
+      sub: user.userId,
+      is_anon: false,
+      ver: 1,
+    }
+
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' })
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' })
+
     return { accessToken, refreshToken }
   }
   refreshAccessToken(refreshToken: string): string {
-    let payload
     try {
-      payload = this.tokenProvider.verify(refreshToken)
+      const payload = this.jwtService.verify<JwtPayload>(refreshToken)
+      return this.jwtService.sign(payload, { expiresIn: '15m' })
     } catch {
-      throw new BadRequestException('INVALID_REFRESH_TOKEN')
+      throw new UnauthorizedException('Invalid refresh token')
     }
-    const typedPayload = payload as { sub: string; is_anon: boolean; ver: number }
-    return this.tokenProvider.sign(
-      {
-        sub: typedPayload.sub,
-        is_anon: typedPayload.is_anon,
-        ver: typedPayload.ver,
-      },
-      '15m'
-    )
   }
   async upgradeAnonymousToAuthenticated(
     anonUserId: string,
     username: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const anonUser = await this.userRepository.findById(anonUserId)
-    if (!anonUser || !anonUser.isAnonymous) {
-      throw new BadRequestException('INVALID_ANONYMOUS_USER')
+    if (!anonUser?.isAnonymous) {
+      throw new BadRequestException('User is not anonymous')
     }
-    let authenticatedUser = await this.userRepository.findByUsername(username)
-    if (!authenticatedUser) {
-      authenticatedUser = {
-        userId: randomUUID(),
-        username,
-        isAnonymous: false,
-        createdAt: Date.now(),
-      }
-      await this.userRepository.save(authenticatedUser)
+
+    const existingUser = await this.userRepository.findByUsername(username)
+    if (existingUser) {
+      throw new BadRequestException('Username already exists')
     }
-    const accessToken = this.tokenProvider.sign(
-      {
-        sub: authenticatedUser.userId,
-        is_anon: false,
-        ver: 1,
-      },
-      '15m'
-    )
-    const refreshToken = this.tokenProvider.sign(
-      {
-        sub: authenticatedUser.userId,
-        is_anon: false,
-        ver: 1,
-      },
-      '7d'
-    )
+
+    const authenticatedUser = {
+      ...anonUser,
+      username,
+      isAnonymous: false,
+    }
+
+    await this.userRepository.save(authenticatedUser)
+
+    const payload: JwtPayload = {
+      sub: authenticatedUser.userId,
+      is_anon: false,
+      ver: 1,
+    }
+
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' })
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' })
+
     return { accessToken, refreshToken }
   }
 }

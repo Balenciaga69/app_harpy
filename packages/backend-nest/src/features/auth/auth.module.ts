@@ -7,9 +7,8 @@ import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { AuthController } from './auth.controller'
 import { AllowAnonymousGuard, IsAuthenticatedGuard } from './auth.guard'
 import { AuthService } from './auth.service'
-import { JwtTokenProvider } from './jwt-token-provider'
 import { JwtStrategy } from './jwt.strategy'
-import { PasswordHasher } from './password-hasher'
+import { PasswordService } from './password.service'
 import { InMemoryUserRepository } from './repository/in-memory-user-repository'
 import { RedisUserRepository } from './repository/redis-user-repository'
 import { TokenBlacklistService } from './token-blacklist.service'
@@ -31,8 +30,7 @@ import { TokenBlacklistService } from './token-blacklist.service'
   ],
   providers: [
     AuthService,
-    JwtTokenProvider,
-    PasswordHasher,
+    PasswordService,
     TokenBlacklistService,
     {
       provide: InjectionTokens.UserRepository,

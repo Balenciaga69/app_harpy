@@ -1,10 +1,10 @@
-﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards, UseInterceptors } from '@nestjs/common'
+﻿import { Body, Controller, Get, HttpCode, Post, Request, Res, UseGuards } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 import { ConfigService } from '@nestjs/config'
 import type { Response } from 'express'
 import { IsAuthenticatedGuard } from './auth.guard'
 import { AuthService } from './auth.service'
 import type { AuthenticatedUser } from './jwt.strategy'
-import { LoginRateLimitInterceptor } from './rate-limit.interceptor'
 import { TokenBlacklistService } from './token-blacklist.service'
 @Controller('api/auth')
 export class AuthController {
@@ -27,7 +27,7 @@ export class AuthController {
     }
   }
   @Post('login')
-  @UseInterceptors(LoginRateLimitInterceptor)
+  @Throttle({ login: { limit: 3, ttl: 300000 } })
   @HttpCode(200)
   // 登入
   async login(@Body() body: { username: string; password: string }, @Res({ passthrough: true }) res: Response) {
