@@ -1,4 +1,7 @@
-﻿import { Injectable, UnauthorizedException, CanActivate, ExecutionContext } from '@nestjs/common'
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Injectable, UnauthorizedException, CanActivate, ExecutionContext } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { TokenBlacklistService } from './token-blacklist.service'
 @Injectable()
@@ -35,7 +38,6 @@ export class IsAuthenticatedGuard extends AuthGuard('jwt') implements CanActivat
 }
 @Injectable()
 export class AllowAnonymousGuard extends AuthGuard('jwt') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override handleRequest(_err: unknown, user: unknown): any {
     return user ?? null
   }

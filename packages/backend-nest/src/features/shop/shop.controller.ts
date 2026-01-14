@@ -1,5 +1,5 @@
 ﻿import { Body, Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common'
-import { ApiBody, ApiOperation } from '@nestjs/swagger'
+import { ApiBody } from '@nestjs/swagger'
 import { ContextInitializationInterceptor } from 'src/features/shared/interceptors/context-initialization.interceptor'
 import { BuyItemDto } from './model/buy-item.dto'
 import { RefreshShopDto } from './model/refresh-shop.dto'
@@ -14,7 +14,6 @@ export class ShopController {
     return this.shopService.getShopItems({ runId })
   }
   @Post('shop/buy')
-  @ApiOperation({ summary: '購買物品' })
   @ApiBody({
     schema: {
       example: {
@@ -27,7 +26,6 @@ export class ShopController {
     return this.shopService.buyItem(dto)
   }
   @Post('shop/sell')
-  @ApiOperation({ summary: '賣出物品' })
   @ApiBody({
     schema: {
       example: {
@@ -40,7 +38,6 @@ export class ShopController {
     return this.shopService.sellItem(dto)
   }
   @Post('shop/refresh')
-  @ApiOperation({ summary: '刷新商店' })
   @ApiBody({
     schema: {
       example: {

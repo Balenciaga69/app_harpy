@@ -1,4 +1,6 @@
-﻿import {
+﻿/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
@@ -29,10 +31,6 @@ export class RateLimitInterceptor implements NestInterceptor {
     return next.handle()
   }
 }
-/**
- * ?餃蝡舫?撠??????
- * ?游?潛??嚗? 5 ?? 3 甈?
- */
 @Injectable()
 export class LoginRateLimitInterceptor implements NestInterceptor {
   constructor(@Inject(InjectionTokens.RedisClient) private readonly redis: Redis) {}
