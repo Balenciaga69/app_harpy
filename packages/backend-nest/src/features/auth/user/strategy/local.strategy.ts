@@ -2,7 +2,9 @@
 import { PassportStrategy } from '@nestjs/passport'
 import * as bcrypt from 'bcrypt'
 import { Strategy } from 'passport-local'
+import { AuthenticatedUser } from '../model/authenticated-user.ts'
 import { RedisUserRepository } from '../repository/user.repository'
+
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userRepository: RedisUserRepository) {
@@ -11,7 +13,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       passwordField: 'password',
     })
   }
-  async validate(username: string, password: string) {
+
+  async validate(username: string, password: string): Promise<AuthenticatedUser> {
     const user = await this.userRepository.findActiveByUsername(username)
     if (!user) {
       throw new UnauthorizedException('帳號不存在或已停用')

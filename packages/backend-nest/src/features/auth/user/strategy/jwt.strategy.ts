@@ -1,13 +1,16 @@
 ﻿import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-export interface JwtPayload {
+import { AuthenticatedUser } from '../model/authenticated-user.ts'
+
+interface JwtPayload {
   sub: string
   username: string
   jti: string
   iat?: number
   exp?: number
 }
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
@@ -19,8 +22,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET || 'your-secret-key',
     })
   }
+
   // eslint-disable-next-line @typescript-eslint/require-await
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
     return {
       userId: payload.sub,
       username: payload.username,

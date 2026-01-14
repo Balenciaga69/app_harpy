@@ -2,12 +2,10 @@
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { nanoid } from 'nanoid'
+import { PASSWORD_CONFIG, JWT_CONFIG } from '../auth.config'
 import { User } from './model/user.entity'
 import { RedisRefreshTokenRepository } from './repository/refresh-token.repository'
 import { RedisUserRepository } from './repository/user.repository'
-const BCRYPT_ROUNDS = 10
-const ACCESS_TOKEN_TTL_SECONDS = 900 // 15 分鐘
-const REFRESH_TOKEN_TTL_SECONDS = 2592000 // 30 天
 export interface AuthTokens {
   accessToken: string
   refreshToken: string
@@ -29,7 +27,7 @@ export class UserService {
     if (existsUser) {
       throw new ConflictException('帳號已存在')
     }
-    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS)
+    const passwordHash = await bcrypt.hash(password, PASSWORD_CONFIG.BCRYPT_ROUNDS)
     const userId = nanoid()
     const now = new Date()
     const user: User = {
@@ -49,25 +47,37 @@ export class UserService {
       username,
     }
     const accessToken = this.jwtService.sign(accessTokenPayload, {
-      expiresIn: ACCESS_TOKEN_TTL_SECONDS,
+      expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS,
     })
     const jti = nanoid()
     const now = new Date()
-    const refreshTokenExpiresAt = new Date(now.getTime() + REFRESH_TOKEN_TTL_SECONDS * 1000)
+    const refreshTokenExpiresAt = new Date(now.getTime() + JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS * 1000)
     await this.refreshTokenRepository.save({
       jti,
       userId,
       createdAt: now,
       expiresAt: refreshTokenExpiresAt,
     })
-    const refreshToken = this.jwtService.sign({ jti }, { expiresIn: REFRESH_TOKEN_TTL_SECONDS })
+    const refreshToken = this.jwtService.sign({ jti }, { expiresIn: JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS })
     return {
       accessToken,
       refreshToken,
-      expiresIn: ACCESS_TOKEN_TTL_SECONDS,
+      expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS,
     }
   }
   async refreshAccessToken(jti: string, userId: string, username: string): Promise<AuthTokens> {
+    // 驗證參數不為空且為字串
+    if (
+      !jti ||
+      !userId ||
+      !username ||
+      typeof jti !== 'string' ||
+      typeof userId !== 'string' ||
+      typeof username !== 'string'
+    ) {
+      throw new UnauthorizedException('無效的 Token 刷新請求')
+    }
+
     const isBlacklisted = await this.refreshTokenRepository.isBlacklisted(jti)
     if (isBlacklisted) {
       throw new UnauthorizedException('Token 已被撤銷')

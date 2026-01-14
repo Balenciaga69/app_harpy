@@ -1,30 +1,36 @@
-﻿import { JwtModule } from '@nestjs/jwt'
+﻿import { Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import Module from 'module'
+import { JWT_CONFIG } from './auth.config'
+import { AuthController } from './auth.controller'
 import { RedisGuestRepository } from './guest/guest.repository'
+import { GuestService } from './guest/guest.service'
+import { JwtAuthGuard } from './user/jwt-auth.guard'
 import { RedisRefreshTokenRepository } from './user/repository/refresh-token.repository'
 import { RedisUserRepository } from './user/repository/user.repository'
+import { JwtStrategy } from './user/strategy/jwt.strategy'
+import { LocalStrategy } from './user/strategy/local.strategy'
+import { UserService } from './user/user.service'
+
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'default-secret',
-      signOptions: { expiresIn: '15m' },
+      secret: JWT_CONFIG.SECRET,
+      signOptions: { expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS },
     }),
   ],
   controllers: [AuthController],
   providers: [
     UserService,
     GuestService,
-    RedisUserRepository,
-    RedisGuestRepository,
-    RedisRefreshTokenRepository,
     LocalStrategy,
     JwtStrategy,
     JwtAuthGuard,
-    GuestGuard,
-    TokenBlacklistService,
+    RedisUserRepository,
+    RedisGuestRepository,
+    RedisRefreshTokenRepository,
   ],
-  exports: [UserService, GuestService, JwtAuthGuard, GuestGuard],
+  exports: [UserService, GuestService, JwtAuthGuard],
 })
 export class AuthModule {}
