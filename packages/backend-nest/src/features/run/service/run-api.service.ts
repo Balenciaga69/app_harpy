@@ -1,5 +1,5 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
-import { RunInitializationService } from 'src/features/shared/from-game-core'
+import { RunInitializationService } from 'src/from-game-core'
 import { InjectionTokens } from '../../shared/providers/injection-tokens'
 import { CreateRunRecordParams } from '../model/run-record'
 import type { IRunRepository } from '../repository/run-repository'

@@ -2,7 +2,7 @@
 import { ConfigService } from '@nestjs/config'
 import Redis from 'ioredis'
 import { ContextManager } from './context/context-manager'
-import { IContextBatchRepository } from './from-game-core'
+import { IContextBatchRepository } from '../../from-game-core'
 import { configStoreProviders } from './providers/config-store.providers'
 import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
 import { InjectionTokens } from './providers/injection-tokens'

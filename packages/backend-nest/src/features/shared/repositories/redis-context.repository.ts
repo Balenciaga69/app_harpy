@@ -7,7 +7,7 @@ import {
   IRunContext,
   IShopContext,
   IStashContext,
-} from '../from-game-core'
+} from '../../../from-game-core'
 import { InjectionTokens } from '../providers/injection-tokens'
 type Updates = Parameters<IContextBatchRepository['updateBatch']>[0]
 @Injectable()

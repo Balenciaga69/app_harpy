@@ -5,7 +5,7 @@ import {
   EquipmentContextHandler,
   EquipmentService as GameCoreEquipmentService,
   IContextSnapshotAccessor,
-} from 'src/features/shared/from-game-core'
+} from 'src/from-game-core'
 import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { EquipmentService } from './equipment.service'
 export const equipmentFeatureProviders = [

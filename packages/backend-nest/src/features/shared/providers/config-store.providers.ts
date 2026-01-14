@@ -6,7 +6,7 @@
   InternalProfessionConfigLoader,
   InternalShopConfigLoader,
   InternalUltimateConfigLoader,
-} from 'src/features/shared/from-game-core'
+} from 'src/from-game-core'
 import { InjectionTokens } from './injection-tokens'
 export const configStoreProviders = [
   {

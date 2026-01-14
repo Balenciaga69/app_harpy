@@ -7,7 +7,7 @@ import {
   ItemEntityService,
   ProfessionEntityService,
   CharacterAggregateService,
-} from '../from-game-core'
+} from '../../../from-game-core'
 import { InjectionTokens } from './injection-tokens'
 export const contentGenerationProviders = [
   {

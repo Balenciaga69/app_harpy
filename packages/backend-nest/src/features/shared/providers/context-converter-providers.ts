@@ -7,7 +7,7 @@ import {
   IConfigStoreAccessor,
   ContextUnitOfWork,
   IContextMutator,
-} from '../from-game-core'
+} from '../../../from-game-core'
 import { InjectionTokens } from './injection-tokens'
 export const contextConverterProviders = [
   {
