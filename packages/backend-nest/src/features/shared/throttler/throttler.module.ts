@@ -1,14 +1,12 @@
-import { Module } from '@nestjs/common'
+﻿import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
-
 @Module({
   imports: [
     ThrottlerModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
         const ttl = configService.get<number>('THROTTLE_TTL', 60) * 1000 // 轉換為毫秒
         const limit = configService.get<number>('THROTTLE_LIMIT', 5)
-
         return [
           {
             name: 'default',

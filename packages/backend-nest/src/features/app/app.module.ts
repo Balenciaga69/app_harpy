@@ -8,7 +8,6 @@ import { EquipmentModule } from '../equipment/equipment.module'
 import { RunModule } from '../run/run.module'
 import { ShopModule } from '../shop/shop.module'
 import { HealthController } from './app.controller'
-
 @Module({
   imports: [
     ConfigModule.forRoot({
