@@ -1,6 +1,7 @@
-﻿import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
-import { RefreshTokenRecord } from '../model/refresh-token-record.entity'
+import { REDIS_KEYS } from '../auth.config'
+import { RefreshTokenRecord } from './refresh-token-record.entity'
 export interface IRefreshTokenRepository {
   save(record: RefreshTokenRecord): Promise<void>
   findByJti(jti: string): Promise<RefreshTokenRecord | null>
@@ -11,20 +12,15 @@ export interface IRefreshTokenRepository {
 }
 @Injectable()
 export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
-  //@Copilot Is there a reason why these PREFIXES are not put in auth.config.ts?
-  // Or why are they needed? Can it still work without writing these?
-  private readonly RECORD_PREFIX = 'refresh-token'
-  private readonly USER_TOKENS_PREFIX = 'user-tokens'
-  private readonly BLACKLIST_PREFIX = 'blacklist'
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
   private getRecordKey(jti: string) {
-    return `${this.RECORD_PREFIX}:${jti}`
+    return `${REDIS_KEYS.REFRESH_TOKEN_RECORD}:${jti}`
   }
   private getUserTokensKey(userId: string) {
-    return `${this.USER_TOKENS_PREFIX}:${userId}`
+    return `${REDIS_KEYS.USER_TOKENS}:${userId}`
   }
   private getBlacklistKey(jti: string) {
-    return `${this.BLACKLIST_PREFIX}:${jti}`
+    return `${REDIS_KEYS.BLACKLIST}:${jti}`
   }
   private validateExpiresAt(expiresAt: Date): number {
     const now = Date.now()

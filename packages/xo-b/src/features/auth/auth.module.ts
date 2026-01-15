@@ -6,7 +6,8 @@ import { AuthController } from './auth.controller'
 import { RedisGuestRepository } from './guest/guest.repository'
 import { GuestService } from './guest/guest.service'
 import { JwtAuthGuard } from './user/jwt-auth.guard'
-import { RedisRefreshTokenRepository } from './user/repository/refresh-token.repository'
+import { RedisAccessTokenRepository } from './token/access-token.repository'
+import { RedisRefreshTokenRepository } from './token/refresh-token.repository'
 import { RedisUserRepository } from './user/repository/user.repository'
 import { JwtStrategy } from './user/strategy/jwt.strategy'
 import { LocalStrategy } from './user/strategy/local.strategy'
@@ -29,6 +30,7 @@ import { UserService } from './user/user.service'
     RedisUserRepository,
     RedisGuestRepository,
     RedisRefreshTokenRepository,
+    RedisAccessTokenRepository,
   ],
   exports: [UserService, GuestService, JwtAuthGuard],
 })

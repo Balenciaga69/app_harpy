@@ -15,3 +15,12 @@ export const PASSWORD_CONFIG = {
 export const SESSION_CONFIG = {
   GUEST_SESSION_TTL_SECONDS: 3600, // 1 小時
 } as const
+export const REDIS_KEYS = {
+  REFRESH_TOKEN_RECORD: 'refresh-token',
+  USER_TOKENS: 'user-tokens',
+  BLACKLIST: 'blacklist',
+  GUEST_SESSION: 'guest',
+  ACCESS_TOKEN: 'access-token',
+  USER_DEVICES: 'user-devices',
+  ACCESS_TOKEN_BLACKLIST: 'access-token-blacklist',
+} as const

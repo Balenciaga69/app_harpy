@@ -1,6 +1,7 @@
-﻿import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Inject } from '@nestjs/common'
 import Redis from 'ioredis'
+import { REDIS_KEYS } from '../auth.config'
 import { GuestSession } from './guest-session.entity'
 // 定義訪客儲存庫的介面
 export interface IGuestRepository {
@@ -14,7 +15,7 @@ export interface IGuestRepository {
 export class RedisGuestRepository implements IGuestRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
   private getKey(guestId: string) {
-    return `guest:${guestId}`
+    return `${REDIS_KEYS.GUEST_SESSION}:${guestId}`
   }
   private calcTtl(expiresAt: Date): number {
     return Math.max(1, Math.floor((expiresAt.getTime() - Date.now()) / 1000))

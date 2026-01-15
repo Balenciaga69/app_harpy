@@ -1,19 +1,28 @@
-﻿import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { nanoid } from 'nanoid'
+import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
+import { Result } from 'src/from-xo-c'
+import { SESSION_CONFIG } from '../auth.config'
 import { GuestSession } from './guest-session.entity'
 import { RedisGuestRepository } from './guest.repository'
 @Injectable()
 export class GuestService {
-  //@Copilot 為何不放到 auth.config.ts 有理由嗎?
-  private readonly SESSION_TTL_SECONDS = 3600
-  constructor(private readonly guestRepository: RedisGuestRepository) {}
+  constructor(
+    private readonly guestRepository: RedisGuestRepository,
+    private readonly configService: ConfigService
+  ) {}
   async createGuestSession(): Promise<{
     guestId: string
     expiresAt: Date
   }> {
     const guestId = nanoid()
     const now = new Date()
-    const expiresAt = new Date(now.getTime() + this.SESSION_TTL_SECONDS * 1000)
+    const ttlSeconds = this.configService.get<number>(
+      'GUEST_SESSION_TTL_SECONDS',
+      SESSION_CONFIG.GUEST_SESSION_TTL_SECONDS
+    )
+    const expiresAt = new Date(now.getTime() + ttlSeconds * 1000)
     const session: GuestSession = {
       guestId,
       createdAt: now,
@@ -22,25 +31,29 @@ export class GuestService {
     await this.guestRepository.save(session)
     return { guestId, expiresAt }
   }
-  async validateGuestId(guestId: string): Promise<GuestSession | null> {
+  async validateGuestId(guestId: string): Promise<Result<GuestSession>> {
     const session = await this.guestRepository.findByGuestId(guestId)
     if (!session) {
-      return null
+      return Result.fail(ApiErrorCode.認證_認證無效)
     }
     if (session.expiresAt.getTime() < Date.now()) {
       await this.guestRepository.deleteByGuestId(guestId)
-      return null
+      return Result.fail(ApiErrorCode.認證_令牌過期)
     }
-    return session
+    return Result.success(session)
   }
-  async extendGuestSession(guestId: string): Promise<Date | null> {
-    const session = await this.validateGuestId(guestId)
-    if (!session) {
-      return null
+  async extendGuestSession(guestId: string): Promise<Result<Date>> {
+    const result = await this.validateGuestId(guestId)
+    if (result.isFailure) {
+      return Result.fail(result.error!)
     }
-    const newExpiresAt = new Date(Date.now() + this.SESSION_TTL_SECONDS * 1000)
+    const ttlSeconds = this.configService.get<number>(
+      'GUEST_SESSION_TTL_SECONDS',
+      SESSION_CONFIG.GUEST_SESSION_TTL_SECONDS
+    )
+    const newExpiresAt = new Date(Date.now() + ttlSeconds * 1000)
     await this.guestRepository.updateExpiresAt(guestId, newExpiresAt)
-    return newExpiresAt
+    return Result.success(newExpiresAt)
   }
   async deleteGuestSession(guestId: string): Promise<void> {
     await this.guestRepository.deleteByGuestId(guestId)

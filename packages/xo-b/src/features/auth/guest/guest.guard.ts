@@ -9,20 +9,21 @@ export class GuestOrUserGuard implements CanActivate {
   constructor(private readonly guestService: GuestService) {}
   /** Determine whether it is a verified user or a guest */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    //Check if it is a validated user
+    // Check if it is a validated user
     const request = context.switchToHttp().getRequest()
     if (request.user) {
       return true
     }
-    //Check if it is a validated guest
+    // Check if it is a validated guest
     const guestId = this.extractGuestId(request)
     if (!guestId) {
       throw new UnauthorizedException('需要提供有效的 User Token 或 Guest ID')
     }
-    const session = await this.guestService.validateGuestId(guestId)
-    if (!session) {
-      throw new UnauthorizedException('Guest ID 已過期或不存在')
+    const result = await this.guestService.validateGuestId(guestId)
+    if (result.isFailure) {
+      throw new UnauthorizedException(result.error === 'AUTH_EXPIRED' ? 'Guest ID 已過期' : 'Guest ID 不存在或無效')
     }
+    const session = result.value!
     request.guest = { guestId: session.guestId }
     return true
   }
