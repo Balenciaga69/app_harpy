@@ -33,7 +33,7 @@ export class UserService {
   async register(username: string, password: string): Promise<Result<{ userId: string }>> {
     const existsUser = await this.userRepository.existsByUsername(username)
     if (existsUser) {
-      return Result.fail(ApiErrorCode.參數_驗證失敗)
+      return Result.fail(ApiErrorCode.註冊_帳號已存在)
     }
     const passwordHash = await bcrypt.hash(password, PASSWORD_CONFIG.BCRYPT_ROUNDS)
     const userId = nanoid()

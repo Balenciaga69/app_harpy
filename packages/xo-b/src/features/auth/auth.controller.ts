@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Query, Request, UseGuards, Res } from '@nestjs/common'
+import { Body, Controller, HttpCode, Post, Query, Request, Res, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -7,11 +7,13 @@ import { Response } from 'express'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
 import { JWT_CONFIG } from './auth.config'
 import {
+  AuthenticatedRequest,
+  LoginDto,
   GuestSessionResponseDto,
   LoginResponseDto,
   RefreshResponseDto,
-  RegisterResponseDto,
   RegisterDto,
+  RegisterResponseDto,
 } from './dto/auth.dto'
 import { GetUser } from './get-user.decorator'
 import { GuestService } from './guest/guest.service'
@@ -19,9 +21,6 @@ import { JwtAuthGuard } from './user/jwt-auth.guard'
 import { JwtRefreshGuard } from './user/jwt-refresh.guard'
 import { AuthenticatedUser } from './user/model/authenticated-user'
 import { UserService } from './user/user.service'
-interface AuthenticatedRequest extends Request {
-  user: AuthenticatedUser
-}
 @ApiTags('Authentication - 認證')
 @Controller('auth')
 export class AuthController {
@@ -46,9 +45,12 @@ export class AuthController {
   @ApiOperation({ summary: '帳號密碼登入' })
   @ApiResponse({ status: 200, type: LoginResponseDto })
   async login(
+    @Body() dto: LoginDto,
     @Request() req: AuthenticatedRequest,
     @Res({ passthrough: true }) res: Response
   ): Promise<LoginResponseDto> {
+    console.info('xZx dto', dto)
+    // req.user 由 AuthGuard('local') 注入，dto 僅用於 Swagger 文件顯示
     const result = await this.userService.login(req.user.userId, req.user.username)
     ResultToExceptionMapper.throwIfFailure(result)
     const payload = result.value!
