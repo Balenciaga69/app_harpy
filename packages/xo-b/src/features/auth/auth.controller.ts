@@ -3,24 +3,22 @@ import { AuthGuard } from '@nestjs/passport'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import { JWT_CONFIG } from './auth.config'
 import {
   GuestSessionResponseDto,
   LoginResponseDto,
   RefreshResponseDto,
   RegisterResponseDto,
-} from './dto/auth-response.dto'
-import { RegisterDto } from './dto/register.dto'
+  RegisterDto,
+} from './dto/auth.dto'
 import { GetUser } from './get-user.decorator'
 import { GuestService } from './guest/guest.service'
 import { JwtAuthGuard } from './user/jwt-auth.guard'
 import { JwtRefreshGuard } from './user/jwt-refresh.guard'
+import { AuthenticatedUser } from './user/model/authenticated-user'
 import { UserService } from './user/user.service'
-interface AuthenticatedRequest {
-  user: {
-    userId: string
-    username: string
-    deviceId?: string
-  }
+interface AuthenticatedRequest extends Request {
+  user: AuthenticatedUser
 }
 @ApiTags('Authentication - 認證')
 @Controller('auth')
@@ -57,10 +55,8 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: '刷新 Access Token' })
   @ApiResponse({ status: 200, type: RefreshResponseDto })
-  async refresh(
-    @GetUser() user: { userId: string; username: string; jti: string; expiresAt: Date }
-  ): Promise<RefreshResponseDto> {
-    const result = await this.userService.refreshAccessToken(user.jti, user.userId, user.username, user.expiresAt)
+  async refresh(@GetUser() user: AuthenticatedUser): Promise<RefreshResponseDto> {
+    const result = await this.userService.refreshAccessToken(user.jti!, user.userId, user.username, user.expiresAt!)
     ResultToExceptionMapper.throwIfFailure(result)
     return result.value!
   }
@@ -68,12 +64,15 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @ApiOperation({ summary: '登出' })
-  async logout(@GetUser() user: { userId: string; deviceId?: string }, @Query('allDevices') allDevices?: string) {
+  async logout(@GetUser() user: AuthenticatedUser, @Query('allDevices') allDevices?: string) {
     const logoutAll = allDevices === 'true'
     if (logoutAll || !user.deviceId) {
       await this.userService.logoutAllDevices(user.userId)
     } else {
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+      // 動態計算 Access Token 的剩餘壽命，避免硬編碼 15 分鐘
+      const expiresAt = user.exp
+        ? new Date(user.exp * 1000)
+        : new Date(Date.now() + JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS * 1000)
       await this.userService.logoutThisDevice(user.userId, user.deviceId, expiresAt)
     }
   }
