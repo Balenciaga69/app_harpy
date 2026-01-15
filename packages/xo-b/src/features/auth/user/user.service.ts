@@ -6,23 +6,13 @@ import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
 import { Result } from 'src/from-xo-c'
 import { JWT_CONFIG, PASSWORD_CONFIG } from '../auth.config'
-import { User } from './model/user.entity'
 import { RedisAccessTokenRepository } from '../token/access-token.repository'
 import { RedisRefreshTokenRepository } from '../token/refresh-token.repository'
+import { SessionManager } from '../session-manager'
+import { AuthTokens, JwtAccessPayload } from '../contracts'
+import { User } from './model/user.entity'
 import { RedisUserRepository } from './repository/user.repository'
-export interface AuthTokens {
-  accessToken: string
-  refreshToken: string
-  expiresIn: number
-}
-export interface JwtAccessPayload {
-  sub: string
-  username: string
-  jti: string
-  type: 'access'
-  deviceId: string
-  deviceName?: string
-}
+
 @Injectable()
 export class UserService {
   constructor(
@@ -30,9 +20,11 @@ export class UserService {
     private readonly refreshTokenRepository: RedisRefreshTokenRepository,
     private readonly accessTokenRepository: RedisAccessTokenRepository,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly sessionManager: SessionManager
   ) {}
-  async register(username: string, password: string): Promise<Result<{ userId: string }, ApiErrorCode>> {
+  /** Register a new user */
+  async register(username: string, password: string): Promise<Result<{ userId: string }>> {
     const existsUser = await this.userRepository.existsByUsername(username)
     if (existsUser) {
       return Result.fail(ApiErrorCode.參數_驗證失敗)
@@ -51,7 +43,8 @@ export class UserService {
     await this.userRepository.save(user)
     return Result.success({ userId })
   }
-  async login(userId: string, username: string): Promise<Result<AuthTokens, ApiErrorCode>> {
+  /** 派發新的 auth tokens */
+  async login(userId: string, username: string): Promise<Result<AuthTokens>> {
     const accessJti = nanoid()
     const refreshJti = nanoid()
     const deviceId = nanoid()
@@ -67,8 +60,8 @@ export class UserService {
       sub: userId,
       username,
       jti: accessJti,
-      type: 'access',
       deviceId,
+      type: 'access',
     }
     const accessToken = this.jwtService.sign(accessTokenPayload, {
       expiresIn: accessTokenExpirySeconds,
@@ -76,7 +69,6 @@ export class UserService {
     const now = new Date()
     const accessTokenExpiresAt = new Date(now.getTime() + accessTokenExpirySeconds * 1000)
     const refreshTokenExpiresAt = new Date(now.getTime() + refreshTokenExpirySeconds * 1000)
-    // 保存 Access Token 記錄用於黑名單驗證
     await this.accessTokenRepository.save({
       jti: accessJti,
       userId,
@@ -101,7 +93,7 @@ export class UserService {
       expiresIn: accessTokenExpirySeconds,
     })
   }
-  async refreshAccessToken(jti: string, userId: string, username: string): Promise<Result<AuthTokens, ApiErrorCode>> {
+  async refreshAccessToken(jti: string, userId: string, username: string): Promise<Result<AuthTokens>> {
     if (
       !jti ||
       !userId ||
@@ -122,26 +114,21 @@ export class UserService {
     }
     return this.login(userId, username)
   }
-  /**
-   * 登出此裝置
-   * 只黑名單該裝置的 Access Token，其他裝置保持活躍
-   */
+  /** 將指定的 deviceId 加入 access token 黑名單 */
   async logoutThisDevice(userId: string, deviceId: string, accessTokenExpiresAt: Date): Promise<void> {
-    await this.accessTokenRepository.addDeviceToBlacklist(userId, deviceId, accessTokenExpiresAt)
+    await this.sessionManager.logoutDevice(userId, deviceId, accessTokenExpiresAt)
   }
-  /**
-   * 登出所有裝置
-   * 黑名單該用戶的所有 Access Token 與 Refresh Token
-   */
+
+  /** 刪除所有 access token 和 refresh token */
   async logoutAllDevices(userId: string): Promise<void> {
-    await this.accessTokenRepository.addAllDevicesToBlacklist(userId)
-    await this.refreshTokenRepository.deleteAllByUserId(userId)
+    await this.sessionManager.logoutAllDevices(userId)
   }
+
+  /** 將指定的 refresh token 加入黑名單並刪除 */
   async revokeToken(jti: string): Promise<void> {
     const record = await this.refreshTokenRepository.findByJti(jti)
     if (record) {
-      await this.refreshTokenRepository.addToBlacklist(jti, record.expiresAt)
-      await this.refreshTokenRepository.deleteByJti(jti)
+      await this.sessionManager.revokeRefreshToken(jti, record.expiresAt)
     }
   }
 }

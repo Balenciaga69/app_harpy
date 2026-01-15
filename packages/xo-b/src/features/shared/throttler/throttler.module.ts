@@ -18,6 +18,11 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
             ttl: 5 * 60 * 1000, // 5 分鐘
             limit: 3,
           },
+          {
+            name: 'register',
+            ttl: 10 * 60 * 1000, // 10 分鐘
+            limit: 5,
+          },
         ]
       },
       inject: [ConfigService],

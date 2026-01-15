@@ -1,12 +1,8 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
+import { IUserRepository } from '../../contracts'
 import { User } from '../model/user.entity'
-interface IUserRepository {
-  save(user: User): Promise<void>
-  findByUsername(username: string): Promise<User | null>
-  existsByUsername(username: string): Promise<boolean>
-  findActiveByUsername(username: string): Promise<User | null>
-}
+
 @Injectable()
 export class RedisUserRepository implements IUserRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}

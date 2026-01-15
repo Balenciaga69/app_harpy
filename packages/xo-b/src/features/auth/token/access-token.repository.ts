@@ -1,18 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
 import { REDIS_KEYS } from '../auth.config'
+import { IAccessTokenRepository } from '../contracts'
 import { AccessTokenRecord } from './access-token-record.entity'
-export interface IAccessTokenRepository {
-  save(record: AccessTokenRecord): Promise<void>
-  findByJti(jti: string): Promise<AccessTokenRecord | null>
-  isBlacklistedByJti(jti: string): Promise<boolean>
-  isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean>
-  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
-  addDeviceToBlacklist(userId: string, deviceId: string, expiresAt: Date): Promise<void>
-  addAllDevicesToBlacklist(userId: string): Promise<void>
-  deleteByJti(jti: string): Promise<void>
-  deleteAllByUserId(userId: string): Promise<void>
-}
+
 @Injectable()
 export class RedisAccessTokenRepository implements IAccessTokenRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}

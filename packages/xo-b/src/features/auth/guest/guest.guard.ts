@@ -7,7 +7,7 @@ import { GuestService } from './guest.service'
 @Injectable()
 export class GuestOrUserGuard implements CanActivate {
   constructor(private readonly guestService: GuestService) {}
-  /** Determine whether it is a verified user or a guest */
+  /** Allow guests or users to use */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Check if it is a validated user
     const request = context.switchToHttp().getRequest()

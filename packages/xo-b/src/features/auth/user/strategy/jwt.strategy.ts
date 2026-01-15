@@ -7,16 +7,8 @@ import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { RedisAccessTokenRepository } from '../../token/access-token.repository'
+import { JwtAccessPayload } from '../../contracts'
 import { AuthenticatedUser } from '../model/authenticated-user'
-interface JwtPayload {
-  sub: string
-  username: string
-  jti: string
-  type: 'access' | 'refresh'
-  deviceId?: string
-  iat?: number
-  exp?: number
-}
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -36,12 +28,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: secret,
     })
   }
-  async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
+  async validate(payload: JwtAccessPayload): Promise<AuthenticatedUser> {
     // 只驗證 Access Token
     if (payload.type !== 'access') {
       throw new UnauthorizedException('Invalid token type')
     }
-    // 檢查是否被黑名單（按 jti）
+    // 檢查是否被黑名單
     const isBlacklistedByJti = await this.accessTokenRepository.isBlacklistedByJti(payload.jti)
     if (isBlacklistedByJti) {
       throw new UnauthorizedException('Token has been revoked')

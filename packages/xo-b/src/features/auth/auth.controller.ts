@@ -21,6 +21,7 @@ export class AuthController {
     private readonly guestService: GuestService
   ) {}
   @Post('register')
+  @Throttle('register')
   async register(@Body() dto: RegisterDto) {
     const result = await this.userService.register(dto.username, dto.password)
     ResultToExceptionMapper.throwIfFailure(result)
@@ -28,7 +29,7 @@ export class AuthController {
   }
   @Post('login')
   @UseGuards(AuthGuard('local'))
-  @Throttle({ login: { limit: 3, ttl: 300000 } })
+  @Throttle('login')
   @HttpCode(200)
   async login(@Request() req: AuthenticatedRequest) {
     const result = await this.userService.login(req.user.userId, req.user.username)
@@ -55,16 +56,17 @@ export class AuthController {
   @HttpCode(204)
   async logout(@GetUser() user: { userId: string; deviceId?: string }, @Query('allDevices') allDevices?: string) {
     const logoutAll = allDevices === 'true'
+    // 如果 登出所有裝置
     if (logoutAll) {
-      // 登出所有裝置
       await this.userService.logoutAllDevices(user.userId)
-    } else if (user.deviceId) {
-      // 只登出該裝置
-      // 為了簡化，我們用固定的 15 分鐘 TTL（Access Token 的過期時間）
+    }
+    // 如果 指定裝置登出
+    else if (user.deviceId) {
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
       await this.userService.logoutThisDevice(user.userId, user.deviceId, expiresAt)
-    } else {
-      // 沒有提供 deviceId，預設登出所有裝置以保持安全
+    }
+    // 否則 預設登出所有裝置
+    else {
       await this.userService.logoutAllDevices(user.userId)
     }
   }

@@ -5,6 +5,7 @@ $configs = @(
     # @{ Output = "out/output_app.txt"; Path = "./packages/xo-c/src/application" },
     # @{ Output = "out/output_domain.txt"; Path = "./packages/xo-c/src/domain" },
     @{ Output = "out/output_api.txt"; Path = "./packages/xo-b/src" }
+    @{ Output = "out/output_auth.txt"; Path = "./packages/xo-b/src/features/auth" }
 )
 
 # 使用 foreach 循環執行每個配置

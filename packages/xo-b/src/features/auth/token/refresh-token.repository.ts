@@ -1,15 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
 import { REDIS_KEYS } from '../auth.config'
+import { IRefreshTokenRepository } from '../contracts'
 import { RefreshTokenRecord } from './refresh-token-record.entity'
-export interface IRefreshTokenRepository {
-  save(record: RefreshTokenRecord): Promise<void>
-  findByJti(jti: string): Promise<RefreshTokenRecord | null>
-  deleteByJti(jti: string): Promise<void>
-  deleteAllByUserId(userId: string): Promise<void>
-  isBlacklisted(jti: string): Promise<boolean>
-  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
-}
+
 @Injectable()
 export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
@@ -64,12 +58,12 @@ export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
   async deleteAllByUserId(userId: string): Promise<void> {
     try {
       const userTokensKey = this.getUserTokensKey(userId)
-      const jtis = await this.redis.smembers(userTokensKey)
-      if (jtis.length === 0) {
+      const ids = await this.redis.smembers(userTokensKey)
+      if (ids.length === 0) {
         return
       }
       const pipeline = this.redis.pipeline()
-      for (const jti of jtis) {
+      for (const jti of ids) {
         const recordKey = this.getRecordKey(jti)
         const blacklistKey = this.getBlacklistKey(jti)
         pipeline.del(recordKey)

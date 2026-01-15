@@ -2,15 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { Inject } from '@nestjs/common'
 import Redis from 'ioredis'
 import { REDIS_KEYS } from '../auth.config'
+import { IGuestRepository } from '../contracts'
 import { GuestSession } from './guest-session.entity'
-// 定義訪客儲存庫的介面
-export interface IGuestRepository {
-  save(session: GuestSession): Promise<void>
-  findByGuestId(guestId: string): Promise<GuestSession | null>
-  existsByGuestId(guestId: string): Promise<boolean>
-  deleteByGuestId(guestId: string): Promise<void>
-  updateExpiresAt?(guestId: string, expiresAt: Date): Promise<void>
-}
+
 @Injectable()
 export class RedisGuestRepository implements IGuestRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
