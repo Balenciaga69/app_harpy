@@ -111,7 +111,7 @@ applyTo: '/*.ts, /*.tsx, /*.js, /*.jsx'
   - localforage
   - zustand
 
-#### game-core 模組內的開發守則
+#### xo-c 模組內的開發守則
 
 - 因為我安裝了 eslint-plugin-boundaries
 - 我要讓內部遵循單向依賴規則 - 箭頭永遠指向內層

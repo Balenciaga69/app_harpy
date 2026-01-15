@@ -8,8 +8,8 @@
 - 我們要來刷新商店商品
 - (async) 前端玩家呼叫 API
 - (async) API 專案從 (DB/Cache) 取 Run,Character,Shop,Stash 等 Context
-- 將 Context 注入進 game-core 層
-- 使用 game-core 的 shopService 刷新商品方法
+- 將 Context 注入進 xo-c 層
+- 使用 xo-c 的 shopService 刷新商品方法
 - 同時操作 扣角色錢, 更新商店商品等聚合根行為
 - 透過 ContextUnitOfWork 一次性提交所有變更至記憶體中的短期 Context 快照 管理器
 - (async) API 層取得以上業務邏輯操作的結果, 透過 IRepository 實現將變更寫回 (DB/Cache)

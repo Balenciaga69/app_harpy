@@ -251,7 +251,7 @@ RDB（帳戶系統）：
 
 ## 9 樂觀鎖
 
-game-core 專案（你現在的位置）
+xo-c 專案（你現在的位置）
 ├─ Domain Layer
 │ └─ 純邏輯（無任何外部依賴）
 ├─ Application Layer

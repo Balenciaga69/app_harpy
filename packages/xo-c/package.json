@@ -1,0 +1,32 @@
+{
+  "name": "@app-harpy/xo-c",
+  "version": "0.0.0",
+  "description": "Game core logic library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "clean": "rimraf dist",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "check:cic": "madge --circular --extensions ts,tsx src",
+    "check:deps": "madge --extensions ts,tsx src",
+    "check:folders": "node ./scripts/check-folder-size.cjs --root src --limit 10",
+    "check:folders:verbose": "node ./scripts/check-folder-size.cjs --root src --limit 10 --verbose",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "chance": "^1.1.13",
+    "mitt": "^3.0.1",
+    "nanoid": "^5.1.6",
+    "seedrandom": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/seedrandom": "^3.0.8",
+    "rimraf": "^5.0.5"
+  }
+}

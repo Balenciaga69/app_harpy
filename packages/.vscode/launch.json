@@ -6,13 +6,13 @@
 //       "request": "launch",
 //       "name": "Debug NestJS",
 //       "skipFiles": ["<node_internals>/**"],
-//       "program": "${workspaceFolder}/backend-nest/src/main.ts",
+//       "program": "${workspaceFolder}/xo-b/src/main.ts",
 //       "preLaunchTask": "npm: build",
-//       "outFiles": ["${workspaceFolder}/backend-nest/dist/**/*.js"],
+//       "outFiles": ["${workspaceFolder}/xo-b/dist/**/*.js"],
 //       // "stopOnEntry": true,
 //       "console": "integratedTerminal",
 //       "internalConsoleOptions": "neverOpen",
-//       "resolveSourceMapLocations": ["${workspaceFolder}/backend-nest/dist/**/*.js", "${workspaceFolder}/backend-nest/node_modules/**"]
+//       "resolveSourceMapLocations": ["${workspaceFolder}/xo-b/dist/**/*.js", "${workspaceFolder}/xo-b/node_modules/**"]
 //     }
 //   ]
 // }
@@ -24,21 +24,18 @@
       "request": "launch",
       "name": "Debug NestJS",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/backend-nest/src/main.ts",
+      "program": "${workspaceFolder}/xo-b/src/main.ts",
       "preLaunchTask": "npm: build",
-      "outFiles": ["${workspaceFolder}/backend-nest/dist/**/*.js"],
+      "outFiles": ["${workspaceFolder}/xo-b/dist/**/*.js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "resolveSourceMapLocations": [
-        "${workspaceFolder}/backend-nest/dist/**/*.js",
-        "${workspaceFolder}/backend-nest/node_modules/**"
-      ]
+      "resolveSourceMapLocations": ["${workspaceFolder}/xo-b/dist/**/*.js", "${workspaceFolder}/xo-b/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Debug NestJS (ts-node)",
-      "program": "${workspaceFolder}/backend-nest/src/main.ts",
+      "program": "${workspaceFolder}/xo-b/src/main.ts",
       "runtimeArgs": ["-r", "tsconfig-paths/register", "-r", "ts-node/register"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

@@ -106,11 +106,11 @@ importers:
         specifier: ^8.52.0
         version: 8.52.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
 
-  packages/backend-nest:
+  packages/xo-b:
     dependencies:
-      '@app-harpy/game-core':
+      '@app-harpy/xo-c':
         specifier: workspace:*
-        version: link:../game-core
+        version: link:../xo-c
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.11(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -215,7 +215,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
 
-  packages/game-core:
+  packages/xo-c:
     dependencies:
       chance:
         specifier: ^1.1.13
