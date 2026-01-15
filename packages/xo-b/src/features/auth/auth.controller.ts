@@ -1,7 +1,9 @@
-import { Body, Controller, HttpCode, Post, Query, Request, UseGuards } from '@nestjs/common'
+import { Body, Controller, HttpCode, Post, Query, Request, UseGuards, Res } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
+import { Response } from 'express'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
 import { JWT_CONFIG } from './auth.config'
 import {
@@ -25,7 +27,8 @@ interface AuthenticatedRequest extends Request {
 export class AuthController {
   constructor(
     private readonly userService: UserService,
-    private readonly guestService: GuestService
+    private readonly guestService: GuestService,
+    private readonly configService: ConfigService
   ) {}
   @Post('register')
   @Throttle({ register: {} })
@@ -42,11 +45,36 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ summary: '帳號密碼登入' })
   @ApiResponse({ status: 200, type: LoginResponseDto })
-  async login(@Request() req: AuthenticatedRequest): Promise<LoginResponseDto> {
+  async login(
+    @Request() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<LoginResponseDto> {
     const result = await this.userService.login(req.user.userId, req.user.username)
     ResultToExceptionMapper.throwIfFailure(result)
+    const payload = result.value!
+    const refreshToken = payload.refreshToken
+    const refreshTtl =
+      this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
+    const accessTtl =
+      this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    // 設置 Refresh Token Cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: refreshTtl * 1000,
+      path: '/',
+    })
+    // 設置 Access Token Cookie
+    res.cookie('accessToken', payload.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: accessTtl * 1000,
+      path: '/',
+    })
     return {
-      ...result.value!,
+      ...payload,
       user: { userId: req.user.userId, username: req.user.username },
     }
   }
@@ -55,16 +83,46 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: '刷新 Access Token' })
   @ApiResponse({ status: 200, type: RefreshResponseDto })
-  async refresh(@GetUser() user: AuthenticatedUser): Promise<RefreshResponseDto> {
+  async refresh(
+    @GetUser() user: AuthenticatedUser,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<RefreshResponseDto> {
     const result = await this.userService.refreshAccessToken(user.jti!, user.userId, user.username, user.expiresAt!)
     ResultToExceptionMapper.throwIfFailure(result)
-    return result.value!
+    const payload = result.value!
+    const refreshTtl =
+      this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
+    const accessTtl =
+      this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    // 更新 Refresh Token Cookie (Rotation)
+    res.cookie('refreshToken', payload.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: refreshTtl * 1000,
+      path: '/',
+    })
+    // 設置新的 Access Token Cookie
+    res.cookie('accessToken', payload.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: accessTtl * 1000,
+      path: '/',
+    })
+    return payload
   }
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @ApiOperation({ summary: '登出' })
-  async logout(@GetUser() user: AuthenticatedUser, @Query('allDevices') allDevices?: string) {
+  async logout(
+    @GetUser() user: AuthenticatedUser,
+    @Res({ passthrough: true }) res: Response,
+    @Query('allDevices') allDevices?: string
+  ) {
+    res.clearCookie('refreshToken', { path: '/' })
+    res.clearCookie('accessToken', { path: '/' })
     const logoutAll = allDevices === 'true'
     if (logoutAll || !user.deviceId) {
       await this.userService.logoutAllDevices(user.userId)

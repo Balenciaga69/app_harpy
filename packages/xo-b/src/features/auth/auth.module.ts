@@ -21,7 +21,7 @@ import { UserService } from './user/user.service'
     PassportModule,
     JwtModule.register({
       secret: JWT_CONFIG.SECRET,
-      signOptions: { expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS },
+      signOptions: { expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS, algorithm: JWT_CONFIG.ALGORITHM },
     }),
   ],
   controllers: [AuthController],

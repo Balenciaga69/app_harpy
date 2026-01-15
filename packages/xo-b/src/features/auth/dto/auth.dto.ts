@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString, MinLength } from 'class-validator'
+import { AuthTokens } from '../contracts'
 /** 註冊請求 DTO */
 export class RegisterDto {
   @ApiProperty()
@@ -32,7 +33,7 @@ export class LoginResponseDto {
     username: string
   }
 }
-export class RefreshResponseDto {
+export class RefreshResponseDto implements AuthTokens {
   @ApiProperty()
   accessToken!: string
   @ApiProperty()
