@@ -1,14 +1,13 @@
-import { Injectable } from '@nestjs/common'
-import { IAccessTokenRepository } from './contracts'
-import { IRefreshTokenRepository } from './contracts'
-/**
- * Session 管理器
- * 集中處理所有與 session 和登出相關的邏輯
- */
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { IAccessTokenRepository, IRefreshTokenRepository } from './contracts'
+// ...existing code...
 @Injectable()
 export class SessionManager {
   constructor(
+    @Inject(InjectionTokens.AccessTokenRepository)
     private readonly accessTokenRepo: IAccessTokenRepository,
+    @Inject(InjectionTokens.RefreshTokenRepository)
     private readonly refreshTokenRepo: IRefreshTokenRepository
   ) {}
   /**

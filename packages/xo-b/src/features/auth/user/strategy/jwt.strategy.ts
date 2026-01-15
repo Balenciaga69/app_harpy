@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { JwtAccessPayload } from '../../contracts'
-import { RedisAccessTokenRepository } from '../../token/access-token.repository'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { IAccessTokenRepository, JwtAccessPayload } from '../../contracts'
 import { AuthenticatedUser } from '../model/authenticated-user'
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     readonly configService: ConfigService,
-    private readonly accessTokenRepository: RedisAccessTokenRepository
+    @Inject(InjectionTokens.AccessTokenRepository)
+    private readonly accessTokenRepository: IAccessTokenRepository
   ) {
     const secret = configService.get<string>('JWT_SECRET')
     if (!secret) {

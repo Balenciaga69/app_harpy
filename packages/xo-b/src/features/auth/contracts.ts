@@ -16,19 +16,16 @@ export interface JwtAccessPayload {
   iat?: number
   exp?: number
 }
-/**
- * JWT Refresh Token Payload
- * 用於換發新的 Access Token
- */
+/** 用於換發新的 Access Token */
 export interface JwtRefreshPayload {
+  sub: string
+  username: string
   jti: string
   type: 'refresh'
   iat?: number
-  exp?: number
+  exp: number
 }
-/**
- * API 回傳的認證 Token
- */
+/** API 回傳的認證 Token */
 export interface AuthTokens {
   accessToken: string
   refreshToken: string
@@ -70,5 +67,5 @@ export interface IGuestRepository {
   findByGuestId(guestId: string): Promise<GuestSession | null>
   existsByGuestId(guestId: string): Promise<boolean>
   deleteByGuestId(guestId: string): Promise<void>
-  updateExpiresAt?(guestId: string, expiresAt: Date): Promise<void>
+  updateExpiresAt(guestId: string, expiresAt: Date): Promise<void>
 }

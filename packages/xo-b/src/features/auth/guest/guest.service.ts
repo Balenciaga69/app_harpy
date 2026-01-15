@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { Result } from 'src/from-xo-c'
 import { SESSION_CONFIG } from '../auth.config'
+import { IGuestRepository } from '../contracts'
 import { GuestSession } from './guest-session.entity'
-import { RedisGuestRepository } from './guest.repository'
 @Injectable()
 export class GuestService {
   constructor(
-    private readonly guestRepository: RedisGuestRepository,
+    @Inject(InjectionTokens.GuestRepository)
+    private readonly guestRepository: IGuestRepository,
     private readonly configService: ConfigService
   ) {}
   async createGuestSession(): Promise<{

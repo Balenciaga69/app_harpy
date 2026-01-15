@@ -1,11 +1,19 @@
 import { Body, Controller, HttpCode, Post, Query, Request, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import {
+  GuestSessionResponseDto,
+  LoginResponseDto,
+  RefreshResponseDto,
+  RegisterResponseDto,
+} from './dto/auth-response.dto'
 import { RegisterDto } from './dto/register.dto'
 import { GetUser } from './get-user.decorator'
 import { GuestService } from './guest/guest.service'
 import { JwtAuthGuard } from './user/jwt-auth.guard'
+import { JwtRefreshGuard } from './user/jwt-refresh.guard'
 import { UserService } from './user/user.service'
 interface AuthenticatedRequest {
   user: {
@@ -14,6 +22,7 @@ interface AuthenticatedRequest {
     deviceId?: string
   }
 }
+@ApiTags('Authentication - 認證')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -21,58 +30,58 @@ export class AuthController {
     private readonly guestService: GuestService
   ) {}
   @Post('register')
-  @Throttle('register')
-  async register(@Body() dto: RegisterDto) {
+  @Throttle({ register: {} })
+  @ApiOperation({ summary: '註冊新帳號' })
+  @ApiResponse({ status: 201, type: RegisterResponseDto })
+  async register(@Body() dto: RegisterDto): Promise<RegisterResponseDto> {
     const result = await this.userService.register(dto.username, dto.password)
     ResultToExceptionMapper.throwIfFailure(result)
     return { userId: result.value!.userId, message: '註冊成功' }
   }
   @Post('login')
   @UseGuards(AuthGuard('local'))
-  @Throttle('login')
+  @Throttle({ login: {} })
   @HttpCode(200)
-  async login(@Request() req: AuthenticatedRequest) {
+  @ApiOperation({ summary: '帳號密碼登入' })
+  @ApiResponse({ status: 200, type: LoginResponseDto })
+  async login(@Request() req: AuthenticatedRequest): Promise<LoginResponseDto> {
     const result = await this.userService.login(req.user.userId, req.user.username)
     ResultToExceptionMapper.throwIfFailure(result)
-    const tokens = result.value!
     return {
-      ...tokens,
-      user: {
-        userId: req.user.userId,
-        username: req.user.username,
-      },
+      ...result.value!,
+      user: { userId: req.user.userId, username: req.user.username },
     }
   }
   @Post('refresh')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
-  async refresh(@GetUser() user: { userId: string; username: string; jti: string }) {
-    const result = await this.userService.refreshAccessToken(user.jti, user.userId, user.username)
+  @UseGuards(JwtRefreshGuard)
+  @ApiOperation({ summary: '刷新 Access Token' })
+  @ApiResponse({ status: 200, type: RefreshResponseDto })
+  async refresh(
+    @GetUser() user: { userId: string; username: string; jti: string; expiresAt: Date }
+  ): Promise<RefreshResponseDto> {
+    const result = await this.userService.refreshAccessToken(user.jti, user.userId, user.username, user.expiresAt)
     ResultToExceptionMapper.throwIfFailure(result)
     return result.value!
   }
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
+  @ApiOperation({ summary: '登出' })
   async logout(@GetUser() user: { userId: string; deviceId?: string }, @Query('allDevices') allDevices?: string) {
     const logoutAll = allDevices === 'true'
-    // 如果 登出所有裝置
-    if (logoutAll) {
+    if (logoutAll || !user.deviceId) {
       await this.userService.logoutAllDevices(user.userId)
-    }
-    // 如果 指定裝置登出
-    else if (user.deviceId) {
+    } else {
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
       await this.userService.logoutThisDevice(user.userId, user.deviceId, expiresAt)
-    }
-    // 否則 預設登出所有裝置
-    else {
-      await this.userService.logoutAllDevices(user.userId)
     }
   }
   @Post('guest')
   @HttpCode(201)
-  async createGuestSession() {
+  @ApiOperation({ summary: '創建訪客 Session' })
+  @ApiResponse({ status: 201, type: GuestSessionResponseDto })
+  async createGuestSession(): Promise<GuestSessionResponseDto> {
     const session = await this.guestService.createGuestSession()
     return {
       guestId: session.guestId,

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
-import { REDIS_KEYS } from '../auth.config'
+import { JWT_CONFIG, REDIS_KEYS } from '../auth.config'
 import { IAccessTokenRepository } from '../contracts'
 import { AccessTokenRecord } from './access-token-record.entity'
 @Injectable()
@@ -98,8 +98,8 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
     try {
       const key = this.getUserAllDevicesBlacklistKey(userId)
       // 永久黑名單，需要等待用戶重新登入時清除，或者設置一個很長的 TTL
-      // 這裡設置 30 天 TTL，確保不會因為 Redis 故障導致資料泄露
-      const ttl = 30 * 24 * 60 * 60
+      // 使用配置中的 Refresh Token 壽命作為安全範圍
+      const ttl = JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
       await this.redis.set(key, '1', 'EX', ttl)
     } catch (error) {
       throw this.handleError('addAllDevicesToBlacklist', error)

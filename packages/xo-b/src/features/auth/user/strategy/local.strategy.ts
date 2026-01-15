@@ -1,12 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import * as bcrypt from 'bcrypt'
 import { Strategy } from 'passport-local'
-import { AuthenticatedUser } from '../model/authenticated-user.js'
-import { RedisUserRepository } from '../repository/user.repository'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { IUserRepository } from '../../contracts'
+import { AuthenticatedUser } from '../model/authenticated-user'
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly userRepository: RedisUserRepository) {
+  constructor(
+    @Inject(InjectionTokens.UserRepository)
+    private readonly userRepository: IUserRepository
+  ) {
     super({
       usernameField: 'username',
       passwordField: 'password',
