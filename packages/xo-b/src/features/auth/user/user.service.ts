@@ -6,13 +6,12 @@ import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
 import { Result } from 'src/from-xo-c'
 import { JWT_CONFIG, PASSWORD_CONFIG } from '../auth.config'
+import { AuthTokens, JwtAccessPayload } from '../contracts'
+import { SessionManager } from '../session-manager'
 import { RedisAccessTokenRepository } from '../token/access-token.repository'
 import { RedisRefreshTokenRepository } from '../token/refresh-token.repository'
-import { SessionManager } from '../session-manager'
-import { AuthTokens, JwtAccessPayload } from '../contracts'
 import { User } from './model/user.entity'
 import { RedisUserRepository } from './repository/user.repository'
-
 @Injectable()
 export class UserService {
   constructor(
@@ -118,12 +117,10 @@ export class UserService {
   async logoutThisDevice(userId: string, deviceId: string, accessTokenExpiresAt: Date): Promise<void> {
     await this.sessionManager.logoutDevice(userId, deviceId, accessTokenExpiresAt)
   }
-
   /** 刪除所有 access token 和 refresh token */
   async logoutAllDevices(userId: string): Promise<void> {
     await this.sessionManager.logoutAllDevices(userId)
   }
-
   /** 將指定的 refresh token 加入黑名單並刪除 */
   async revokeToken(jti: string): Promise<void> {
     const record = await this.refreshTokenRepository.findByJti(jti)

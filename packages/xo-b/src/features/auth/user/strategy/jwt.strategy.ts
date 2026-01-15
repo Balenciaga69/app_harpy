@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/require-await */
+
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { RedisAccessTokenRepository } from '../../token/access-token.repository'
 import { JwtAccessPayload } from '../../contracts'
+import { RedisAccessTokenRepository } from '../../token/access-token.repository'
 import { AuthenticatedUser } from '../model/authenticated-user'
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

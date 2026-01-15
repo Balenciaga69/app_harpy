@@ -4,7 +4,6 @@ import Redis from 'ioredis'
 import { REDIS_KEYS } from '../auth.config'
 import { IGuestRepository } from '../contracts'
 import { GuestSession } from './guest-session.entity'
-
 @Injectable()
 export class RedisGuestRepository implements IGuestRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}

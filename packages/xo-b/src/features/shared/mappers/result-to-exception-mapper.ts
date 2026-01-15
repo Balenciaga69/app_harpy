@@ -9,12 +9,14 @@ import { ApplicationErrorCode, DomainErrorCode, getErrorMessage, Result } from '
 import { ApiErrorCode, ApiErrorMessages } from '../errors/ApiErrorCode'
 type ErrorCodeUnion = DomainErrorCode | ApplicationErrorCode | ApiErrorCode | string
 export class ResultToExceptionMapper {
+  /** 如果 Result Failure, 則 Throw Exception */
   static throwIfFailure<T>(result: Result<T>): void {
     if (result.isFailure) {
       const errorCode = result.error || 'UNKNOWN_ERROR'
       this.mapAndThrow(errorCode)
     }
   }
+  /** 映射錯誤代碼並拋出對應的異常 */
   private static mapAndThrow(errorCode: ErrorCodeUnion): never {
     const message = this.getErrorMessage(errorCode)
     const statusCode = this.getStatusCode(errorCode)
@@ -31,6 +33,7 @@ export class ResultToExceptionMapper {
         throw new BadRequestException({ error: errorCode, message })
     }
   }
+  /** 根據錯誤代碼取得錯誤訊息 */
   private static getErrorMessage(errorCode: ErrorCodeUnion): string {
     // 優先查詢 API 層錯誤
     if (Object.values(ApiErrorCode).includes(errorCode as ApiErrorCode)) {
@@ -45,22 +48,23 @@ export class ResultToExceptionMapper {
     }
     return '未知的錯誤'
   }
+  /** 根據 ErrorCode 取得 StatusCode */
   private static getStatusCode(errorCode: ErrorCodeUnion): number {
-    // 根據錯誤型別決定 HTTP 狀態碼
+    const apiErrorCode = errorCode as ApiErrorCode
     if (
-      errorCode === ApiErrorCode.認證_未提供認證 ||
-      errorCode === ApiErrorCode.認證_認證無效 ||
-      errorCode === ApiErrorCode.認證_令牌過期
+      apiErrorCode === ApiErrorCode.認證_未提供認證 ||
+      apiErrorCode === ApiErrorCode.認證_認證無效 ||
+      apiErrorCode === ApiErrorCode.認證_令牌過期
     ) {
       return 401
     }
-    if (errorCode === ApiErrorCode.授權_權限不足) {
+    if (apiErrorCode === ApiErrorCode.授權_權限不足) {
       return 403
     }
-    if (errorCode === ApiErrorCode.參數_不存在) {
+    if (apiErrorCode === ApiErrorCode.參數_不存在) {
       return 404
     }
-    if (errorCode === ApiErrorCode.伺服器_內部錯誤) {
+    if (apiErrorCode === ApiErrorCode.伺服器_內部錯誤) {
       return 500
     }
     return 400

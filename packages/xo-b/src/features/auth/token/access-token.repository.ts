@@ -3,7 +3,6 @@ import Redis from 'ioredis'
 import { REDIS_KEYS } from '../auth.config'
 import { IAccessTokenRepository } from '../contracts'
 import { AccessTokenRecord } from './access-token-record.entity'
-
 @Injectable()
 export class RedisAccessTokenRepository implements IAccessTokenRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}

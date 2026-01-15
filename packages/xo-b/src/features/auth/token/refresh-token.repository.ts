@@ -3,7 +3,6 @@ import Redis from 'ioredis'
 import { REDIS_KEYS } from '../auth.config'
 import { IRefreshTokenRepository } from '../contracts'
 import { RefreshTokenRecord } from './refresh-token-record.entity'
-
 @Injectable()
 export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
