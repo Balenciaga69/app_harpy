@@ -17,8 +17,8 @@ import {
 } from './dto/auth.dto'
 import { GetUser } from './get-user.decorator'
 import { GuestService } from './guest/guest.service'
-import { JwtAuthGuard } from './user/jwt-auth.guard'
 import { JwtRefreshGuard } from './user/jwt-refresh.guard'
+import { JwtStatefulAuthGuard } from './user/jwt-stateful-auth.guard'
 import { AuthenticatedUser } from './user/model/authenticated-user'
 import { UserService } from './user/user.service'
 @ApiTags('Authentication - 認證')
@@ -114,7 +114,7 @@ export class AuthController {
     return payload
   }
   @Post('logout')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtStatefulAuthGuard)
   @HttpCode(204)
   @ApiOperation({ summary: '登出' })
   async logout(

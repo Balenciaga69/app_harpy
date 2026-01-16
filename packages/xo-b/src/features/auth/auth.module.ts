@@ -9,11 +9,13 @@ import { GuestService } from './guest/guest.service'
 import { SessionManager } from './session-manager'
 import { RedisAccessTokenRepository } from './token/access-token.repository'
 import { RedisRefreshTokenRepository } from './token/refresh-token.repository'
-import { JwtAuthGuard } from './user/jwt-auth.guard'
 import { JwtRefreshGuard } from './user/jwt-refresh.guard'
+import { JwtStatefulAuthGuard } from './user/jwt-stateful-auth.guard'
+import { JwtStatelessAuthGuard } from './user/jwt-stateless-auth.guard'
 import { RedisUserRepository } from './user/repository/user.repository'
 import { JwtRefreshStrategy } from './user/strategy/jwt-refresh.strategy'
-import { JwtStrategy } from './user/strategy/jwt.strategy'
+import { JwtStatefulStrategy } from './user/strategy/jwt-stateful.strategy'
+import { JwtStatelessStrategy } from './user/strategy/jwt-stateless.strategy'
 import { LocalStrategy } from './user/strategy/local.strategy'
 import { UserService } from './user/user.service'
 @Module({
@@ -30,9 +32,11 @@ import { UserService } from './user/user.service'
     GuestService,
     SessionManager,
     LocalStrategy,
-    JwtStrategy,
+    JwtStatefulStrategy,
+    JwtStatelessStrategy,
     JwtRefreshStrategy,
-    JwtAuthGuard,
+    JwtStatefulAuthGuard,
+    JwtStatelessAuthGuard,
     JwtRefreshGuard,
     {
       provide: InjectionTokens.UserRepository,
@@ -51,6 +55,6 @@ import { UserService } from './user/user.service'
       useClass: RedisAccessTokenRepository,
     },
   ],
-  exports: [UserService, GuestService, JwtAuthGuard],
+  exports: [UserService, GuestService, JwtStatefulAuthGuard, JwtStatelessAuthGuard],
 })
 export class AuthModule {}
