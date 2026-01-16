@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString, MinLength } from 'class-validator'
 import { Request } from 'express'
-import { AuthTokens } from '../contracts'
 import { AuthenticatedUser } from '../user/model/authenticated-user'
-
 /** 登入請求 DTO */
 export class LoginDto {
   @ApiProperty()
@@ -55,7 +53,7 @@ export class LoginResponseDto {
     username: string
   }
 }
-export class RefreshResponseDto implements AuthTokens {
+export class RefreshResponseDto {
   @ApiProperty()
   accessToken!: string
   @ApiProperty()

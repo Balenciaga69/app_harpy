@@ -45,11 +45,10 @@ export class AuthController {
   @ApiOperation({ summary: '帳號密碼登入' })
   @ApiResponse({ status: 200, type: LoginResponseDto })
   async login(
-    @Body() dto: LoginDto,
+    @Body() _dto: LoginDto,
     @Request() req: AuthenticatedRequest,
     @Res({ passthrough: true }) res: Response
   ): Promise<LoginResponseDto> {
-    console.info('xZx dto', dto)
     // req.user 由 AuthGuard('local') 注入，dto 僅用於 Swagger 文件顯示
     const result = await this.userService.login(req.user.userId, req.user.username)
     ResultToExceptionMapper.throwIfFailure(result)
