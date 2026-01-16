@@ -7,6 +7,9 @@ export const InjectionTokens = {
   ContextSnapshotAccessor: 'IContextSnapshotAccessor',
   ContextMutator: 'IContextMutator',
   UserRepository: 'IUserRepository',
+  AccessTokenRepository: 'IAccessTokenRepository',
+  RefreshTokenRepository: 'IRefreshTokenRepository',
+  GuestRepository: 'IGuestRepository',
   RunRepository: 'IRunRepository',
   RedisClient: 'REDIS_CLIENT',
 } as const

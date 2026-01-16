@@ -1,8 +1,7 @@
-﻿import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import Redis from 'ioredis'
 import { IUserRepository } from '../../contracts'
 import { User } from '../model/user.entity'
-
 @Injectable()
 export class RedisUserRepository implements IUserRepository {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}

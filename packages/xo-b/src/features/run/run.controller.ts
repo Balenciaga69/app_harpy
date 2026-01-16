@@ -1,90 +1,99 @@
-﻿import {
+import {
   BadRequestException,
   Body,
   Controller,
   Get,
   Param,
   Post,
+  Query,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiBody, ApiParam } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { ContextInitializationInterceptor } from 'src/features/shared/interceptors/context-initialization.interceptor'
 import { IsAuthenticatedGuard } from '../auth/auth.guard'
 import { GetUser } from '../auth/get-user.decorator'
+import { EquipmentService } from '../equipment/equipment.service'
 import { ResultToExceptionMapper } from '../shared/mappers/result-to-exception-mapper'
+import { BuyItemDto } from '../shop/model/buy-item.dto'
+import { RefreshShopDto } from '../shop/model/refresh-shop.dto'
+import { SellItemDto } from '../shop/model/sell-item.dto'
+import { ShopNestService } from '../shop/shop.service'
 import { InitRunDto } from './model/init-run.dto'
+import { RunRelicActionDto } from './model/run-relic-action.dto'
 import { RunApiService } from './service/run-api.service'
 import { RunOptionsService } from './service/run-options.service'
+@ApiTags('Game Run - 遊戲進行')
 @Controller('api/run')
 export class RunController {
   constructor(
     private readonly runOptionsService: RunOptionsService,
-    private readonly runService: RunApiService
+    private readonly runService: RunApiService,
+    private readonly shopService: ShopNestService,
+    private readonly equipmentService: EquipmentService
   ) {}
   @Get('professions')
   getProfessions() {
-    const professions = this.runOptionsService.getAvailableProfessions()
-    return {
-      success: true,
-      data: professions,
-    }
+    return { success: true, data: this.runOptionsService.getAvailableProfessions() }
   }
   @Get('relics')
   getRelicTemplates() {
-    const relics = this.runOptionsService.getAllRelicTemplates()
-    return {
-      success: true,
-      data: relics,
-    }
+    return { success: true, data: this.runOptionsService.getAllRelicTemplates() }
   }
   @Get('professions/:id/started-relics')
-  @ApiParam({ name: 'id', description: '職業 id (e.g., WARRIOR)' })
   getProfessionRelics(@Param('id') id: string) {
     try {
-      const relics = this.runOptionsService.getSelectableStartingRelics(id)
-      return {
-        success: true,
-        data: relics,
-      }
+      return { success: true, data: this.runOptionsService.getSelectableStartingRelics(id) }
     } catch {
-      throw new BadRequestException({
-        error: 'PROFESSION_NOT_FOUND',
-        message: '職業不存在或獲取起始聖物失敗',
-      })
+      throw new BadRequestException({ error: 'PROFESSION_NOT_FOUND' })
     }
   }
   @Post('init-for-user')
   @UseGuards(IsAuthenticatedGuard)
   @ApiBearerAuth('access-token')
-  @ApiBody({
-    schema: {
-      example: {
-        professionId: 'WARRIOR',
-        seed: 12345,
-        startingRelicIds: ['relic_warrior_resolute_heart'],
-      },
-    },
-  })
-  async initializeRunForUser(@GetUser() user: unknown, @Body() dto: InitRunDto) {
-    const userId = (user as { userId?: string }).userId
-    if (!userId) {
-      throw new UnauthorizedException('MISSING_USER_ID')
-    }
-    const result = await this.runService.initializeRunForUser(userId, {
-      professionId: dto.professionId,
-      seed: dto.seed,
-      startingRelicIds: dto.startingRelicIds,
-    })
+  async initializeRunForUser(@GetUser() user: { userId?: string }, @Body() dto: InitRunDto) {
+    if (!user.userId) throw new UnauthorizedException('MISSING_USER_ID')
+    const result = await this.runService.initializeRunForUser(user.userId, dto)
     ResultToExceptionMapper.throwIfFailure(result)
-    const appContext = result.value!
-    const runId = appContext.contexts.runContext.runId
+    const ctx = result.value!.contexts
     return {
       success: true,
       data: {
-        runId,
-        professionId: appContext.contexts.characterContext.professionId,
-        seed: appContext.contexts.runContext.seed,
+        runId: ctx.runContext.runId,
+        professionId: ctx.characterContext.professionId,
+        seed: ctx.runContext.seed,
       },
     }
+  }
+  // --- Shop ---
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Get('shop/items')
+  getShopItems(@Query('runId') runId: string) {
+    return this.shopService.getShopItems({ runId })
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Post('shop/buy')
+  buyItem(@Body() dto: BuyItemDto) {
+    return this.shopService.buyItem(dto)
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Post('shop/sell')
+  sellItem(@Body() dto: SellItemDto) {
+    return this.shopService.sellItem(dto)
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Post('shop/refresh')
+  refreshShop(@Body() dto: RefreshShopDto) {
+    return this.shopService.refreshShop(dto)
+  }
+  // --- Equipment ---
+  @Post('equipment/equip')
+  equipRelic(@Body() dto: RunRelicActionDto) {
+    return this.equipmentService.equipRelic(dto.relicId)
+  }
+  @Post('equipment/unequip')
+  unequipRelic(@Body() dto: RunRelicActionDto) {
+    return this.equipmentService.unequipRelic(dto.relicId)
   }
 }

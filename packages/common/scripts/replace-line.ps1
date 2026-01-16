@@ -1,8 +1,8 @@
 $paths = @(
-   # "G:\Coding\app_harpy\packages\xo-b\src",
-   # "G:\Coding\app_harpy\packages\xo-c\src"
-   "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\xo-b\src",
-   "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\xo-c\src"
+   "G:\Coding\app_harpy\packages\xo-b\src",
+   "G:\Coding\app_harpy\packages\xo-c\src"
+   # "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\xo-b\src",
+   # "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\xo-c\src"
 )
 foreach ($path in $paths) {
    if (-not (Test-Path $path)) {

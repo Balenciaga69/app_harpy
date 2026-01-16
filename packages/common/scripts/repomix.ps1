@@ -1,10 +1,10 @@
-# cd "g:\Coding\app_harpy"
-cd "C:\Users\wits\Desktop\GitRepo\app_harpy"
+cd "g:\Coding\app_harpy"
+# cd "C:\Users\wits\Desktop\GitRepo\app_harpy"
 # 定義配置數組，每個項目包含名稱、輸出文件名和路徑
 $configs = @(
     # @{ Output = "out/output_app.txt"; Path = "./packages/xo-c/src/application" },
     # @{ Output = "out/output_domain.txt"; Path = "./packages/xo-c/src/domain" },
-    @{ Output = "out/output_api.txt"; Path = "./packages/xo-b/src" }
+    # @{ Output = "out/output_api.txt"; Path = "./packages/xo-b/src" }
     @{ Output = "out/output_auth.txt"; Path = "./packages/xo-b/src/features/auth" }
 )
 

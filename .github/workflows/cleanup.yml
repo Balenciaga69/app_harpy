@@ -1,0 +1,49 @@
+name: Code Cleanup and Validation
+on:
+  workflow_dispatch: 
+jobs:
+  validate-and-cleanup:
+    permissions:
+      contents: write
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Lint and Build
+        run: |
+          pnpm --filter "{./packages/xo-b,./packages/xo-c}" run lint
+          pnpm --filter "{./packages/xo-b,./packages/xo-c}" run build
+      - name: Run Cleanup Action
+        uses: ./.github/actions/code-cleanup
+        with:
+          folders: "packages/xo-b/src packages/xo-c/src"
+          extensions: "ts tsx js jsx html"
+      - name: Commit and Push Changes
+        if: success() # 確保前面檢查都過關才執行
+        run: |
+          # 檢查是否有檔案變動
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "偵測到變動，執行提交..."
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            
+            git add .
+            # 加入 [skip ci] 防止 GitHub Actions 無限觸發自己 (無限迴圈)
+            git commit -m "chore: 自動清理多餘空行 [skip ci]"
+            git push
+          else
+            echo "沒有任何檔案變動，跳過提交。"
+          fi

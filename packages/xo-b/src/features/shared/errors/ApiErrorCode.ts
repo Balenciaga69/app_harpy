@@ -6,6 +6,7 @@ export enum ApiErrorCode {
   參數_驗證失敗 = 'VALIDATION_FAILED',
   參數_不存在 = 'NOT_FOUND',
   伺服器_內部錯誤 = 'INTERNAL_ERROR',
+  註冊_帳號已存在 = 'REGISTER_ACCOUNT_EXISTS',
 }
 export const ApiErrorMessages: Record<ApiErrorCode, string> = {
   [ApiErrorCode.認證_未提供認證]: '未提供認證資訊',
@@ -15,4 +16,5 @@ export const ApiErrorMessages: Record<ApiErrorCode, string> = {
   [ApiErrorCode.參數_驗證失敗]: '請求參數驗證失敗',
   [ApiErrorCode.參數_不存在]: '資源不存在',
   [ApiErrorCode.伺服器_內部錯誤]: '伺服器內部錯誤',
+  [ApiErrorCode.註冊_帳號已存在]: '帳號已存在，請直接登入',
 }

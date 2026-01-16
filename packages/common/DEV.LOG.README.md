@@ -4,6 +4,8 @@
 
 - 補上統一管理的 redis key 常數
 - api 專案也用 Result Pattern 統一回傳格式
+- 研究 access token 與 refresh token 的最佳實踐
+- 研究 passport 原理
 
 ## _2025/01/14_
 

@@ -1,24 +1,30 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { Result } from 'src/from-xo-c'
 import { JWT_CONFIG, PASSWORD_CONFIG } from '../auth.config'
-import { RedisAccessTokenRepository } from '../token/access-token.repository'
-import { RedisRefreshTokenRepository } from '../token/refresh-token.repository'
+import {
+  AuthTokens,
+  IAccessTokenRepository,
+  IRefreshTokenRepository,
+  IUserRepository,
+  JwtAccessPayload,
+} from '../contracts'
 import { SessionManager } from '../session-manager'
-import { AuthTokens, JwtAccessPayload } from '../contracts'
 import { User } from './model/user.entity'
-import { RedisUserRepository } from './repository/user.repository'
-
 @Injectable()
 export class UserService {
   constructor(
-    private readonly userRepository: RedisUserRepository,
-    private readonly refreshTokenRepository: RedisRefreshTokenRepository,
-    private readonly accessTokenRepository: RedisAccessTokenRepository,
+    @Inject(InjectionTokens.UserRepository)
+    private readonly userRepository: IUserRepository,
+    @Inject(InjectionTokens.RefreshTokenRepository)
+    private readonly refreshTokenRepository: IRefreshTokenRepository,
+    @Inject(InjectionTokens.AccessTokenRepository)
+    private readonly accessTokenRepository: IAccessTokenRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly sessionManager: SessionManager
@@ -27,7 +33,7 @@ export class UserService {
   async register(username: string, password: string): Promise<Result<{ userId: string }>> {
     const existsUser = await this.userRepository.existsByUsername(username)
     if (existsUser) {
-      return Result.fail(ApiErrorCode.參數_驗證失敗)
+      return Result.fail(ApiErrorCode.註冊_帳號已存在)
     }
     const passwordHash = await bcrypt.hash(password, PASSWORD_CONFIG.BCRYPT_ROUNDS)
     const userId = nanoid()
@@ -84,7 +90,12 @@ export class UserService {
       expiresAt: refreshTokenExpiresAt,
     })
     const refreshToken = this.jwtService.sign(
-      { jti: refreshJti, type: 'refresh' },
+      {
+        sub: userId,
+        username,
+        jti: refreshJti,
+        type: 'refresh',
+      },
       { expiresIn: refreshTokenExpirySeconds }
     )
     return Result.success({
@@ -93,7 +104,12 @@ export class UserService {
       expiresIn: accessTokenExpirySeconds,
     })
   }
-  async refreshAccessToken(jti: string, userId: string, username: string): Promise<Result<AuthTokens>> {
+  async refreshAccessToken(
+    jti: string,
+    userId: string,
+    username: string,
+    originalExpiresAt: Date
+  ): Promise<Result<AuthTokens>> {
     if (
       !jti ||
       !userId ||
@@ -112,18 +128,71 @@ export class UserService {
     if (!record || record.userId !== userId) {
       return Result.fail(ApiErrorCode.認證_認證無效)
     }
-    return this.login(userId, username)
+    // 撤銷舊的 Refresh Token
+    await this.refreshTokenRepository.deleteByJti(jti)
+    // 生成新的 Access Token (保持原有的 deviceId)
+    const accessJti = nanoid()
+    const deviceId = record.deviceId || nanoid()
+    const accessTokenExpirySeconds = this.configService.get<number>(
+      'ACCESS_TOKEN_EXPIRY_SECONDS',
+      JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    )
+    const now = new Date()
+    const accessTokenExpiresAt = new Date(now.getTime() + accessTokenExpirySeconds * 1000)
+    const accessTokenPayload: JwtAccessPayload = {
+      sub: userId,
+      username,
+      jti: accessJti,
+      deviceId,
+      type: 'access',
+    }
+    const accessToken = this.jwtService.sign(accessTokenPayload, {
+      expiresIn: accessTokenExpirySeconds,
+    })
+    await this.accessTokenRepository.save({
+      jti: accessJti,
+      userId,
+      deviceId,
+      createdAt: now,
+      expiresAt: accessTokenExpiresAt,
+    })
+    // 生成新的 Refresh Token (繼承原始過期時間 防止無限續期)
+    const newRefreshJti = nanoid()
+    const remainingSeconds = Math.floor((originalExpiresAt.getTime() - now.getTime()) / 1000)
+    // 如果剩餘時間過短 就不再發放新的 Refresh Token 或者過期了
+    if (remainingSeconds <= 0) {
+      return Result.fail(ApiErrorCode.認證_令牌過期)
+    }
+    const refreshToken = this.jwtService.sign(
+      {
+        sub: userId,
+        username,
+        jti: newRefreshJti,
+        type: 'refresh',
+      },
+      { expiresIn: remainingSeconds }
+    )
+    await this.refreshTokenRepository.save({
+      jti: newRefreshJti,
+      userId,
+      deviceId: record.deviceId,
+      createdAt: now,
+      expiresAt: originalExpiresAt,
+    })
+    return Result.success({
+      accessToken,
+      refreshToken,
+      expiresIn: accessTokenExpirySeconds,
+    })
   }
   /** 將指定的 deviceId 加入 access token 黑名單 */
   async logoutThisDevice(userId: string, deviceId: string, accessTokenExpiresAt: Date): Promise<void> {
     await this.sessionManager.logoutDevice(userId, deviceId, accessTokenExpiresAt)
   }
-
   /** 刪除所有 access token 和 refresh token */
   async logoutAllDevices(userId: string): Promise<void> {
     await this.sessionManager.logoutAllDevices(userId)
   }
-
   /** 將指定的 refresh token 加入黑名單並刪除 */
   async revokeToken(jti: string): Promise<void> {
     const record = await this.refreshTokenRepository.findByJti(jti)

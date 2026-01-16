@@ -6,7 +6,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
     ThrottlerModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
         const ttl = configService.get<number>('THROTTLE_TTL', 60) * 1000 // 轉換為毫秒
-        const limit = configService.get<number>('THROTTLE_LIMIT', 5)
+        const limit = configService.get<number>('THROTTLE_LIMIT', 30)
         return [
           {
             name: 'default',
@@ -16,12 +16,12 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
           {
             name: 'login',
             ttl: 5 * 60 * 1000, // 5 分鐘
-            limit: 3,
+            limit: 30,
           },
           {
             name: 'register',
             ttl: 10 * 60 * 1000, // 10 分鐘
-            limit: 5,
+            limit: 30,
           },
         ]
       },

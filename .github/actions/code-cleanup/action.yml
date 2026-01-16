@@ -1,0 +1,20 @@
+name: "Universal Code Cleanup"
+description: "自動清理指定目錄與副檔名的多餘空行"
+inputs:
+  folders:
+    description: "掃描資料夾"
+    required: true
+  extensions:
+    description: "副檔名清單"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        for folder in ${{ inputs.folders }}; do
+          [ -d "$folder" ] || { echo "Warning: Directory $folder not found, skipping."; continue; }
+          for ext in ${{ inputs.extensions }}; do
+            find "$folder" -type f -name "*.$ext" -exec perl -i -0777 -pe 's/(\r?\n)\r?\n/\1/g' {} +
+          done
+        done

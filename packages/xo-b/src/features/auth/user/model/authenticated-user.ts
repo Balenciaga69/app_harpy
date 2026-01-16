@@ -3,4 +3,6 @@ export interface AuthenticatedUser {
   username: string
   jti?: string
   deviceId?: string
+  exp?: number
+  expiresAt?: Date
 }
