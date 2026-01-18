@@ -6,7 +6,7 @@ import { ContextManager } from './context/context-manager'
 import { configStoreProviders } from './providers/config-store.providers'
 import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
 import { InjectionTokens } from './providers/injection-tokens'
-import { RedisModule } from './redis/redis.module'
+import { RedisModule } from './cache/redis.module'
 import { InMemoryContextRepository } from './repositories/in-memory-context.repository'
 import { RedisContextRepository } from './repositories/redis-context.repository'
 type ConfigStore = ConstructorParameters<typeof ContextManager>[0]

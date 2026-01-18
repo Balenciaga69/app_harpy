@@ -3,9 +3,16 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Cache } from 'cache-manager'
 import { plainToInstance } from 'class-transformer'
 import { REDIS_KEYS } from '../auth.config'
-import { IGuestRepository } from '../contracts'
 import { GuestSessionDto } from '../shared/guest-session.dto'
 import { GuestSession } from './guest-session.entity'
+/** 訪客 Session 儲存庫介面*/
+export interface IGuestRepository {
+  save(session: GuestSession): Promise<void>
+  findByGuestId(guestId: string): Promise<GuestSession | null>
+  existsByGuestId(guestId: string): Promise<boolean>
+  deleteByGuestId(guestId: string): Promise<void>
+  updateExpiresAt(guestId: string, expiresAt: Date): Promise<void>
+}
 @Injectable()
 export class RedisGuestRepository implements IGuestRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}

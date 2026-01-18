@@ -3,9 +3,17 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Cache } from 'cache-manager'
 import { plainToInstance } from 'class-transformer'
 import { REDIS_KEYS } from '../auth.config'
-import { IRefreshTokenRepository } from '../contracts'
 import { RefreshTokenRecordDto } from '../shared/refresh-token-record.dto'
 import { RefreshTokenRecord } from './refresh-token-record.entity'
+/** Refresh Token 儲存庫介面*/
+export interface IRefreshTokenRepository {
+  save(record: RefreshTokenRecord): Promise<void>
+  findByJti(jti: string): Promise<RefreshTokenRecord | null>
+  deleteByJti(jti: string): Promise<void>
+  deleteAllByUserId(userId: string): Promise<void>
+  isBlacklisted(jti: string): Promise<boolean>
+  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
+}
 @Injectable()
 export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}

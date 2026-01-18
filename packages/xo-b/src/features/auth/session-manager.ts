@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
-import { IAccessTokenRepository, IRefreshTokenRepository } from './contracts'
+import { IAccessTokenRepository } from './token/access-token.repository'
+import { IRefreshTokenRepository } from './token/refresh-token.repository'
 // ...existing code...
 @Injectable()
 export class SessionManager {

@@ -3,9 +3,19 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Cache } from 'cache-manager'
 import { plainToInstance } from 'class-transformer'
 import { JWT_CONFIG, REDIS_KEYS } from '../auth.config'
-import { IAccessTokenRepository } from '../contracts'
 import { AccessTokenRecordDto } from '../shared/access-token-record.dto'
 import { AccessTokenRecord } from './access-token-record.entity'
+export interface IAccessTokenRepository {
+  save(record: AccessTokenRecord): Promise<void>
+  findByJti(jti: string): Promise<AccessTokenRecord | null>
+  isBlacklistedByJti(jti: string): Promise<boolean>
+  isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean>
+  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
+  addDeviceToBlacklist(userId: string, deviceId: string, expiresAt: Date): Promise<void>
+  addAllDevicesToBlacklist(userId: string): Promise<void>
+  deleteByJti(jti: string): Promise<void>
+  deleteAllByUserId(userId: string): Promise<void>
+}
 @Injectable()
 export class RedisAccessTokenRepository implements IAccessTokenRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}

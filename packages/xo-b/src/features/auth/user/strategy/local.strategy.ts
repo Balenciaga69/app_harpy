@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport'
 import * as bcrypt from 'bcrypt'
 import { Strategy } from 'passport-local'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
-import { IUserRepository } from '../../contracts'
 import { AuthenticatedUser } from '../model/authenticated-user'
+import { IUserRepository } from '../repository/user.repository'
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(

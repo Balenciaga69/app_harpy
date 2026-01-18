@@ -2,9 +2,15 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache } from 'cache-manager'
 import { plainToInstance } from 'class-transformer'
-import { IUserRepository } from '../../contracts'
 import { UserDto } from '../../shared/user.dto'
 import { User } from '../model/user.entity'
+/** 用戶儲存庫介面 */
+export interface IUserRepository {
+  save(user: User): Promise<void>
+  findByUsername(username: string): Promise<User | null>
+  existsByUsername(username: string): Promise<boolean>
+  findActiveByUsername(username: string): Promise<User | null>
+}
 @Injectable()
 export class RedisUserRepository implements IUserRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}

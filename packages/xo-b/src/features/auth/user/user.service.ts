@@ -7,15 +7,12 @@ import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { Result } from 'src/from-xo-c'
 import { JWT_CONFIG, PASSWORD_CONFIG } from '../auth.config'
-import {
-  AuthTokens,
-  IAccessTokenRepository,
-  IRefreshTokenRepository,
-  IUserRepository,
-  JwtAccessPayload,
-} from '../contracts'
+import { AuthTokens, JwtAccessPayload } from '../contracts'
 import { SessionManager } from '../session-manager'
+import { IAccessTokenRepository } from '../token/access-token.repository'
+import { IRefreshTokenRepository } from '../token/refresh-token.repository'
 import { User } from './model/user.entity'
+import { IUserRepository } from './repository/user.repository'
 @Injectable()
 export class UserService {
   constructor(
