@@ -3,6 +3,50 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import type { RedisOptions } from 'ioredis'
 import Redis from 'ioredis'
 import { InjectionTokens } from '../providers/injection-tokens'
+
+/**
+ * Redis 連接模組（全局模組）
+ *
+ * 職責：
+ *   - 管理 Redis 連接的建立、配置、重試策略
+ *   - 提供統一的 Redis 客戶端實例供全應用使用
+ *   - 處理連接生命週期（連接、重連、錯誤處理）
+ *
+ * 重要概念：
+ *   - Redis 是存儲介質（in-memory data store），純粹的數據存儲
+ *   - 本身只提供 set/get/del 等基礎操作
+ *   - 不包含任何「快速訪問」的業務邏輯
+ *
+ * 與 CacheConfigModule 的區別：
+ *   ┌─────────────────────────────────────┐
+ *   │  使用場景對比                         │
+ *   ├─────────────────────────────────────┤
+ *   │ CacheModule (使用模式)               │
+ *   │ ├─ 業務：Session、Token、臨時數據   │
+ *   │ ├─ TTL: 自動過期                    │
+ *   │ ├─ 操作：get/set/delete            │
+ *   │ └─ 例子：Cache.get('user:123')     │
+ *   ├─────────────────────────────────────┤
+ *   │ RedisModule (存儲介質)               │
+ *   │ ├─ 業務：低層直接操作                │
+ *   │ ├─ TTL: 手動管理                    │
+ *   │ ├─ 操作：set/get/zadd/lpush...     │
+ *   │ └─ 例子：redis.set('key', 'val')   │
+ *   └─────────────────────────────────────┘
+ *
+ * 何時直接使用 RedisModule：
+ *   - 需要複雜的 Redis 操作（Sorted Set、Stream 等）
+ *   - 需要細粒度的 TTL 控制
+ *   - 需要跨 Service 的數據共享結構
+ *
+ * @example
+ * // 注入 Redis 客戶端
+ * constructor(@Inject(InjectionTokens.RedisClient) private redis: Redis) {}
+ *
+ * // 直接操作
+ * await this.redis.set('key', 'value', 'EX', 3600)
+ * await this.redis.zadd('sorted-set', 1, 'member')
+ */
 @Global()
 @Module({
   imports: [ConfigModule],

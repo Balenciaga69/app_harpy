@@ -1,19 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { Result } from 'src/from-xo-c'
-import { SESSION_CONFIG } from '../auth.config'
 import { IGuestRepository } from '../contracts'
 import { GuestSession } from './guest-session.entity'
+import { SessionExpirationPolicy } from './session-expiration.policy'
+
 @Injectable()
 export class GuestService {
-  private readonly MAX_SESSION_LIFETIME_SECONDS = 86400 // 24 小時
   constructor(
     @Inject(InjectionTokens.GuestRepository)
     private readonly guestRepository: IGuestRepository,
-    private readonly configService: ConfigService
+    private readonly expirationPolicy: SessionExpirationPolicy
   ) {}
   async createGuestSession(): Promise<{
     guestId: string
@@ -21,11 +20,7 @@ export class GuestService {
   }> {
     const guestId = nanoid()
     const now = new Date()
-    const ttlSeconds = this.configService.get<number>(
-      'GUEST_SESSION_TTL_SECONDS',
-      SESSION_CONFIG.GUEST_SESSION_TTL_SECONDS
-    )
-    const expiresAt = new Date(now.getTime() + ttlSeconds * 1000)
+    const expiresAt = this.expirationPolicy.calculateExpiresAt()
     const session: GuestSession = {
       guestId,
       createdAt: now,
@@ -39,7 +34,7 @@ export class GuestService {
     if (!session) {
       return Result.fail(ApiErrorCode.認證_認證無效)
     }
-    if (session.expiresAt.getTime() < Date.now()) {
+    if (this.expirationPolicy.isExpired(session.expiresAt)) {
       await this.guestRepository.deleteByGuestId(guestId)
       return Result.fail(ApiErrorCode.認證_令牌過期)
     }
@@ -51,19 +46,12 @@ export class GuestService {
       return Result.fail(result.error!)
     }
     const session = result.value!
-    const createdAt = new Date(session.createdAt).getTime()
-    const now = Date.now()
-    const aliveSeconds = Math.floor((now - createdAt) / 1000)
     // 防止無限延長
-    if (aliveSeconds > this.MAX_SESSION_LIFETIME_SECONDS) {
+    if (this.expirationPolicy.isMaxLifetimeExceeded(session.createdAt)) {
       await this.guestRepository.deleteByGuestId(guestId)
       return Result.fail(ApiErrorCode.認證_令牌過期)
     }
-    const ttlSeconds = this.configService.get<number>(
-      'GUEST_SESSION_TTL_SECONDS',
-      SESSION_CONFIG.GUEST_SESSION_TTL_SECONDS
-    )
-    const newExpiresAt = new Date(Date.now() + ttlSeconds * 1000)
+    const newExpiresAt = this.expirationPolicy.calculateExpiresAt()
     await this.guestRepository.updateExpiresAt(guestId, newExpiresAt)
     return Result.success(newExpiresAt)
   }

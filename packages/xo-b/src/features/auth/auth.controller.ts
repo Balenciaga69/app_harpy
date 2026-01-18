@@ -1,11 +1,9 @@
 import { Body, Controller, HttpCode, Post, Query, Request, Res, UseGuards } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
 import { Response } from 'express'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
-import { JWT_CONFIG } from './auth.config'
 import {
   AuthenticatedRequest,
   LoginDto,
@@ -17,17 +15,20 @@ import {
 } from './dto/auth.dto'
 import { GetUser } from './get-user.decorator'
 import { GuestService } from './guest/guest.service'
+import { SessionExpirationPolicy } from './guest/session-expiration.policy'
 import { JwtRefreshGuard } from './user/jwt-refresh.guard'
 import { JwtStatefulAuthGuard } from './user/jwt-stateful-auth.guard'
 import { AuthenticatedUser } from './user/model/authenticated-user'
 import { UserService } from './user/user.service'
+import { AuthResponseBuilder } from './builders/auth-response.builder'
 @ApiTags('Authentication - 認證')
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly guestService: GuestService,
-    private readonly configService: ConfigService
+    private readonly responseBuilder: AuthResponseBuilder,
+    private readonly expirationPolicy: SessionExpirationPolicy
   ) {}
   @Post('register')
   @Throttle({ register: {} })
@@ -53,31 +54,15 @@ export class AuthController {
     const result = await this.userService.login(req.user.userId, req.user.username)
     ResultToExceptionMapper.throwIfFailure(result)
     const payload = result.value!
-    const refreshToken = payload.refreshToken
-    const refreshTtl =
-      this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
-    const accessTtl =
-      this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
-    // 設置 Refresh Token Cookie
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'lax',
-      maxAge: refreshTtl * 1000,
-      path: '/',
-    })
-    // 設置 Access Token Cookie
-    res.cookie('accessToken', payload.accessToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'lax',
-      maxAge: accessTtl * 1000,
-      path: '/',
-    })
-    return {
-      ...payload,
-      user: { userId: req.user.userId, username: req.user.username },
-    }
+    // 使用 ResponseBuilder 統一管理 Cookie 與響應
+    const { response, cookies } = this.responseBuilder.buildLoginResponse(
+      payload.accessToken,
+      payload.refreshToken,
+      req.user.userId,
+      req.user.username
+    )
+    this.responseBuilder.setCookies(res, cookies)
+    return response
   }
   @Post('refresh')
   @HttpCode(200)
@@ -91,27 +76,10 @@ export class AuthController {
     const result = await this.userService.refreshAccessToken(user.jti!, user.userId, user.username, user.expiresAt!)
     ResultToExceptionMapper.throwIfFailure(result)
     const payload = result.value!
-    const refreshTtl =
-      this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
-    const accessTtl =
-      this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
-    // 更新 Refresh Token Cookie (Rotation)
-    res.cookie('refreshToken', payload.refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'lax',
-      maxAge: refreshTtl * 1000,
-      path: '/',
-    })
-    // 設置新的 Access Token Cookie
-    res.cookie('accessToken', payload.accessToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'lax',
-      maxAge: accessTtl * 1000,
-      path: '/',
-    })
-    return payload
+    // 使用 ResponseBuilder 統一管理 Cookie 與響應
+    const { response, cookies } = this.responseBuilder.buildRefreshResponse(payload.accessToken, payload.refreshToken)
+    this.responseBuilder.setCookies(res, cookies)
+    return response
   }
   @Post('logout')
   @UseGuards(JwtStatefulAuthGuard)
@@ -122,16 +90,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Query('allDevices') allDevices?: string
   ) {
-    res.clearCookie('refreshToken', { path: '/' })
-    res.clearCookie('accessToken', { path: '/' })
+    // 使用 ResponseBuilder 統一清除 Cookie
+    this.responseBuilder.clearAuthCookies(res)
     const logoutAll = allDevices === 'true'
     if (logoutAll || !user.deviceId) {
       await this.userService.logoutAllDevices(user.userId)
     } else {
-      // 動態計算 Access Token 的剩餘壽命，避免硬編碼 15 分鐘
-      const expiresAt = user.exp
-        ? new Date(user.exp * 1000)
-        : new Date(Date.now() + JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS * 1000)
+      // 使用 ExpirationPolicy 計算過期時間
+      const expiresAt = user.exp ? new Date(user.exp * 1000) : this.expirationPolicy.calculateExpiresAt()
       await this.userService.logoutThisDevice(user.userId, user.deviceId, expiresAt)
     }
   }
@@ -144,7 +110,7 @@ export class AuthController {
     return {
       guestId: session.guestId,
       expiresAt: session.expiresAt,
-      expiresIn: Math.floor((session.expiresAt.getTime() - Date.now()) / 1000),
+      expiresIn: this.expirationPolicy.getRemainingSeconds(session.expiresAt),
     }
   }
 }
