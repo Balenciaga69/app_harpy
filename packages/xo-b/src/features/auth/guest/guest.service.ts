@@ -9,6 +9,8 @@ import { IGuestRepository } from '../contracts'
 import { GuestSession } from './guest-session.entity'
 @Injectable()
 export class GuestService {
+  private readonly MAX_SESSION_LIFETIME_SECONDS = 86400 // 24 小時
+
   constructor(
     @Inject(InjectionTokens.GuestRepository)
     private readonly guestRepository: IGuestRepository,
@@ -49,6 +51,18 @@ export class GuestService {
     if (result.isFailure) {
       return Result.fail(result.error!)
     }
+
+    const session = result.value!
+    const createdAt = new Date(session.createdAt).getTime()
+    const now = Date.now()
+    const aliveSeconds = Math.floor((now - createdAt) / 1000)
+
+    // 防止無限延長
+    if (aliveSeconds > this.MAX_SESSION_LIFETIME_SECONDS) {
+      await this.guestRepository.deleteByGuestId(guestId)
+      return Result.fail(ApiErrorCode.認證_令牌過期)
+    }
+
     const ttlSeconds = this.configService.get<number>(
       'GUEST_SESSION_TTL_SECONDS',
       SESSION_CONFIG.GUEST_SESSION_TTL_SECONDS

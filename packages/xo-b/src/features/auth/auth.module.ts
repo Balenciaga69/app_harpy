@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { JWT_CONFIG } from './auth.config'
 import { AuthController } from './auth.controller'
+import { CacheConfigModule } from './cache.module'
 import { RedisGuestRepository } from './guest/guest.repository'
 import { GuestService } from './guest/guest.service'
 import { SessionManager } from './session-manager'
@@ -22,6 +23,7 @@ import { UserService } from './user/user.service'
 @Module({
   imports: [
     PassportModule,
+    CacheConfigModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

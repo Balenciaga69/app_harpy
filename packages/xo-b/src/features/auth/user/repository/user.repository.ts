@@ -1,24 +1,32 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
-import Redis from 'ioredis'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
 import { IUserRepository } from '../../contracts'
+import { UserDto } from '../../shared/user.dto'
 import { User } from '../model/user.entity'
+
 @Injectable()
 export class RedisUserRepository implements IUserRepository {
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+
   async save(user: User): Promise<void> {
     const key = `user:${user.username}`
-    await this.redis.set(key, JSON.stringify(user))
+    await this.cache.set(key, user)
   }
+
   async findByUsername(username: string): Promise<User | null> {
     const key = `user:${username}`
-    const userData = await this.redis.get(key)
-    return userData ? (JSON.parse(userData) as User) : null
+    const data = await this.cache.get<Record<string, unknown>>(key)
+    if (!data) return null
+    return plainToInstance(UserDto, data)
   }
+
   async existsByUsername(username: string): Promise<boolean> {
     const key = `user:${username}`
-    const exists = await this.redis.exists(key)
-    return exists === 1
+    return (await this.cache.get(key)) !== undefined
   }
+
   async findActiveByUsername(username: string): Promise<User | null> {
     const user = await this.findByUsername(username)
     return user && user.isActive ? user : null
