@@ -1,6 +1,5 @@
 import { CacheModule } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
-
 /**
  * 全局 Cache 模組
  *

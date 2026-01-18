@@ -6,7 +6,6 @@ import { Result } from 'src/from-xo-c'
 import { IGuestRepository } from '../contracts'
 import { GuestSession } from './guest-session.entity'
 import { SessionExpirationPolicy } from './session-expiration.policy'
-
 @Injectable()
 export class GuestService {
   constructor(

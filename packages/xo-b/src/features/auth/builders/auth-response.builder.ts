@@ -4,7 +4,6 @@ import { Response } from 'express'
 import { CookieOptions } from 'express'
 import { JWT_CONFIG } from '../auth.config'
 import { LoginResponseDto, RefreshResponseDto } from '../dto/auth.dto'
-
 /**
  * 認證響應構建器
  * 統一管理 Cookie 設置、Token 過期時間計算等響應相關邏輯
@@ -13,7 +12,6 @@ import { LoginResponseDto, RefreshResponseDto } from '../dto/auth.dto'
 @Injectable()
 export class AuthResponseBuilder {
   constructor(private readonly configService: ConfigService) {}
-
   /**
    * 獲取 Cookie 基本配置
    * @private
@@ -28,7 +26,6 @@ export class AuthResponseBuilder {
       path: '/',
     }
   }
-
   /**
    * 構建登入響應，包含 Cookie 設置信息
    * @param accessToken Access Token
@@ -51,7 +48,6 @@ export class AuthResponseBuilder {
       this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
     const refreshTtl =
       this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
-
     const response: LoginResponseDto = {
       accessToken,
       refreshToken,
@@ -61,7 +57,6 @@ export class AuthResponseBuilder {
         username,
       },
     }
-
     const cookies = [
       {
         name: 'accessToken',
@@ -80,10 +75,8 @@ export class AuthResponseBuilder {
         } as CookieOptions,
       },
     ]
-
     return { response, cookies }
   }
-
   /**
    * 構建刷新 Token 響應，包含 Cookie 設置信息
    * @param accessToken 新的 Access Token
@@ -102,13 +95,11 @@ export class AuthResponseBuilder {
       this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
     const refreshTtl =
       this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
-
     const response: RefreshResponseDto = {
       accessToken,
       refreshToken,
       expiresIn: accessTtl,
     }
-
     const cookies = [
       {
         name: 'accessToken',
@@ -127,10 +118,8 @@ export class AuthResponseBuilder {
         } as CookieOptions,
       },
     ]
-
     return { response, cookies }
   }
-
   /**
    * 在 Response 上設置所有 Cookie
    * @param res Express Response 對象
@@ -141,7 +130,6 @@ export class AuthResponseBuilder {
       res.cookie(name, value, options)
     })
   }
-
   /**
    * 在 Response 上清除認證相關 Cookie
    * @param res Express Response 對象

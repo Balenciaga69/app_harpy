@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { SESSION_CONFIG } from '../auth.config'
-
 /**
  * Session 過期時間策略
  * 統一管理所有 Session 相關的過期計算邏輯
@@ -9,9 +8,7 @@ import { SESSION_CONFIG } from '../auth.config'
 @Injectable()
 export class SessionExpirationPolicy {
   private readonly MAX_SESSION_LIFETIME_SECONDS = 86400 // 24 小時
-
   constructor(private readonly configService: ConfigService) {}
-
   /**
    * 計算過期時間
    * @returns 過期的絕對時間
@@ -23,7 +20,6 @@ export class SessionExpirationPolicy {
     )
     return new Date(Date.now() + ttlSeconds * 1000)
   }
-
   /**
    * 檢查 Session 是否已過期
    * @param expiresAt 過期時間
@@ -32,7 +28,6 @@ export class SessionExpirationPolicy {
   isExpired(expiresAt: Date): boolean {
     return expiresAt.getTime() < Date.now()
   }
-
   /**
    * 檢查 Session 是否超過最大生命週期
    * 用於防止無限延長 Session
@@ -43,7 +38,6 @@ export class SessionExpirationPolicy {
     const lifetime = (Date.now() - new Date(createdAt).getTime()) / 1000
     return lifetime > this.MAX_SESSION_LIFETIME_SECONDS
   }
-
   /**
    * 計算剩餘生命週期（秒數）
    * @param expiresAt 過期時間

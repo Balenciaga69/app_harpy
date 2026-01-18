@@ -1,9 +1,8 @@
-﻿import { Global, Logger, Module } from '@nestjs/common'
+import { Global, Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import type { RedisOptions } from 'ioredis'
 import Redis from 'ioredis'
 import { InjectionTokens } from '../providers/injection-tokens'
-
 /**
  * Redis 連接模組（全局模組）
  *
