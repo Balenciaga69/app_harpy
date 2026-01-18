@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
@@ -21,9 +22,16 @@ import { UserService } from './user/user.service'
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: JWT_CONFIG.SECRET,
-      signOptions: { expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS, algorithm: JWT_CONFIG.ALGORITHM },
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn:
+            configService.get<number>('JWT_ACCESS_TOKEN_EXPIRY_SECONDS') || JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS,
+          algorithm: JWT_CONFIG.ALGORITHM,
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

@@ -61,7 +61,7 @@ export class AuthController {
     // 設置 Refresh Token Cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'lax',
       maxAge: refreshTtl * 1000,
       path: '/',
@@ -69,7 +69,7 @@ export class AuthController {
     // 設置 Access Token Cookie
     res.cookie('accessToken', payload.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'lax',
       maxAge: accessTtl * 1000,
       path: '/',
@@ -98,7 +98,7 @@ export class AuthController {
     // 更新 Refresh Token Cookie (Rotation)
     res.cookie('refreshToken', payload.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'lax',
       maxAge: refreshTtl * 1000,
       path: '/',
@@ -106,7 +106,7 @@ export class AuthController {
     // 設置新的 Access Token Cookie
     res.cookie('accessToken', payload.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'lax',
       maxAge: accessTtl * 1000,
       path: '/',

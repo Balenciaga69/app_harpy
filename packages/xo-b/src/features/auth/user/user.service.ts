@@ -29,7 +29,9 @@ export class UserService {
     private readonly configService: ConfigService,
     private readonly sessionManager: SessionManager
   ) {}
-  /** Register a new user */
+  /**
+   * 註冊用戶帳號
+   */
   async register(username: string, password: string): Promise<Result<{ userId: string }>> {
     const existsUser = await this.userRepository.existsByUsername(username)
     if (existsUser) {
@@ -49,7 +51,9 @@ export class UserService {
     await this.userRepository.save(user)
     return Result.success({ userId })
   }
-  /** 派發新的 auth tokens */
+  /**
+   * 登入並生成 訪問,刷新令牌
+   */
   async login(userId: string, username: string): Promise<Result<AuthTokens>> {
     const accessJti = nanoid()
     const refreshJti = nanoid()
@@ -104,6 +108,9 @@ export class UserService {
       expiresIn: accessTokenExpirySeconds,
     })
   }
+  /**
+   * 刷新訪問令牌
+   */
   async refreshAccessToken(
     jti: string,
     userId: string,
@@ -185,15 +192,21 @@ export class UserService {
       expiresIn: accessTokenExpirySeconds,
     })
   }
-  /** 將指定的 deviceId 加入 access token 黑名單 */
+  /**
+   * 將指定的 deviceId 加入 access token 黑名單
+   */
   async logoutThisDevice(userId: string, deviceId: string, accessTokenExpiresAt: Date): Promise<void> {
     await this.sessionManager.logoutDevice(userId, deviceId, accessTokenExpiresAt)
   }
-  /** 刪除所有 access token 和 refresh token */
+  /**
+   * 刪除所有 access token 和 refresh token
+   */
   async logoutAllDevices(userId: string): Promise<void> {
     await this.sessionManager.logoutAllDevices(userId)
   }
-  /** 將指定的 refresh token 加入黑名單並刪除 */
+  /**
+   * 將指定的 refresh token 加入黑名單並刪除
+   */
   async revokeToken(jti: string): Promise<void> {
     const record = await this.refreshTokenRepository.findByJti(jti)
     if (record) {
