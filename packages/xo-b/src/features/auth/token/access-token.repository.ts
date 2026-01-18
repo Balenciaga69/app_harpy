@@ -37,9 +37,7 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
       const ttl = this.validateExpiresAt(record.expiresAt)
       const recordKey = this.getRecordKey(record.jti)
       const userDevicesKey = this.getUserDevicesKey(record.userId)
-
       await this.cache.set(recordKey, record, ttl)
-
       // 記錄用戶的裝置列表（這裡簡化，實際可能需要 Set 結構）
       const devices = await this.cache.get<string[]>(userDevicesKey)
       const updatedDevices = devices ? [...new Set([...devices, record.deviceId])] : [record.deviceId]
@@ -48,7 +46,6 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
       throw this.handleError('save', error)
     }
   }
-
   async findByJti(jti: string): Promise<AccessTokenRecord | null> {
     try {
       const key = this.getRecordKey(jti)
@@ -67,7 +64,6 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
       throw this.handleError('isBlacklistedByJti', error)
     }
   }
-
   async isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean> {
     try {
       const deviceBlacklistKey = this.getDeviceBlacklistKey(userId, deviceId)
@@ -91,7 +87,6 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
       throw this.handleError('addToBlacklist', error)
     }
   }
-
   async addDeviceToBlacklist(userId: string, deviceId: string, expiresAt: Date): Promise<void> {
     try {
       const ttl = this.validateExpiresAt(expiresAt)
@@ -101,7 +96,6 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
       throw this.handleError('addDeviceToBlacklist', error)
     }
   }
-
   async addAllDevicesToBlacklist(userId: string): Promise<void> {
     try {
       const key = this.getUserAllDevicesBlacklistKey(userId)
@@ -111,7 +105,6 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
       throw this.handleError('addAllDevicesToBlacklist', error)
     }
   }
-
   async deleteByJti(jti: string): Promise<void> {
     try {
       const key = this.getRecordKey(jti)
@@ -124,18 +117,14 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
     try {
       const userDevicesKey = this.getUserDevicesKey(userId)
       const devices = await this.cache.get<string[]>(userDevicesKey)
-
       if (!devices || devices.length === 0) {
         return
       }
-
       for (const deviceId of devices) {
         const deviceBlacklistKey = this.getDeviceBlacklistKey(userId, deviceId)
         await this.cache.del(deviceBlacklistKey)
       }
-
       await this.cache.del(userDevicesKey)
-
       const allDevicesBlacklistKey = this.getUserAllDevicesBlacklistKey(userId)
       await this.cache.del(allDevicesBlacklistKey)
     } catch (error) {

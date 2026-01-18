@@ -6,7 +6,6 @@ import { REDIS_KEYS } from '../auth.config'
 import { IRefreshTokenRepository } from '../contracts'
 import { RefreshTokenRecordDto } from '../shared/refresh-token-record.dto'
 import { RefreshTokenRecord } from './refresh-token-record.entity'
-
 @Injectable()
 export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
@@ -32,9 +31,7 @@ export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
       const ttl = this.validateExpiresAt(record.expiresAt)
       const recordKey = this.getRecordKey(record.jti)
       const userTokensKey = this.getUserTokensKey(record.userId)
-
       await this.cache.set(recordKey, record, ttl)
-
       const tokens = await this.cache.get<string[]>(userTokensKey)
       const updatedTokens = tokens ? [...new Set([...tokens, record.jti])] : [record.jti]
       await this.cache.set(userTokensKey, updatedTokens, ttl)
@@ -42,7 +39,6 @@ export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
       throw this.handleError('save', error)
     }
   }
-
   async findByJti(jti: string): Promise<RefreshTokenRecord | null> {
     try {
       const key = this.getRecordKey(jti)
@@ -65,24 +61,20 @@ export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
     try {
       const userTokensKey = this.getUserTokensKey(userId)
       const ids = await this.cache.get<string[]>(userTokensKey)
-
       if (!ids || ids.length === 0) {
         return
       }
-
       for (const jti of ids) {
         const recordKey = this.getRecordKey(jti)
         const blacklistKey = this.getBlacklistKey(jti)
         await this.cache.del(recordKey)
         await this.cache.del(blacklistKey)
       }
-
       await this.cache.del(userTokensKey)
     } catch (error) {
       throw this.handleError('deleteAllByUserId', error)
     }
   }
-
   async isBlacklisted(jti: string): Promise<boolean> {
     try {
       const key = this.getBlacklistKey(jti)
@@ -100,7 +92,6 @@ export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
       throw this.handleError('addToBlacklist', error)
     }
   }
-
   private handleError(method: string, error: unknown): Error {
     if (error instanceof Error) {
       return error
