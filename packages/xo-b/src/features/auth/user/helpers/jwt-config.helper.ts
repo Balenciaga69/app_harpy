@@ -1,5 +1,8 @@
 import { ConfigService } from '@nestjs/config'
 export class JwtConfigHelper {
+  /**
+   * 從 `ConfigService` 獲取並驗證 JWT Secret
+   */
   static getValidatedSecret(configService: ConfigService, strategyName: string): string {
     const secret = configService.get<string>('JWT_SECRET')
     if (!secret) {

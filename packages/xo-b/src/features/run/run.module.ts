@@ -1,6 +1,7 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Redis } from 'ioredis'
+import type { Cache } from 'cache-manager'
 import { AuthModule } from '../auth/auth.module'
 import { EquipmentModule } from '../equipment/equipment.module'
 import { InjectionTokens } from '../shared/providers/injection-tokens'
@@ -20,17 +21,15 @@ import { RunOptionsService } from './service/run-options.service'
   providers: [
     {
       provide: InjectionTokens.RunRepository,
-      useFactory: (configService: ConfigService, redis?: Redis) => {
+      useFactory: (configService: ConfigService, cache: Cache) => {
         const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
         if (storageType === 'memory') {
-          return new InMemoryRunRepository()
+          return new InMemoryRunRepository(cache)
         }
-        if (!redis) {
-          throw new Error('Redis client is not available. Please check your STORAGE_TYPE configuration.')
-        }
-        return new RedisRunRepository(redis)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        return new RedisRunRepository(cache)
       },
-      inject: [ConfigService, { token: InjectionTokens.RedisClient, optional: true }],
+      inject: [ConfigService, CACHE_MANAGER],
     },
     IsOwnRunGuard,
     RunOptionsService,

@@ -4,7 +4,7 @@ cd "g:\Coding\app_harpy"
 $configs = @(
     # @{ Output = "out/output_app.txt"; Path = "./packages/xo-c/src/application" },
     # @{ Output = "out/output_domain.txt"; Path = "./packages/xo-c/src/domain" },
-    # @{ Output = "out/output_api.txt"; Path = "./packages/xo-b/src" }
+    @{ Output = "out/output_api.txt"; Path = "./packages/xo-b/src" }
     @{ Output = "out/output_auth.txt"; Path = "./packages/xo-b/src/features/auth" }
 )
 

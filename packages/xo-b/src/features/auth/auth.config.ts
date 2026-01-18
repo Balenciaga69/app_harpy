@@ -3,7 +3,6 @@
  * 集中管理所有認證相關的常數
  */
 export const JWT_CONFIG = {
-  SECRET: process.env.JWT_SECRET,
   ALGORITHM: 'HS256',
   ACCESS_TOKEN_EXPIRY_SECONDS: 900, // 15 分鐘
   REFRESH_TOKEN_EXPIRY_SECONDS: 2592000, // 30 天

@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
+import { CacheConfigModule } from 'src/features/shared/cache/cache.module'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { JWT_CONFIG } from './auth.config'
 import { AuthController } from './auth.controller'
+import { AuthResponseBuilder } from './builders/auth-response.builder'
 import { RedisGuestRepository } from './guest/guest.repository'
 import { GuestService } from './guest/guest.service'
+import { SessionExpirationPolicy } from './guest/session-expiration.policy'
 import { SessionManager } from './session-manager'
 import { RedisAccessTokenRepository } from './token/access-token.repository'
 import { RedisRefreshTokenRepository } from './token/refresh-token.repository'
@@ -21,9 +25,17 @@ import { UserService } from './user/user.service'
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: JWT_CONFIG.SECRET,
-      signOptions: { expiresIn: JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS, algorithm: JWT_CONFIG.ALGORITHM },
+    CacheConfigModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn:
+            configService.get<number>('JWT_ACCESS_TOKEN_EXPIRY_SECONDS') || JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS,
+          algorithm: JWT_CONFIG.ALGORITHM,
+        },
+      }),
     }),
   ],
   controllers: [AuthController],
@@ -31,6 +43,8 @@ import { UserService } from './user/user.service'
     UserService,
     GuestService,
     SessionManager,
+    SessionExpirationPolicy,
+    AuthResponseBuilder,
     LocalStrategy,
     JwtStatefulStrategy,
     JwtStatelessStrategy,

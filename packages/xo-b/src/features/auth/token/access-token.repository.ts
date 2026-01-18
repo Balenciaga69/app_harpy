@@ -1,11 +1,24 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
-import Redis from 'ioredis'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
 import { JWT_CONFIG, REDIS_KEYS } from '../auth.config'
-import { IAccessTokenRepository } from '../contracts'
+import { AccessTokenRecordDto } from '../shared/access-token-record.dto'
 import { AccessTokenRecord } from './access-token-record.entity'
+export interface IAccessTokenRepository {
+  save(record: AccessTokenRecord): Promise<void>
+  findByJti(jti: string): Promise<AccessTokenRecord | null>
+  isBlacklistedByJti(jti: string): Promise<boolean>
+  isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean>
+  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
+  addDeviceToBlacklist(userId: string, deviceId: string, expiresAt: Date): Promise<void>
+  addAllDevicesToBlacklist(userId: string): Promise<void>
+  deleteByJti(jti: string): Promise<void>
+  deleteAllByUserId(userId: string): Promise<void>
+}
 @Injectable()
 export class RedisAccessTokenRepository implements IAccessTokenRepository {
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
   private getRecordKey(jti: string) {
     return `${REDIS_KEYS.ACCESS_TOKEN}:${jti}`
   }
@@ -27,18 +40,18 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
     if (expiresMs <= now) {
       throw new Error(`Token has already expired: ${expiresAt.toISOString()}`)
     }
-    return Math.floor((expiresMs - now) / 1000)
+    return expiresMs - now
   }
   async save(record: AccessTokenRecord): Promise<void> {
     try {
       const ttl = this.validateExpiresAt(record.expiresAt)
       const recordKey = this.getRecordKey(record.jti)
       const userDevicesKey = this.getUserDevicesKey(record.userId)
-      await this.redis
-        .pipeline()
-        .set(recordKey, JSON.stringify(record), 'EX', ttl)
-        .sadd(userDevicesKey, record.deviceId)
-        .exec()
+      await this.cache.set(recordKey, record, ttl)
+      // 記錄用戶的裝置列表（這裡簡化，實際可能需要 Set 結構）
+      const devices = await this.cache.get<string[]>(userDevicesKey)
+      const updatedDevices = devices ? [...new Set([...devices, record.deviceId])] : [record.deviceId]
+      await this.cache.set(userDevicesKey, updatedDevices, ttl)
     } catch (error) {
       throw this.handleError('save', error)
     }
@@ -46,8 +59,9 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
   async findByJti(jti: string): Promise<AccessTokenRecord | null> {
     try {
       const key = this.getRecordKey(jti)
-      const data = await this.redis.get(key)
-      return data ? (JSON.parse(data) as AccessTokenRecord) : null
+      const data = await this.cache.get<Record<string, unknown>>(key)
+      if (!data) return null
+      return plainToInstance(AccessTokenRecordDto, data)
     } catch (error) {
       throw this.handleError('findByJti', error)
     }
@@ -55,22 +69,20 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
   async isBlacklistedByJti(jti: string): Promise<boolean> {
     try {
       const key = this.getJtiBlacklistKey(jti)
-      return (await this.redis.exists(key)) === 1
+      return (await this.cache.get(key)) !== undefined
     } catch (error) {
       throw this.handleError('isBlacklistedByJti', error)
     }
   }
   async isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean> {
     try {
-      // 檢查該裝置是否被黑名單
       const deviceBlacklistKey = this.getDeviceBlacklistKey(userId, deviceId)
-      const deviceBlacklisted = (await this.redis.exists(deviceBlacklistKey)) === 1
+      const deviceBlacklisted = (await this.cache.get(deviceBlacklistKey)) !== undefined
       if (deviceBlacklisted) {
         return true
       }
-      // 檢查用戶是否登出所有裝置
       const allDevicesBlacklistKey = this.getUserAllDevicesBlacklistKey(userId)
-      const allDevicesBlacklisted = (await this.redis.exists(allDevicesBlacklistKey)) === 1
+      const allDevicesBlacklisted = (await this.cache.get(allDevicesBlacklistKey)) !== undefined
       return allDevicesBlacklisted
     } catch (error) {
       throw this.handleError('isBlacklistedByDeviceId', error)
@@ -80,7 +92,7 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
     try {
       const ttl = this.validateExpiresAt(expiresAt)
       const key = this.getJtiBlacklistKey(jti)
-      await this.redis.set(key, '1', 'EX', ttl)
+      await this.cache.set(key, '1', ttl)
     } catch (error) {
       throw this.handleError('addToBlacklist', error)
     }
@@ -89,7 +101,7 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
     try {
       const ttl = this.validateExpiresAt(expiresAt)
       const key = this.getDeviceBlacklistKey(userId, deviceId)
-      await this.redis.set(key, '1', 'EX', ttl)
+      await this.cache.set(key, '1', ttl)
     } catch (error) {
       throw this.handleError('addDeviceToBlacklist', error)
     }
@@ -97,10 +109,8 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
   async addAllDevicesToBlacklist(userId: string): Promise<void> {
     try {
       const key = this.getUserAllDevicesBlacklistKey(userId)
-      // 永久黑名單，需要等待用戶重新登入時清除，或者設置一個很長的 TTL
-      // 使用配置中的 Refresh Token 壽命作為安全範圍
-      const ttl = JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
-      await this.redis.set(key, '1', 'EX', ttl)
+      const ttl = JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS * 1000
+      await this.cache.set(key, '1', ttl)
     } catch (error) {
       throw this.handleError('addAllDevicesToBlacklist', error)
     }
@@ -108,7 +118,7 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
   async deleteByJti(jti: string): Promise<void> {
     try {
       const key = this.getRecordKey(jti)
-      await this.redis.del(key)
+      await this.cache.del(key)
     } catch (error) {
       throw this.handleError('deleteByJti', error)
     }
@@ -116,22 +126,17 @@ export class RedisAccessTokenRepository implements IAccessTokenRepository {
   async deleteAllByUserId(userId: string): Promise<void> {
     try {
       const userDevicesKey = this.getUserDevicesKey(userId)
-      const devices = await this.redis.smembers(userDevicesKey)
-      if (devices.length === 0) {
+      const devices = await this.cache.get<string[]>(userDevicesKey)
+      if (!devices || devices.length === 0) {
         return
       }
-      const pipeline = this.redis.pipeline()
-      // 刪除每個裝置的黑名單記錄
       for (const deviceId of devices) {
         const deviceBlacklistKey = this.getDeviceBlacklistKey(userId, deviceId)
-        pipeline.del(deviceBlacklistKey)
+        await this.cache.del(deviceBlacklistKey)
       }
-      // 刪除用戶裝置列表
-      pipeline.del(userDevicesKey)
-      // 刪除用戶全裝置黑名單
+      await this.cache.del(userDevicesKey)
       const allDevicesBlacklistKey = this.getUserAllDevicesBlacklistKey(userId)
-      pipeline.del(allDevicesBlacklistKey)
-      await pipeline.exec()
+      await this.cache.del(allDevicesBlacklistKey)
     } catch (error) {
       throw this.handleError('deleteAllByUserId', error)
     }

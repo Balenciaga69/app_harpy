@@ -1,91 +1,31 @@
-### 我預期的檔案
+原本: 以 JSON 字串的形式儲存在 Redis 的 String 類型中
+改為 Redis Hash 類型 並練習與觀察差異 以及注意事項與未來擴充與優缺點
+以及 如何處理只讀取部分欄位的需求
 
-- auth\guest\guest.guard.ts
-- auth\guest\guest.repository.ts
-- auth\guest\guest.service.ts
-- auth\user
-- auth\user\strategy
-- auth\user\strategy\jwt.strategy.ts
-- auth\user\strategy\local.strategy.ts
-- auth\user\auth.config.ts
-- auth\user\jwt-auth.guard.ts
-- auth\user\refresh-token.repository.ts
-- auth\user\token-blacklist.ts
-- auth\user\user.entity.ts
-- auth\user\user.repository.ts
-- auth\user\user.service.ts
-- auth\auth.controller.ts
-- auth\auth.module.ts
+---
 
-我打算使用以下套件來建立帳號系統：
+在用戶登入或刷新 token 時
+加入一個 sorted set
+來計算累計 Run 關卡數量最多玩家有哪些
 
-- `@nestjs/jwt`
-- `passport`
-- `passport-jwt`
-- `@nestjs/passport`
-- `bcrypt`
+---
 
-### 功能需求
+我們的 REPO save 方法已經使用了 pipeline 來確保多個操作的原子性
+這是一個很好的基礎，可以進一步探討更複雜的並發控制。
+如果 AccessTokenRecord 或 RefreshTokenRecord 的 expiresAt 是從 Redis 中讀取後再進行邏輯判斷和寫入，那麼在讀取和寫入之間可能會發生 race condition。
+(WATCH/MULTI/EXEC) 或許是我們需要的解決方案?!
 
-- **註冊**：
-  - 在註冊時加密密碼。
-  - 註冊流程非常簡單，只需要提供帳號與密碼。
-- **登入**：
-  - 在登入時比對密碼。
-  - 登入成功後，回傳 JWT Token。
+---
 
-### 系統架構
+探討:
+如果有多個服務實例同時嘗試執行 deleteAllByUserId，是否會存在潛在的 race condition？例如，一個實例正在讀取 smembers，另一個實例同時刪除了部分 member。雖然 pipeline 確保了 del 操作的原子性，但讀取 smembers 和執行 pipeline 之間仍然存在間隙。
 
-- **User Model**：
-  - 定義使用者的資料結構，包含：
-    - 帳號（pk）
-    - 密碼
-    - 創建於、更新於
-    - 啟用/停用欄位
-- **Service**：
-  - 處理業務邏輯，例如加密密碼、驗證密碼。
-- **Controller**：
-  - 處理 HTTP 請求，提供註冊與登入的 API。
-- **Repository**：
-  - 負責與資料庫交互。
-- **資料庫類型**：
-  - 尚未確定，目前使用 Redis AOF 模式進行測試。
-- **其他需求**：
-  - 註冊時檢查帳號是否重複。
-  - 支持多設備登入，使用 Refresh Token 的唯一標識（JIT）。
+---
 
-### 配置需求
+目前 findByUsername 只能進行精確匹配。如果未來需要模糊搜尋、部分匹配或多欄位搜尋用戶，RediSearch 將是一個強大的工具。
 
-- **JWT 配置**：
-  - 採用 Access Token + Refresh Token 的機制。
-  - 使用 RS256 指定的簽名演算法。
-  - Payload 僅包含 UserId。
-  - 需要黑名單機制。
-- **AuthGuard 配置**：
-  - Local Strategy：用於帳號密碼驗證。
-  - JWT Strategy：用於 Token 驗證。
-  - 無需基於角色或權限進行額外控管。
-  - 支持全域或特定路由的控制。
-  - 單純驗證 Token 是否通過。
-  - 是否需要支持多種策略（可選）。
+---
 
-### 訪客模式
-
-- **訪客身份管理**：
-  - 訪客身份應該是臨時的，與具名用戶（已註冊用戶）分開管理。
-  - 當用戶以訪客身份進入應用時，生成一個臨時的訪客 Token。
-  - 將該 Token 存儲在客戶端，並在伺服器端記錄。
-  - 設置訪客 Token 的過期時間（如 24 小時），過期後需要重新生成。
-
-- **訪客數據轉移**：
-  - 當訪客完成註冊或登入後：
-    1. 查找該訪客 Token 對應的數據。
-    2. 將數據轉移到該用戶的正式帳號中。
-    3. 刪除訪客 Token 和相關數據。
-
-- **身份更新**：
-  - 註冊或登入成功後，生成正式用戶的 JWT Token，替換訪客 Token。
-
-- **路由保護**：
-  - 設置一個 GuestGuard，允許訪客身份訪問特定路由。
-  - 在 JWT Payload 中加入 `role` 欄位，區分訪客（guest）與正式用戶（user）。
+把這些都視為 任務遊戲
+我們目前的環境都能做到嗎?
+還是要準備一些新工具或架構調整?

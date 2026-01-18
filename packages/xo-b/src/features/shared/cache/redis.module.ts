@@ -1,4 +1,4 @@
-﻿import { Global, Logger, Module } from '@nestjs/common'
+import { Global, Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import type { RedisOptions } from 'ioredis'
 import Redis from 'ioredis'
@@ -9,17 +9,17 @@ import { InjectionTokens } from '../providers/injection-tokens'
   providers: [
     {
       provide: InjectionTokens.RedisClient,
-      useFactory: (configService: ConfigService) => {
+      useFactory: (conf: ConfigService) => {
         const logger = new Logger('RedisModule')
-        const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
+        const storageType = conf.get<string>('STORAGE_TYPE', 'memory')
         if (storageType !== 'redis') {
           logger.log('Storage type is not redis, skipping connection.')
           return null
         }
-        const host = configService.get<string>('REDIS_HOST', 'localhost')
-        const port = configService.get<number>('REDIS_PORT', 6379)
-        const password = configService.get<string>('REDIS_PASSWORD')
-        const db = configService.get<number>('REDIS_DB', 0)
+        const host = conf.get<string>('REDIS_HOST', 'localhost')
+        const port = conf.get<number>('REDIS_PORT', 6379)
+        const password = conf.get<string>('REDIS_PASSWORD')
+        const db = conf.get<number>('REDIS_DB', 0)
         const redisOptions: RedisOptions = {
           host,
           port,
