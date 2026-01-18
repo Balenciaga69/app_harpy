@@ -4,6 +4,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
 import { Response } from 'express'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import { AuthResponseBuilder } from './builders/auth-response.builder'
 import {
   AuthenticatedRequest,
   LoginDto,
@@ -20,7 +21,6 @@ import { JwtRefreshGuard } from './user/jwt-refresh.guard'
 import { JwtStatefulAuthGuard } from './user/jwt-stateful-auth.guard'
 import { AuthenticatedUser } from './user/model/authenticated-user'
 import { UserService } from './user/user.service'
-import { AuthResponseBuilder } from './builders/auth-response.builder'
 @ApiTags('Authentication - 認證')
 @Controller('auth')
 export class AuthController {

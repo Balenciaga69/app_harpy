@@ -24,7 +24,7 @@ import { RunOptionsService } from './service/run-options.service'
       useFactory: (configService: ConfigService, cache: Cache) => {
         const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
         if (storageType === 'memory') {
-          return new InMemoryRunRepository()
+          return new InMemoryRunRepository(cache)
         }
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         return new RedisRunRepository(cache)
