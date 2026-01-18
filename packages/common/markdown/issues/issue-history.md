@@ -21,3 +21,4 @@
 ### Redis
 
 - 為何我要用 Hash 而不是 String 來存取資料?
+- 專案使用了 ioredis, keyv, cache-manager 這些各自的角色與關心的事有哪些?

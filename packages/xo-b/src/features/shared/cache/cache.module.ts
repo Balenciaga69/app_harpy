@@ -1,42 +1,34 @@
-import KeyvRedis from '@keyv/redis'
 import { CacheModule } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
+import Redis from 'ioredis'
 import { Keyv } from 'keyv'
+import { InjectionTokens } from '../providers/injection-tokens'
+import { RedisKeyvAdapter } from './redis-keyv.adapter'
+import { RedisModule } from './redis.module'
+
 @Module({
   imports: [
+    RedisModule,
     CacheModule.registerAsync({
       isGlobal: true,
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (conf: ConfigService) => {
+      inject: [ConfigService, InjectionTokens.RedisClient],
+      useFactory: (conf: ConfigService, redis: Redis | null) => {
         const storageType = conf.get<string>('STORAGE_TYPE', 'memory')
-        // 只在 storageType 為 'redis' 時才連接 Redis
-        if (storageType === 'redis') {
-          const host = conf.get<string>('REDIS_HOST') || 'localhost'
-          const port = parseInt(conf.get<string>('REDIS_PORT') || '6379', 10)
-          const password = conf.get<string>('REDIS_PASSWORD')
-          const db = conf.get<number>('REDIS_DB') || 0
-          try {
-            // eslint-disable-next-line no-console
-            console.log(`[CacheModule] Connecting to Redis: ${host}:${port} db=${db}`)
-            const connectionString = password
-              ? `redis://:${password}@${host}:${port}/${db}`
-              : `redis://${host}:${port}/${db}`
-            const store = new Keyv(new KeyvRedis(connectionString))
-            // eslint-disable-next-line no-console
-            console.log('[CacheModule] ✓ Redis store initialized successfully')
-            return {
-              stores: [store],
-              ttl: 600 * 1000, // 轉換為毫秒
-            }
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error('[CacheModule] ✗ Redis connection failed:', error)
-            throw error
+
+        // ✅ 如果有 ioredis instance，用 Keyv adapter 複用它
+        if (storageType === 'redis' && redis) {
+          const adapter = new RedisKeyvAdapter(redis, 'keyv')
+          const keyv = new Keyv({ store: adapter })
+          // eslint-disable-next-line no-console
+          console.log('[CacheModule] ✓ Using Redis with Keyv adapter (single connection)')
+          return {
+            stores: [keyv],
+            ttl: 600 * 1000, // 毫秒
           }
         }
-        // 使用 in-memory cache
+
+        // ✅ 降級到內存
         const memoryStore = new Keyv()
         // eslint-disable-next-line no-console
         console.log('[CacheModule] Using in-memory cache')

@@ -3,6 +3,7 @@
 ## _2025/01/18_
 
 - 研究 Redis TTL 與 事務機制
+- 研究 keyv-redis 與 nestjs cache manager 整合 並比對 ioredis 是否更符合需求
 
 ## _2025/01/17_
 
