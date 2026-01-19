@@ -6,7 +6,6 @@ import { Keyv } from 'keyv'
 import { InjectionTokens } from '../providers/injection-tokens'
 import { RedisKeyvAdapter } from './redis-keyv.adapter'
 import { RedisModule } from './redis.module'
-
 @Module({
   imports: [
     RedisModule,
@@ -15,7 +14,6 @@ import { RedisModule } from './redis.module'
       inject: [ConfigService, InjectionTokens.RedisClient],
       useFactory: (conf: ConfigService, redis: Redis | null) => {
         const storageType = conf.get<string>('STORAGE_TYPE', 'memory')
-
         // ✅ 如果有 ioredis instance，用 Keyv adapter 複用它
         if (storageType === 'redis' && redis) {
           const adapter = new RedisKeyvAdapter(redis, 'keyv')
@@ -27,7 +25,6 @@ import { RedisModule } from './redis.module'
             ttl: 600 * 1000, // 毫秒
           }
         }
-
         // ✅ 降級到內存
         const memoryStore = new Keyv()
         // eslint-disable-next-line no-console

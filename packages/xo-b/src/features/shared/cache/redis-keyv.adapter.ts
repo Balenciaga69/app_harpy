@@ -1,5 +1,4 @@
 import Redis from 'ioredis'
-
 /**
  * Keyv Redis Adapter
  *
@@ -16,11 +15,9 @@ export class RedisKeyvAdapter {
     private readonly redis: Redis,
     private readonly prefix: string = 'keyv'
   ) {}
-
   private makeKey(key: string): string {
     return `${this.prefix}:${key}`
   }
-
   async get(key: string): Promise<Record<string, unknown> | undefined> {
     try {
       const data = await this.redis.get(this.makeKey(key))
@@ -32,11 +29,9 @@ export class RedisKeyvAdapter {
       return undefined
     }
   }
-
   async set(key: string, value: Record<string, unknown>, ttl?: number): Promise<void> {
     const prefixedKey = this.makeKey(key)
     const serialized = JSON.stringify(value)
-
     if (ttl !== undefined) {
       // CacheManager 的 ttl 是毫秒，ioredis setex 需要秒
       const ttlSeconds = Math.floor(ttl / 1000)
@@ -45,7 +40,6 @@ export class RedisKeyvAdapter {
       await this.redis.set(prefixedKey, serialized)
     }
   }
-
   async delete(key: string): Promise<boolean> {
     try {
       const result = await this.redis.del(this.makeKey(key))
@@ -54,7 +48,6 @@ export class RedisKeyvAdapter {
       return false
     }
   }
-
   async clear(): Promise<void> {
     try {
       const pattern = `${this.prefix}:*`
@@ -66,7 +59,6 @@ export class RedisKeyvAdapter {
       // 清空失敗時靜默處理
     }
   }
-
   async has(key: string): Promise<boolean> {
     try {
       const result = await this.redis.exists(this.makeKey(key))

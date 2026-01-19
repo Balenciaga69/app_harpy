@@ -15,7 +15,6 @@ import { RunController } from './run.controller'
 import { runFeatureProviders } from './run.providers'
 import { RunApiService } from './service/run-api.service'
 import { RunOptionsService } from './service/run-options.service'
-
 @Module({
   imports: [SharedAppModule, SharedInfraModule, AuthModule, ShopModule, EquipmentModule],
   controllers: [RunController],
