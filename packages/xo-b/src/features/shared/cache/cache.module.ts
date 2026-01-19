@@ -14,7 +14,6 @@ import { RedisModule } from './redis.module'
       inject: [ConfigService, InjectionTokens.RedisClient],
       useFactory: (conf: ConfigService, redis: Redis | null) => {
         const storageType = conf.get<string>('STORAGE_TYPE', 'memory')
-        // ✅ 如果有 ioredis instance，用 Keyv adapter 複用它
         if (storageType === 'redis' && redis) {
           const adapter = new RedisKeyvAdapter(redis, 'keyv')
           const keyv = new Keyv({ store: adapter })
