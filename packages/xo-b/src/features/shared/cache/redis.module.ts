@@ -2,6 +2,7 @@ import { Global, Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import type { RedisOptions } from 'ioredis'
 import Redis from 'ioredis'
+
 import { InjectionTokens } from '../providers/injection-tokens'
 @Global()
 @Module({
@@ -9,21 +10,21 @@ import { InjectionTokens } from '../providers/injection-tokens'
   providers: [
     {
       provide: InjectionTokens.RedisClient,
-      useFactory: (conf: ConfigService) => {
+      useFactory: (config: ConfigService) => {
         const logger = new Logger('RedisModule')
-        const storageType = conf.get<string>('STORAGE_TYPE', 'memory')
+        const storageType = config.get<string>('STORAGE_TYPE', 'memory')
         if (storageType !== 'redis') {
           logger.log('Storage type is not redis, skipping connection.')
           return null
         }
-        const host = conf.get<string>('REDIS_HOST', 'localhost')
-        const port = conf.get<number>('REDIS_PORT', 6379)
-        const password = conf.get<string>('REDIS_PASSWORD')
-        const db = conf.get<number>('REDIS_DB', 0)
+        const host = config.get<string>('REDIS_HOST', 'localhost')
+        const port = config.get<number>('REDIS_PORT', 6379)
+        const password = config.get<string>('REDIS_PASSWORD')
+        const database = config.get<number>('REDIS_DB', 0)
         const redisOptions: RedisOptions = {
           host,
           port,
-          db,
+          db: database,
           retryStrategy: (times: number) => {
             // 指數退避重試策略
             const delay = Math.min(times * 50, 2000)
@@ -45,15 +46,15 @@ import { InjectionTokens } from '../providers/injection-tokens'
           redisOptions.password = password
         }
         const redis = new Redis(redisOptions)
-        const logPrefix = `[Redis][${host}:${port}][db=${db}]`
+        const logPrefix = `[Redis][${host}:${port}][db=${database}]`
         redis.on('connect', () => {
           logger.log(`${logPrefix} ✓ 已連接`)
         })
         redis.on('ready', () => {
           logger.log(`${logPrefix} ✓ 已準備好`)
         })
-        redis.on('error', (err: Error) => {
-          logger.error(`${logPrefix} ✗ 錯誤: ${err.message}`, err.stack)
+        redis.on('error', (error: Error) => {
+          logger.error(`${logPrefix} ✗ 錯誤: ${error.message}`, error.stack)
         })
         redis.on('reconnecting', (times: number) => {
           logger.warn(`${logPrefix} ⟳ 正在重新連線...（第 ${times ?? '?'} 次）`)

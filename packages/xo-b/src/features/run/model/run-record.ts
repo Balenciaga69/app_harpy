@@ -9,7 +9,7 @@ export enum RunStatus {
   Active = 'ACTIVE',
   Completed = 'COMPLETED',
 }
-export interface CreateRunRecordParams {
+export interface CreateRunRecordParameters {
   runId: string
   userId: string
 }

@@ -1,6 +1,5 @@
 $paths = @(
-   "G:\Coding\app_harpy\packages\xo-b\src",
-   "G:\Coding\app_harpy\packages\xo-c\src"
+   "G:\Coding\my_tool_vault\NewTools\TS\app_papa_legba\xx_nest\src"
    # "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\xo-b\src",
    # "C:\Users\wits\Desktop\GitRepo\app_harpy\packages\xo-c\src"
 )

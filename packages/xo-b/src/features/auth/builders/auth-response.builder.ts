@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Response } from 'express'
 import { CookieOptions } from 'express'
+
 import { JWT_CONFIG } from '../auth.config'
 import { LoginResponseDto, RefreshResponseDto } from '../dto/auth.dto'
 /**
@@ -126,9 +127,9 @@ export class AuthResponseBuilder {
    * @param cookies Cookie 設置陣列
    */
   setCookies(res: Response, cookies: Array<{ name: string; value: string; options: CookieOptions }>): void {
-    cookies.forEach(({ name, value, options }) => {
+    for (const { name, value, options } of cookies) {
       res.cookie(name, value, options)
-    })
+    }
   }
   /**
    * 在 Response 上清除認證相關 Cookie

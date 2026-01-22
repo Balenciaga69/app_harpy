@@ -7,7 +7,7 @@ export interface IEquipmentService {
   unequipRelicAndUpdateContexts(relicId: string): Result<void, string>
 }
 export class EquipmentService implements IEquipmentService {
-  constructor(private ctxHandler: IEquipmentContextHandler) {}
+  constructor(private contextHandler: IEquipmentContextHandler) {}
   public unequipRelicAndUpdateContexts(relicId: string): Result<void, string> {
     const validateResult = this.ctxHandler.validateRunStatus()
     if (validateResult.isFailure) {
@@ -23,7 +23,7 @@ export class EquipmentService implements IEquipmentService {
     const newCharacter = unequipResult.value!
     const newStash = addItemResult.value!
     this.ctxHandler.commitEquipmentTransaction({ character: newCharacter, stash: newStash })
-    return Result.success(undefined)
+    return Result.success()
   }
   public equipRelicAndUpdateContexts(relicId: string): Result<void, string> {
     const validateResult = this.ctxHandler.validateRunStatus()
@@ -38,6 +38,6 @@ export class EquipmentService implements IEquipmentService {
     const newStash = removeItemResult.value!
     const newCharacter = equipResult.value!
     this.ctxHandler.commitEquipmentTransaction({ character: newCharacter, stash: newStash })
-    return Result.success(undefined)
+    return Result.success()
   }
 }

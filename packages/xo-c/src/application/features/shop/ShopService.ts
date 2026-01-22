@@ -12,7 +12,7 @@ export interface IShopService {
 export class ShopService implements IShopService {
   constructor(
     private itemGenerationService: IItemGenerationService,
-    private ctxHandler: IShopContextHandler
+    private contextHandler: IShopContextHandler
   ) {}
   buyItem(itemId: string): Result<void, string> {
     const validateResult = this.ctxHandler.validateRunStatus()
@@ -32,7 +32,7 @@ export class ShopService implements IShopService {
       shop: shopResult.value!,
       stash: stashResult.value!,
     })
-    return Result.success(undefined)
+    return Result.success()
   }
   sellItem(itemId: string): Result<void, string> {
     const validateResult = this.ctxHandler.validateRunStatus()
@@ -47,14 +47,14 @@ export class ShopService implements IShopService {
       characterRecord: addResult.value!.record,
       stash: stashRemoveResult.value!,
     })
-    return Result.success(undefined)
+    return Result.success()
   }
   generateShopItems(): Result<void, string> {
     const { shop } = this.ctxHandler.loadShopDomainContexts()
     const start = shop.items.length
     const end = shop.config.shopSlotCount
     const items: ItemEntity[] = []
-    for (let i = start; i < end; i++) {
+    for (let index = start; index < end; index++) {
       const result = this.itemGenerationService.generateRandomItemFromShop()
       if (result.isFailure) return Result.fail(result.error!)
       items.push(result.value!)
@@ -67,7 +67,7 @@ export class ShopService implements IShopService {
     this.ctxHandler.commitGenerateShopItemsTransaction({
       shop: addedShop,
     })
-    return Result.success(undefined)
+    return Result.success()
   }
   refreshShopItems(): Result<void, string> {
     const validateResult = this.ctxHandler.validateRunStatus()
@@ -82,11 +82,11 @@ export class ShopService implements IShopService {
     this.ctxHandler.commitSellTransaction({
       characterRecord: deductResult.value!.record,
     })
-    return Result.success(undefined)
+    return Result.success()
   }
   refreshShopItemsBySystem(): Result<void, string> {
     const result = this.generateShopItems()
     if (result.isFailure) return Result.fail(result.error!)
-    return Result.success(undefined)
+    return Result.success()
   }
 }

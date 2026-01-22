@@ -39,7 +39,7 @@ export class ItemRollModifierStrategyFactory {
     const strategies: IItemRollModifierStrategy[] = []
     for (const strategyConfig of rewardConfig.modifierStrategies) {
       switch (strategyConfig.strategyId) {
-        case 'MOST_FREQUENT_TAG':
+        case 'MOST_FREQUENT_TAG': {
           strategies.push(
             new MostFrequentTagRewardModifierStrategy(
               this.configStoreAccessor,
@@ -48,7 +48,8 @@ export class ItemRollModifierStrategyFactory {
             )
           )
           break
-        case 'RARITY_PREFERENCE':
+        }
+        case 'RARITY_PREFERENCE': {
           const rarityMultipliers = rewardConfig.rarityMultipliers || {
             COMMON: 1,
             RARE: 1,
@@ -57,11 +58,14 @@ export class ItemRollModifierStrategyFactory {
           }
           strategies.push(new RarityRewardModifierStrategy(rarityMultipliers))
           break
-        case 'REVERSE_FREQUENT_TAG':
+        }
+        case 'REVERSE_FREQUENT_TAG': {
           strategies.push(new ReverseFrequentTagRewardModifierStrategy(this.configStoreAccessor, this.contextSnapshot))
           break
-        default:
+        }
+        default: {
           break
+        }
       }
     }
     return strategies

@@ -1,4 +1,4 @@
-cd "C:\Users\wits\Desktop\GitRepo\my_text_md\materials\trash\2025q4\interview_information\my_interview_record"
+cd "G:\Coding\my_tool_vault\NewTools\TS\app_papa_legba\xx_nest\src"
 # cd "C:\Users\wits\Desktop\GitRepo\app_harpy"
 # 定義配置數組，每個項目包含名稱、輸出文件名和路徑
 $configs = @(

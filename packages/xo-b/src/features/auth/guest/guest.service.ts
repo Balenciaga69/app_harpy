@@ -3,8 +3,9 @@ import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { Result } from 'src/from-xo-c'
-import { GuestSession } from './guest-session.entity'
+
 import { IGuestRepository } from './guest.repository'
+import { GuestSession } from './guest-session.entity'
 import { SessionExpirationPolicy } from './session-expiration.policy'
 @Injectable()
 export class GuestService {

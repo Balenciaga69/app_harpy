@@ -17,8 +17,8 @@ export class MostFrequentTagRewardModifierStrategy implements IItemRollModifierS
   aggregateModifiers(): ItemRollModifier[] {
     const tagFrequency = countEquippedTagOccurrences(this.configStoreAccessor, this.contextSnapshot)
     if (tagFrequency.size === 0) return []
-    const mostFrequentTag = Array.from(tagFrequency.entries()).reduce((prev, current) =>
-      current[1] > prev[1] ? current : prev
+    const mostFrequentTag = [...tagFrequency.entries()].reduce((previous, current) =>
+      current[1] > previous[1] ? current : previous
     )[0]
     return [
       {

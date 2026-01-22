@@ -18,7 +18,7 @@ export class RunService implements IRunService {
     if (advanceResult.isFailure) return Result.fail(advanceResult.error!)
     const newRun = advanceResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    return Result.success(undefined)
+    return Result.success()
   }
   deductRetry(): Result<void, string> {
     const run = this.runContextHandler.loadRunDomain()
@@ -26,7 +26,7 @@ export class RunService implements IRunService {
     if (deductResult.isFailure) return Result.fail(deductResult.error!)
     const newRun = deductResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    return Result.success(undefined)
+    return Result.success()
   }
   changeRunStatus(newStatus: RunStatus): Result<void, string> {
     const run = this.runContextHandler.loadRunDomain()
@@ -34,7 +34,7 @@ export class RunService implements IRunService {
     if (changeResult.isFailure) return Result.fail(changeResult.error!)
     const newRun = changeResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    return Result.success(undefined)
+    return Result.success()
   }
   endRun(): Result<void, string> {
     const run = this.runContextHandler.loadRunDomain()
@@ -42,7 +42,7 @@ export class RunService implements IRunService {
     if (endResult.isFailure) return Result.fail(endResult.error!)
     const newRun = endResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    return Result.success(undefined)
+    return Result.success()
   }
   addEncounteredEnemy(enemyId: string): Result<void, string> {
     const run = this.runContextHandler.loadRunDomain()
@@ -50,6 +50,6 @@ export class RunService implements IRunService {
     if (addResult.isFailure) return Result.fail(addResult.error!)
     const newRun = addResult.value!
     this.runContextHandler.commitRunChanges(newRun)
-    return Result.success(undefined)
+    return Result.success()
   }
 }

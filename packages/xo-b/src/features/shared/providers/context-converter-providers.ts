@@ -1,12 +1,13 @@
 ﻿import { Scope } from '@nestjs/common'
+
 import {
-  ContextToDomainConverter,
-  ItemEntityService,
   CharacterAggregateService,
-  IContextSnapshotAccessor,
-  IConfigStoreAccessor,
+  ContextToDomainConverter,
   ContextUnitOfWork,
+  IConfigStoreAccessor,
   IContextMutator,
+  IContextSnapshotAccessor,
+  ItemEntityService,
 } from '../../../from-xo-c'
 import { InjectionTokens } from './injection-tokens'
 export const contextConverterProviders = [

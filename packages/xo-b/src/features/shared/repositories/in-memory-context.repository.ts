@@ -1,4 +1,5 @@
 ﻿import { Injectable } from '@nestjs/common'
+
 import {
   ICharacterContext,
   IContextBatchRepository,
@@ -39,14 +40,14 @@ export class InMemoryContextRepository implements IContextBatchRepository {
     if (updates.shop) {
       this.store.set(`shop:${runId}`, updates.shop.context)
     }
-    return Promise.resolve({
+    return {
       success: true,
       runContext: updates.run?.context,
       stashContext: updates.stash?.context,
       characterContext: updates.character?.context,
       shopContext: updates.shop?.context,
       globalVersion: (globalVersion || 0) + 1,
-    })
+    }
   }
   getByKey(key: string): unknown {
     return this.store.get(key) ?? null
@@ -59,12 +60,12 @@ export class InMemoryContextRepository implements IContextBatchRepository {
     if (!runContext) {
       return null
     }
-    return Promise.resolve({
+    return {
       success: true,
       runContext,
       characterContext: (this.store.get(`character:${runId}`) as ICharacterContext | undefined) ?? undefined,
       stashContext: (this.store.get(`stash:${runId}`) as IStashContext | undefined) ?? undefined,
       shopContext: (this.store.get(`shop:${runId}`) as IShopContext | undefined) ?? undefined,
-    })
+    }
   }
 }

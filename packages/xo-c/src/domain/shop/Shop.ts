@@ -28,7 +28,7 @@ export class Shop {
     return this._config
   }
   public getItem(itemId: string): Result<ShopItemEntity> {
-    const foundItem = this._items.find((i) => i.itemEntity.record.id === itemId)
+    const foundItem = this._items.find((index) => index.itemEntity.record.id === itemId)
     if (!foundItem) return Result.fail(DomainErrorCode.商店_商店物品不存在)
     return Result.success(foundItem)
   }
@@ -49,7 +49,7 @@ export class Shop {
     return Result.success(new Shop([...this._items, ...shopItems], this._config))
   }
   removeItem(itemId: string): Result<Shop> {
-    const newItems = this._items.filter((i) => i.itemEntity.record.id !== itemId)
+    const newItems = this._items.filter((index) => index.itemEntity.record.id !== itemId)
     if (newItems.length === this._items.length) {
       return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }
@@ -62,13 +62,13 @@ export class Shop {
     if (this._items.length === 0) {
       return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }
-    const rarestItem = this._items.reduce((prev, current) => {
-      return current.itemEntity.template.rarity > prev.itemEntity.template.rarity ? current : prev
+    const rarestItem = this._items.reduce((previous, current) => {
+      return current.itemEntity.template.rarity > previous.itemEntity.template.rarity ? current : previous
     })
     return this.discountItem(rarestItem.itemEntity.record.id)
   }
   discountItem(itemId: string): Result<Shop, DomainErrorCode.商店_商店物品不存在> {
-    const itemIndex = this._items.findIndex((i) => i.itemEntity.record.id === itemId)
+    const itemIndex = this._items.findIndex((index) => index.itemEntity.record.id === itemId)
     if (itemIndex === -1) {
       return Result.fail(DomainErrorCode.商店_商店物品不存在)
     }

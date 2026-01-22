@@ -1,12 +1,13 @@
 ﻿import { Scope } from '@nestjs/common'
+
 import {
   AffixEntityService,
+  CharacterAggregateService,
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
-  UltimateEntityService,
   ItemEntityService,
   ProfessionEntityService,
-  CharacterAggregateService,
+  UltimateEntityService,
 } from '../../../from-xo-c'
 import { InjectionTokens } from './injection-tokens'
 export const contentGenerationProviders = [

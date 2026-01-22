@@ -27,7 +27,7 @@ export interface IPostCombatContextHandler {
     stash: Stash,
     selectedIndexes: number[]
   ): Result<RewardApplicationResult>
-  commitClaimRewardsAndAdvance(params: {
+  commitClaimRewardsAndAdvance(parameters: {
     updatedCharacter: Character
     updatedStash: Stash
     selectedRewardIndexes: number[]
@@ -59,11 +59,11 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     stash: Stash,
     selectedIndexes: number[]
   ): Result<RewardApplicationResult> {
-    const postCombatCtx = this.accessor.getPostCombatContext()
-    if (!postCombatCtx || postCombatCtx.result !== 'WIN') {
+    const postCombatContext = this.accessor.getPostCombatContext()
+    if (!postCombatContext || postCombatContext.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-    const availableRewards = postCombatCtx.detail.availableRewards
+    const availableRewards = postCombatContext.detail.availableRewards
     const applyRewardResult = selectedIndexes.reduce(
       (accumulatorResult, selectedIndex) => {
         if (accumulatorResult.isFailure) {
@@ -103,32 +103,32 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
   private createRelicEntityFromRecord(itemRecord: ItemRecord) {
     return this.itemEntityService.createRelicByRecord(itemRecord)
   }
-  public commitClaimRewardsAndAdvance(params: {
+  public commitClaimRewardsAndAdvance(parameters: {
     updatedCharacter: Character
     updatedStash: Stash
     selectedRewardIndexes: number[]
   }): Result<void, string> {
-    const postCombatCtx = this.accessor.getPostCombatContext()
-    if (!postCombatCtx) {
+    const postCombatContext = this.accessor.getPostCombatContext()
+    if (!postCombatContext) {
       return Result.fail(DomainErrorCode.PostCombat_上下文不存在)
     }
-    if (postCombatCtx.result !== 'WIN') {
+    if (postCombatContext.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-    const winCtx = postCombatCtx
-    const updatedPostCombatCtx: PostCombatContext = {
+    const winContext = postCombatContext
+    const updatedPostCombatContext: PostCombatContext = {
       result: 'WIN',
-      combatDifficulty: winCtx.combatDifficulty,
+      combatDifficulty: winContext.combatDifficulty,
       isPlayerConfirmed: true,
       detail: {
-        ...winCtx.detail,
-        selectedRewardIndexes: params.selectedRewardIndexes,
+        ...winContext.detail,
+        selectedRewardIndexes: parameters.selectedRewardIndexes,
       },
     }
     return this.transactionManager.commitClaimRewardsAndAdvance({
-      character: params.updatedCharacter,
-      stash: params.updatedStash,
-      postCombatContext: updatedPostCombatCtx,
+      character: parameters.updatedCharacter,
+      stash: parameters.updatedStash,
+      postCombatContext: updatedPostCombatContext,
     })
   }
   public endRun(): Result<void> {
@@ -136,6 +136,6 @@ export class PostCombatContextHandler implements IPostCombatContextHandler {
     if (result.isFailure) {
       return Result.fail(result.error!)
     }
-    return Result.success(undefined)
+    return Result.success()
   }
 }

@@ -34,7 +34,7 @@ export class ShopContextHandler implements IShopContextHandler {
     }
     if (updates.stash) {
       this.unitOfWork.patchStashContext({
-        items: updates.stash.listItems().map((i) => i.record),
+        items: updates.stash.listItems().map((index) => index.record),
       })
     }
     if (updates.shop) {
@@ -43,7 +43,7 @@ export class ShopContextHandler implements IShopContextHandler {
       })
     }
     this.unitOfWork.commit()
-    return Result.success(undefined)
+    return Result.success()
   }
   public commitSellTransaction(updates: { characterRecord?: CharacterRecord; stash?: Stash }) {
     if (updates.characterRecord) {
@@ -53,18 +53,18 @@ export class ShopContextHandler implements IShopContextHandler {
     }
     if (updates.stash) {
       this.unitOfWork.patchStashContext({
-        items: updates.stash.listItems().map((i) => i.record),
+        items: updates.stash.listItems().map((index) => index.record),
       })
     }
     this.unitOfWork.commit()
-    return Result.success(undefined)
+    return Result.success()
   }
   public commitGenerateShopItemsTransaction(updates: { shop: Shop }) {
     this.unitOfWork.patchShopContext({
       items: updates.shop.items.map((shopAgg) => shopAgg.record),
     })
     this.unitOfWork.commit()
-    return Result.success(undefined)
+    return Result.success()
   }
 }
 export interface IShopContextHandler {

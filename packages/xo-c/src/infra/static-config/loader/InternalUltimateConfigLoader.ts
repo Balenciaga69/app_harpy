@@ -8,6 +8,6 @@ export class InternalUltimateConfigLoader implements IUltimateConfigLoader {
     const dto: UltimateConfigDTO = {
       ultimateTemplates: UltimateTemplateList,
     }
-    return Promise.resolve(dto)
+    return dto;
   }
 }

@@ -9,15 +9,15 @@ export interface DetailedPricingParameters {
 }
 export type pricingParameters = Pick<DetailedPricingParameters, 'config' | 'difficulty' | 'rarity'>
 export const PriceHelper = {
-  calculateItemPrice(params: DetailedPricingParameters): number {
-    const { config, difficulty, rarity, isBuying, isDiscounted } = params
+  calculateItemPrice(parameters: DetailedPricingParameters): number {
+    const { config, difficulty, rarity, isBuying, isDiscounted } = parameters
     const basePrice = config.rarityPriceTable[rarity]
     const discountFactor = isDiscounted ? 1 - config.discountRate : 1
     const priceWithDifficulty = Math.floor(basePrice * (1 + difficulty * config.difficultyMultiplier)) * discountFactor
     return isBuying ? priceWithDifficulty : Math.floor(priceWithDifficulty * 1 - config.salePriceDepreciationRate)
   },
-  calculateDiscountedPrice(params: pricingParameters): number {
-    const { config, difficulty, rarity } = params
+  calculateDiscountedPrice(parameters: pricingParameters): number {
+    const { config, difficulty, rarity } = parameters
     return this.calculateItemPrice({
       config,
       difficulty,
@@ -26,8 +26,8 @@ export const PriceHelper = {
       isDiscounted: true,
     })
   },
-  calculateSalePrice(params: pricingParameters): number {
-    const { config, difficulty, rarity } = params
+  calculateSalePrice(parameters: pricingParameters): number {
+    const { config, difficulty, rarity } = parameters
     return this.calculateItemPrice({
       config,
       difficulty,

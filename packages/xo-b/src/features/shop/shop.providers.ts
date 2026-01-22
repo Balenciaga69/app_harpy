@@ -7,6 +7,7 @@ import {
   ShopContextHandler,
   ShopService,
 } from 'src/from-xo-c'
+
 import { InjectionTokens } from '../shared/providers/injection-tokens'
 export const shopFeatureProviders = [
   {

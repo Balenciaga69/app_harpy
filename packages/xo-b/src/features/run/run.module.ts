@@ -2,6 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { Cache } from 'cache-manager'
+
 import { AuthModule } from '../auth/auth.module'
 import { EquipmentModule } from '../equipment/equipment.module'
 import { InjectionTokens } from '../shared/providers/injection-tokens'
@@ -26,7 +27,7 @@ import { RunOptionsService } from './service/run-options.service'
         if (storageType === 'memory') {
           return new InMemoryRunRepository(cache)
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
         return new RedisRunRepository(cache)
       },
       inject: [ConfigService, CACHE_MANAGER],

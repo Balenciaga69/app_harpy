@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer'
+
 import { RunRecord, RunStatus } from '../model/run-record'
 export class RunRecordDto implements RunRecord {
   runId!: string

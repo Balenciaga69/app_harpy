@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common'
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common'
 import { Response } from 'express'
 @Catch(HttpException)
 export class ResultExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp()
-    const response = ctx.getResponse<Response>()
+    const context = host.switchToHttp()
+    const response = context.getResponse<Response>()
     const status = exception.getStatus()
     const exceptionResponse = exception.getResponse()
     response.status(status).json({

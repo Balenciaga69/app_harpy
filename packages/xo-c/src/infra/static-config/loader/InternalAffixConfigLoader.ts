@@ -9,6 +9,6 @@ export class InternalAffixConfigLoader implements IAffixConfigLoader {
       affixTemplates: AffixTemplateList,
       affixEffectTemplates: AffixEffectTemplateList,
     }
-    return Promise.resolve(dto)
+    return dto;
   }
 }

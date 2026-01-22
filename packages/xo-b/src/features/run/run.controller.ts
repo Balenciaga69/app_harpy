@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { ContextInitializationInterceptor } from 'src/features/shared/interceptors/context-initialization.interceptor'
+
 import { IsAuthenticatedGuard } from '../auth/auth.guard'
 import { GetUser } from '../auth/get-user.decorator'
 import { EquipmentService } from '../equipment/equipment.service'
@@ -56,13 +57,13 @@ export class RunController {
     if (!user.userId) throw new UnauthorizedException('MISSING_USER_ID')
     const result = await this.runService.initializeRunForUser(user.userId, dto)
     ResultToExceptionMapper.throwIfFailure(result)
-    const ctx = result.value!.contexts
+    const context = result.value!.contexts
     return {
       success: true,
       data: {
-        runId: ctx.runContext.runId,
-        professionId: ctx.characterContext.professionId,
-        seed: ctx.runContext.seed,
+        runId: context.runContext.runId,
+        professionId: context.characterContext.professionId,
+        seed: context.runContext.seed,
       },
     }
   }

@@ -4,11 +4,12 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
 import { Response } from 'express'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+
 import { AuthResponseBuilder } from './builders/auth-response.builder'
 import {
   AuthenticatedRequest,
-  LoginDto,
   GuestSessionResponseDto,
+  LoginDto,
   LoginResponseDto,
   RefreshResponseDto,
   RegisterDto,
@@ -47,19 +48,19 @@ export class AuthController {
   @ApiResponse({ status: 200, type: LoginResponseDto })
   async login(
     @Body() _dto: LoginDto,
-    @Request() req: AuthenticatedRequest,
+    @Request() request: AuthenticatedRequest,
     @Res({ passthrough: true }) res: Response
   ): Promise<LoginResponseDto> {
     // req.user 由 AuthGuard('local') 注入，dto 僅用於 Swagger 文件顯示
-    const result = await this.userService.login(req.user.userId, req.user.username)
+    const result = await this.userService.login(request.user.userId, request.user.username)
     ResultToExceptionMapper.throwIfFailure(result)
     const payload = result.value!
     // 使用 ResponseBuilder 統一管理 Cookie 與響應
     const { response, cookies } = this.responseBuilder.buildLoginResponse(
       payload.accessToken,
       payload.refreshToken,
-      req.user.userId,
-      req.user.username
+      request.user.userId,
+      request.user.username
     )
     this.responseBuilder.setCookies(res, cookies)
     return response

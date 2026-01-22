@@ -10,7 +10,7 @@ export class ItemStore implements IItemStore {
   private rewardRollConfigs: Map<string, RewardRollConfig> = new Map()
   private relics: Map<string, RelicTemplate> = new Map()
   getAllItemRollConstraints(): ItemRollConstraint[] {
-    return Array.from(this.itemRollConstraints.values())
+    return [...this.itemRollConstraints.values()]
   }
   getItemRollConstraint(id: string): ItemRollConstraint {
     const constraint = this.itemRollConstraints.get(id)
@@ -53,7 +53,7 @@ export class ItemStore implements IItemStore {
     return this.getAllRelics()
   }
   getAllRelics(): RelicTemplate[] {
-    return Array.from(this.relics.values())
+    return [...this.relics.values()]
   }
   getManyRelics(ids: string[]): RelicTemplate[] {
     return ids.map((id) => this.getRelic(id))

@@ -9,6 +9,6 @@ export class InternalEnemyConfigLoader implements IEnemyConfigLoader {
       enemyTemplates: EnemyTemplateList,
       spawnInfos: EnemyWeightList,
     }
-    return Promise.resolve(dto)
+    return dto;
   }
 }

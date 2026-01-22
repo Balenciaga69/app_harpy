@@ -4,10 +4,10 @@ import { IShopContext } from '../interface/IShopContext'
 import { IStashContext } from '../interface/IStashContext'
 import { IContextMutator, IContextSnapshotAccessor } from './AppContextService'
 export interface IContextUnitOfWork {
-  updateCharacterContext(ctx: ICharacterContext): IContextUnitOfWork
-  updateStashContext(ctx: IStashContext): IContextUnitOfWork
-  updateRunContext(ctx: IRunContext): IContextUnitOfWork
-  updateShopContext(ctx: IShopContext): IContextUnitOfWork
+  updateCharacterContext(context: ICharacterContext): IContextUnitOfWork
+  updateStashContext(context: IStashContext): IContextUnitOfWork
+  updateRunContext(context: IRunContext): IContextUnitOfWork
+  updateShopContext(context: IShopContext): IContextUnitOfWork
   patchCharacterContext(patch: Partial<ICharacterContext>): IContextUnitOfWork
   patchStashContext(patch: Partial<IStashContext>): IContextUnitOfWork
   patchRunContext(patch: Partial<IRunContext>): IContextUnitOfWork
@@ -25,23 +25,23 @@ export class ContextUnitOfWork implements IContextUnitOfWork {
     private contextMutator: IContextMutator,
     private contextAccessor: IContextSnapshotAccessor
   ) {}
-  updateCharacterContext(ctx: ICharacterContext): this {
-    this.characterContextUpdate = ctx
+  updateCharacterContext(context: ICharacterContext): this {
+    this.characterContextUpdate = context
     this.hasChanges = true
     return this
   }
-  updateStashContext(ctx: IStashContext): this {
-    this.stashContextUpdate = ctx
+  updateStashContext(context: IStashContext): this {
+    this.stashContextUpdate = context
     this.hasChanges = true
     return this
   }
-  updateRunContext(ctx: IRunContext): this {
-    this.runContextUpdate = ctx
+  updateRunContext(context: IRunContext): this {
+    this.runContextUpdate = context
     this.hasChanges = true
     return this
   }
-  updateShopContext(ctx: IShopContext): this {
-    this.shopContextUpdate = ctx
+  updateShopContext(context: IShopContext): this {
+    this.shopContextUpdate = context
     this.hasChanges = true
     return this
   }

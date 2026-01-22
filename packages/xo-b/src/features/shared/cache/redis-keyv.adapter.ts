@@ -20,11 +20,11 @@ export class RedisKeyvAdapter {
   async set(key: string, value: Record<string, unknown>, ttl?: number): Promise<void> {
     const prefixedKey = this.makeKey(key)
     const serialized = JSON.stringify(value)
-    if (ttl !== undefined) {
+    if (ttl === undefined) {
+      await this.redis.set(prefixedKey, serialized)
+    } else {
       const ttlSeconds = Math.floor(ttl / 1000)
       await this.redis.setex(prefixedKey, ttlSeconds, serialized)
-    } else {
-      await this.redis.set(prefixedKey, serialized)
     }
   }
   async delete(key: string): Promise<boolean> {
@@ -42,8 +42,7 @@ export class RedisKeyvAdapter {
       if (keys.length > 0) {
         await this.redis.del(...keys)
       }
-    } catch {
-    }
+    } catch {}
   }
   async has(key: string): Promise<boolean> {
     try {

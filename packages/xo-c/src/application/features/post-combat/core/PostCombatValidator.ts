@@ -13,24 +13,24 @@ export class PostCombatValidator implements IPostCombatValidator {
     return RunStatusGuard.requireStatus(status, 'POST_COMBAT')
   }
   public validateRewardSelection(selectedIndexes: number[]): Result<void, string> {
-    const postCombatCtx = this.accessor.getPostCombatContext()
-    if (!postCombatCtx) {
+    const postCombatContext = this.accessor.getPostCombatContext()
+    if (!postCombatContext) {
       return Result.fail(DomainErrorCode.PostCombat_上下文不存在)
     }
-    if (postCombatCtx.result !== 'WIN') {
+    if (postCombatContext.result !== 'WIN') {
       return Result.fail(DomainErrorCode.PostCombat_非勝利狀態)
     }
-    const { maxSelectableCount, availableRewards } = postCombatCtx.detail
+    const { maxSelectableCount, availableRewards } = postCombatContext.detail
     if (selectedIndexes.length !== maxSelectableCount) {
       return Result.fail(DomainErrorCode.PostCombat_獎勵數量不符)
     }
-    if (selectedIndexes.some((idx) => typeof idx !== 'number' || idx < 0 || idx >= availableRewards.length)) {
+    if (selectedIndexes.some((index) => typeof index !== 'number' || index < 0 || index >= availableRewards.length)) {
       return Result.fail(DomainErrorCode.PostCombat_無效獎勵索引)
     }
     const uniqueIndexes = new Set(selectedIndexes)
     if (uniqueIndexes.size !== selectedIndexes.length) {
       return Result.fail(DomainErrorCode.PostCombat_重複獎勵索引)
     }
-    return Result.success(undefined)
+    return Result.success()
   }
 }

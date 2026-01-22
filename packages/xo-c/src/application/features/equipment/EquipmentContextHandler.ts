@@ -34,9 +34,9 @@ export class EquipmentContextHandler implements IEquipmentContextHandler {
       ...updates.character.record,
     })
     this.unitOfWork.patchStashContext({
-      items: updates.stash.listItems().map((i) => i.record),
+      items: updates.stash.listItems().map((index) => index.record),
     })
     this.unitOfWork.commit()
-    return Result.success(undefined)
+    return Result.success()
   }
 }

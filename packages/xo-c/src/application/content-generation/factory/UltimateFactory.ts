@@ -1,22 +1,22 @@
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
-export interface UltimateRecordCreateParams {
+export interface UltimateRecordCreateParameters {
   difficulty: number
   sourceUnitId: string
   atCreated: AtCreatedInfo
 }
-function createUltimateRecord(templateId: string, params: UltimateRecordCreateParams): UltimateRecord {
+function createUltimateRecord(templateId: string, parameters: UltimateRecordCreateParameters): UltimateRecord {
   return {
     id: IdGeneratorHelper.generateUltimateRecordId(),
     templateId,
-    sourceUnitId: params.sourceUnitId,
+    sourceUnitId: parameters.sourceUnitId,
     pluginAffixRecord: [],
-    atCreated: params.atCreated,
+    atCreated: parameters.atCreated,
   }
 }
-function createManyUltimateRecords(templateIds: string[], params: UltimateRecordCreateParams): UltimateRecord[] {
-  return templateIds.map((templateId) => createUltimateRecord(templateId, params))
+function createManyUltimateRecords(templateIds: string[], parameters: UltimateRecordCreateParameters): UltimateRecord[] {
+  return templateIds.map((templateId) => createUltimateRecord(templateId, parameters))
 }
 export const UltimateRecordFactory = {
   createOne: createUltimateRecord,

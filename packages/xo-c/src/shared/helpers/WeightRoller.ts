@@ -8,11 +8,11 @@ export interface RollInfo<T = string> {
 const roll = <T = string>(seed: number, weightInfo: RollInfo<T>[]) => {
   let cumWeight = 0
   const validInfos: ValidInfo<T>[] = []
-  weightInfo.forEach((info) => {
-    if (info.weight <= 0) return
+  for (const info of weightInfo) {
+    if (info.weight <= 0) continue
     cumWeight += info.weight
     validInfos.push({ id: info.id, cumWeight })
-  })
+  }
   if (validInfos.length === 0) {
     return Result.fail<T>('無可用選項可供骰選')
   }
@@ -23,7 +23,7 @@ const getRolledId = <T = string>(seed: number, validInfos: ValidInfo<T>[], cumWe
   for (const { id, cumWeight } of validInfos) {
     if (randomValue < cumWeight) return id
   }
-  return validInfos[validInfos.length - 1].id
+  return validInfos.at(-1).id
 }
 export const WeightRoller = {
   roll,

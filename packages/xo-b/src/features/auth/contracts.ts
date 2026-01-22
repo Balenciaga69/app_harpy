@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from './user/model/authenticated-user'
 /**
  * JWT Access Token Payload
  * 用於每次 API 請求驗證
@@ -28,4 +27,5 @@ export interface AuthTokens {
   expiresIn: number
 }
 /** 認證後的用戶資訊 */
-export type { AuthenticatedUser }
+
+export { type AuthenticatedUser } from './user/model/authenticated-user'

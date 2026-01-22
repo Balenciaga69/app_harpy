@@ -14,7 +14,7 @@ export class ProfessionStore implements IProfessionStore {
     return this.professions.has(id)
   }
   getAllProfessions(): ProfessionTemplate[] {
-    return Array.from(this.professions.values())
+    return [...this.professions.values()]
   }
   setMany(professions: ProfessionTemplate[]): void {
     for (const profession of professions) {

@@ -1,5 +1,6 @@
 ﻿import { Inject, Injectable, Logger } from '@nestjs/common'
 import Redis from 'ioredis'
+
 import {
   ICharacterContext,
   IContextBatchRepository,
@@ -63,7 +64,7 @@ export class RedisContextRepository implements IContextBatchRepository {
       return null
     }
     try {
-      const [runData, characterData, stashData, shopData, globalVersionStr] = await Promise.all([
+      const [runData, characterData, stashData, shopData, globalVersionString] = await Promise.all([
         this.redis.get(this.getRunContextKey(runId)),
         this.redis.get(this.getCharacterContextKey(runId)),
         this.redis.get(this.getStashContextKey(runId)),
@@ -79,7 +80,7 @@ export class RedisContextRepository implements IContextBatchRepository {
         characterContext: characterData ? (JSON.parse(characterData) as ICharacterContext) : undefined,
         stashContext: stashData ? (JSON.parse(stashData) as IStashContext) : undefined,
         shopContext: shopData ? (JSON.parse(shopData) as IShopContext) : undefined,
-        globalVersion: globalVersionStr ? parseInt(globalVersionStr, 10) : 0,
+        globalVersion: globalVersionString ? Number.parseInt(globalVersionString, 10) : 0,
       }
     } catch (error) {
       this.logger.error(`getByRunId 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)

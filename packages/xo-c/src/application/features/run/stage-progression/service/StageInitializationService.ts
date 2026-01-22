@@ -50,10 +50,10 @@ export class StageInitializationService implements IStageInitializationService {
       temporaryContext: updatedTemporaryContext,
     })
     this.unitOfWork.commit()
-    return Result.success(undefined)
+    return Result.success()
   }
   private initializeEventStage(_stageNumber: number): Result<void, string> {
     // TODO: 實作事件初始化邏輯
-    return Result.success(undefined)
+    return Result.success()
   }
 }

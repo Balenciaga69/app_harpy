@@ -1,4 +1,5 @@
 ﻿import { Inject, Injectable, Logger } from '@nestjs/common'
+
 import { IAppContext, IContextBatchRepository } from '../../../from-xo-c'
 import { InjectionTokens } from '../providers/injection-tokens'
 type IConfigStore = IAppContext['configStore']

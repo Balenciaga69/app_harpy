@@ -7,17 +7,21 @@ function computeAggregatedValue(base: number, mods: readonly UnitStatModifier[])
   let lastSet: number | undefined = undefined
   for (const m of mods) {
     switch (m.operation) {
-      case 'ADD':
+      case 'ADD': {
         addSum += m.value
         break
-      case 'MULTIPLY':
+      }
+      case 'MULTIPLY': {
         multiplySum += m.value
         break
-      case 'SET':
+      }
+      case 'SET': {
         lastSet = m.value
         break
-      default:
+      }
+      default: {
         break
+      }
     }
   }
   let v = (base + addSum) * (1 + multiplySum)
@@ -35,8 +39,8 @@ export const UnitStatAggregate = (baseStats: UnitStats, modifiers: readonly Unit
   const fieldsWithMods = Object.keys(byField) as (keyof UnitStats)[]
   for (const field of fieldsWithMods) {
     const mods = byField[field] ?? []
-    const baseVal = Number(baseStats[field] ?? 0)
-    const aggregated = computeAggregatedValue(baseVal, mods)
+    const baseValue = Number(baseStats[field] ?? 0)
+    const aggregated = computeAggregatedValue(baseValue, mods)
     result[field] = aggregated
   }
   return result

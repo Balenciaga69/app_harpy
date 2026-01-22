@@ -1,21 +1,21 @@
 import { AffixRecord } from '../../../domain/affix/Affix'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
-export interface AffixRecordCreateParams {
+export interface AffixRecordCreateParameters {
   difficulty: number
   sourceUnitId: string
   atCreated: AtCreatedInfo
 }
-function createRecord(templateId: string, params: AffixRecordCreateParams): AffixRecord {
+function createRecord(templateId: string, parameters: AffixRecordCreateParameters): AffixRecord {
   return {
     id: IdGeneratorHelper.generateAffixRecordId(),
     templateId,
-    sourceUnitId: params.sourceUnitId,
-    atCreated: params.atCreated,
+    sourceUnitId: parameters.sourceUnitId,
+    atCreated: parameters.atCreated,
   }
 }
-function createManyRecords(templateIds: string[], params: AffixRecordCreateParams): AffixRecord[] {
-  return templateIds.map((templateId) => createRecord(templateId, params))
+function createManyRecords(templateIds: string[], parameters: AffixRecordCreateParameters): AffixRecord[] {
+  return templateIds.map((templateId) => createRecord(templateId, parameters))
 }
 export const AffixRecordFactory = {
   createOne: createRecord,

@@ -1,7 +1,7 @@
 import { ChapterLevel } from '../../shared/models/TemplateWeightInfo'
 export interface IEventStageProcessor {
-  canTrigger: (ctx: StageProcessorContext) => boolean
-  process: (ctx: StageProcessorContext) => void
+  canTrigger: (context: StageProcessorContext) => boolean
+  process: (context: StageProcessorContext) => void
 }
 export interface StageProcessorContext {
   readonly seed: number

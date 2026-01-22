@@ -6,6 +6,7 @@ import {
   EquipmentService as GameCoreEquipmentService,
   IContextSnapshotAccessor,
 } from 'src/from-xo-c'
+
 import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { EquipmentService } from './equipment.service'
 export const equipmentFeatureProviders = [

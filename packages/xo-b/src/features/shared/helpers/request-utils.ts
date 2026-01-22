@@ -1,12 +1,12 @@
 ﻿import { Request } from 'express'
 export function getRunIdFromRequest(request: Request): string | undefined {
   if (request.body && typeof request.body === 'object' && 'runId' in request.body) {
-    const val = (request.body as Record<string, unknown>).runId
-    if (typeof val === 'string') return val
+    const value = (request.body as Record<string, unknown>).runId
+    if (typeof value === 'string') return value
   }
   if (request.query && typeof request.query === 'object' && 'runId' in request.query) {
-    const val = (request.query as Record<string, unknown>).runId
-    if (typeof val === 'string') return val
+    const value = (request.query as Record<string, unknown>).runId
+    if (typeof value === 'string') return value
   }
   return undefined
 }

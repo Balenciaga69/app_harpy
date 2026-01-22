@@ -1,7 +1,7 @@
 import { JwtAccessPayload, JwtRefreshPayload } from '../../contracts'
 import { AuthenticatedUser } from '../model/authenticated-user'
-export class AuthenticatedUserBuilder {
-  static fromAccessPayload(payload: JwtAccessPayload): AuthenticatedUser {
+export const AuthenticatedUserBuilder = {
+  fromAccessPayload(payload: JwtAccessPayload): AuthenticatedUser {
     return {
       userId: payload.sub,
       username: payload.username,
@@ -9,8 +9,8 @@ export class AuthenticatedUserBuilder {
       deviceId: payload.deviceId,
       exp: payload.exp,
     }
-  }
-  static fromRefreshPayload(payload: JwtRefreshPayload, deviceId?: string): AuthenticatedUser {
+  },
+  fromRefreshPayload(payload: JwtRefreshPayload, deviceId?: string): AuthenticatedUser {
     return {
       userId: payload.sub,
       username: payload.username,
@@ -18,5 +18,5 @@ export class AuthenticatedUserBuilder {
       deviceId: deviceId,
       exp: payload.exp,
     }
-  }
+  },
 }

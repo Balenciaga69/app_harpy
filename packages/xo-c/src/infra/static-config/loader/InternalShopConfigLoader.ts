@@ -5,6 +5,6 @@ export class InternalShopConfigLoader implements IShopConfigLoader {
     const dto: ShopConfigDTO = {
       shopConfigs: ShopConfigList,
     }
-    return Promise.resolve(dto)
+    return dto;
   }
 }

@@ -1,6 +1,7 @@
 ﻿/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+
 import { InjectionTokens } from '../shared/providers/injection-tokens'
 import { IRunRepository } from './repository/run-repository'
 @Injectable()

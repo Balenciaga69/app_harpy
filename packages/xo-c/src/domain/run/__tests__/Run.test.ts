@@ -17,7 +17,7 @@ describe('Run', () => {
   })
   const createTestRun = (overrides?: Partial<IRunFields>): Run => {
     const baseFields: IRunFields = {
-      seed: 12345,
+      seed: 12_345,
       currentChapter: 1,
       currentStage: 1,
       encounteredEnemyIds: [],
@@ -36,7 +36,7 @@ describe('Run', () => {
   describe('基礎建構與取值', () => {
     it('應能正確建立 Run 實體', () => {
       const run = createTestRun()
-      expect(run.seed).toBe(12345)
+      expect(run.seed).toBe(12_345)
       expect(run.currentChapter).toBe(1)
       expect(run.currentStage).toBe(1)
       expect(run.remainingFailRetries).toBe(3)
@@ -129,12 +129,12 @@ describe('Run', () => {
     })
     it('從 COMPLETED 轉換任何狀態都應失敗', () => {
       const statuses: RunStatus[] = ['IDLE', 'PRE_COMBAT', 'IN_COMBAT', 'POST_COMBAT']
-      statuses.forEach((status) => {
+      for (const status of statuses) {
         const run = createTestRun({ status: 'COMPLETED' })
         const result = run.changeStatus(status)
         expect(result.isFailure).toBe(true)
         expect(result.error).toBe(DomainErrorCode.Run_已結束無法更改)
-      })
+      }
     })
   })
   describe('addEncounteredEnemy', () => {
@@ -186,18 +186,18 @@ describe('Run', () => {
       expect(result.error).toBe(DomainErrorCode.Run_已結束無法更改)
     })
     it('應能新增多個 Modifier', () => {
-      const mod1 = createTestModifier()
-      const mod2: ItemRollRarityModifier = {
+      const module1 = createTestModifier()
+      const module2: ItemRollRarityModifier = {
         type: 'RARITY',
         rarity: 'RARE',
-        multiplier: 2.0,
+        multiplier: 2,
         durationStages: 1,
       }
-      const run = createTestRun({ status: 'IDLE', rollModifiers: [mod1] })
-      const result = run.addRollModifier(mod2)
+      const run = createTestRun({ status: 'IDLE', rollModifiers: [module1] })
+      const result = run.addRollModifier(module2)
       expect(result.isSuccess).toBe(true)
       expect(result.value?.rollModifiers).toHaveLength(2)
-      expect(result.value?.rollModifiers).toContain(mod2)
+      expect(result.value?.rollModifiers).toContain(module2)
     })
   })
   describe('endRun', () => {
@@ -215,12 +215,12 @@ describe('Run', () => {
     })
     it('從任何非 COMPLETED 狀態都能結束', () => {
       const statuses: RunStatus[] = ['IDLE', 'PRE_COMBAT', 'IN_COMBAT', 'POST_COMBAT']
-      statuses.forEach((status) => {
+      for (const status of statuses) {
         const run = createTestRun({ status })
         const result = run.endRun()
         expect(result.isSuccess).toBe(true)
         expect(result.value?.status).toBe('COMPLETED')
-      })
+      }
     })
   })
   describe('不可變性', () => {

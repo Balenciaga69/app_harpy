@@ -6,21 +6,21 @@ export const aggregateModifiersByType = (
   type: ItemRollModifierType
 ): Map<string, number> => {
   const result = new Map<string, number>()
-  for (const mod of modifiers) {
-    if (mod.type !== type) continue
+  for (const module_ of modifiers) {
+    if (module_.type !== type) continue
     let key: string
     if (type === 'RARITY') {
-      const rarityMod = mod as unknown as { rarity: ItemRarity }
-      key = rarityMod.rarity
+      const rarityModule = module_ as unknown as { rarity: ItemRarity }
+      key = rarityModule.rarity
     } else if (type === 'TAG') {
-      const tagMod = mod as unknown as { tag: TagType }
-      key = tagMod.tag
+      const tagModule = module_ as unknown as { tag: TagType }
+      key = tagModule.tag
     } else {
-      const idMod = mod as unknown as { templateId: string }
-      key = idMod.templateId
+      const idModule = module_ as unknown as { templateId: string }
+      key = idModule.templateId
     }
     const current = result.get(key) ?? 1
-    result.set(key, current * mod.multiplier)
+    result.set(key, current * module_.multiplier)
   }
   return result
 }
@@ -44,14 +44,14 @@ export const calculateTemplateWeight = (
   baseWeight = 1
 ): number => {
   let weight = baseWeight
-  const idMod = modifiers.idMultipliers.get(template.id)
-  if (idMod !== undefined) weight *= idMod
+  const idModule = modifiers.idMultipliers.get(template.id)
+  if (idModule !== undefined) weight *= idModule
   for (const [tag, multiplier] of modifiers.tagMultipliers.entries()) {
     if (template.tags.includes(tag)) {
       weight *= multiplier
     }
   }
-  const rarityMod = modifiers.rarityMultipliers.get(template.rarity)
-  if (rarityMod !== undefined) weight *= rarityMod
+  const rarityModule = modifiers.rarityMultipliers.get(template.rarity)
+  if (rarityModule !== undefined) weight *= rarityModule
   return weight
 }

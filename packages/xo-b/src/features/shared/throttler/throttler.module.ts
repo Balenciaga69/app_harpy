@@ -1,6 +1,6 @@
 ﻿import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 @Module({
   imports: [
     ThrottlerModule.forRootAsync({

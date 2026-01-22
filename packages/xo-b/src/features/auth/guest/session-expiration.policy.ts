@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+
 import { SESSION_CONFIG } from '../auth.config'
 /**
  * Session 過期時間策略
@@ -7,7 +8,7 @@ import { SESSION_CONFIG } from '../auth.config'
  */
 @Injectable()
 export class SessionExpirationPolicy {
-  private readonly MAX_SESSION_LIFETIME_SECONDS = 86400 // 24 小時
+  private readonly MAX_SESSION_LIFETIME_SECONDS = 86_400 // 24 小時
   constructor(private readonly configService: ConfigService) {}
   /**
    * 計算過期時間

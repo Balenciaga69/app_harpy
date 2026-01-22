@@ -26,14 +26,14 @@ export class RunInitializationService {
     private readonly unitOfWork: IContextUnitOfWork,
     private readonly stageNodeService?: IStageNodeGenerationService
   ) {}
-  async initialize(params: RunInitializationParams): Promise<Result<IAppContext>> {
-    const professionResult = this.validateProfession(params.professionId)
+  async initialize(parameters: RunInitializationParameters): Promise<Result<IAppContext>> {
+    const professionResult = this.validateProfession(parameters.professionId)
     if (professionResult.isFailure) {
       return Result.fail(professionResult.error!)
     }
     const profession = professionResult.value!
-    const identifiers = this.generateRunIdentifiers(params.seed)
-    const contextsResult = this.assembleRunContexts(identifiers.runId, params, identifiers.seed, profession)
+    const identifiers = this.generateRunIdentifiers(parameters.seed)
+    const contextsResult = this.assembleRunContexts(identifiers.runId, parameters, identifiers.seed, profession)
     if (contextsResult.isFailure) {
       return Result.fail(contextsResult.error!)
     }
@@ -59,7 +59,7 @@ export class RunInitializationService {
   }
   private assembleRunContexts(
     runId: string,
-    params: RunInitializationParams,
+    parameters: RunInitializationParameters,
     seed: number,
     profession: ProfessionTemplate
   ): Result<{
@@ -70,19 +70,19 @@ export class RunInitializationService {
   }> {
     const stageService = this.stageNodeService ?? new StageNodeGenerationService()
     const characterId = `${runId}-char`
-    const startingRelicIdsResult = resolveStartingRelicIds(profession.startRelicIds, params.startingRelicIds)
+    const startingRelicIdsResult = resolveStartingRelicIds(profession.startRelicIds, parameters.startingRelicIds)
     if (startingRelicIdsResult.isFailure) return Result.fail(startingRelicIdsResult.error!)
     const startingRelicIds = startingRelicIdsResult.value!
     const relicRecordsResult = createRelicRecordsForInitialization(startingRelicIds, this.external, characterId)
     if (relicRecordsResult.isFailure) return Result.fail(relicRecordsResult.error!)
-    const ultimateRecordResult = createUltimateRecordForInitialization(params, profession, this.external, characterId)
+    const ultimateRecordResult = createUltimateRecordForInitialization(parameters, profession, this.external, characterId)
     if (ultimateRecordResult.isFailure) return Result.fail(ultimateRecordResult.error!)
     const runContextResult = buildRunContext(runId, seed, stageService)
     if (runContextResult.isFailure) return Result.fail(runContextResult.error!)
     const characterContext = buildCharacterContext(
       runId,
-      params.professionId,
-      params.characterName ?? 'Player',
+      parameters.professionId,
+      parameters.characterName ?? 'Player',
       relicRecordsResult.value!,
       ultimateRecordResult.value!
     )
@@ -102,10 +102,10 @@ export class RunInitializationService {
       .updateStashContext(contexts.stashContext)
       .updateShopContext(contexts.shopContext)
       .commit()
-    return Result.success(undefined)
+    return Result.success()
   }
 }
-export interface RunInitializationParams {
+export interface RunInitializationParameters {
   professionId: string
   characterName?: string
   startingRelicIds?: string[]

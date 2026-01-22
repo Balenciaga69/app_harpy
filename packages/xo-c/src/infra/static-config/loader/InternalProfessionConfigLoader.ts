@@ -8,6 +8,6 @@ export class InternalProfessionConfigLoader implements IProfessionConfigLoader {
     const dto: ProfessionConfigDTO = {
       professionTemplates: ProfessionTemplateList,
     }
-    return Promise.resolve(dto)
+    return dto;
   }
 }

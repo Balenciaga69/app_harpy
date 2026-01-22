@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid'
 import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
 import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
 import { Result } from 'src/from-xo-c'
+
 import { JWT_CONFIG, PASSWORD_CONFIG } from '../auth.config'
 import { AuthTokens, JwtAccessPayload } from '../contracts'
 import { SessionManager } from '../session-manager'

@@ -5,7 +5,7 @@ export class InitRunDto {
   @IsString()
   @MinLength(1)
   declare professionId: string
-  @ApiPropertyOptional({ example: 12345 })
+  @ApiPropertyOptional({ example: 12_345 })
   @IsOptional()
   @IsNumber()
   seed?: number

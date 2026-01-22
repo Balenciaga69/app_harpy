@@ -25,10 +25,10 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
         ...updates.character.record,
       })
       .patchStashContext({
-        items: updates.stash.listItems().map((i) => i.record),
+        items: updates.stash.listItems().map((index) => index.record),
       })
       .commit()
-    return Result.success(undefined)
+    return Result.success()
   }
   public commitRetryDeduction(remainingFailRetries: number): Result<void> {
     this.unitOfWork
@@ -36,7 +36,7 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
         remainingFailRetries,
       })
       .commit()
-    return Result.success(undefined)
+    return Result.success()
   }
   public updatePostCombatContext(updatedPostCombat: PostCombatContext): Result<void> {
     const currentRunContext = this.contextAccessor.getRunContext()
@@ -48,7 +48,7 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
       },
     }
     this.unitOfWork.updateRunContext(updatedRunContext).commit()
-    return Result.success(undefined)
+    return Result.success()
   }
   public commitClaimRewardsAndAdvance(updates: {
     character: Character
@@ -68,6 +68,6 @@ export class PostCombatTransactionManager implements IPostCombatTransactionManag
         },
       })
       .commit()
-    return Result.success(undefined)
+    return Result.success()
   }
 }

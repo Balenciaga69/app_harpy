@@ -3,11 +3,11 @@ import { UltimateRecord } from '../../../../domain/ultimate/Ultimate'
 import { DifficultyHelper } from '../../../../shared/helpers/DifficultyHelper'
 import { ApplicationErrorCode } from '../../../../shared/result/ErrorCodes'
 import { Result } from '../../../../shared/result/Result'
-import { AffixRecordCreateParams, AffixRecordFactory } from '../../../content-generation/factory/AffixFactory'
+import { AffixRecordCreateParams as AffixRecordCreateParameters, AffixRecordFactory } from '../../../content-generation/factory/AffixFactory'
 import { RelicRecordFactory } from '../../../content-generation/factory/RelicFactory'
 import { UltimateRecordFactory } from '../../../content-generation/factory/UltimateFactory'
 import { IRunExternalAdapter } from './RunExternalAdapter'
-import type { RunInitializationParams } from './RunInitializationService'
+import type { RunInitializationParams as RunInitializationParameters } from './RunInitializationService'
 export function resolveStartingRelicIds(
   startRelicIds: ReadonlyArray<string>,
   requestedRelics?: string[] | undefined
@@ -33,7 +33,7 @@ export function createRelicRecordsForInitialization(
     .filter((t): t is NonNullable<typeof t> => t !== undefined)
   if (relicTemplates.length === 0) return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
   const affixIds = relicTemplates.flatMap((template) => template.affixIds ?? [])
-  const initialAffixData: AffixRecordCreateParams = {
+  const initialAffixData: AffixRecordCreateParameters = {
     atCreated: { chapter: 1, stage: 1, difficulty: DifficultyHelper.getDifficultyFactor(1, 1) },
     difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
     sourceUnitId: characterId,
@@ -46,7 +46,7 @@ export function createRelicRecordsForInitialization(
   return Result.success(relicRecords)
 }
 export function createUltimateRecordForInitialization(
-  params: RunInitializationParams,
+  parameters: RunInitializationParameters,
   profession: ReturnType<IRunExternalAdapter['getProfession']>,
   external: IRunExternalAdapter,
   characterId: string
@@ -55,12 +55,12 @@ export function createUltimateRecordForInitialization(
   if (!startUltimateIds || startUltimateIds.length === 0) {
     return Result.fail(ApplicationErrorCode.初始化_起始大絕招無效)
   }
-  const ultimateId = params.startingUltimateId ?? startUltimateIds[0]
+  const ultimateId = parameters.startingUltimateId ?? startUltimateIds[0]
   const ultimateTemplate = external.getUltimate(ultimateId)
   if (!ultimateTemplate) {
     return Result.fail(ApplicationErrorCode.初始化_起始大絕招無效)
   }
-  const initialAffixData: AffixRecordCreateParams = {
+  const initialAffixData: AffixRecordCreateParameters = {
     atCreated: { chapter: 1, stage: 1, difficulty: DifficultyHelper.getDifficultyFactor(1, 1) },
     difficulty: DifficultyHelper.getDifficultyFactor(1, 1),
     sourceUnitId: characterId,

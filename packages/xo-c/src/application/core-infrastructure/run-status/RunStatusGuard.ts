@@ -13,7 +13,7 @@ const validateTransition = (current: RunStatus, next: RunStatus): Result<void, s
   if (!allowedNextStates?.includes(next)) {
     return Result.fail(DomainErrorCode.Run_非法狀態轉換)
   }
-  return Result.success(undefined)
+  return Result.success()
 }
 const requireStatus = (current: RunStatus, expectedStatus: RunStatus | RunStatus[]): Result<void, string> => {
   if (Array.isArray(expectedStatus)) {
@@ -25,7 +25,7 @@ const requireStatus = (current: RunStatus, expectedStatus: RunStatus | RunStatus
       return Result.fail(DomainErrorCode.Run_狀態不符)
     }
   }
-  return Result.success(undefined)
+  return Result.success()
 }
 export const RunStatusGuard = {
   validateTransition,

@@ -123,7 +123,7 @@ const affix_effect_necromancer_resurrection_double: AffixEffect = {
       type: 'STAT_MODIFY',
       stat: 'resurrectionChance',
       operation: 'MULTIPLY',
-      value: 2.0,
+      value: 2,
     },
   ],
 }

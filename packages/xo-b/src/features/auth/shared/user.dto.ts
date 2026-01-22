@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer'
+
 import { User } from '../user/model/user.entity'
 export class UserDto implements User {
   id!: string

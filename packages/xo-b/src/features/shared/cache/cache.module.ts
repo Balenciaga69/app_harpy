@@ -3,17 +3,18 @@ import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import Redis from 'ioredis'
 import { Keyv } from 'keyv'
+
 import { InjectionTokens } from '../providers/injection-tokens'
-import { RedisKeyvAdapter } from './redis-keyv.adapter'
 import { RedisModule } from './redis.module'
+import { RedisKeyvAdapter } from './redis-keyv.adapter'
 @Module({
   imports: [
     RedisModule,
     CacheModule.registerAsync({
       isGlobal: true,
       inject: [ConfigService, InjectionTokens.RedisClient],
-      useFactory: (conf: ConfigService, redis: Redis | null) => {
-        const storageType = conf.get<string>('STORAGE_TYPE', 'memory')
+      useFactory: (config: ConfigService, redis: Redis | null) => {
+        const storageType = config.get<string>('STORAGE_TYPE', 'memory')
         if (storageType === 'redis' && redis) {
           const adapter = new RedisKeyvAdapter(redis, 'keyv')
           const keyv = new Keyv({ store: adapter })

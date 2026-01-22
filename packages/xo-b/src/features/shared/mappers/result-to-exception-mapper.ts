@@ -1,11 +1,12 @@
 import {
   BadRequestException,
-  UnauthorizedException,
   ForbiddenException,
-  NotFoundException,
   InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { ApplicationErrorCode, DomainErrorCode, getErrorMessage, Result } from 'src/from-xo-c'
+
 import { ApiErrorCode, ApiErrorMessages } from '../errors/ApiErrorCode'
 type ErrorCodeUnion = DomainErrorCode | ApplicationErrorCode | ApiErrorCode | string
 export class ResultToExceptionMapper {
@@ -21,16 +22,21 @@ export class ResultToExceptionMapper {
     const message = this.getErrorMessage(errorCode)
     const statusCode = this.getStatusCode(errorCode)
     switch (statusCode) {
-      case 401:
+      case 401: {
         throw new UnauthorizedException({ error: errorCode, message })
-      case 403:
+      }
+      case 403: {
         throw new ForbiddenException({ error: errorCode, message })
-      case 404:
+      }
+      case 404: {
         throw new NotFoundException({ error: errorCode, message })
-      case 500:
+      }
+      case 500: {
         throw new InternalServerErrorException({ error: errorCode, message })
-      default:
+      }
+      default: {
         throw new BadRequestException({ error: errorCode, message })
+      }
     }
   }
   /** 根據錯誤代碼取得錯誤訊息 */

@@ -1,12 +1,13 @@
 ﻿import { Scope } from '@nestjs/common'
+
 import {
-  ItemConstraintService,
   IConfigStoreAccessor,
   IContextSnapshotAccessor,
+  ItemConstraintService,
+  ItemEntityService,
+  ItemGenerationService,
   ItemModifierAggregationService,
   ItemRollService,
-  ItemGenerationService,
-  ItemEntityService,
 } from '../../../from-xo-c'
 import { InjectionTokens } from './injection-tokens'
 export const itemGenerationProviders = [

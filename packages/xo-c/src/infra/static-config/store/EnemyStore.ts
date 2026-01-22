@@ -26,10 +26,10 @@ export class EnemyStore implements IEnemyStore {
     return this.enemySpawnInfos.has(id)
   }
   getEnemySpawnInfosByChapter(chapter: ChapterLevel): EnemySpawnInfo[] {
-    return Array.from(this.enemySpawnInfos.values()).filter((info) => info.chapters.includes(chapter))
+    return [...this.enemySpawnInfos.values()].filter((info) => info.chapters.includes(chapter))
   }
   getAllEnemySpawnInfos(): EnemySpawnInfo[] {
-    return Array.from(this.enemySpawnInfos.values())
+    return [...this.enemySpawnInfos.values()]
   }
   setMany(enemies: EnemyTemplate[]): void {
     for (const enemy of enemies) {

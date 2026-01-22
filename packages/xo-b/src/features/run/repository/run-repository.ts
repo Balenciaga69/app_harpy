@@ -1,6 +1,6 @@
-﻿import { CreateRunRecordParams, RunRecord } from '../model/run-record'
+﻿import { CreateRunRecordParams as CreateRunRecordParameters, RunRecord } from '../model/run-record'
 export interface IRunRepository {
-  createRunRecord(params: CreateRunRecordParams): Promise<RunRecord>
+  createRunRecord(parameters: CreateRunRecordParameters): Promise<RunRecord>
   getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null>
   getRunsByUserId(userId: string): Promise<RunRecord[]>
   getActiveRunByUserId(userId: string): Promise<RunRecord | null>

@@ -7,6 +7,7 @@
   InternalShopConfigLoader,
   InternalUltimateConfigLoader,
 } from 'src/from-xo-c'
+
 import { InjectionTokens } from './injection-tokens'
 export const configStoreProviders = [
   {

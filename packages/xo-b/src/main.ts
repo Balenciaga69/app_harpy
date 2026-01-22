@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import cookieParser from 'cookie-parser'
+
 import { AppModule } from './features/app/app.module'
 import { AllExceptionsFilter } from './features/shared/filters/all-exceptions.filter'
 import { ResultExceptionFilter } from './features/shared/filters/result-exception.filter'

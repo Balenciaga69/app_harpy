@@ -7,7 +7,7 @@ export class RarityRewardModifierStrategy implements IItemRollModifierStrategy {
     this.rarityMultipliers = new Map(Object.entries(rarityMultipliers) as [ItemRarity, number][])
   }
   aggregateModifiers(): ItemRollModifier[] {
-    return Array.from(this.rarityMultipliers.entries()).map(([rarity, multiplier]) => ({
+    return [...this.rarityMultipliers.entries()].map(([rarity, multiplier]) => ({
       type: 'RARITY' as const,
       rarity,
       multiplier,

@@ -1,9 +1,10 @@
 ﻿import { Inject, Injectable } from '@nestjs/common'
 import { RunInitializationService } from 'src/from-xo-c'
+
 import { InjectionTokens } from '../../shared/providers/injection-tokens'
-import { CreateRunRecordParams } from '../model/run-record'
+import { CreateRunRecordParams as CreateRunRecordParameters } from '../model/run-record'
 import type { IRunRepository } from '../repository/run-repository'
-type InitializeRunForUserParams = {
+type InitializeRunForUserParameters = {
   professionId: string
   seed?: number
   startingRelicIds?: string[]
@@ -14,16 +15,16 @@ export class RunApiService {
     private readonly runInitializationService: RunInitializationService,
     @Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository
   ) {}
-  async initializeRunForUser(userId: string, params: InitializeRunForUserParams) {
+  async initializeRunForUser(userId: string, parameters: InitializeRunForUserParameters) {
     const result = await this.runInitializationService.initialize({
-      professionId: params.professionId,
-      seed: params.seed,
-      startingRelicIds: params.startingRelicIds,
+      professionId: parameters.professionId,
+      seed: parameters.seed,
+      startingRelicIds: parameters.startingRelicIds,
     })
     if (result.isFailure) return result
     const appContext = result.value!
     const runId = appContext.contexts.runContext.runId
-    const runRecord: CreateRunRecordParams = {
+    const runRecord: CreateRunRecordParameters = {
       runId,
       userId,
     }

@@ -14,7 +14,7 @@ export class ReverseFrequentTagRewardModifierStrategy implements IItemRollModifi
   aggregateModifiers(): ItemRollModifier[] {
     const tagFrequency = countEquippedTagOccurrences(this.configStoreAccessor, this.contextSnapshot)
     if (tagFrequency.size === 0) return []
-    const sortedTags = Array.from(tagFrequency.entries())
+    const sortedTags = [...tagFrequency.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, this.topN)
       .map(([tag]) => tag)

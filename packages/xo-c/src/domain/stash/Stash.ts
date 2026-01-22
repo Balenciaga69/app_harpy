@@ -26,14 +26,14 @@ export class Stash {
     return Result.success(new Stash([...this.items, item], this.capacity))
   }
   public removeItem(itemId: string): Result<Stash, DomainErrorCode.倉庫_物品不存在> {
-    const newItems = this.items.filter((i) => i.record.id !== itemId)
+    const newItems = this.items.filter((index) => index.record.id !== itemId)
     if (newItems.length === this.items.length) {
       return Result.fail(DomainErrorCode.倉庫_物品不存在)
     }
     return Result.success(new Stash(newItems, this.capacity))
   }
   public getItem(itemId: string): ItemEntity | null {
-    const item = this._items.find((i) => i.record.id === itemId) || null
+    const item = this._items.find((index) => index.record.id === itemId) || null
     if (!item) return null
     return item
   }
@@ -50,7 +50,7 @@ export class Stash {
     return Result.success(new Stash(this.items, newCapacity))
   }
   public hasItem(itemId: string): boolean {
-    return this._items.some((i) => i.record.id === itemId)
+    return this._items.some((index) => index.record.id === itemId)
   }
   public isAtCapacity(): boolean {
     return this._items.length >= this._capacity

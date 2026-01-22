@@ -23,11 +23,11 @@ export class ItemConstraintService implements IItemConstraintService {
     }
     const hasConstraint = itemStore.hasItemRollConstraint(templateId)
     if (!hasConstraint) {
-      return Result.success(undefined)
+      return Result.success()
     }
     const constraint = itemStore.getItemRollConstraint(templateId)
     if (!constraint) {
-      return Result.success(undefined)
+      return Result.success()
     }
     if (constraint.chapters && !constraint.chapters.includes(runContext.currentChapter)) {
       return Result.fail(ApplicationErrorCode.物品_章節不允許此物品)
@@ -46,7 +46,7 @@ export class ItemConstraintService implements IItemConstraintService {
     if ((constraint.enemyIds?.length ?? 0) > 0) {
       return Result.fail(ApplicationErrorCode.物品_物品受敵人限制)
     }
-    return Result.success(undefined)
+    return Result.success()
   }
   getAvailableTemplates(itemType: ItemType, rarity: ItemRarity): ItemTemplate[] {
     if (itemType !== 'RELIC') return []

@@ -14,7 +14,7 @@ export class ShopStore implements IShopStore {
     return this.shopConfigs.has(id)
   }
   getAllShopConfigs(): ShopConfig[] {
-    return Array.from(this.shopConfigs.values())
+    return [...this.shopConfigs.values()]
   }
   setMany(shopConfigs: ShopConfig[]): void {
     for (const config of shopConfigs) {

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString, MinLength } from 'class-validator'
 import { Request } from 'express'
+
 import { AuthenticatedUser } from '../user/model/authenticated-user'
 /** 登入請求 DTO */
 export class LoginDto {

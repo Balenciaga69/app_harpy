@@ -23,10 +23,10 @@ export interface IContextSnapshotAccessor {
   getRunStatus(): IRunContext['status']
 }
 export interface IContextMutator {
-  setRunContext(ctx: IRunContext): void
-  setCharacterContext(ctx: ICharacterContext): void
-  setStashContext(ctx: IStashContext): void
-  setShopContext(ctx: IShopContext): void
+  setRunContext(context: IRunContext): void
+  setCharacterContext(context: ICharacterContext): void
+  setStashContext(context: IStashContext): void
+  setShopContext(context: IShopContext): void
 }
 export class ConfigStoreAccessorImpl implements IConfigStoreAccessor {
   constructor(private context: IAppContext) {}
@@ -78,17 +78,17 @@ export class ContextMutatorImpl implements IContextMutator {
     private onContextChange: (next: IAppContext) => void | Promise<void>,
     private currentContext: IAppContext
   ) {}
-  setRunContext(ctx: IRunContext): void {
-    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, runContext: ctx } })
+  setRunContext(context: IRunContext): void {
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, runContext: context } })
   }
-  setCharacterContext(ctx: ICharacterContext): void {
-    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, characterContext: ctx } })
+  setCharacterContext(context: ICharacterContext): void {
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, characterContext: context } })
   }
-  setStashContext(ctx: IStashContext): void {
-    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, stashContext: ctx } })
+  setStashContext(context: IStashContext): void {
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, stashContext: context } })
   }
-  setShopContext(ctx: IShopContext): void {
-    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, shopContext: ctx } })
+  setShopContext(context: IShopContext): void {
+    this.updateContext({ ...this.currentContext, contexts: { ...this.currentContext.contexts, shopContext: context } })
   }
   private updateContext(next: IAppContext): void {
     this.currentContext = next

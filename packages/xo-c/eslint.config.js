@@ -3,6 +3,9 @@ import base from '../../eslint.base.js' // 導入 monorepo 共用 ESLint 設定
 import tseslint from '@typescript-eslint/eslint-plugin' // TypeScript ESLint 插件
 import tsParser from '@typescript-eslint/parser' // TypeScript 解析器
 import boundaries from 'eslint-plugin-boundaries' // 架構邊界檢查插件
+import simpleImportSort from 'eslint-plugin-simple-import-sort' // 自動排序 import
+import unicorn from 'eslint-plugin-unicorn' // 現代化最佳實踐
+import sonarjs from 'eslint-plugin-sonarjs' // 偵測程式碼異味
 
 export default [
   base, // 應用共用 ESLint 設定
@@ -20,9 +23,9 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint, // TypeScript ESLint 插件
       boundaries, // 架構邊界檢查
-      // simpleImportSort, // [可選] 自動排序 import
-      // sonarjs, // [可選] 異味代碼檢查
-      // 'unused-imports', // [可選] 自動清理未用 import
+      'simple-import-sort': simpleImportSort, // 自動排序 import
+      unicorn, // 現代化最佳實踐
+      sonarjs, // 偵測程式碼異味
     },
     settings: {
       'import/resolver': {
@@ -58,6 +61,40 @@ export default [
           ],
         },
       ],
+      // ===== 強制 Import/Export 順序 =====
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+      // ===== 強制函數回傳值類型 =====
+      '@typescript-eslint/explicit-function-return-type': [
+        'warn', // 改為 warn，允許代碼編譯但會收到警告
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+        },
+      ],
+      // ===== 邏輯複雜度限制 =====
+      'complexity': ['warn', 10], // 一個函數內最多 10 條邏輯分支
+      'max-depth': ['warn', 3], // 嵌套層級最多 3 層
+      'max-lines-per-function': ['warn', 50], // 單個函數不超過 50 行
+      // ===== 防止循環引用 =====
+      'import/no-cycle': 'error',
+      // 'import/no-unused-modules': ['warn', { unusedExports: true }], // 與 flat config 不兼容
+      // ===== Unicorn 現代化最佳實踐 =====
+      ...unicorn.configs.recommended.rules,
+      'unicorn/filename-case': 'off', // 允許當前的命名約定
+      'unicorn/prevent-abbreviations': 'warn', // 降低為警告
+      'unicorn/consistent-function-scoping': 'warn', // 降低為警告
+      'unicorn/no-array-reduce': 'warn', // 降低為警告
+      'unicorn/no-array-sort': 'warn', // 降低為警告
+      'unicorn/no-null': 'warn', // 降低為警告
+      'unicorn/no-empty-file': 'warn', // 降低為警告
+      // ===== SonarJS 程式碼異味檢查 =====
+      ...sonarjs.configs.recommended.rules,
+      'sonarjs/todo-tag': 'warn', // TODO 標籤降低為警告
+      'sonarjs/pseudo-random': 'warn', // 偽隨機降低為警告
+      'sonarjs/reduce-initial-value': 'warn', // 降低為警告
+      'sonarjs/void-use': 'warn', // 降低為警告
     },
   },
   {

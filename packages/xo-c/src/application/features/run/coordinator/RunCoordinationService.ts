@@ -19,6 +19,6 @@ export class RunCoordinationService implements IRunCoordinationService {
     this.runContextHandler.commitRunChanges(newRun)
     const initResult = this.stageInitializationService.initializeStage(stageNumber)
     if (initResult.isFailure) return Result.fail(initResult.error!)
-    return Result.success(undefined)
+    return Result.success()
   }
 }

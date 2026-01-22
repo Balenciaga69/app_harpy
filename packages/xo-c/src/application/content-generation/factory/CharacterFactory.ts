@@ -3,7 +3,7 @@ import { RelicRecord } from '../../../domain/item/Item'
 import { UltimateRecord } from '../../../domain/ultimate/Ultimate'
 import { AtCreatedInfo } from '../../../shared/models/BaseInstanceFields'
 import { IdGeneratorHelper } from '../../core-infrastructure/id/idGeneratorHelpers'
-export interface CharacterRecordCreateParams {
+export interface CharacterRecordCreateParameters {
   difficulty: number
   sourceUnitId: string
   atCreated: AtCreatedInfo
@@ -15,16 +15,16 @@ export interface CharacterRecordCreateParams {
   currentLoad: number
   gold: number
 }
-function createCharacterRecord(professionId: string, params: CharacterRecordCreateParams): CharacterRecord {
+function createCharacterRecord(professionId: string, parameters: CharacterRecordCreateParameters): CharacterRecord {
   const record: CharacterRecord = {
     id: IdGeneratorHelper.generateCharacterId(),
-    name: params.name,
+    name: parameters.name,
     professionId,
-    relics: params.relics,
-    ultimate: params.ultimate,
-    gold: params.gold,
-    loadCapacity: params.loadCapacity,
-    currentLoad: params.currentLoad,
+    relics: parameters.relics,
+    ultimate: parameters.ultimate,
+    gold: parameters.gold,
+    loadCapacity: parameters.loadCapacity,
+    currentLoad: parameters.currentLoad,
   }
   return record
 }

@@ -18,24 +18,24 @@ export class PostCombatProcessor {
     private transactionManager: IPostCombatTransactionManager
   ) {}
   public process(): Result<void> {
-    const postCombatCtx = this.contextAccessor.getPostCombatContext()
-    if (!postCombatCtx) {
+    const postCombatContext = this.contextAccessor.getPostCombatContext()
+    if (!postCombatContext) {
       return Result.fail(ApplicationErrorCode.初始化_起始聖物無效)
     }
-    if (postCombatCtx.result === 'WIN') {
-      return this.handleWin(postCombatCtx)
+    if (postCombatContext.result === 'WIN') {
+      return this.handleWin(postCombatContext)
     }
-    if (postCombatCtx.result === 'LOSE') {
-      return this.handleLose(postCombatCtx)
+    if (postCombatContext.result === 'LOSE') {
+      return this.handleLose(postCombatContext)
     }
-    return Result.success(undefined)
+    return Result.success()
   }
-  private handleWin(postCombatCtx: PostCombatContext): Result<void> {
+  private handleWin(postCombatContext: PostCombatContext): Result<void> {
     const character = this.postCombatDomainConverter.convertCharacterContextToDomain()
     const stash = this.postCombatDomainConverter.convertStashContextToDomain()
     const rewardContext: RewardGenerationContext = {
       character,
-      difficulty: postCombatCtx.combatDifficulty,
+      difficulty: postCombatContext.combatDifficulty,
       stash,
     }
     const rewardResult = this.rewardFactory.createRewards(rewardContext.difficulty)
@@ -43,23 +43,22 @@ export class PostCombatProcessor {
       return Result.fail(rewardResult.error!)
     }
     const updatedPostCombat = {
-      ...(postCombatCtx as PostCombatWinContext),
+      ...(postCombatContext as PostCombatWinContext),
       detail: {
-        ...(postCombatCtx as PostCombatWinContext).detail,
+        ...(postCombatContext as PostCombatWinContext).detail,
         availableRewards: rewardResult.value!,
       },
     }
     this.transactionManager.updatePostCombatContext(updatedPostCombat)
-    return Result.success(undefined)
+    return Result.success()
   }
-  private handleLose(postCombatCtx: PostCombatLoseContext): Result<void> {
-    if (postCombatCtx.combatDifficulty === 'BOSS' || postCombatCtx.combatDifficulty === 'ENDLESS') {
-    } else {
+  private handleLose(postCombatContext: PostCombatLoseContext): Result<void> {
+    if (postCombatContext.combatDifficulty === 'BOSS' || postCombatContext.combatDifficulty === 'ENDLESS') {} else {
       const currentRetries = this.contextAccessor.getRemainingFailRetries()
-      const retryCountToDeduct = postCombatCtx.detail.retryCountToDeduct || 1
+      const retryCountToDeduct = postCombatContext.detail.retryCountToDeduct || 1
       const newRemainingRetries = Math.max(0, currentRetries - retryCountToDeduct)
       this.transactionManager.commitRetryDeduction(newRemainingRetries)
     }
-    return Result.success(undefined)
+    return Result.success()
   }
 }

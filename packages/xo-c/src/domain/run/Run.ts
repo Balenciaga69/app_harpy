@@ -68,7 +68,7 @@ export class Run implements IRunFields, IRunBehavior {
     if (this._status === 'COMPLETED') {
       return Result.fail(DomainErrorCode.Run_已結束無法更改)
     }
-    return Result.success(undefined)
+    return Result.success()
   }
   deductRetry(): Result<Run> {
     if (this.isRunEnded().isFailure) return Result.fail(this.isRunEnded().error!)

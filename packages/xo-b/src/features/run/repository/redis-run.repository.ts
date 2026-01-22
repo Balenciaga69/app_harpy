@@ -2,26 +2,27 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache } from 'cache-manager'
 import { plainToInstance } from 'class-transformer'
-import { CreateRunRecordParams, RunRecord, RunStatus } from '../model/run-record'
+
+import { CreateRunRecordParams as CreateRunRecordParameters, RunRecord, RunStatus } from '../model/run-record'
 import { RunRecordDto } from '../shared/run-record.dto'
 import { IRunRepository } from './run-repository'
 @Injectable()
 export class RedisRunRepository implements IRunRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
-  async createRunRecord(params: CreateRunRecordParams): Promise<RunRecord> {
+  async createRunRecord(parameters: CreateRunRecordParameters): Promise<RunRecord> {
     const record: RunRecord = {
-      runId: params.runId,
-      userId: params.userId,
+      runId: parameters.runId,
+      userId: parameters.userId,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       status: RunStatus.Active,
     }
-    const ttl = 86400 * 10 * 1000 // 10 days in ms
-    await this.cache.set(`run:${params.runId}`, record, ttl)
-    const existingRuns = await this.cache.get<string[]>(`user:${params.userId}:runs`)
-    const runIds = existingRuns ? [...new Set([...existingRuns, params.runId])] : [params.runId]
-    await this.cache.set(`user:${params.userId}:runs`, runIds, ttl)
-    await this.cache.set(`user:${params.userId}:active-run`, params.runId, ttl)
+    const ttl = 86_400 * 10 * 1000 // 10 days in ms
+    await this.cache.set(`run:${parameters.runId}`, record, ttl)
+    const existingRuns = await this.cache.get<string[]>(`user:${parameters.userId}:runs`)
+    const runIds = existingRuns ? [...new Set([...existingRuns, parameters.runId])] : [parameters.runId]
+    await this.cache.set(`user:${parameters.userId}:runs`, runIds, ttl)
+    await this.cache.set(`user:${parameters.userId}:active-run`, parameters.runId, ttl)
     return record
   }
   async getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null> {
@@ -56,7 +57,7 @@ export class RedisRunRepository implements IRunRepository {
       status: status as RunStatus,
       updatedAt: Date.now(),
     }
-    const ttl = 86400 * 10 * 1000
+    const ttl = 86_400 * 10 * 1000
     await this.cache.set(`run:${runId}`, updatedRecord, ttl)
   }
   async deleteRunRecord(runId: string): Promise<void> {
@@ -73,10 +74,6 @@ export class RedisRunRepository implements IRunRepository {
     const runIds = await this.cache.get<string[]>(`user:${userId}:runs`)
     if (!runIds) return
     const updated = runIds.filter((id) => id !== runId)
-    if (updated.length > 0) {
-      await this.cache.set(`user:${userId}:runs`, updated)
-    } else {
-      await this.cache.del(`user:${userId}:runs`)
-    }
+    await (updated.length > 0 ? this.cache.set(`user:${userId}:runs`, updated) : this.cache.del(`user:${userId}:runs`))
   }
 }

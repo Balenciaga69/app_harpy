@@ -1,6 +1,7 @@
 ﻿import { Module, Scope } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import Redis from 'ioredis'
+
 import { IContextBatchRepository } from '../../from-xo-c'
 import { RedisModule } from './cache/redis.module'
 import { ContextManager } from './context/context-manager'

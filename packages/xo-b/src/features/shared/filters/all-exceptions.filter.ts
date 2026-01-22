@@ -12,9 +12,9 @@ interface ApiErrorResponse {
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger('AllExceptionsFilter')
   catch(exception: unknown, host: ArgumentsHost): void {
-    const ctx = host.switchToHttp()
-    const request = ctx.getRequest<Request>()
-    const response = ctx.getResponse<Response>()
+    const context = host.switchToHttp()
+    const request = context.getRequest<Request>()
+    const response = context.getResponse<Response>()
     const status = this.getStatus(exception)
     const errorResponse = this.buildErrorResponse(exception, request)
     this.logError(exception, request, status)

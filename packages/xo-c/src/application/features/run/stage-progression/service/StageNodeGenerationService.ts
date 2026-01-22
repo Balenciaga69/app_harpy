@@ -16,8 +16,8 @@ export class StageNodeGenerationService implements IStageNodeGenerationService {
   private create(seed: number): StageNodeMap {
     const result: Record<number, StageType> = {}
     const rngHelper = new RandomHelper(seed)
-    for (let i = 1; i <= LEVEL_COUNT; i++) {
-      result[i] = this.determineStageType(i, rngHelper)
+    for (let index = 1; index <= LEVEL_COUNT; index++) {
+      result[index] = this.determineStageType(index, rngHelper)
     }
     return result
   }

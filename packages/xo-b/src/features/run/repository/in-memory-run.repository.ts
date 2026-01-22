@@ -3,14 +3,14 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import type { Cache } from 'cache-manager'
 import { plainToInstance } from 'class-transformer'
-import { CreateRunRecordParams, RunRecord, RunStatus } from '../model/run-record'
+
+import { CreateRunRecordParams as CreateRunRecordParameters, RunRecord, RunStatus } from '../model/run-record'
 import { RunRecordDto } from '../shared/run-record.dto'
 import { IRunRepository } from './run-repository'
 @Injectable()
 export class InMemoryRunRepository implements IRunRepository {
   private cache: any
   constructor(@Inject(CACHE_MANAGER) cache: Cache) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.cache = cache
   }
   private getRunKey(runId: string): string {
@@ -22,20 +22,20 @@ export class InMemoryRunRepository implements IRunRepository {
   private getActiveRunKey(userId: string): string {
     return `user:${userId}:active-run`
   }
-  async createRunRecord(params: CreateRunRecordParams): Promise<RunRecord> {
+  async createRunRecord(parameters: CreateRunRecordParameters): Promise<RunRecord> {
     const record: RunRecord = {
-      runId: params.runId,
-      userId: params.userId,
+      runId: parameters.runId,
+      userId: parameters.userId,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       status: RunStatus.Active,
     }
-    const ttl = 86400 * 10 * 1000 // 10 days in ms
+    const ttl = 86_400 * 10 * 1000 // 10 days in ms
     await this.cache.set(this.getRunKey(record.runId), record, ttl)
-    const existingRuns = (await this.cache.get(this.getUserRunsKey(params.userId))) as string[] | undefined
-    const runIds = existingRuns ? [...new Set([...existingRuns, params.runId])] : [params.runId]
-    await this.cache.set(this.getUserRunsKey(params.userId), runIds, ttl)
-    await this.cache.set(this.getActiveRunKey(params.userId), params.runId, ttl)
+    const existingRuns = (await this.cache.get(this.getUserRunsKey(parameters.userId))) as string[] | undefined
+    const runIds = existingRuns ? [...new Set([...existingRuns, parameters.runId])] : [parameters.runId]
+    await this.cache.set(this.getUserRunsKey(parameters.userId), runIds, ttl)
+    await this.cache.set(this.getActiveRunKey(parameters.userId), parameters.runId, ttl)
     return record
   }
   async getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null> {
@@ -70,7 +70,7 @@ export class InMemoryRunRepository implements IRunRepository {
       status: status as RunStatus,
       updatedAt: Date.now(),
     }
-    const ttl = 86400 * 10 * 1000
+    const ttl = 86_400 * 10 * 1000
     await this.cache.set(this.getRunKey(runId), updatedRecord, ttl)
   }
   async deleteRunRecord(runId: string): Promise<void> {
@@ -87,10 +87,8 @@ export class InMemoryRunRepository implements IRunRepository {
     const runIds = (await this.cache.get(this.getUserRunsKey(userId))) as string[] | undefined
     if (!runIds) return
     const updated = runIds.filter((id) => id !== runId)
-    if (updated.length > 0) {
-      await this.cache.set(this.getUserRunsKey(userId), updated)
-    } else {
-      await this.cache.del(this.getUserRunsKey(userId))
-    }
+    await (updated.length > 0
+      ? this.cache.set(this.getUserRunsKey(userId), updated)
+      : this.cache.del(this.getUserRunsKey(userId)))
   }
 }

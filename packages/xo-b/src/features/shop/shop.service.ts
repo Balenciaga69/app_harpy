@@ -2,6 +2,7 @@
 import { ContextManager } from 'src/features/shared/context/context-manager'
 import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
 import { ShopService } from 'src/from-xo-c'
+
 import { BuyItemDto } from './model/buy-item.dto'
 import { RefreshShopDto } from './model/refresh-shop.dto'
 import { SellItemDto } from './model/sell-item.dto'
@@ -12,7 +13,7 @@ interface GetShopItemsDto {
 export class ShopNestService {
   constructor(
     @Optional() private readonly shopService: ShopService,
-    private readonly ctxManager: ContextManager
+    private readonly contextManager: ContextManager
   ) {}
   async getShopItems(dto: GetShopItemsDto) {
     if (!this.shopService) {
