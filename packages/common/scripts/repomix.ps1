@@ -1,4 +1,4 @@
-cd "G:\Coding\my_tool_vault\NewTools\TS\app_papa_legba\xx_nest\src"
+cd "G:\Coding\app_harpy\packages\xo-b\src"
 # cd "C:\Users\wits\Desktop\GitRepo\app_harpy"
 # 定義配置數組，每個項目包含名稱、輸出文件名和路徑
 $configs = @(

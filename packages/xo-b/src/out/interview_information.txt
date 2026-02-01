@@ -1,0 +1,3827 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where comments have been removed, empty lines have been removed.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.ts, **/*.tsx, *.md, *.txt
+- Files matching these patterns are excluded: data/**, **/__tests__/**, **/*.spec.ts
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Code comments have been removed from supported file types
+- Empty lines have been removed from all files
+- Files are sorted by Git change count (files with more changes are at the bottom)
+
+
+================================================================
+Directory Structure
+================================================================
+features/app/app.controller.ts
+features/app/app.module.ts
+features/auth/auth.config.ts
+features/auth/auth.controller.ts
+features/auth/auth.guard.ts
+features/auth/auth.module.ts
+features/auth/builders/auth-response.builder.ts
+features/auth/contracts.ts
+features/auth/dto/auth.dto.ts
+features/auth/get-user.decorator.ts
+features/auth/guest/guest-session.entity.ts
+features/auth/guest/guest.guard.ts
+features/auth/guest/guest.repository.ts
+features/auth/guest/guest.service.ts
+features/auth/guest/session-expiration.policy.ts
+features/auth/session-manager.ts
+features/auth/shared/access-token-record.dto.ts
+features/auth/shared/guest-session.dto.ts
+features/auth/shared/refresh-token-record.dto.ts
+features/auth/shared/user.dto.ts
+features/auth/token/access-token-record.entity.ts
+features/auth/token/access-token.repository.ts
+features/auth/token/refresh-token-record.entity.ts
+features/auth/token/refresh-token.repository.ts
+features/auth/user/helpers/authenticated-user.builder.ts
+features/auth/user/helpers/jwt-config.helper.ts
+features/auth/user/helpers/jwt-extractor.factory.ts
+features/auth/user/helpers/jwt-validator.helper.ts
+features/auth/user/jwt-refresh.guard.ts
+features/auth/user/jwt-stateful-auth.guard.ts
+features/auth/user/jwt-stateless-auth.guard.ts
+features/auth/user/model/authenticated-user.ts
+features/auth/user/model/user.entity.ts
+features/auth/user/repository/user.repository.ts
+features/auth/user/strategy/jwt-refresh.strategy.ts
+features/auth/user/strategy/jwt-stateful.strategy.ts
+features/auth/user/strategy/jwt-stateless.strategy.ts
+features/auth/user/strategy/local.strategy.ts
+features/auth/user/user.service.ts
+features/equipment/equipment.module.ts
+features/equipment/equipment.providers.ts
+features/equipment/equipment.service.ts
+features/run/is-own-run.guard.ts
+features/run/model/init-run.dto.ts
+features/run/model/run-record.ts
+features/run/model/run-relic-action.dto.ts
+features/run/repository/in-memory-run.repository.ts
+features/run/repository/redis-run.repository.ts
+features/run/repository/run-repository.ts
+features/run/run.controller.ts
+features/run/run.module.ts
+features/run/run.providers.ts
+features/run/service/run-api.service.ts
+features/run/service/run-options.service.ts
+features/run/shared/run-record.dto.ts
+features/shared/cache/cache.module.ts
+features/shared/cache/redis-keyv.adapter.ts
+features/shared/cache/redis.module.ts
+features/shared/context/context-manager.ts
+features/shared/errors/ApiErrorCode.ts
+features/shared/filters/all-exceptions.filter.ts
+features/shared/filters/result-exception.filter.ts
+features/shared/helpers/request-utils.ts
+features/shared/interceptors/context-initialization.interceptor.ts
+features/shared/mappers/result-to-exception-mapper.ts
+features/shared/providers/config-store.providers.ts
+features/shared/providers/content-generation-providers.ts
+features/shared/providers/context-converter-providers.ts
+features/shared/providers/fine-grained-interface.providers.ts
+features/shared/providers/injection-tokens.ts
+features/shared/providers/item-generation-provider.ts
+features/shared/providers/shared-app-providers.ts
+features/shared/repositories/in-memory-context.repository.ts
+features/shared/repositories/redis-context.repository.ts
+features/shared/shared-app.module.ts
+features/shared/shared-infra.module.ts
+features/shared/throttler/throttler.module.ts
+features/shop/model/buy-item.dto.ts
+features/shop/model/refresh-shop.dto.ts
+features/shop/model/sell-item.dto.ts
+features/shop/shop.module.ts
+features/shop/shop.providers.ts
+features/shop/shop.service.ts
+from-xo-c.ts
+main.ts
+
+================================================================
+Files
+================================================================
+
+================
+File: features/app/app.controller.ts
+================
+import { Controller, Get } from '@nestjs/common'
+@Controller('health')
+export class HealthController {
+  @Get()
+  check() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    }
+  }
+}
+
+================
+File: features/app/app.module.ts
+================
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { SharedAppModule } from 'src/features/shared/shared-app.module'
+import { SharedInfraModule } from 'src/features/shared/shared-infra.module'
+import { AppThrottlerModule } from 'src/features/shared/throttler/throttler.module'
+import { AuthModule } from '../auth/auth.module'
+import { EquipmentModule } from '../equipment/equipment.module'
+import { RunModule } from '../run/run.module'
+import { ShopModule } from '../shop/shop.module'
+import { HealthController } from './app.controller'
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env',
+    }),
+    AppThrottlerModule,
+    SharedInfraModule,
+    SharedAppModule,
+    AuthModule,
+    RunModule,
+    ShopModule,
+    EquipmentModule,
+  ],
+  controllers: [HealthController],
+  providers: [],
+})
+export class AppModule {}
+
+================
+File: features/auth/auth.config.ts
+================
+export const JWT_CONFIG = {
+  ALGORITHM: 'HS256',
+  ACCESS_TOKEN_EXPIRY_SECONDS: 900,
+  REFRESH_TOKEN_EXPIRY_SECONDS: 2_592_000,
+} as const
+export const PASSWORD_CONFIG = {
+  BCRYPT_ROUNDS: 10,
+  MIN_LENGTH: 8,
+} as const
+export const SESSION_CONFIG = {
+  GUEST_SESSION_TTL_SECONDS: 3600,
+} as const
+export const REDIS_KEYS = {
+  REFRESH_TOKEN_RECORD: 'refresh-token',
+  USER_TOKENS: 'user-tokens',
+  BLACKLIST: 'blacklist',
+  GUEST_SESSION: 'guest',
+  ACCESS_TOKEN: 'access-token',
+  USER_DEVICES: 'user-devices',
+  ACCESS_TOKEN_BLACKLIST: 'access-token-blacklist',
+} as const
+
+================
+File: features/auth/auth.controller.ts
+================
+import { Body, Controller, HttpCode, Post, Query, Request, Res, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { Throttle } from '@nestjs/throttler'
+import { Response } from 'express'
+import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import { AuthResponseBuilder } from './builders/auth-response.builder'
+import {
+  AuthenticatedRequest,
+  GuestSessionResponseDto,
+  LoginDto,
+  LoginResponseDto,
+  RefreshResponseDto,
+  RegisterDto,
+  RegisterResponseDto,
+} from './dto/auth.dto'
+import { GetUser } from './get-user.decorator'
+import { GuestService } from './guest/guest.service'
+import { SessionExpirationPolicy } from './guest/session-expiration.policy'
+import { JwtRefreshGuard } from './user/jwt-refresh.guard'
+import { JwtStatefulAuthGuard } from './user/jwt-stateful-auth.guard'
+import { AuthenticatedUser } from './user/model/authenticated-user'
+import { UserService } from './user/user.service'
+@ApiTags('Authentication - 認證')
+@Controller('auth')
+export class AuthController {
+  constructor(
+    private readonly userService: UserService,
+    private readonly guestService: GuestService,
+    private readonly responseBuilder: AuthResponseBuilder,
+    private readonly expirationPolicy: SessionExpirationPolicy
+  ) {}
+  @Post('register')
+  @Throttle({ register: {} })
+  @ApiOperation({ summary: '註冊新帳號' })
+  @ApiResponse({ status: 201, type: RegisterResponseDto })
+  async register(@Body() dto: RegisterDto): Promise<RegisterResponseDto> {
+    const result = await this.userService.register(dto.username, dto.password)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return { userId: result.value!.userId, message: '註冊成功' }
+  }
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  @Throttle({ login: {} })
+  @HttpCode(200)
+  @ApiOperation({ summary: '帳號密碼登入' })
+  @ApiResponse({ status: 200, type: LoginResponseDto })
+  async login(
+    @Body() _dto: LoginDto,
+    @Request() request: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<LoginResponseDto> {
+    const result = await this.userService.login(request.user.userId, request.user.username)
+    ResultToExceptionMapper.throwIfFailure(result)
+    const payload = result.value!
+    const { response, cookies } = this.responseBuilder.buildLoginResponse(
+      payload.accessToken,
+      payload.refreshToken,
+      request.user.userId,
+      request.user.username
+    )
+    this.responseBuilder.setCookies(res, cookies)
+    return response
+  }
+  @Post('refresh')
+  @HttpCode(200)
+  @UseGuards(JwtRefreshGuard)
+  @ApiOperation({ summary: '刷新 Access Token' })
+  @ApiResponse({ status: 200, type: RefreshResponseDto })
+  async refresh(
+    @GetUser() user: AuthenticatedUser,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<RefreshResponseDto> {
+    const result = await this.userService.refreshAccessToken(user.jti!, user.userId, user.username, user.expiresAt!)
+    ResultToExceptionMapper.throwIfFailure(result)
+    const payload = result.value!
+    const { response, cookies } = this.responseBuilder.buildRefreshResponse(payload.accessToken, payload.refreshToken)
+    this.responseBuilder.setCookies(res, cookies)
+    return response
+  }
+  @Post('logout')
+  @UseGuards(JwtStatefulAuthGuard)
+  @HttpCode(204)
+  @ApiOperation({ summary: '登出' })
+  async logout(
+    @GetUser() user: AuthenticatedUser,
+    @Res({ passthrough: true }) res: Response,
+    @Query('allDevices') allDevices?: string
+  ) {
+    this.responseBuilder.clearAuthCookies(res)
+    const logoutAll = allDevices === 'true'
+    if (logoutAll || !user.deviceId) {
+      await this.userService.logoutAllDevices(user.userId)
+    } else {
+      const expiresAt = user.exp ? new Date(user.exp * 1000) : this.expirationPolicy.calculateExpiresAt()
+      await this.userService.logoutThisDevice(user.userId, user.deviceId, expiresAt)
+    }
+  }
+  @Post('guest')
+  @HttpCode(201)
+  @ApiOperation({ summary: '創建訪客 Session' })
+  @ApiResponse({ status: 201, type: GuestSessionResponseDto })
+  async createGuestSession(): Promise<GuestSessionResponseDto> {
+    const session = await this.guestService.createGuestSession()
+    return {
+      guestId: session.guestId,
+      expiresAt: session.expiresAt,
+      expiresIn: this.expirationPolicy.getRemainingSeconds(session.expiresAt),
+    }
+  }
+}
+
+================
+File: features/auth/auth.guard.ts
+================
+import { Injectable } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+@Injectable()
+export class IsAuthenticatedGuard extends AuthGuard('jwt') {}
+
+================
+File: features/auth/auth.module.ts
+================
+import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport'
+import { CacheConfigModule } from 'src/features/shared/cache/cache.module'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { JWT_CONFIG } from './auth.config'
+import { AuthController } from './auth.controller'
+import { AuthResponseBuilder } from './builders/auth-response.builder'
+import { RedisGuestRepository } from './guest/guest.repository'
+import { GuestService } from './guest/guest.service'
+import { SessionExpirationPolicy } from './guest/session-expiration.policy'
+import { SessionManager } from './session-manager'
+import { RedisAccessTokenRepository } from './token/access-token.repository'
+import { RedisRefreshTokenRepository } from './token/refresh-token.repository'
+import { JwtRefreshGuard } from './user/jwt-refresh.guard'
+import { JwtStatefulAuthGuard } from './user/jwt-stateful-auth.guard'
+import { JwtStatelessAuthGuard } from './user/jwt-stateless-auth.guard'
+import { RedisUserRepository } from './user/repository/user.repository'
+import { JwtRefreshStrategy } from './user/strategy/jwt-refresh.strategy'
+import { JwtStatefulStrategy } from './user/strategy/jwt-stateful.strategy'
+import { JwtStatelessStrategy } from './user/strategy/jwt-stateless.strategy'
+import { LocalStrategy } from './user/strategy/local.strategy'
+import { UserService } from './user/user.service'
+@Module({
+  imports: [
+    PassportModule,
+    CacheConfigModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn:
+            configService.get<number>('JWT_ACCESS_TOKEN_EXPIRY_SECONDS') || JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS,
+          algorithm: JWT_CONFIG.ALGORITHM,
+        },
+      }),
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [
+    UserService,
+    GuestService,
+    SessionManager,
+    SessionExpirationPolicy,
+    AuthResponseBuilder,
+    LocalStrategy,
+    JwtStatefulStrategy,
+    JwtStatelessStrategy,
+    JwtRefreshStrategy,
+    JwtStatefulAuthGuard,
+    JwtStatelessAuthGuard,
+    JwtRefreshGuard,
+    {
+      provide: InjectionTokens.UserRepository,
+      useClass: RedisUserRepository,
+    },
+    {
+      provide: InjectionTokens.GuestRepository,
+      useClass: RedisGuestRepository,
+    },
+    {
+      provide: InjectionTokens.RefreshTokenRepository,
+      useClass: RedisRefreshTokenRepository,
+    },
+    {
+      provide: InjectionTokens.AccessTokenRepository,
+      useClass: RedisAccessTokenRepository,
+    },
+  ],
+  exports: [UserService, GuestService, JwtStatefulAuthGuard, JwtStatelessAuthGuard],
+})
+export class AuthModule {}
+
+================
+File: features/auth/builders/auth-response.builder.ts
+================
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { Response } from 'express'
+import { CookieOptions } from 'express'
+import { JWT_CONFIG } from '../auth.config'
+import { LoginResponseDto, RefreshResponseDto } from '../dto/auth.dto'
+@Injectable()
+export class AuthResponseBuilder {
+  constructor(private readonly configService: ConfigService) {}
+  private getCookieOptions(): Omit<CookieOptions, 'maxAge'> {
+    const isProduction = this.configService.get<string>('NODE_ENV') === 'production'
+    return {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      path: '/',
+    }
+  }
+  buildLoginResponse(
+    accessToken: string,
+    refreshToken: string,
+    userId: string,
+    username: string
+  ): {
+    response: LoginResponseDto
+    cookies: Array<{ name: string; value: string; options: CookieOptions }>
+  } {
+    const baseOptions = this.getCookieOptions()
+    const accessTtl =
+      this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    const refreshTtl =
+      this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
+    const response: LoginResponseDto = {
+      accessToken,
+      refreshToken,
+      expiresIn: accessTtl,
+      user: {
+        userId,
+        username,
+      },
+    }
+    const cookies = [
+      {
+        name: 'accessToken',
+        value: accessToken,
+        options: {
+          ...baseOptions,
+          maxAge: accessTtl * 1000,
+        } as CookieOptions,
+      },
+      {
+        name: 'refreshToken',
+        value: refreshToken,
+        options: {
+          ...baseOptions,
+          maxAge: refreshTtl * 1000,
+        } as CookieOptions,
+      },
+    ]
+    return { response, cookies }
+  }
+  buildRefreshResponse(
+    accessToken: string,
+    refreshToken: string
+  ): {
+    response: RefreshResponseDto
+    cookies: Array<{ name: string; value: string; options: CookieOptions }>
+  } {
+    const baseOptions = this.getCookieOptions()
+    const accessTtl =
+      this.configService.get<number>('ACCESS_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    const refreshTtl =
+      this.configService.get<number>('REFRESH_TOKEN_EXPIRY_SECONDS') ?? JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
+    const response: RefreshResponseDto = {
+      accessToken,
+      refreshToken,
+      expiresIn: accessTtl,
+    }
+    const cookies = [
+      {
+        name: 'accessToken',
+        value: accessToken,
+        options: {
+          ...baseOptions,
+          maxAge: accessTtl * 1000,
+        } as CookieOptions,
+      },
+      {
+        name: 'refreshToken',
+        value: refreshToken,
+        options: {
+          ...baseOptions,
+          maxAge: refreshTtl * 1000,
+        } as CookieOptions,
+      },
+    ]
+    return { response, cookies }
+  }
+  setCookies(res: Response, cookies: Array<{ name: string; value: string; options: CookieOptions }>): void {
+    for (const { name, value, options } of cookies) {
+      res.cookie(name, value, options)
+    }
+  }
+  clearAuthCookies(res: Response): void {
+    res.clearCookie('refreshToken', { path: '/' })
+    res.clearCookie('accessToken', { path: '/' })
+  }
+}
+
+================
+File: features/auth/contracts.ts
+================
+export interface JwtAccessPayload {
+  sub: string
+  username: string
+  jti: string
+  deviceId: string
+  type: 'access'
+  iat?: number
+  exp?: number
+}
+export interface JwtRefreshPayload {
+  sub: string
+  username: string
+  jti: string
+  type: 'refresh'
+  iat?: number
+  exp: number
+}
+export interface AuthTokens {
+  accessToken: string
+  refreshToken: string
+  expiresIn: number
+}
+export { type AuthenticatedUser } from './user/model/authenticated-user'
+
+================
+File: features/auth/dto/auth.dto.ts
+================
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString, MinLength } from 'class-validator'
+import { Request } from 'express'
+import { AuthenticatedUser } from '../user/model/authenticated-user'
+export class LoginDto {
+  @ApiProperty()
+  @IsString()
+  username!: string
+  @ApiProperty()
+  @IsString()
+  password!: string
+}
+export interface AuthenticatedRequest extends Request {
+  user: AuthenticatedUser
+}
+export class AuthenticatedUserDto {
+  @ApiProperty()
+  userId!: string
+  @ApiProperty()
+  username!: string
+}
+export class RegisterDto {
+  @ApiProperty()
+  @IsString()
+  @MinLength(3, { message: '帳號至少 3 個字符' })
+  username!: string
+  @ApiProperty()
+  @IsString()
+  @MinLength(8, { message: '密碼至少 8 個字符' })
+  password!: string
+}
+export class RegisterResponseDto {
+  @ApiProperty()
+  userId!: string
+  @ApiProperty()
+  message!: string
+}
+export class LoginResponseDto {
+  @ApiProperty()
+  accessToken!: string
+  @ApiProperty()
+  refreshToken!: string
+  @ApiProperty()
+  expiresIn!: number
+  @ApiProperty({
+    example: { userId: 'uuid', username: 'john' },
+  })
+  user!: {
+    userId: string
+    username: string
+  }
+}
+export class RefreshResponseDto {
+  @ApiProperty()
+  accessToken!: string
+  @ApiProperty()
+  refreshToken!: string
+  @ApiProperty()
+  expiresIn!: number
+}
+export class GuestSessionResponseDto {
+  @ApiProperty()
+  guestId!: string
+  @ApiProperty()
+  expiresAt!: Date
+  @ApiProperty()
+  expiresIn!: number
+}
+
+================
+File: features/auth/get-user.decorator.ts
+================
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { AuthenticatedUser } from './user/model/authenticated-user.js'
+export const GetUser = createParamDecorator((_data: unknown, context: ExecutionContext): AuthenticatedUser => {
+  const user = context.switchToHttp().getRequest().user
+  return user
+})
+
+================
+File: features/auth/guest/guest-session.entity.ts
+================
+export interface GuestSession {
+  guestId: string
+  createdAt: Date
+  expiresAt: Date
+}
+
+================
+File: features/auth/guest/guest.guard.ts
+================
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
+import { GuestService } from './guest.service'
+@Injectable()
+export class GuestOrUserGuard implements CanActivate {
+  constructor(private readonly guestService: GuestService) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    if (request.user) {
+      return true
+    }
+    const guestId = this.extractGuestId(request)
+    if (!guestId) {
+      throw new UnauthorizedException('需要提供有效的 User Token 或 Guest ID')
+    }
+    const result = await this.guestService.validateGuestId(guestId)
+    if (result.isFailure) {
+      throw new UnauthorizedException(result.error === 'AUTH_EXPIRED' ? 'Guest ID 已過期' : 'Guest ID 不存在或無效')
+    }
+    const session = result.value!
+    request.guest = { guestId: session.guestId }
+    return true
+  }
+  private extractGuestId(request: any): string | null {
+    const guestId = request.headers?.['x-guest-id']
+    if (guestId) {
+      return guestId
+    }
+    return request.query?.guestId || null
+  }
+}
+
+================
+File: features/auth/guest/guest.repository.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
+import { REDIS_KEYS } from '../auth.config'
+import { GuestSessionDto } from '../shared/guest-session.dto'
+import { GuestSession } from './guest-session.entity'
+export interface IGuestRepository {
+  save(session: GuestSession): Promise<void>
+  findByGuestId(guestId: string): Promise<GuestSession | null>
+  existsByGuestId(guestId: string): Promise<boolean>
+  deleteByGuestId(guestId: string): Promise<void>
+  updateExpiresAt(guestId: string, expiresAt: Date): Promise<void>
+}
+@Injectable()
+export class RedisGuestRepository implements IGuestRepository {
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  private getKey(guestId: string) {
+    return `${REDIS_KEYS.GUEST_SESSION}:${guestId}`
+  }
+  private calcTtl(expiresAt: Date): number {
+    return Math.max(1, expiresAt.getTime() - Date.now())
+  }
+  async save(session: GuestSession): Promise<void> {
+    const key = this.getKey(session.guestId)
+    const ttl = this.calcTtl(session.expiresAt)
+    await this.cache.set(key, session, ttl)
+  }
+  async findByGuestId(guestId: string): Promise<GuestSession | null> {
+    const key = this.getKey(guestId)
+    const data = await this.cache.get<Record<string, unknown>>(key)
+    if (!data) return null
+    return plainToInstance(GuestSessionDto, data)
+  }
+  async existsByGuestId(guestId: string): Promise<boolean> {
+    const key = this.getKey(guestId)
+    return (await this.cache.get(key)) !== undefined
+  }
+  async deleteByGuestId(guestId: string): Promise<void> {
+    const key = this.getKey(guestId)
+    await this.cache.del(key)
+  }
+  async updateExpiresAt(guestId: string, expiresAt: Date): Promise<void> {
+    const session = await this.findByGuestId(guestId)
+    if (session) {
+      session.expiresAt = expiresAt
+      await this.save(session)
+    }
+  }
+}
+
+================
+File: features/auth/guest/guest.service.ts
+================
+import { Inject, Injectable } from '@nestjs/common'
+import { nanoid } from 'nanoid'
+import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { Result } from 'src/from-xo-c'
+import { IGuestRepository } from './guest.repository'
+import { GuestSession } from './guest-session.entity'
+import { SessionExpirationPolicy } from './session-expiration.policy'
+@Injectable()
+export class GuestService {
+  constructor(
+    @Inject(InjectionTokens.GuestRepository)
+    private readonly guestRepository: IGuestRepository,
+    private readonly expirationPolicy: SessionExpirationPolicy
+  ) {}
+  async createGuestSession(): Promise<{
+    guestId: string
+    expiresAt: Date
+  }> {
+    const guestId = nanoid()
+    const now = new Date()
+    const expiresAt = this.expirationPolicy.calculateExpiresAt()
+    const session: GuestSession = {
+      guestId,
+      createdAt: now,
+      expiresAt,
+    }
+    await this.guestRepository.save(session)
+    return { guestId, expiresAt }
+  }
+  async validateGuestId(guestId: string): Promise<Result<GuestSession>> {
+    const session = await this.guestRepository.findByGuestId(guestId)
+    if (!session) {
+      return Result.fail(ApiErrorCode.認證_認證無效)
+    }
+    if (this.expirationPolicy.isExpired(session.expiresAt)) {
+      await this.guestRepository.deleteByGuestId(guestId)
+      return Result.fail(ApiErrorCode.認證_令牌過期)
+    }
+    return Result.success(session)
+  }
+  async extendGuestSession(guestId: string): Promise<Result<Date>> {
+    const result = await this.validateGuestId(guestId)
+    if (result.isFailure) {
+      return Result.fail(result.error!)
+    }
+    const session = result.value!
+    if (this.expirationPolicy.isMaxLifetimeExceeded(session.createdAt)) {
+      await this.guestRepository.deleteByGuestId(guestId)
+      return Result.fail(ApiErrorCode.認證_令牌過期)
+    }
+    const newExpiresAt = this.expirationPolicy.calculateExpiresAt()
+    await this.guestRepository.updateExpiresAt(guestId, newExpiresAt)
+    return Result.success(newExpiresAt)
+  }
+  async deleteGuestSession(guestId: string): Promise<void> {
+    await this.guestRepository.deleteByGuestId(guestId)
+  }
+}
+
+================
+File: features/auth/guest/session-expiration.policy.ts
+================
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { SESSION_CONFIG } from '../auth.config'
+@Injectable()
+export class SessionExpirationPolicy {
+  private readonly MAX_SESSION_LIFETIME_SECONDS = 86_400
+  constructor(private readonly configService: ConfigService) {}
+  calculateExpiresAt(): Date {
+    const ttlSeconds = this.configService.get<number>(
+      'GUEST_SESSION_TTL_SECONDS',
+      SESSION_CONFIG.GUEST_SESSION_TTL_SECONDS
+    )
+    return new Date(Date.now() + ttlSeconds * 1000)
+  }
+  isExpired(expiresAt: Date): boolean {
+    return expiresAt.getTime() < Date.now()
+  }
+  isMaxLifetimeExceeded(createdAt: Date): boolean {
+    const lifetime = (Date.now() - new Date(createdAt).getTime()) / 1000
+    return lifetime > this.MAX_SESSION_LIFETIME_SECONDS
+  }
+  getRemainingSeconds(expiresAt: Date): number {
+    const remaining = Math.floor((expiresAt.getTime() - Date.now()) / 1000)
+    return Math.max(0, remaining)
+  }
+}
+
+================
+File: features/auth/session-manager.ts
+================
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { IAccessTokenRepository } from './token/access-token.repository'
+import { IRefreshTokenRepository } from './token/refresh-token.repository'
+@Injectable()
+export class SessionManager {
+  constructor(
+    @Inject(InjectionTokens.AccessTokenRepository)
+    private readonly accessTokenRepo: IAccessTokenRepository,
+    @Inject(InjectionTokens.RefreshTokenRepository)
+    private readonly refreshTokenRepo: IRefreshTokenRepository
+  ) {}
+  async logoutDevice(userId: string, deviceId: string, expiresAt: Date): Promise<void> {
+    await this.accessTokenRepo.addDeviceToBlacklist(userId, deviceId, expiresAt)
+  }
+  async logoutAllDevices(userId: string): Promise<void> {
+    await this.accessTokenRepo.addAllDevicesToBlacklist(userId)
+    await this.refreshTokenRepo.deleteAllByUserId(userId)
+  }
+  async revokeRefreshToken(jti: string, expiresAt: Date): Promise<void> {
+    await this.refreshTokenRepo.addToBlacklist(jti, expiresAt)
+    await this.refreshTokenRepo.deleteByJti(jti)
+  }
+}
+
+================
+File: features/auth/shared/access-token-record.dto.ts
+================
+import { Type } from 'class-transformer'
+import { AccessTokenRecord } from '../token/access-token-record.entity'
+export class AccessTokenRecordDto implements AccessTokenRecord {
+  jti!: string
+  userId!: string
+  deviceId!: string
+  @Type(() => Date)
+  createdAt!: Date
+  @Type(() => Date)
+  expiresAt!: Date
+}
+
+================
+File: features/auth/shared/guest-session.dto.ts
+================
+import { Type } from 'class-transformer'
+import { GuestSession } from '../guest/guest-session.entity'
+export class GuestSessionDto implements GuestSession {
+  guestId!: string
+  @Type(() => Date)
+  createdAt!: Date
+  @Type(() => Date)
+  expiresAt!: Date
+}
+
+================
+File: features/auth/shared/refresh-token-record.dto.ts
+================
+import { Type } from 'class-transformer'
+import { RefreshTokenRecord } from '../token/refresh-token-record.entity'
+export class RefreshTokenRecordDto implements RefreshTokenRecord {
+  jti!: string
+  userId!: string
+  deviceId?: string
+  @Type(() => Date)
+  createdAt!: Date
+  @Type(() => Date)
+  expiresAt!: Date
+}
+
+================
+File: features/auth/shared/user.dto.ts
+================
+import { Type } from 'class-transformer'
+import { User } from '../user/model/user.entity'
+export class UserDto implements User {
+  id!: string
+  username!: string
+  passwordHash!: string
+  @Type(() => Date)
+  createdAt!: Date
+  @Type(() => Date)
+  updatedAt!: Date
+  isActive!: boolean
+}
+
+================
+File: features/auth/token/access-token-record.entity.ts
+================
+export interface AccessTokenRecord {
+  jti: string
+  userId: string
+  deviceId: string
+  createdAt: Date
+  expiresAt: Date
+}
+
+================
+File: features/auth/token/access-token.repository.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
+import { JWT_CONFIG, REDIS_KEYS } from '../auth.config'
+import { AccessTokenRecordDto } from '../shared/access-token-record.dto'
+import { AccessTokenRecord } from './access-token-record.entity'
+export interface IAccessTokenRepository {
+  save(record: AccessTokenRecord): Promise<void>
+  findByJti(jti: string): Promise<AccessTokenRecord | null>
+  isBlacklistedByJti(jti: string): Promise<boolean>
+  isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean>
+  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
+  addDeviceToBlacklist(userId: string, deviceId: string, expiresAt: Date): Promise<void>
+  addAllDevicesToBlacklist(userId: string): Promise<void>
+  deleteByJti(jti: string): Promise<void>
+  deleteAllByUserId(userId: string): Promise<void>
+}
+@Injectable()
+export class RedisAccessTokenRepository implements IAccessTokenRepository {
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  private getRecordKey(jti: string) {
+    return `${REDIS_KEYS.ACCESS_TOKEN}:${jti}`
+  }
+  private getUserDevicesKey(userId: string) {
+    return `${REDIS_KEYS.USER_DEVICES}:${userId}`
+  }
+  private getDeviceBlacklistKey(userId: string, deviceId: string) {
+    return `${REDIS_KEYS.ACCESS_TOKEN_BLACKLIST}:${userId}:device:${deviceId}`
+  }
+  private getJtiBlacklistKey(jti: string) {
+    return `${REDIS_KEYS.ACCESS_TOKEN_BLACKLIST}:${jti}`
+  }
+  private getUserAllDevicesBlacklistKey(userId: string) {
+    return `${REDIS_KEYS.ACCESS_TOKEN_BLACKLIST}:${userId}:all-devices`
+  }
+  private validateExpiresAt(expiresAt: Date): number {
+    const now = Date.now()
+    const expiresMs = expiresAt.getTime()
+    if (expiresMs <= now) {
+      throw new Error(`Token has already expired: ${expiresAt.toISOString()}`)
+    }
+    return expiresMs - now
+  }
+  async save(record: AccessTokenRecord): Promise<void> {
+    try {
+      const ttl = this.validateExpiresAt(record.expiresAt)
+      const recordKey = this.getRecordKey(record.jti)
+      const userDevicesKey = this.getUserDevicesKey(record.userId)
+      await this.cache.set(recordKey, record, ttl)
+      const devices = await this.cache.get<string[]>(userDevicesKey)
+      const updatedDevices = devices ? [...new Set([...devices, record.deviceId])] : [record.deviceId]
+      await this.cache.set(userDevicesKey, updatedDevices, ttl)
+    } catch (error) {
+      throw this.handleError('save', error)
+    }
+  }
+  async findByJti(jti: string): Promise<AccessTokenRecord | null> {
+    try {
+      const key = this.getRecordKey(jti)
+      const data = await this.cache.get<Record<string, unknown>>(key)
+      if (!data) return null
+      return plainToInstance(AccessTokenRecordDto, data)
+    } catch (error) {
+      throw this.handleError('findByJti', error)
+    }
+  }
+  async isBlacklistedByJti(jti: string): Promise<boolean> {
+    try {
+      const key = this.getJtiBlacklistKey(jti)
+      return (await this.cache.get(key)) !== undefined
+    } catch (error) {
+      throw this.handleError('isBlacklistedByJti', error)
+    }
+  }
+  async isBlacklistedByDeviceId(userId: string, deviceId: string): Promise<boolean> {
+    try {
+      const deviceBlacklistKey = this.getDeviceBlacklistKey(userId, deviceId)
+      const deviceBlacklisted = (await this.cache.get(deviceBlacklistKey)) !== undefined
+      if (deviceBlacklisted) {
+        return true
+      }
+      const allDevicesBlacklistKey = this.getUserAllDevicesBlacklistKey(userId)
+      const allDevicesBlacklisted = (await this.cache.get(allDevicesBlacklistKey)) !== undefined
+      return allDevicesBlacklisted
+    } catch (error) {
+      throw this.handleError('isBlacklistedByDeviceId', error)
+    }
+  }
+  async addToBlacklist(jti: string, expiresAt: Date): Promise<void> {
+    try {
+      const ttl = this.validateExpiresAt(expiresAt)
+      const key = this.getJtiBlacklistKey(jti)
+      await this.cache.set(key, '1', ttl)
+    } catch (error) {
+      throw this.handleError('addToBlacklist', error)
+    }
+  }
+  async addDeviceToBlacklist(userId: string, deviceId: string, expiresAt: Date): Promise<void> {
+    try {
+      const ttl = this.validateExpiresAt(expiresAt)
+      const key = this.getDeviceBlacklistKey(userId, deviceId)
+      await this.cache.set(key, '1', ttl)
+    } catch (error) {
+      throw this.handleError('addDeviceToBlacklist', error)
+    }
+  }
+  async addAllDevicesToBlacklist(userId: string): Promise<void> {
+    try {
+      const key = this.getUserAllDevicesBlacklistKey(userId)
+      const ttl = JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS * 1000
+      await this.cache.set(key, '1', ttl)
+    } catch (error) {
+      throw this.handleError('addAllDevicesToBlacklist', error)
+    }
+  }
+  async deleteByJti(jti: string): Promise<void> {
+    try {
+      const key = this.getRecordKey(jti)
+      await this.cache.del(key)
+    } catch (error) {
+      throw this.handleError('deleteByJti', error)
+    }
+  }
+  async deleteAllByUserId(userId: string): Promise<void> {
+    try {
+      const userDevicesKey = this.getUserDevicesKey(userId)
+      const devices = await this.cache.get<string[]>(userDevicesKey)
+      if (!devices || devices.length === 0) {
+        return
+      }
+      for (const deviceId of devices) {
+        const deviceBlacklistKey = this.getDeviceBlacklistKey(userId, deviceId)
+        await this.cache.del(deviceBlacklistKey)
+      }
+      await this.cache.del(userDevicesKey)
+      const allDevicesBlacklistKey = this.getUserAllDevicesBlacklistKey(userId)
+      await this.cache.del(allDevicesBlacklistKey)
+    } catch (error) {
+      throw this.handleError('deleteAllByUserId', error)
+    }
+  }
+  private handleError(method: string, error: unknown): Error {
+    if (error instanceof Error) {
+      return error
+    }
+    return new Error(`RedisAccessTokenRepository.${method} failed: ${String(error)}`)
+  }
+}
+
+================
+File: features/auth/token/refresh-token-record.entity.ts
+================
+export interface RefreshTokenRecord {
+  jti: string
+  userId: string
+  deviceId?: string
+  createdAt: Date
+  expiresAt: Date
+}
+
+================
+File: features/auth/token/refresh-token.repository.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
+import { REDIS_KEYS } from '../auth.config'
+import { RefreshTokenRecordDto } from '../shared/refresh-token-record.dto'
+import { RefreshTokenRecord } from './refresh-token-record.entity'
+export interface IRefreshTokenRepository {
+  save(record: RefreshTokenRecord): Promise<void>
+  findByJti(jti: string): Promise<RefreshTokenRecord | null>
+  deleteByJti(jti: string): Promise<void>
+  deleteAllByUserId(userId: string): Promise<void>
+  isBlacklisted(jti: string): Promise<boolean>
+  addToBlacklist(jti: string, expiresAt: Date): Promise<void>
+}
+@Injectable()
+export class RedisRefreshTokenRepository implements IRefreshTokenRepository {
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  private getRecordKey(jti: string) {
+    return `${REDIS_KEYS.REFRESH_TOKEN_RECORD}:${jti}`
+  }
+  private getUserTokensKey(userId: string) {
+    return `${REDIS_KEYS.USER_TOKENS}:${userId}`
+  }
+  private getBlacklistKey(jti: string) {
+    return `${REDIS_KEYS.BLACKLIST}:${jti}`
+  }
+  private validateExpiresAt(expiresAt: Date): number {
+    const now = Date.now()
+    const expiresMs = expiresAt.getTime()
+    if (expiresMs <= now) {
+      throw new Error(`Token has already expired: ${expiresAt.toISOString()}`)
+    }
+    return expiresMs - now
+  }
+  async save(record: RefreshTokenRecord): Promise<void> {
+    try {
+      const ttl = this.validateExpiresAt(record.expiresAt)
+      const recordKey = this.getRecordKey(record.jti)
+      const userTokensKey = this.getUserTokensKey(record.userId)
+      await this.cache.set(recordKey, record, ttl)
+      const tokens = await this.cache.get<string[]>(userTokensKey)
+      const updatedTokens = tokens ? [...new Set([...tokens, record.jti])] : [record.jti]
+      await this.cache.set(userTokensKey, updatedTokens, ttl)
+    } catch (error) {
+      throw this.handleError('save', error)
+    }
+  }
+  async findByJti(jti: string): Promise<RefreshTokenRecord | null> {
+    try {
+      const key = this.getRecordKey(jti)
+      const data = await this.cache.get<Record<string, unknown>>(key)
+      if (!data) return null
+      return plainToInstance(RefreshTokenRecordDto, data)
+    } catch (error) {
+      throw this.handleError('findByJti', error)
+    }
+  }
+  async deleteByJti(jti: string): Promise<void> {
+    try {
+      const key = this.getRecordKey(jti)
+      await this.cache.del(key)
+    } catch (error) {
+      throw this.handleError('deleteByJti', error)
+    }
+  }
+  async deleteAllByUserId(userId: string): Promise<void> {
+    try {
+      const userTokensKey = this.getUserTokensKey(userId)
+      const ids = await this.cache.get<string[]>(userTokensKey)
+      if (!ids || ids.length === 0) {
+        return
+      }
+      for (const jti of ids) {
+        const recordKey = this.getRecordKey(jti)
+        const blacklistKey = this.getBlacklistKey(jti)
+        await this.cache.del(recordKey)
+        await this.cache.del(blacklistKey)
+      }
+      await this.cache.del(userTokensKey)
+    } catch (error) {
+      throw this.handleError('deleteAllByUserId', error)
+    }
+  }
+  async isBlacklisted(jti: string): Promise<boolean> {
+    try {
+      const key = this.getBlacklistKey(jti)
+      return (await this.cache.get(key)) !== undefined
+    } catch (error) {
+      throw this.handleError('isBlacklisted', error)
+    }
+  }
+  async addToBlacklist(jti: string, expiresAt: Date): Promise<void> {
+    try {
+      const ttl = this.validateExpiresAt(expiresAt)
+      const key = this.getBlacklistKey(jti)
+      await this.cache.set(key, '1', ttl)
+    } catch (error) {
+      throw this.handleError('addToBlacklist', error)
+    }
+  }
+  private handleError(method: string, error: unknown): Error {
+    if (error instanceof Error) {
+      return error
+    }
+    return new Error(`RefreshTokenRepository.${method} failed: ${String(error)}`)
+  }
+}
+
+================
+File: features/auth/user/helpers/authenticated-user.builder.ts
+================
+import { JwtAccessPayload, JwtRefreshPayload } from '../../contracts'
+import { AuthenticatedUser } from '../model/authenticated-user'
+export const AuthenticatedUserBuilder = {
+  fromAccessPayload(payload: JwtAccessPayload): AuthenticatedUser {
+    return {
+      userId: payload.sub,
+      username: payload.username,
+      jti: payload.jti,
+      deviceId: payload.deviceId,
+      exp: payload.exp,
+    }
+  },
+  fromRefreshPayload(payload: JwtRefreshPayload, deviceId?: string): AuthenticatedUser {
+    return {
+      userId: payload.sub,
+      username: payload.username,
+      jti: payload.jti,
+      deviceId: deviceId,
+      exp: payload.exp,
+    }
+  },
+}
+
+================
+File: features/auth/user/helpers/jwt-config.helper.ts
+================
+import { ConfigService } from '@nestjs/config'
+export const JwtConfigHelper = {
+  getValidatedSecret(configService: ConfigService, strategyName: string): string {
+    const secret = configService.get<string>('JWT_SECRET')
+    if (!secret) {
+      throw new Error(
+        `[JWT_SECRET] environment variable is required for ${strategyName}. ` +
+          'Please set JWT_SECRET in your .env file or environment variables.'
+      )
+    }
+    return secret
+  },
+}
+
+================
+File: features/auth/user/helpers/jwt-extractor.factory.ts
+================
+import { Request } from 'express'
+import { ExtractJwt } from 'passport-jwt'
+export const JwtExtractorFactory = {
+  createAccessTokenExtractor() {
+    return ExtractJwt.fromExtractors([
+      (request: Request) => (request?.cookies?.accessToken as string) ?? null,
+      ExtractJwt.fromAuthHeaderAsBearerToken(),
+    ])
+  },
+  createRefreshTokenExtractor() {
+    return ExtractJwt.fromExtractors([
+      (request: Request) => (request?.cookies?.refreshToken as string) ?? null,
+      ExtractJwt.fromAuthHeaderAsBearerToken(),
+    ])
+  },
+}
+
+================
+File: features/auth/user/helpers/jwt-validator.helper.ts
+================
+import { UnauthorizedException } from '@nestjs/common'
+import { JwtAccessPayload, JwtRefreshPayload } from '../../contracts'
+export const JwtValidator = {
+  validateAccessTokenType(payload: JwtAccessPayload): void {
+    if (payload.type !== 'access') {
+      throw new UnauthorizedException('Invalid token type')
+    }
+  },
+  validateRefreshTokenType(payload: JwtRefreshPayload): void {
+    if (payload.type !== 'refresh') {
+      throw new UnauthorizedException('Invalid token type for refresh')
+    }
+  },
+}
+
+================
+File: features/auth/user/jwt-refresh.guard.ts
+================
+import { Injectable } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+@Injectable()
+export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {}
+
+================
+File: features/auth/user/jwt-stateful-auth.guard.ts
+================
+import { Injectable } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+@Injectable()
+export class JwtStatefulAuthGuard extends AuthGuard('jwt-stateful') {}
+
+================
+File: features/auth/user/jwt-stateless-auth.guard.ts
+================
+import { Injectable } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+@Injectable()
+export class JwtStatelessAuthGuard extends AuthGuard('jwt-stateless') {}
+
+================
+File: features/auth/user/model/authenticated-user.ts
+================
+export interface AuthenticatedUser {
+  userId: string
+  username: string
+  jti?: string
+  deviceId?: string
+  exp?: number
+  expiresAt?: Date
+}
+
+================
+File: features/auth/user/model/user.entity.ts
+================
+export interface User {
+  id: string
+  username: string
+  passwordHash: string
+  createdAt: Date
+  updatedAt: Date
+  isActive: boolean
+}
+
+================
+File: features/auth/user/repository/user.repository.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
+import { UserDto } from '../../shared/user.dto'
+import { User } from '../model/user.entity'
+export interface IUserRepository {
+  save(user: User): Promise<void>
+  findByUsername(username: string): Promise<User | null>
+  existsByUsername(username: string): Promise<boolean>
+  findActiveByUsername(username: string): Promise<User | null>
+}
+@Injectable()
+export class RedisUserRepository implements IUserRepository {
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  async save(user: User): Promise<void> {
+    const key = `user:${user.username}`
+    await this.cache.set(key, user)
+  }
+  async findByUsername(username: string): Promise<User | null> {
+    const key = `user:${username}`
+    const data = await this.cache.get<Record<string, unknown>>(key)
+    if (!data) return null
+    return plainToInstance(UserDto, data)
+  }
+  async existsByUsername(username: string): Promise<boolean> {
+    const key = `user:${username}`
+    return (await this.cache.get(key)) !== undefined
+  }
+  async findActiveByUsername(username: string): Promise<User | null> {
+    const user = await this.findByUsername(username)
+    return user && user.isActive ? user : null
+  }
+}
+
+================
+File: features/auth/user/strategy/jwt-refresh.strategy.ts
+================
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { PassportStrategy } from '@nestjs/passport'
+import { Strategy } from 'passport-jwt'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { JwtRefreshPayload } from '../../contracts'
+import { IRefreshTokenRepository } from '../../token/refresh-token.repository'
+import { JwtConfigHelper } from '../helpers/jwt-config.helper'
+import { JwtExtractorFactory } from '../helpers/jwt-extractor.factory'
+import { JwtValidator } from '../helpers/jwt-validator.helper'
+import { AuthenticatedUser } from '../model/authenticated-user'
+@Injectable()
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+  constructor(
+    readonly configService: ConfigService,
+    @Inject(InjectionTokens.RefreshTokenRepository)
+    private readonly refreshTokenRepository: IRefreshTokenRepository
+  ) {
+    const secret = JwtConfigHelper.getValidatedSecret(configService, 'JwtRefreshStrategy')
+    super({
+      jwtFromRequest: JwtExtractorFactory.createRefreshTokenExtractor(),
+      ignoreExpiration: false,
+      secretOrKey: secret,
+    })
+  }
+  async validate(payload: JwtRefreshPayload): Promise<AuthenticatedUser> {
+    JwtValidator.validateRefreshTokenType(payload)
+    const isBlacklisted = await this.refreshTokenRepository.isBlacklisted(payload.jti)
+    if (isBlacklisted) {
+      throw new Error('Refresh token has been revoked')
+    }
+    const record = await this.refreshTokenRepository.findByJti(payload.jti)
+    if (!record) {
+      throw new Error('Refresh token not found')
+    }
+    return {
+      userId: payload.sub,
+      username: payload.username,
+      jti: payload.jti,
+      deviceId: record.deviceId,
+      expiresAt: new Date(payload.exp * 1000),
+    }
+  }
+}
+
+================
+File: features/auth/user/strategy/jwt-stateful.strategy.ts
+================
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { PassportStrategy } from '@nestjs/passport'
+import { Strategy } from 'passport-jwt'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { JwtAccessPayload } from '../../contracts'
+import { IAccessTokenRepository } from '../../token/access-token.repository'
+import { AuthenticatedUserBuilder } from '../helpers/authenticated-user.builder'
+import { JwtConfigHelper } from '../helpers/jwt-config.helper'
+import { JwtExtractorFactory } from '../helpers/jwt-extractor.factory'
+import { JwtValidator } from '../helpers/jwt-validator.helper'
+import { AuthenticatedUser } from '../model/authenticated-user'
+@Injectable()
+export class JwtStatefulStrategy extends PassportStrategy(Strategy, 'jwt-stateful') {
+  constructor(
+    readonly configService: ConfigService,
+    @Inject(InjectionTokens.AccessTokenRepository)
+    private readonly accessTokenRepository: IAccessTokenRepository
+  ) {
+    const secret = JwtConfigHelper.getValidatedSecret(configService, 'JwtStatefulStrategy')
+    super({
+      jwtFromRequest: JwtExtractorFactory.createAccessTokenExtractor(),
+      ignoreExpiration: false,
+      secretOrKey: secret,
+    })
+  }
+  async validate(payload: JwtAccessPayload): Promise<AuthenticatedUser> {
+    JwtValidator.validateAccessTokenType(payload)
+    const isBlacklistedByJti = await this.accessTokenRepository.isBlacklistedByJti(payload.jti)
+    if (isBlacklistedByJti) {
+      throw new Error('Token has been revoked')
+    }
+    if (payload.deviceId) {
+      const isDeviceBlacklisted = await this.accessTokenRepository.isBlacklistedByDeviceId(
+        payload.sub,
+        payload.deviceId
+      )
+      if (isDeviceBlacklisted) {
+        throw new Error('Device session has been terminated')
+      }
+    }
+    return AuthenticatedUserBuilder.fromAccessPayload(payload)
+  }
+}
+
+================
+File: features/auth/user/strategy/jwt-stateless.strategy.ts
+================
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { PassportStrategy } from '@nestjs/passport'
+import { Strategy } from 'passport-jwt'
+import { JwtAccessPayload } from '../../contracts'
+import { AuthenticatedUserBuilder } from '../helpers/authenticated-user.builder'
+import { JwtConfigHelper } from '../helpers/jwt-config.helper'
+import { JwtExtractorFactory } from '../helpers/jwt-extractor.factory'
+import { JwtValidator } from '../helpers/jwt-validator.helper'
+import { AuthenticatedUser } from '../model/authenticated-user'
+@Injectable()
+export class JwtStatelessStrategy extends PassportStrategy(Strategy, 'jwt-stateless') {
+  constructor(configService: ConfigService) {
+    const secret = JwtConfigHelper.getValidatedSecret(configService, 'JwtStatelessStrategy')
+    super({
+      jwtFromRequest: JwtExtractorFactory.createAccessTokenExtractor(),
+      ignoreExpiration: false,
+      secretOrKey: secret,
+    })
+  }
+  validate(payload: JwtAccessPayload): AuthenticatedUser {
+    JwtValidator.validateAccessTokenType(payload)
+    return AuthenticatedUserBuilder.fromAccessPayload(payload)
+  }
+}
+
+================
+File: features/auth/user/strategy/local.strategy.ts
+================
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import * as bcrypt from 'bcrypt'
+import { Strategy } from 'passport-local'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { AuthenticatedUser } from '../model/authenticated-user'
+import { IUserRepository } from '../repository/user.repository'
+@Injectable()
+export class LocalStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    @Inject(InjectionTokens.UserRepository)
+    private readonly userRepository: IUserRepository
+  ) {
+    super({
+      usernameField: 'username',
+      passwordField: 'password',
+    })
+  }
+  async validate(username: string, password: string): Promise<AuthenticatedUser> {
+    const user = await this.userRepository.findActiveByUsername(username)
+    if (!user) {
+      throw new UnauthorizedException('帳號不存在或已停用')
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash)
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('密碼錯誤')
+    }
+    return { userId: user.id, username: user.username }
+  }
+}
+
+================
+File: features/auth/user/user.service.ts
+================
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
+import { nanoid } from 'nanoid'
+import { ApiErrorCode } from 'src/features/shared/errors/ApiErrorCode'
+import { InjectionTokens } from 'src/features/shared/providers/injection-tokens'
+import { Result } from 'src/from-xo-c'
+import { JWT_CONFIG, PASSWORD_CONFIG } from '../auth.config'
+import { AuthTokens, JwtAccessPayload } from '../contracts'
+import { SessionManager } from '../session-manager'
+import { IAccessTokenRepository } from '../token/access-token.repository'
+import { IRefreshTokenRepository } from '../token/refresh-token.repository'
+import { User } from './model/user.entity'
+import { IUserRepository } from './repository/user.repository'
+@Injectable()
+export class UserService {
+  constructor(
+    @Inject(InjectionTokens.UserRepository)
+    private readonly userRepository: IUserRepository,
+    @Inject(InjectionTokens.RefreshTokenRepository)
+    private readonly refreshTokenRepository: IRefreshTokenRepository,
+    @Inject(InjectionTokens.AccessTokenRepository)
+    private readonly accessTokenRepository: IAccessTokenRepository,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly sessionManager: SessionManager
+  ) {}
+  async register(username: string, password: string): Promise<Result<{ userId: string }>> {
+    const existsUser = await this.userRepository.existsByUsername(username)
+    if (existsUser) {
+      return Result.fail(ApiErrorCode.註冊_帳號已存在)
+    }
+    const passwordHash = await bcrypt.hash(password, PASSWORD_CONFIG.BCRYPT_ROUNDS)
+    const userId = nanoid()
+    const now = new Date()
+    const user: User = {
+      id: userId,
+      username,
+      passwordHash,
+      createdAt: now,
+      updatedAt: now,
+      isActive: true,
+    }
+    await this.userRepository.save(user)
+    return Result.success({ userId })
+  }
+  async login(userId: string, username: string): Promise<Result<AuthTokens>> {
+    const accessJti = nanoid()
+    const refreshJti = nanoid()
+    const deviceId = nanoid()
+    const accessTokenExpirySeconds = this.configService.get<number>(
+      'ACCESS_TOKEN_EXPIRY_SECONDS',
+      JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    )
+    const refreshTokenExpirySeconds = this.configService.get<number>(
+      'REFRESH_TOKEN_EXPIRY_SECONDS',
+      JWT_CONFIG.REFRESH_TOKEN_EXPIRY_SECONDS
+    )
+    const accessTokenPayload: JwtAccessPayload = {
+      sub: userId,
+      username,
+      jti: accessJti,
+      deviceId,
+      type: 'access',
+    }
+    const accessToken = this.jwtService.sign(accessTokenPayload, {
+      expiresIn: accessTokenExpirySeconds,
+    })
+    const now = new Date()
+    const accessTokenExpiresAt = new Date(now.getTime() + accessTokenExpirySeconds * 1000)
+    const refreshTokenExpiresAt = new Date(now.getTime() + refreshTokenExpirySeconds * 1000)
+    await this.accessTokenRepository.save({
+      jti: accessJti,
+      userId,
+      deviceId,
+      createdAt: now,
+      expiresAt: accessTokenExpiresAt,
+    })
+    await this.refreshTokenRepository.save({
+      jti: refreshJti,
+      userId,
+      deviceId,
+      createdAt: now,
+      expiresAt: refreshTokenExpiresAt,
+    })
+    const refreshToken = this.jwtService.sign(
+      {
+        sub: userId,
+        username,
+        jti: refreshJti,
+        type: 'refresh',
+      },
+      { expiresIn: refreshTokenExpirySeconds }
+    )
+    return Result.success({
+      accessToken,
+      refreshToken,
+      expiresIn: accessTokenExpirySeconds,
+    })
+  }
+  async refreshAccessToken(
+    jti: string,
+    userId: string,
+    username: string,
+    originalExpiresAt: Date
+  ): Promise<Result<AuthTokens>> {
+    if (
+      !jti ||
+      !userId ||
+      !username ||
+      typeof jti !== 'string' ||
+      typeof userId !== 'string' ||
+      typeof username !== 'string'
+    ) {
+      return Result.fail(ApiErrorCode.認證_認證無效)
+    }
+    const isBlacklisted = await this.refreshTokenRepository.isBlacklisted(jti)
+    if (isBlacklisted) {
+      return Result.fail(ApiErrorCode.認證_令牌過期)
+    }
+    const record = await this.refreshTokenRepository.findByJti(jti)
+    if (!record || record.userId !== userId) {
+      return Result.fail(ApiErrorCode.認證_認證無效)
+    }
+    await this.refreshTokenRepository.deleteByJti(jti)
+    const accessJti = nanoid()
+    const deviceId = record.deviceId || nanoid()
+    const accessTokenExpirySeconds = this.configService.get<number>(
+      'ACCESS_TOKEN_EXPIRY_SECONDS',
+      JWT_CONFIG.ACCESS_TOKEN_EXPIRY_SECONDS
+    )
+    const now = new Date()
+    const accessTokenExpiresAt = new Date(now.getTime() + accessTokenExpirySeconds * 1000)
+    const accessTokenPayload: JwtAccessPayload = {
+      sub: userId,
+      username,
+      jti: accessJti,
+      deviceId,
+      type: 'access',
+    }
+    const accessToken = this.jwtService.sign(accessTokenPayload, {
+      expiresIn: accessTokenExpirySeconds,
+    })
+    await this.accessTokenRepository.save({
+      jti: accessJti,
+      userId,
+      deviceId,
+      createdAt: now,
+      expiresAt: accessTokenExpiresAt,
+    })
+    const newRefreshJti = nanoid()
+    const remainingSeconds = Math.floor((originalExpiresAt.getTime() - now.getTime()) / 1000)
+    if (remainingSeconds <= 0) {
+      return Result.fail(ApiErrorCode.認證_令牌過期)
+    }
+    const refreshToken = this.jwtService.sign(
+      {
+        sub: userId,
+        username,
+        jti: newRefreshJti,
+        type: 'refresh',
+      },
+      { expiresIn: remainingSeconds }
+    )
+    await this.refreshTokenRepository.save({
+      jti: newRefreshJti,
+      userId,
+      deviceId: record.deviceId,
+      createdAt: now,
+      expiresAt: originalExpiresAt,
+    })
+    return Result.success({
+      accessToken,
+      refreshToken,
+      expiresIn: accessTokenExpirySeconds,
+    })
+  }
+  async logoutThisDevice(userId: string, deviceId: string, accessTokenExpiresAt: Date): Promise<void> {
+    await this.sessionManager.logoutDevice(userId, deviceId, accessTokenExpiresAt)
+  }
+  async logoutAllDevices(userId: string): Promise<void> {
+    await this.sessionManager.logoutAllDevices(userId)
+  }
+  async revokeToken(jti: string): Promise<void> {
+    const record = await this.refreshTokenRepository.findByJti(jti)
+    if (record) {
+      await this.sessionManager.revokeRefreshToken(jti, record.expiresAt)
+    }
+  }
+}
+
+================
+File: features/equipment/equipment.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedAppModule } from 'src/features/shared/shared-app.module'
+import { SharedInfraModule } from 'src/features/shared/shared-infra.module'
+import { equipmentFeatureProviders } from './equipment.providers'
+@Module({
+  imports: [SharedInfraModule, SharedAppModule],
+  controllers: [],
+  providers: [...equipmentFeatureProviders],
+  exports: [...equipmentFeatureProviders],
+})
+export class EquipmentModule {}
+
+================
+File: features/equipment/equipment.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  EquipmentContextHandler,
+  EquipmentService as GameCoreEquipmentService,
+  IContextSnapshotAccessor,
+} from 'src/from-xo-c'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
+import { EquipmentService } from './equipment.service'
+export const equipmentFeatureProviders = [
+  {
+    provide: EquipmentContextHandler,
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+      return new EquipmentContextHandler(snapshot, converter, uow)
+    },
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextToDomainConverter, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: GameCoreEquipmentService,
+    useFactory: (handler: EquipmentContextHandler) => {
+      return new GameCoreEquipmentService(handler)
+    },
+    inject: [EquipmentContextHandler],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EquipmentService,
+    useFactory: (gameCoreService: GameCoreEquipmentService) => {
+      return new EquipmentService(gameCoreService)
+    },
+    inject: [GameCoreEquipmentService],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/equipment/equipment.service.ts
+================
+import { Injectable } from '@nestjs/common'
+import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import { EquipmentService as GameCoreEquipmentService } from 'src/from-xo-c'
+@Injectable()
+export class EquipmentService {
+  constructor(private readonly gameCoreEquipmentService: GameCoreEquipmentService) {}
+  equipRelic(relicId: string): { success: boolean; data: { message: string; relicId: string } } {
+    const result = this.gameCoreEquipmentService.equipRelicAndUpdateContexts(relicId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      data: {
+        message: '?蝛蹂???',
+        relicId,
+      },
+    }
+  }
+  unequipRelic(relicId: string): { success: boolean; data: { message: string; relicId: string } } {
+    const result = this.gameCoreEquipmentService.unequipRelicAndUpdateContexts(relicId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      data: {
+        message: '??思???',
+        relicId,
+      },
+    }
+  }
+}
+
+================
+File: features/run/is-own-run.guard.ts
+================
+import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
+import { IRunRepository } from './repository/run-repository'
+@Injectable()
+export class IsOwnRunGuard implements CanActivate {
+  constructor(@Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    const runId = (request.params?.runId ?? '') as string
+    const userId = (request.user?.userId ?? '') as string
+    // 如果 沒有 runId 或 userId 則 拋出錯誤
+    if (!runId || !userId) {
+      throw new UnauthorizedException('MISSING_RUN_OR_USER_ID')
+    }
+    if (!request.user?.sub && !request.user?.userId) {
+      throw new UnauthorizedException('INVALID_JWT_PAYLOAD')
+    }
+    const record = await this.runRepository.getRunIfOwner(runId, userId)
+    if (!record) {
+      throw new UnauthorizedException('RUN_NOT_OWNED_BY_USER')
+    }
+    return true
+  }
+}
+
+================
+File: features/run/model/init-run.dto.ts
+================
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsArray, IsNumber, IsOptional, IsString, MinLength } from 'class-validator'
+export class InitRunDto {
+  @ApiProperty({ example: 'WARRIOR' })
+  @IsString()
+  @MinLength(1)
+  declare professionId: string
+  @ApiPropertyOptional({ example: 12_345 })
+  @IsOptional()
+  @IsNumber()
+  seed?: number
+  @ApiPropertyOptional({
+    example: ['relic_warrior_resolute_heart'],
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  startingRelicIds?: string[]
+}
+
+================
+File: features/run/model/run-record.ts
+================
+export interface RunRecord {
+  readonly runId: string
+  readonly userId: string
+  readonly createdAt: number
+  readonly updatedAt: number
+  readonly status: RunStatus
+}
+export enum RunStatus {
+  Active = 'ACTIVE',
+  Completed = 'COMPLETED',
+}
+export interface CreateRunRecordParameters {
+  runId: string
+  userId: string
+}
+
+================
+File: features/run/model/run-relic-action.dto.ts
+================
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString } from 'class-validator'
+export class RunRelicActionDto {
+  @IsString()
+  @ApiProperty()
+  runId!: string
+  @IsString()
+  @ApiProperty()
+  relicId!: string
+}
+
+================
+File: features/run/repository/in-memory-run.repository.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import type { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
+import { CreateRunRecordParams as CreateRunRecordParameters, RunRecord, RunStatus } from '../model/run-record'
+import { RunRecordDto } from '../shared/run-record.dto'
+import { IRunRepository } from './run-repository'
+@Injectable()
+export class InMemoryRunRepository implements IRunRepository {
+  private cache: any
+  constructor(@Inject(CACHE_MANAGER) cache: Cache) {
+    this.cache = cache
+  }
+  private getRunKey(runId: string): string {
+    return `run:${runId}`
+  }
+  private getUserRunsKey(userId: string): string {
+    return `user:${userId}:runs`
+  }
+  private getActiveRunKey(userId: string): string {
+    return `user:${userId}:active-run`
+  }
+  async createRunRecord(parameters: CreateRunRecordParameters): Promise<RunRecord> {
+    const record: RunRecord = {
+      runId: parameters.runId,
+      userId: parameters.userId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status: RunStatus.Active,
+    }
+    const ttl = 86_400 * 10 * 1000
+    await this.cache.set(this.getRunKey(record.runId), record, ttl)
+    const existingRuns = (await this.cache.get(this.getUserRunsKey(parameters.userId))) as string[] | undefined
+    const runIds = existingRuns ? [...new Set([...existingRuns, parameters.runId])] : [parameters.runId]
+    await this.cache.set(this.getUserRunsKey(parameters.userId), runIds, ttl)
+    await this.cache.set(this.getActiveRunKey(parameters.userId), parameters.runId, ttl)
+    return record
+  }
+  async getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null> {
+    const data = (await this.cache.get(this.getRunKey(runId))) as Record<string, unknown> | undefined
+    if (!data) return null
+    const record = plainToInstance(RunRecordDto, data) as RunRecord
+    return record.userId === userId ? record : null
+  }
+  async getRunsByUserId(userId: string): Promise<RunRecord[]> {
+    const runIds = (await this.cache.get(this.getUserRunsKey(userId))) as string[] | undefined
+    if (!runIds || runIds.length === 0) return []
+    const records: RunRecord[] = []
+    for (const runId of runIds) {
+      const data = (await this.cache.get(this.getRunKey(runId))) as Record<string, unknown> | undefined
+      if (data) {
+        records.push(plainToInstance(RunRecordDto, data) as RunRecord)
+      }
+    }
+    return records
+  }
+  async getActiveRunByUserId(userId: string): Promise<RunRecord | null> {
+    const runId = (await this.cache.get(this.getActiveRunKey(userId))) as string | undefined
+    if (!runId) return null
+    return this.getRunIfOwner(runId, userId)
+  }
+  async updateRunStatus(runId: string, status: string): Promise<void> {
+    const data = (await this.cache.get(this.getRunKey(runId))) as Record<string, unknown> | undefined
+    if (!data) return
+    const record = plainToInstance(RunRecordDto, data) as RunRecord
+    const updatedRecord: RunRecord = {
+      ...record,
+      status: status as RunStatus,
+      updatedAt: Date.now(),
+    }
+    const ttl = 86_400 * 10 * 1000
+    await this.cache.set(this.getRunKey(runId), updatedRecord, ttl)
+  }
+  async deleteRunRecord(runId: string): Promise<void> {
+    const data = (await this.cache.get(this.getRunKey(runId))) as Record<string, unknown> | undefined
+    if (!data) return
+    const record = plainToInstance(RunRecordDto, data) as RunRecord
+    await Promise.all([
+      this.cache.del(this.getRunKey(runId)),
+      this.deleteRunFromUserList(record.userId, runId),
+      this.cache.del(this.getActiveRunKey(record.userId)),
+    ])
+  }
+  private async deleteRunFromUserList(userId: string, runId: string): Promise<void> {
+    const runIds = (await this.cache.get(this.getUserRunsKey(userId))) as string[] | undefined
+    if (!runIds) return
+    const updated = runIds.filter((id) => id !== runId)
+    await (updated.length > 0
+      ? this.cache.set(this.getUserRunsKey(userId), updated)
+      : this.cache.del(this.getUserRunsKey(userId)))
+  }
+}
+
+================
+File: features/run/repository/redis-run.repository.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
+import { plainToInstance } from 'class-transformer'
+import { CreateRunRecordParams as CreateRunRecordParameters, RunRecord, RunStatus } from '../model/run-record'
+import { RunRecordDto } from '../shared/run-record.dto'
+import { IRunRepository } from './run-repository'
+@Injectable()
+export class RedisRunRepository implements IRunRepository {
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  async createRunRecord(parameters: CreateRunRecordParameters): Promise<RunRecord> {
+    const record: RunRecord = {
+      runId: parameters.runId,
+      userId: parameters.userId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status: RunStatus.Active,
+    }
+    const ttl = 86_400 * 10 * 1000
+    await this.cache.set(`run:${parameters.runId}`, record, ttl)
+    const existingRuns = await this.cache.get<string[]>(`user:${parameters.userId}:runs`)
+    const runIds = existingRuns ? [...new Set([...existingRuns, parameters.runId])] : [parameters.runId]
+    await this.cache.set(`user:${parameters.userId}:runs`, runIds, ttl)
+    await this.cache.set(`user:${parameters.userId}:active-run`, parameters.runId, ttl)
+    return record
+  }
+  async getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null> {
+    const data = await this.cache.get<Record<string, unknown>>(`run:${runId}`)
+    if (!data) return null
+    const record = plainToInstance(RunRecordDto, data)
+    return record.userId === userId ? record : null
+  }
+  async getRunsByUserId(userId: string): Promise<RunRecord[]> {
+    const runIds = await this.cache.get<string[]>(`user:${userId}:runs`)
+    if (!runIds || runIds.length === 0) return []
+    const records: RunRecord[] = []
+    for (const runId of runIds) {
+      const data = await this.cache.get<Record<string, unknown>>(`run:${runId}`)
+      if (data) {
+        records.push(plainToInstance(RunRecordDto, data))
+      }
+    }
+    return records
+  }
+  async getActiveRunByUserId(userId: string): Promise<RunRecord | null> {
+    const runId = await this.cache.get<string>(`user:${userId}:active-run`)
+    if (!runId) return null
+    return this.getRunIfOwner(runId, userId)
+  }
+  async updateRunStatus(runId: string, status: string): Promise<void> {
+    const data = await this.cache.get<Record<string, unknown>>(`run:${runId}`)
+    if (!data) return
+    const record = plainToInstance(RunRecordDto, data)
+    const updatedRecord: RunRecord = {
+      ...record,
+      status: status as RunStatus,
+      updatedAt: Date.now(),
+    }
+    const ttl = 86_400 * 10 * 1000
+    await this.cache.set(`run:${runId}`, updatedRecord, ttl)
+  }
+  async deleteRunRecord(runId: string): Promise<void> {
+    const data = await this.cache.get<Record<string, unknown>>(`run:${runId}`)
+    if (!data) return
+    const record = plainToInstance(RunRecordDto, data)
+    await Promise.all([
+      this.cache.del(`run:${runId}`),
+      this.deleteRunFromUserList(record.userId, runId),
+      this.cache.del(`user:${record.userId}:active-run`),
+    ])
+  }
+  private async deleteRunFromUserList(userId: string, runId: string): Promise<void> {
+    const runIds = await this.cache.get<string[]>(`user:${userId}:runs`)
+    if (!runIds) return
+    const updated = runIds.filter((id) => id !== runId)
+    await (updated.length > 0 ? this.cache.set(`user:${userId}:runs`, updated) : this.cache.del(`user:${userId}:runs`))
+  }
+}
+
+================
+File: features/run/repository/run-repository.ts
+================
+import { CreateRunRecordParams as CreateRunRecordParameters, RunRecord } from '../model/run-record'
+export interface IRunRepository {
+  createRunRecord(parameters: CreateRunRecordParameters): Promise<RunRecord>
+  getRunIfOwner(runId: string, userId: string): Promise<RunRecord | null>
+  getRunsByUserId(userId: string): Promise<RunRecord[]>
+  getActiveRunByUserId(userId: string): Promise<RunRecord | null>
+  updateRunStatus(runId: string, status: string): Promise<void>
+  deleteRunRecord(runId: string): Promise<void>
+}
+
+================
+File: features/run/run.controller.ts
+================
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { ContextInitializationInterceptor } from 'src/features/shared/interceptors/context-initialization.interceptor'
+import { IsAuthenticatedGuard } from '../auth/auth.guard'
+import { GetUser } from '../auth/get-user.decorator'
+import { EquipmentService } from '../equipment/equipment.service'
+import { ResultToExceptionMapper } from '../shared/mappers/result-to-exception-mapper'
+import { BuyItemDto } from '../shop/model/buy-item.dto'
+import { RefreshShopDto } from '../shop/model/refresh-shop.dto'
+import { SellItemDto } from '../shop/model/sell-item.dto'
+import { ShopNestService } from '../shop/shop.service'
+import { InitRunDto } from './model/init-run.dto'
+import { RunRelicActionDto } from './model/run-relic-action.dto'
+import { RunApiService } from './service/run-api.service'
+import { RunOptionsService } from './service/run-options.service'
+@ApiTags('Game Run - 遊戲進行')
+@Controller('api/run')
+export class RunController {
+  constructor(
+    private readonly runOptionsService: RunOptionsService,
+    private readonly runService: RunApiService,
+    private readonly shopService: ShopNestService,
+    private readonly equipmentService: EquipmentService
+  ) {}
+  @Get('professions')
+  getProfessions() {
+    return { success: true, data: this.runOptionsService.getAvailableProfessions() }
+  }
+  @Get('relics')
+  getRelicTemplates() {
+    return { success: true, data: this.runOptionsService.getAllRelicTemplates() }
+  }
+  @Get('professions/:id/started-relics')
+  getProfessionRelics(@Param('id') id: string) {
+    try {
+      return { success: true, data: this.runOptionsService.getSelectableStartingRelics(id) }
+    } catch {
+      throw new BadRequestException({ error: 'PROFESSION_NOT_FOUND' })
+    }
+  }
+  @Post('init-for-user')
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiBearerAuth('access-token')
+  async initializeRunForUser(@GetUser() user: { userId?: string }, @Body() dto: InitRunDto) {
+    if (!user.userId) throw new UnauthorizedException('MISSING_USER_ID')
+    const result = await this.runService.initializeRunForUser(user.userId, dto)
+    ResultToExceptionMapper.throwIfFailure(result)
+    const context = result.value!.contexts
+    return {
+      success: true,
+      data: {
+        runId: context.runContext.runId,
+        professionId: context.characterContext.professionId,
+        seed: context.runContext.seed,
+      },
+    }
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Get('shop/items')
+  getShopItems(@Query('runId') runId: string) {
+    return this.shopService.getShopItems({ runId })
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Post('shop/buy')
+  buyItem(@Body() dto: BuyItemDto) {
+    return this.shopService.buyItem(dto)
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Post('shop/sell')
+  sellItem(@Body() dto: SellItemDto) {
+    return this.shopService.sellItem(dto)
+  }
+  @UseInterceptors(ContextInitializationInterceptor)
+  @Post('shop/refresh')
+  refreshShop(@Body() dto: RefreshShopDto) {
+    return this.shopService.refreshShop(dto)
+  }
+  @Post('equipment/equip')
+  equipRelic(@Body() dto: RunRelicActionDto) {
+    return this.equipmentService.equipRelic(dto.relicId)
+  }
+  @Post('equipment/unequip')
+  unequipRelic(@Body() dto: RunRelicActionDto) {
+    return this.equipmentService.unequipRelic(dto.relicId)
+  }
+}
+
+================
+File: features/run/run.module.ts
+================
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import type { Cache } from 'cache-manager'
+import { AuthModule } from '../auth/auth.module'
+import { EquipmentModule } from '../equipment/equipment.module'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
+import { SharedAppModule } from '../shared/shared-app.module'
+import { SharedInfraModule } from '../shared/shared-infra.module'
+import { ShopModule } from '../shop/shop.module'
+import { IsOwnRunGuard } from './is-own-run.guard'
+import { InMemoryRunRepository } from './repository/in-memory-run.repository'
+import { RedisRunRepository } from './repository/redis-run.repository'
+import { RunController } from './run.controller'
+import { runFeatureProviders } from './run.providers'
+import { RunApiService } from './service/run-api.service'
+import { RunOptionsService } from './service/run-options.service'
+@Module({
+  imports: [SharedAppModule, SharedInfraModule, AuthModule, ShopModule, EquipmentModule],
+  controllers: [RunController],
+  providers: [
+    {
+      provide: InjectionTokens.RunRepository,
+      useFactory: (configService: ConfigService, cache: Cache) => {
+        const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
+        if (storageType === 'memory') {
+          return new InMemoryRunRepository(cache)
+        }
+        return new RedisRunRepository(cache)
+      },
+      inject: [ConfigService, CACHE_MANAGER],
+    },
+    IsOwnRunGuard,
+    RunOptionsService,
+    RunApiService,
+    ...runFeatureProviders,
+  ],
+  exports: [InjectionTokens.RunRepository, IsOwnRunGuard, RunApiService],
+})
+export class RunModule {}
+
+================
+File: features/run/run.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  AffixEntityService,
+  AppContextRunAdapter,
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  EnemyEntityService,
+  EnemyRandomGenerateService,
+  GameStartOptionsService,
+  IAppContext,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+  RunContextHandler,
+  RunCoordinationService,
+  RunInitializationService,
+  RunService,
+  StageInitializationService,
+  StageNodeGenerationService,
+  UltimateEntityService,
+} from 'src/from-xo-c'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
+export const runFeatureProviders = [
+  {
+    provide: RunContextHandler,
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+      return new RunContextHandler(snapshot, converter, uow)
+    },
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextToDomainConverter, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunService,
+    useFactory: (handler: RunContextHandler) => {
+      return new RunService(handler)
+    },
+    inject: [RunContextHandler],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: GameStartOptionsService,
+    useFactory: (configStore: IAppContext['configStore']) => {
+      return new GameStartOptionsService(configStore.professionStore, configStore.itemStore)
+    },
+    inject: [InjectionTokens.ConfigStore],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: StageNodeGenerationService,
+    useFactory: () => {
+      return new StageNodeGenerationService()
+    },
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EnemyEntityService,
+    useFactory: (
+      affixEntityService: AffixEntityService,
+      ultimateEntityService: UltimateEntityService,
+      configStoreAccessor: IConfigStoreAccessor,
+      contextSnapshot: IContextSnapshotAccessor
+    ) => {
+      return new EnemyEntityService(affixEntityService, ultimateEntityService, configStoreAccessor, contextSnapshot)
+    },
+    inject: [
+      AffixEntityService,
+      UltimateEntityService,
+      InjectionTokens.ConfigStoreAccessor,
+      InjectionTokens.ContextSnapshotAccessor,
+    ],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: EnemyRandomGenerateService,
+    useFactory: (
+      enemyEntityService: EnemyEntityService,
+      configStoreAccessor: IConfigStoreAccessor,
+      contextSnapshotAccessor: IContextSnapshotAccessor
+    ) => {
+      return new EnemyRandomGenerateService(enemyEntityService, configStoreAccessor, contextSnapshotAccessor)
+    },
+    inject: [EnemyEntityService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: StageInitializationService,
+    useFactory: (
+      contextAccessor: IContextSnapshotAccessor,
+      unitOfWork: ContextUnitOfWork,
+      enemyRandomGenerateService: EnemyRandomGenerateService
+    ) => {
+      return new StageInitializationService(contextAccessor, unitOfWork, enemyRandomGenerateService)
+    },
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextUnitOfWork, EnemyRandomGenerateService],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunCoordinationService,
+    useFactory: (runHandler: RunContextHandler, stageInitService: StageInitializationService) => {
+      return new RunCoordinationService(runHandler, stageInitService)
+    },
+    inject: [RunContextHandler, StageInitializationService],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: AppContextRunAdapter,
+    useFactory: (configStore: IAppContext['configStore']) => {
+      return new AppContextRunAdapter(configStore)
+    },
+    inject: [InjectionTokens.ConfigStore],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: RunInitializationService,
+    useFactory: (
+      appContextRunAdapter: AppContextRunAdapter,
+      stageGenerator: StageNodeGenerationService,
+      unitOfWork: ContextUnitOfWork
+    ) => {
+      return new RunInitializationService(appContextRunAdapter, unitOfWork, stageGenerator)
+    },
+    inject: [AppContextRunAdapter, StageNodeGenerationService, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/run/service/run-api.service.ts
+================
+import { Inject, Injectable } from '@nestjs/common'
+import { RunInitializationService } from 'src/from-xo-c'
+import { InjectionTokens } from '../../shared/providers/injection-tokens'
+import { CreateRunRecordParams as CreateRunRecordParameters } from '../model/run-record'
+import type { IRunRepository } from '../repository/run-repository'
+type InitializeRunForUserParameters = {
+  professionId: string
+  seed?: number
+  startingRelicIds?: string[]
+}
+@Injectable()
+export class RunApiService {
+  constructor(
+    private readonly runInitializationService: RunInitializationService,
+    @Inject(InjectionTokens.RunRepository) private readonly runRepository: IRunRepository
+  ) {}
+  async initializeRunForUser(userId: string, parameters: InitializeRunForUserParameters) {
+    const result = await this.runInitializationService.initialize({
+      professionId: parameters.professionId,
+      seed: parameters.seed,
+      startingRelicIds: parameters.startingRelicIds,
+    })
+    if (result.isFailure) return result
+    const appContext = result.value!
+    const runId = appContext.contexts.runContext.runId
+    const runRecord: CreateRunRecordParameters = {
+      runId,
+      userId,
+    }
+    await this.runRepository.createRunRecord(runRecord)
+    return result
+  }
+  async verifyRunOwnership(runId: string, userId: string): Promise<boolean> {
+    const record = await this.runRepository.getRunIfOwner(runId, userId)
+    return record !== null
+  }
+  async getUserRuns(userId: string) {
+    return this.runRepository.getRunsByUserId(userId)
+  }
+  async getUserActiveRun(userId: string) {
+    return this.runRepository.getActiveRunByUserId(userId)
+  }
+}
+
+================
+File: features/run/service/run-options.service.ts
+================
+import { Injectable } from '@nestjs/common'
+import { GameStartOptionsService } from 'src/from-xo-c'
+@Injectable()
+export class RunOptionsService {
+  constructor(private readonly gameStartOptionsService: GameStartOptionsService) {}
+  getAvailableProfessions() {
+    const professions = this.gameStartOptionsService.getAvailableProfessions()
+    return professions.map((prof) => ({
+      id: prof.id,
+      name: prof.name,
+      desc: prof.desc,
+    }))
+  }
+  getAllRelicTemplates() {
+    const professions = this.gameStartOptionsService.getAvailableProfessions()
+    const allRelics = professions.flatMap((prof) => this.gameStartOptionsService.getSelectableStartingRelics(prof.id))
+    return allRelics.map((relic) => ({
+      id: relic.id,
+      name: relic.name,
+      desc: relic.desc,
+      itemType: relic.itemType,
+      rarity: relic.rarity,
+      affixIds: relic.affixIds,
+      tags: relic.tags,
+      loadCost: relic.loadCost,
+      maxStacks: relic.maxStacks,
+    }))
+  }
+  getSelectableStartingRelics(professionId: string) {
+    const relics = this.gameStartOptionsService.getSelectableStartingRelics(professionId)
+    return relics.map((relic) => ({
+      id: relic.id,
+      name: relic.name,
+      desc: relic.desc,
+      itemType: relic.itemType,
+      rarity: relic.rarity,
+      affixIds: relic.affixIds,
+      tags: relic.tags,
+      loadCost: relic.loadCost,
+      maxStacks: relic.maxStacks,
+    }))
+  }
+}
+
+================
+File: features/run/shared/run-record.dto.ts
+================
+import { Type } from 'class-transformer'
+import { RunRecord, RunStatus } from '../model/run-record'
+export class RunRecordDto implements RunRecord {
+  runId!: string
+  userId!: string
+  @Type(() => Number)
+  createdAt!: number
+  @Type(() => Number)
+  updatedAt!: number
+  status!: RunStatus
+}
+
+================
+File: features/shared/cache/cache.module.ts
+================
+import { CacheModule } from '@nestjs/cache-manager'
+import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import Redis from 'ioredis'
+import { Keyv } from 'keyv'
+import { InjectionTokens } from '../providers/injection-tokens'
+import { RedisModule } from './redis.module'
+import { RedisKeyvAdapter } from './redis-keyv.adapter'
+@Module({
+  imports: [
+    RedisModule,
+    CacheModule.registerAsync({
+      isGlobal: true,
+      inject: [ConfigService, InjectionTokens.RedisClient],
+      useFactory: (config: ConfigService, redis: Redis | null) => {
+        const storageType = config.get<string>('STORAGE_TYPE', 'memory')
+        if (storageType === 'redis' && redis) {
+          const adapter = new RedisKeyvAdapter(redis, 'keyv')
+          const keyv = new Keyv({ store: adapter })
+          console.log('[CacheModule] ✓ Using Redis with Keyv adapter (single connection)')
+          return {
+            stores: [keyv],
+            ttl: 600 * 1000,
+          }
+        }
+        const memoryStore = new Keyv()
+        console.log('[CacheModule] Using in-memory cache')
+        return {
+          stores: [memoryStore],
+          ttl: 600 * 1000,
+        }
+      },
+    }),
+  ],
+  exports: [CacheModule],
+})
+export class CacheConfigModule {}
+
+================
+File: features/shared/cache/redis-keyv.adapter.ts
+================
+import Redis from 'ioredis'
+export class RedisKeyvAdapter {
+  constructor(
+    private readonly redis: Redis,
+    private readonly prefix: string = 'keyv'
+  ) {}
+  private makeKey(key: string): string {
+    return `${this.prefix}:${key}`
+  }
+  async get(key: string): Promise<Record<string, unknown> | undefined> {
+    try {
+      const data = await this.redis.get(this.makeKey(key))
+      if (!data) return undefined
+      return JSON.parse(data)
+    } catch {
+      return undefined
+    }
+  }
+  async set(key: string, value: Record<string, unknown>, ttl?: number): Promise<void> {
+    const prefixedKey = this.makeKey(key)
+    const serialized = JSON.stringify(value)
+    if (ttl === undefined) {
+      await this.redis.set(prefixedKey, serialized)
+    } else {
+      const ttlSeconds = Math.floor(ttl / 1000)
+      await this.redis.setex(prefixedKey, ttlSeconds, serialized)
+    }
+  }
+  async delete(key: string): Promise<boolean> {
+    try {
+      const result = await this.redis.del(this.makeKey(key))
+      return result === 1
+    } catch {
+      return false
+    }
+  }
+  async clear(): Promise<void> {
+    try {
+      const pattern = `${this.prefix}:*`
+      const keys = await this.redis.keys(pattern)
+      if (keys.length > 0) {
+        await this.redis.del(...keys)
+      }
+    } catch {}
+  }
+  async has(key: string): Promise<boolean> {
+    try {
+      const result = await this.redis.exists(this.makeKey(key))
+      return result === 1
+    } catch {
+      return false
+    }
+  }
+}
+
+================
+File: features/shared/cache/redis.module.ts
+================
+import { Global, Logger, Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import type { RedisOptions } from 'ioredis'
+import Redis from 'ioredis'
+import { InjectionTokens } from '../providers/injection-tokens'
+@Global()
+@Module({
+  imports: [ConfigModule],
+  providers: [
+    {
+      provide: InjectionTokens.RedisClient,
+      useFactory: (config: ConfigService) => {
+        const logger = new Logger('RedisModule')
+        const storageType = config.get<string>('STORAGE_TYPE', 'memory')
+        if (storageType !== 'redis') {
+          logger.log('Storage type is not redis, skipping connection.')
+          return null
+        }
+        const host = config.get<string>('REDIS_HOST', 'localhost')
+        const port = config.get<number>('REDIS_PORT', 6379)
+        const password = config.get<string>('REDIS_PASSWORD')
+        const database = config.get<number>('REDIS_DB', 0)
+        const redisOptions: RedisOptions = {
+          host,
+          port,
+          db: database,
+          retryStrategy: (times: number) => {
+            const delay = Math.min(times * 50, 2000)
+            return delay
+          },
+          maxRetriesPerRequest: null,
+        }
+        if (password) {
+          redisOptions.password = password
+        }
+        const redis = new Redis(redisOptions)
+        const logPrefix = `[Redis][${host}:${port}][db=${database}]`
+        redis.on('connect', () => {
+          logger.log(`${logPrefix} ✓ 已連接`)
+        })
+        redis.on('ready', () => {
+          logger.log(`${logPrefix} ✓ 已準備好`)
+        })
+        redis.on('error', (error: Error) => {
+          logger.error(`${logPrefix} ✗ 錯誤: ${error.message}`, error.stack)
+        })
+        redis.on('reconnecting', (times: number) => {
+          logger.warn(`${logPrefix} ⟳ 正在重新連線...（第 ${times ?? '?'} 次）`)
+        })
+        redis.on('close', () => {
+          logger.warn(`${logPrefix} ⊘ 連線已關閉`)
+        })
+        return redis
+      },
+      inject: [ConfigService],
+    },
+  ],
+  exports: [InjectionTokens.RedisClient],
+})
+export class RedisModule {}
+
+================
+File: features/shared/context/context-manager.ts
+================
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { IAppContext, IContextBatchRepository } from '../../../from-xo-c'
+import { InjectionTokens } from '../providers/injection-tokens'
+type IConfigStore = IAppContext['configStore']
+@Injectable()
+export class ContextManager {
+  private globalConfigStore: IConfigStore
+  private readonly logger = new Logger(ContextManager.name)
+  constructor(
+    configStore: IConfigStore,
+    @Inject(InjectionTokens.ContextBatchRepository) private readonly repository: IContextBatchRepository
+  ) {
+    this.globalConfigStore = configStore
+  }
+  async saveContext(appContext: IAppContext): Promise<void> {
+    const runId = appContext.contexts.runContext.runId
+    if (!runId) {
+      throw new Error('AppContext must have a valid runId')
+    }
+    const contexts = appContext.contexts
+    try {
+      await this.repository.updateBatch({
+        run: { context: contexts.runContext, expectedVersion: 0 },
+        character: { context: contexts.characterContext, expectedVersion: 0 },
+        stash: { context: contexts.stashContext, expectedVersion: 0 },
+        shop: { context: contexts.shopContext, expectedVersion: 0 },
+      })
+    } catch (error) {
+      this.logger.error(`saveContext 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      throw error
+    }
+  }
+  async getContextByRunId(runId: string): Promise<IAppContext | null> {
+    if (!runId) {
+      return null
+    }
+    try {
+      const result = await this.repository.getByRunId(runId)
+      if (!result?.success || !result.runContext) {
+        return null
+      }
+      return {
+        configStore: this.globalConfigStore,
+        contexts: {
+          runContext: result.runContext,
+          characterContext: result.characterContext ?? ({} as IAppContext['contexts']['characterContext']),
+          stashContext: result.stashContext ?? ({} as IAppContext['contexts']['stashContext']),
+          shopContext: result.shopContext ?? ({} as IAppContext['contexts']['shopContext']),
+        },
+      }
+    } catch (error) {
+      this.logger.error(
+        `getContextByRunId 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`
+      )
+      return null
+    }
+  }
+  getConfigStore(): IConfigStore {
+    return this.globalConfigStore
+  }
+}
+
+================
+File: features/shared/errors/ApiErrorCode.ts
+================
+export enum ApiErrorCode {
+  認證_未提供認證 = 'AUTH_MISSING',
+  認證_認證無效 = 'AUTH_INVALID',
+  認證_令牌過期 = 'AUTH_EXPIRED',
+  授權_權限不足 = 'FORBIDDEN',
+  參數_驗證失敗 = 'VALIDATION_FAILED',
+  參數_不存在 = 'NOT_FOUND',
+  伺服器_內部錯誤 = 'INTERNAL_ERROR',
+  註冊_帳號已存在 = 'REGISTER_ACCOUNT_EXISTS',
+}
+export const ApiErrorMessages: Record<ApiErrorCode, string> = {
+  [ApiErrorCode.認證_未提供認證]: '未提供認證資訊',
+  [ApiErrorCode.認證_認證無效]: '認證資訊無效',
+  [ApiErrorCode.認證_令牌過期]: '令牌已過期，請重新登入',
+  [ApiErrorCode.授權_權限不足]: '權限不足，無法進行此操作',
+  [ApiErrorCode.參數_驗證失敗]: '請求參數驗證失敗',
+  [ApiErrorCode.參數_不存在]: '資源不存在',
+  [ApiErrorCode.伺服器_內部錯誤]: '伺服器內部錯誤',
+  [ApiErrorCode.註冊_帳號已存在]: '帳號已存在，請直接登入',
+}
+
+================
+File: features/shared/filters/all-exceptions.filter.ts
+================
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common'
+import { Request, Response } from 'express'
+interface ApiErrorResponse {
+  success: false
+  error: string
+  message: string
+  details?: unknown
+  timestamp: string
+  path: string
+}
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger('AllExceptionsFilter')
+  catch(exception: unknown, host: ArgumentsHost): void {
+    const context = host.switchToHttp()
+    const request = context.getRequest<Request>()
+    const response = context.getResponse<Response>()
+    const status = this.getStatus(exception)
+    const errorResponse = this.buildErrorResponse(exception, request)
+    this.logError(exception, request, status)
+    response.status(status).json(errorResponse)
+  }
+  private getStatus(exception: unknown): number {
+    if (exception instanceof HttpException) {
+      return exception.getStatus()
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR
+  }
+  private buildErrorResponse(exception: unknown, request: Request): ApiErrorResponse {
+    const now = new Date().toISOString()
+    const path = request.url
+    if (exception instanceof HttpException) {
+      const exceptionResponse = exception.getResponse()
+      if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+        const response = exceptionResponse as Record<string, unknown>
+        return {
+          success: false,
+          error: (response.error as string) || 'HTTP_ERROR',
+          message: (response.message as string) || exception.message,
+          details: response.details,
+          timestamp: now,
+          path,
+        }
+      }
+      return {
+        success: false,
+        error: 'HTTP_ERROR',
+        message: exception.message,
+        timestamp: now,
+        path,
+      }
+    }
+    const message = exception instanceof Error ? exception.message : String(exception)
+    return {
+      success: false,
+      error: 'INTERNAL_SERVER_ERROR',
+      message,
+      timestamp: now,
+      path,
+    }
+  }
+  private logError(exception: unknown, request: Request, status: number): void {
+    const method = request.method
+    const path = request.url
+    const ip = request.ip
+    if (status >= 500) {
+      this.logger.error(
+        `Server Error: ${method} ${path} | IP: ${ip}`,
+        exception instanceof Error ? exception.stack : String(exception)
+      )
+    } else if (status >= 400) {
+      this.logger.warn(`Client Error: ${method} ${path} | IP: ${ip} | Status: ${status}`)
+    }
+  }
+}
+
+================
+File: features/shared/filters/result-exception.filter.ts
+================
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common'
+import { Response } from 'express'
+@Catch(HttpException)
+export class ResultExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const context = host.switchToHttp()
+    const response = context.getResponse<Response>()
+    const status = exception.getStatus()
+    const exceptionResponse = exception.getResponse()
+    response.status(status).json({
+      success: false,
+      error: (exceptionResponse as any).error || 'UNKNOWN_ERROR',
+      message: (exceptionResponse as any).message || exception.message,
+      statusCode: status,
+    })
+  }
+}
+
+================
+File: features/shared/helpers/request-utils.ts
+================
+import { Request } from 'express'
+export function getRunIdFromRequest(request: Request): string | undefined {
+  if (request.body && typeof request.body === 'object' && 'runId' in request.body) {
+    const value = (request.body as Record<string, unknown>).runId
+    if (typeof value === 'string') return value
+  }
+  if (request.query && typeof request.query === 'object' && 'runId' in request.query) {
+    const value = (request.query as Record<string, unknown>).runId
+    if (typeof value === 'string') return value
+  }
+  return undefined
+}
+
+================
+File: features/shared/interceptors/context-initialization.interceptor.ts
+================
+import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
+import { Request } from 'express'
+import { from, Observable } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
+import { ContextManager } from '../context/context-manager'
+import { getRunIdFromRequest } from '../helpers/request-utils'
+@Injectable()
+export class ContextInitializationInterceptor implements NestInterceptor {
+  private static readonly IGNORED_ENDPOINTS = new Set(['/api/run/init'])
+  private static readonly ERROR_MISSING_RUN_ID = {
+    error: 'MISSING_RUN_ID',
+    message: '請求必須包含有效的 runId',
+  }
+  private static readonly ERROR_RUN_NOT_FOUND = (runId: string) => ({
+    error: 'RUN_NOT_FOUND',
+    message: `運行 ${runId} 不存在`,
+  })
+  constructor(private readonly contextManager: ContextManager) {}
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const request = context.switchToHttp().getRequest<Request>()
+    if (ContextInitializationInterceptor.isPathIgnored(request)) {
+      return next.handle()
+    }
+    const runId = getRunIdFromRequest(request)
+    if (!runId) {
+      throw new BadRequestException(ContextInitializationInterceptor.ERROR_MISSING_RUN_ID)
+    }
+    return from(this.contextManager.getContextByRunId(runId)).pipe(
+      switchMap((appContext) => {
+        if (!appContext) {
+          throw new BadRequestException(ContextInitializationInterceptor.ERROR_RUN_NOT_FOUND(runId))
+        }
+        return next.handle()
+      })
+    )
+  }
+  private static isPathIgnored(request: Request): boolean {
+    return ContextInitializationInterceptor.IGNORED_ENDPOINTS.has(request.path)
+  }
+}
+
+================
+File: features/shared/mappers/result-to-exception-mapper.ts
+================
+import {
+  BadRequestException,
+  ForbiddenException,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
+import { ApplicationErrorCode, DomainErrorCode, getErrorMessage, Result } from 'src/from-xo-c'
+import { ApiErrorCode, ApiErrorMessages } from '../errors/ApiErrorCode'
+type ErrorCodeUnion = DomainErrorCode | ApplicationErrorCode | ApiErrorCode | string
+export class ResultToExceptionMapper {
+  static throwIfFailure<T>(result: Result<T>): void {
+    if (result.isFailure) {
+      const errorCode = result.error || 'UNKNOWN_ERROR'
+      this.mapAndThrow(errorCode)
+    }
+  }
+  private static mapAndThrow(errorCode: ErrorCodeUnion): never {
+    const message = this.getErrorMessage(errorCode)
+    const statusCode = this.getStatusCode(errorCode)
+    switch (statusCode) {
+      case 401: {
+        throw new UnauthorizedException({ error: errorCode, message })
+      }
+      case 403: {
+        throw new ForbiddenException({ error: errorCode, message })
+      }
+      case 404: {
+        throw new NotFoundException({ error: errorCode, message })
+      }
+      case 500: {
+        throw new InternalServerErrorException({ error: errorCode, message })
+      }
+      default: {
+        throw new BadRequestException({ error: errorCode, message })
+      }
+    }
+  }
+  private static getErrorMessage(errorCode: ErrorCodeUnion): string {
+    if (Object.values(ApiErrorCode).includes(errorCode as ApiErrorCode)) {
+      return ApiErrorMessages[errorCode as ApiErrorCode]
+    }
+    if (
+      Object.values(DomainErrorCode).includes(errorCode as DomainErrorCode) ||
+      Object.values(ApplicationErrorCode).includes(errorCode as ApplicationErrorCode)
+    ) {
+      return getErrorMessage(errorCode as DomainErrorCode | ApplicationErrorCode)
+    }
+    return '未知的錯誤'
+  }
+  private static getStatusCode(errorCode: ErrorCodeUnion): number {
+    const apiErrorCode = errorCode as ApiErrorCode
+    if (
+      apiErrorCode === ApiErrorCode.認證_未提供認證 ||
+      apiErrorCode === ApiErrorCode.認證_認證無效 ||
+      apiErrorCode === ApiErrorCode.認證_令牌過期
+    ) {
+      return 401
+    }
+    if (apiErrorCode === ApiErrorCode.授權_權限不足) {
+      return 403
+    }
+    if (apiErrorCode === ApiErrorCode.參數_不存在) {
+      return 404
+    }
+    if (apiErrorCode === ApiErrorCode.伺服器_內部錯誤) {
+      return 500
+    }
+    return 400
+  }
+}
+
+================
+File: features/shared/providers/config-store.providers.ts
+================
+import {
+  GameConfigAssembler,
+  InternalAffixConfigLoader,
+  InternalEnemyConfigLoader,
+  InternalItemConfigLoader,
+  InternalProfessionConfigLoader,
+  InternalShopConfigLoader,
+  InternalUltimateConfigLoader,
+} from 'src/from-xo-c'
+import { InjectionTokens } from './injection-tokens'
+export const configStoreProviders = [
+  {
+    provide: InjectionTokens.ConfigStore,
+    useFactory: async () => {
+      const assembler = new GameConfigAssembler(
+        new InternalEnemyConfigLoader(),
+        new InternalItemConfigLoader(),
+        new InternalProfessionConfigLoader(),
+        new InternalUltimateConfigLoader(),
+        new InternalAffixConfigLoader(),
+        new InternalShopConfigLoader()
+      )
+      await assembler.assembleAllConfigs()
+      return {
+        enemyStore: assembler.getEnemyStore(),
+        itemStore: assembler.getItemStore(),
+        professionStore: assembler.getProfessionStore(),
+        ultimateStore: assembler.getUltimateStore(),
+        affixStore: assembler.getAffixStore(),
+        shopStore: assembler.getShopStore(),
+      }
+    },
+  },
+]
+
+================
+File: features/shared/providers/content-generation-providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  AffixEntityService,
+  CharacterAggregateService,
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+  ItemEntityService,
+  ProfessionEntityService,
+  UltimateEntityService,
+} from '../../../from-xo-c'
+import { InjectionTokens } from './injection-tokens'
+export const contentGenerationProviders = [
+  {
+    provide: AffixEntityService,
+    useFactory: (configStoreAccessor: IConfigStoreAccessor, contextSnapshot: IContextSnapshotAccessor) => {
+      return new AffixEntityService(configStoreAccessor, contextSnapshot)
+    },
+    inject: [InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: UltimateEntityService,
+    useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new UltimateEntityService(affixSvc, config, snapshot)
+    },
+    inject: [AffixEntityService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemEntityService,
+    useFactory: (affixSvc: AffixEntityService, config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new ItemEntityService(config, snapshot, affixSvc)
+    },
+    inject: [AffixEntityService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ProfessionEntityService,
+    useFactory: (config: IConfigStoreAccessor) => {
+      return new ProfessionEntityService(config)
+    },
+    inject: [InjectionTokens.ConfigStoreAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: CharacterAggregateService,
+    useFactory: (profSvc: ProfessionEntityService, itemSvc: ItemEntityService, ultimateSvc: UltimateEntityService) => {
+      return new CharacterAggregateService(profSvc, itemSvc, ultimateSvc)
+    },
+    inject: [ProfessionEntityService, ItemEntityService, UltimateEntityService],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/shared/providers/context-converter-providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  CharacterAggregateService,
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  IConfigStoreAccessor,
+  IContextMutator,
+  IContextSnapshotAccessor,
+  ItemEntityService,
+} from '../../../from-xo-c'
+import { InjectionTokens } from './injection-tokens'
+export const contextConverterProviders = [
+  {
+    provide: ContextToDomainConverter,
+    useFactory: (
+      itemSvc: ItemEntityService,
+      charSvc: CharacterAggregateService,
+      snapshot: IContextSnapshotAccessor,
+      config: IConfigStoreAccessor
+    ) => {
+      return new ContextToDomainConverter(itemSvc, charSvc, snapshot, config)
+    },
+    inject: [
+      ItemEntityService,
+      CharacterAggregateService,
+      InjectionTokens.ContextSnapshotAccessor,
+      InjectionTokens.ConfigStoreAccessor,
+    ],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ContextUnitOfWork,
+    useFactory: (snapshot: IContextSnapshotAccessor, mutator: IContextMutator) => {
+      return new ContextUnitOfWork(mutator, snapshot)
+    },
+    inject: [InjectionTokens.ContextSnapshotAccessor, InjectionTokens.ContextMutator],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/shared/providers/fine-grained-interface.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
+import { Request } from 'express'
+import { ConfigStoreAccessorImpl, ContextMutatorImpl, ContextSnapshotAccessorImpl, IAppContext } from 'src/from-xo-c'
+import { ContextManager } from '../context/context-manager'
+import { getRunIdFromRequest } from '../helpers/request-utils'
+import { InjectionTokens } from './injection-tokens'
+export const fineGrainedInterfaceProviders = [
+  {
+    provide: InjectionTokens.AppContext,
+    useFactory: async (contextManager: ContextManager, request: Request) => {
+      const runId = getRunIdFromRequest(request)
+      let currentContext: IAppContext | undefined
+      if (runId && typeof runId === 'string') {
+        const persistedContext = await contextManager.getContextByRunId(runId)
+        if (persistedContext) {
+          currentContext = persistedContext
+        }
+      }
+      if (!currentContext) {
+        currentContext = {
+          configStore: contextManager.getConfigStore(),
+          contexts: {
+            runContext: {} as IAppContext['contexts']['runContext'],
+            characterContext: {} as IAppContext['contexts']['characterContext'],
+            stashContext: {} as IAppContext['contexts']['stashContext'],
+            shopContext: {} as IAppContext['contexts']['shopContext'],
+          },
+        }
+      }
+      return currentContext
+    },
+    inject: [ContextManager, REQUEST],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: InjectionTokens.ConfigStoreAccessor,
+    useFactory: (context: IAppContext) => {
+      return new ConfigStoreAccessorImpl(context)
+    },
+    inject: [InjectionTokens.AppContext],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: InjectionTokens.ContextSnapshotAccessor,
+    useFactory: (context: IAppContext) => {
+      return new ContextSnapshotAccessorImpl(context)
+    },
+    inject: [InjectionTokens.AppContext],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: InjectionTokens.ContextMutator,
+    useFactory: (context: IAppContext, contextManager: ContextManager, request: Request) => {
+      const onContextChange = async (next: IAppContext) => {
+        const runId = getRunIdFromRequest(request)
+        if (runId && typeof runId === 'string') {
+          await contextManager.saveContext(next)
+        }
+      }
+      return new ContextMutatorImpl(onContextChange, context)
+    },
+    inject: [InjectionTokens.AppContext, ContextManager, REQUEST],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/shared/providers/injection-tokens.ts
+================
+export const InjectionTokens = {
+  ContextBatchRepository: 'IContextBatchRepository',
+  ConfigStore: 'CONFIG_STORE',
+  AppContext: 'IAppContext',
+  ConfigStoreAccessor: 'IConfigStoreAccessor',
+  ContextSnapshotAccessor: 'IContextSnapshotAccessor',
+  ContextMutator: 'IContextMutator',
+  UserRepository: 'IUserRepository',
+  AccessTokenRepository: 'IAccessTokenRepository',
+  RefreshTokenRepository: 'IRefreshTokenRepository',
+  GuestRepository: 'IGuestRepository',
+  RunRepository: 'IRunRepository',
+  RedisClient: 'REDIS_CLIENT',
+} as const
+export type InjectionToken = (typeof InjectionTokens)[keyof typeof InjectionTokens]
+
+================
+File: features/shared/providers/item-generation-provider.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  IConfigStoreAccessor,
+  IContextSnapshotAccessor,
+  ItemConstraintService,
+  ItemEntityService,
+  ItemGenerationService,
+  ItemModifierAggregationService,
+  ItemRollService,
+} from '../../../from-xo-c'
+import { InjectionTokens } from './injection-tokens'
+export const itemGenerationProviders = [
+  {
+    provide: ItemConstraintService,
+    useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new ItemConstraintService(config, snapshot)
+    },
+    inject: [InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemModifierAggregationService,
+    useFactory: (config: IConfigStoreAccessor, snapshot: IContextSnapshotAccessor) => {
+      return new ItemModifierAggregationService(config, snapshot)
+    },
+    inject: [InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemRollService,
+    useFactory: (
+      constraintSvc: ItemConstraintService,
+      config: IConfigStoreAccessor,
+      snapshot: IContextSnapshotAccessor
+    ) => {
+      return new ItemRollService(config, snapshot, constraintSvc)
+    },
+    inject: [ItemConstraintService, InjectionTokens.ConfigStoreAccessor, InjectionTokens.ContextSnapshotAccessor],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ItemGenerationService,
+    useFactory: (
+      itemSvc: ItemEntityService,
+      constraintSvc: ItemConstraintService,
+      modifierSvc: ItemModifierAggregationService,
+      rollSvc: ItemRollService
+    ) => {
+      return new ItemGenerationService(itemSvc, constraintSvc, modifierSvc, rollSvc)
+    },
+    inject: [ItemEntityService, ItemConstraintService, ItemModifierAggregationService, ItemRollService],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/shared/providers/shared-app-providers.ts
+================
+import { contentGenerationProviders } from './content-generation-providers'
+import { contextConverterProviders } from './context-converter-providers'
+import { itemGenerationProviders } from './item-generation-provider'
+export const sharedAppProviders = [
+  ...contentGenerationProviders,
+  ...contextConverterProviders,
+  ...itemGenerationProviders,
+]
+
+================
+File: features/shared/repositories/in-memory-context.repository.ts
+================
+import { Injectable } from '@nestjs/common'
+import {
+  ICharacterContext,
+  IContextBatchRepository,
+  IContextUpdateResult,
+  IRunContext,
+  IShopContext,
+  IStashContext,
+} from '../../../from-xo-c'
+@Injectable()
+export class InMemoryContextRepository implements IContextBatchRepository {
+  private store = new Map<string, unknown>()
+  async updateBatch(
+    updates: {
+      run?: { context: IRunContext; expectedVersion: number }
+      stash?: { context: IStashContext; expectedVersion: number }
+      character?: { context: ICharacterContext; expectedVersion: number }
+      shop?: { context: IShopContext; expectedVersion: number }
+    },
+    globalVersion?: number
+  ): Promise<IContextUpdateResult | null> {
+    const runId =
+      updates.run?.context.runId ||
+      updates.character?.context.runId ||
+      updates.stash?.context.runId ||
+      updates.shop?.context.runId
+    if (!runId) {
+      return null
+    }
+    if (updates.run) {
+      this.store.set(`run:${runId}`, updates.run.context)
+    }
+    if (updates.character) {
+      this.store.set(`character:${runId}`, updates.character.context)
+    }
+    if (updates.stash) {
+      this.store.set(`stash:${runId}`, updates.stash.context)
+    }
+    if (updates.shop) {
+      this.store.set(`shop:${runId}`, updates.shop.context)
+    }
+    return {
+      success: true,
+      runContext: updates.run?.context,
+      stashContext: updates.stash?.context,
+      characterContext: updates.character?.context,
+      shopContext: updates.shop?.context,
+      globalVersion: (globalVersion || 0) + 1,
+    }
+  }
+  getByKey(key: string): unknown {
+    return this.store.get(key) ?? null
+  }
+  async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
+    if (!runId) {
+      return null
+    }
+    const runContext = this.store.get(`run:${runId}`) as IRunContext | undefined
+    if (!runContext) {
+      return null
+    }
+    return {
+      success: true,
+      runContext,
+      characterContext: (this.store.get(`character:${runId}`) as ICharacterContext | undefined) ?? undefined,
+      stashContext: (this.store.get(`stash:${runId}`) as IStashContext | undefined) ?? undefined,
+      shopContext: (this.store.get(`shop:${runId}`) as IShopContext | undefined) ?? undefined,
+    }
+  }
+}
+
+================
+File: features/shared/repositories/redis-context.repository.ts
+================
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import Redis from 'ioredis'
+import {
+  ICharacterContext,
+  IContextBatchRepository,
+  IContextUpdateResult,
+  IRunContext,
+  IShopContext,
+  IStashContext,
+} from '../../../from-xo-c'
+import { InjectionTokens } from '../providers/injection-tokens'
+type Updates = Parameters<IContextBatchRepository['updateBatch']>[0]
+@Injectable()
+export class RedisContextRepository implements IContextBatchRepository {
+  private readonly logger = new Logger(RedisContextRepository.name)
+  private readonly GLOBAL_VERSION_KEY = 'version:global'
+  constructor(@Inject(InjectionTokens.RedisClient) private readonly redis: InstanceType<typeof Redis>) {}
+  async updateBatch(updates: Updates, globalVersion?: number): Promise<IContextUpdateResult | null> {
+    const runId =
+      updates.run?.context.runId ||
+      updates.character?.context.runId ||
+      updates.stash?.context.runId ||
+      updates.shop?.context.runId
+    if (!runId) {
+      this.logger.warn('updateBatch: 無法提取 runId，操作被拒絕')
+      return null
+    }
+    try {
+      const useTransaction = true
+      const batch = useTransaction ? this.redis.multi() : this.redis.pipeline()
+      if (updates.run) batch.set(this.getRunContextKey(runId), JSON.stringify(updates.run.context), 'EX', this.getTTL())
+      if (updates.character)
+        batch.set(this.getCharacterContextKey(runId), JSON.stringify(updates.character.context), 'EX', this.getTTL())
+      if (updates.stash)
+        batch.set(this.getStashContextKey(runId), JSON.stringify(updates.stash.context), 'EX', this.getTTL())
+      if (updates.shop)
+        batch.set(this.getShopContextKey(runId), JSON.stringify(updates.shop.context), 'EX', this.getTTL())
+      const nextVersion = (globalVersion || 0) + 1
+      batch.set(this.GLOBAL_VERSION_KEY, nextVersion.toString())
+      await batch.exec()
+      return {
+        success: true,
+        runContext: updates.run?.context,
+        stashContext: updates.stash?.context,
+        characterContext: updates.character?.context,
+        shopContext: updates.shop?.context,
+        globalVersion: nextVersion,
+      }
+    } catch (error) {
+      this.logger.error(`updateBatch 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      return null
+    }
+  }
+  getByKey(key: string): unknown {
+    this.logger.warn(`getByKey 為同步方法，不支持 Redis 操作，建議改用非同步方法 (key: ${key})`)
+    return null
+  }
+  async getByRunId(runId: string): Promise<IContextUpdateResult | null> {
+    if (!runId) {
+      this.logger.warn('getByRunId: runId 為空，操作被拒絕')
+      return null
+    }
+    try {
+      const [runData, characterData, stashData, shopData, globalVersionString] = await Promise.all([
+        this.redis.get(this.getRunContextKey(runId)),
+        this.redis.get(this.getCharacterContextKey(runId)),
+        this.redis.get(this.getStashContextKey(runId)),
+        this.redis.get(this.getShopContextKey(runId)),
+        this.redis.get(this.GLOBAL_VERSION_KEY),
+      ])
+      if (!runData) {
+        return null
+      }
+      return {
+        success: true,
+        runContext: JSON.parse(runData) as IRunContext,
+        characterContext: characterData ? (JSON.parse(characterData) as ICharacterContext) : undefined,
+        stashContext: stashData ? (JSON.parse(stashData) as IStashContext) : undefined,
+        shopContext: shopData ? (JSON.parse(shopData) as IShopContext) : undefined,
+        globalVersion: globalVersionString ? Number.parseInt(globalVersionString, 10) : 0,
+      }
+    } catch (error) {
+      this.logger.error(`getByRunId 失敗 (runId: ${runId}): ${error instanceof Error ? error.message : String(error)}`)
+      return null
+    }
+  }
+  private getRunContextKey(runId: string): string {
+    return `run:${runId}`
+  }
+  private getCharacterContextKey(runId: string): string {
+    return `character:${runId}`
+  }
+  private getStashContextKey(runId: string): string {
+    return `stash:${runId}`
+  }
+  private getShopContextKey(runId: string): string {
+    return `shop:${runId}`
+  }
+  private getTTL(): number {
+    return 1800
+  }
+}
+
+================
+File: features/shared/shared-app.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedInfraModule } from 'src/features/shared/shared-infra.module'
+import { sharedAppProviders } from './providers/shared-app-providers'
+@Module({
+  imports: [SharedInfraModule],
+  providers: [...sharedAppProviders],
+  exports: [...sharedAppProviders],
+})
+export class SharedAppModule {}
+
+================
+File: features/shared/shared-infra.module.ts
+================
+import { Module, Scope } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import Redis from 'ioredis'
+import { IContextBatchRepository } from '../../from-xo-c'
+import { RedisModule } from './cache/redis.module'
+import { ContextManager } from './context/context-manager'
+import { configStoreProviders } from './providers/config-store.providers'
+import { fineGrainedInterfaceProviders } from './providers/fine-grained-interface.providers'
+import { InjectionTokens } from './providers/injection-tokens'
+import { InMemoryContextRepository } from './repositories/in-memory-context.repository'
+import { RedisContextRepository } from './repositories/redis-context.repository'
+type ConfigStore = ConstructorParameters<typeof ContextManager>[0]
+@Module({
+  imports: [RedisModule],
+  providers: [
+    ...configStoreProviders,
+    {
+      provide: InjectionTokens.ContextBatchRepository,
+      useFactory: (configService: ConfigService, redis: Redis) => {
+        const storageType = configService.get<string>('STORAGE_TYPE', 'memory')
+        if (storageType === 'memory') {
+          return new InMemoryContextRepository()
+        }
+        return new RedisContextRepository(redis)
+      },
+      inject: [ConfigService, InjectionTokens.RedisClient],
+    },
+    {
+      provide: ContextManager,
+      useFactory: (configStore: ConfigStore, repo: IContextBatchRepository) => {
+        return new ContextManager(configStore, repo)
+      },
+      inject: [InjectionTokens.ConfigStore, InjectionTokens.ContextBatchRepository],
+      scope: Scope.DEFAULT,
+    },
+    ...fineGrainedInterfaceProviders,
+  ],
+  exports: [
+    ContextManager,
+    InjectionTokens.ContextBatchRepository,
+    InjectionTokens.ConfigStoreAccessor,
+    InjectionTokens.ContextSnapshotAccessor,
+    InjectionTokens.ContextMutator,
+    InjectionTokens.ConfigStore,
+  ],
+})
+export class SharedInfraModule {}
+
+================
+File: features/shared/throttler/throttler.module.ts
+================
+import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+@Module({
+  imports: [
+    ThrottlerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => {
+        const ttl = configService.get<number>('THROTTLE_TTL', 60) * 1000
+        const limit = configService.get<number>('THROTTLE_LIMIT', 30)
+        return [
+          {
+            name: 'default',
+            ttl,
+            limit,
+          },
+          {
+            name: 'login',
+            ttl: 5 * 60 * 1000,
+            limit: 30,
+          },
+          {
+            name: 'register',
+            ttl: 10 * 60 * 1000,
+            limit: 30,
+          },
+        ]
+      },
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [
+    {
+      provide: 'APP_GUARD',
+      useClass: ThrottlerGuard,
+    },
+  ],
+})
+export class AppThrottlerModule {}
+
+================
+File: features/shop/model/buy-item.dto.ts
+================
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString } from 'class-validator'
+export class BuyItemDto {
+  @ApiProperty({ example: 'run_abc123' })
+  @IsString()
+  declare runId: string
+  @ApiProperty({ example: 'relic_warrior_resolute_heart' })
+  @IsString()
+  declare itemId: string
+}
+
+================
+File: features/shop/model/refresh-shop.dto.ts
+================
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString } from 'class-validator'
+export class RefreshShopDto {
+  @ApiProperty({ example: 'run_abc123' })
+  @IsString()
+  declare runId: string
+}
+
+================
+File: features/shop/model/sell-item.dto.ts
+================
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString } from 'class-validator'
+export class SellItemDto {
+  @ApiProperty({ example: 'run_abc123' })
+  @IsString()
+  declare runId: string
+  @ApiProperty({ example: 'relic_warrior_resolute_heart' })
+  @IsString()
+  declare itemId: string
+}
+
+================
+File: features/shop/shop.module.ts
+================
+import { Module } from '@nestjs/common'
+import { SharedAppModule } from 'src/features/shared/shared-app.module'
+import { SharedInfraModule } from 'src/features/shared/shared-infra.module'
+import { shopFeatureProviders } from './shop.providers'
+import { ShopNestService } from './shop.service'
+@Module({
+  imports: [SharedInfraModule, SharedAppModule],
+  controllers: [],
+  providers: [ShopNestService, ...shopFeatureProviders],
+  exports: [ShopNestService],
+})
+export class ShopModule {}
+
+================
+File: features/shop/shop.providers.ts
+================
+import { Scope } from '@nestjs/common'
+import {
+  ContextToDomainConverter,
+  ContextUnitOfWork,
+  IContextSnapshotAccessor,
+  ItemGenerationService,
+  ShopContextHandler,
+  ShopService,
+} from 'src/from-xo-c'
+import { InjectionTokens } from '../shared/providers/injection-tokens'
+export const shopFeatureProviders = [
+  {
+    provide: ShopContextHandler,
+    useFactory: (snapshot: IContextSnapshotAccessor, converter: ContextToDomainConverter, uow: ContextUnitOfWork) => {
+      return new ShopContextHandler(snapshot, converter, uow)
+    },
+    inject: [InjectionTokens.ContextSnapshotAccessor, ContextToDomainConverter, ContextUnitOfWork],
+    scope: Scope.REQUEST,
+  },
+  {
+    provide: ShopService,
+    useFactory: (itemGenSvc: ItemGenerationService, shopHandler: ShopContextHandler) => {
+      return new ShopService(itemGenSvc, shopHandler)
+    },
+    inject: [ItemGenerationService, ShopContextHandler],
+    scope: Scope.REQUEST,
+  },
+]
+
+================
+File: features/shop/shop.service.ts
+================
+import { BadRequestException, Injectable, Optional } from '@nestjs/common'
+import { ContextManager } from 'src/features/shared/context/context-manager'
+import { ResultToExceptionMapper } from 'src/features/shared/mappers/result-to-exception-mapper'
+import { ShopService } from 'src/from-xo-c'
+import { BuyItemDto } from './model/buy-item.dto'
+import { RefreshShopDto } from './model/refresh-shop.dto'
+import { SellItemDto } from './model/sell-item.dto'
+interface GetShopItemsDto {
+  runId: string
+}
+@Injectable()
+export class ShopNestService {
+  constructor(
+    @Optional() private readonly shopService: ShopService,
+    private readonly contextManager: ContextManager
+  ) {}
+  async getShopItems(dto: GetShopItemsDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const context = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!context) throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    const shopContext = context.contexts.shopContext
+    if (!shopContext) {
+      throw new BadRequestException({ error: 'SHOP_CONTEXT_NOT_FOUND', message: '找不到商店上下文' })
+    }
+    return {
+      success: true,
+      data: shopContext,
+    }
+  }
+  async buyItem(dto: BuyItemDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const contextBefore = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!contextBefore) {
+      throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    }
+    const result = this.shopService.buyItem(dto.itemId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      message: '購買成功',
+      data: {
+        runId: dto.runId,
+        itemId: dto.itemId,
+      },
+    }
+  }
+  async sellItem(dto: SellItemDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const contextBefore = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!contextBefore) {
+      throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    }
+    const result = this.shopService.sellItem(dto.itemId)
+    ResultToExceptionMapper.throwIfFailure(result)
+    return {
+      success: true,
+      message: '賣出成功',
+      data: {
+        runId: dto.runId,
+        itemId: dto.itemId,
+      },
+    }
+  }
+  async refreshShop(dto: RefreshShopDto) {
+    if (!this.shopService) {
+      throw new BadRequestException({ error: 'CONTEXT_NOT_READY', message: '尚未進入遊戲或上下文未就緒' })
+    }
+    const contextBefore = await this.ctxManager.getContextByRunId(dto.runId)
+    if (!contextBefore) {
+      throw new BadRequestException({ error: 'RUN_NOT_FOUND', message: 'Run not found' })
+    }
+    const refreshResult = this.shopService.refreshShopItems()
+    ResultToExceptionMapper.throwIfFailure(refreshResult)
+    return {
+      success: true,
+      message: '刷新成功',
+      data: {
+        runId: dto.runId,
+      },
+    }
+  }
+}
+
+================
+File: from-xo-c.ts
+================
+export * from '@xo-c-layer/application/content-generation/service/affix/AffixEntityService'
+export * from '@xo-c-layer/application/content-generation/service/character/CharacterAggregateService'
+export * from '@xo-c-layer/application/content-generation/service/enemy/EnemyEntityService'
+export * from '@xo-c-layer/application/content-generation/service/enemy/EnemyRandomGenerateService'
+export * from '@xo-c-layer/application/content-generation/service/item/item-roll-modifier/ItemModifierAggregationService'
+export * from '@xo-c-layer/application/content-generation/service/item/ItemEntityService'
+export * from '@xo-c-layer/application/content-generation/service/item/ItemGenerationService'
+export * from '@xo-c-layer/application/content-generation/service/item/sub-service/ItemConstraintService'
+export * from '@xo-c-layer/application/content-generation/service/item/sub-service/ItemRollService'
+export * from '@xo-c-layer/application/content-generation/service/profession/ProfessionEntityService'
+export * from '@xo-c-layer/application/content-generation/service/ultimate/UltimateEntityService'
+export * from '@xo-c-layer/application/core-infrastructure/context/helper/ContextToDomainConverter'
+export * from '@xo-c-layer/application/core-infrastructure/context/interface/IAppContext'
+export * from '@xo-c-layer/application/core-infrastructure/context/interface/ICharacterContext'
+export * from '@xo-c-layer/application/core-infrastructure/context/interface/IRunContext'
+export * from '@xo-c-layer/application/core-infrastructure/context/interface/IShopContext'
+export * from '@xo-c-layer/application/core-infrastructure/context/interface/IStashContext'
+export * from '@xo-c-layer/application/core-infrastructure/context/interface/WithRunIdAndVersion'
+export * from '@xo-c-layer/application/core-infrastructure/context/service/AppContextService'
+export * from '@xo-c-layer/application/core-infrastructure/context/service/ContextUnitOfWork'
+export * from '@xo-c-layer/application/core-infrastructure/id/idGeneratorHelpers'
+export * from '@xo-c-layer/application/core-infrastructure/repository/IRepositories'
+export * from '@xo-c-layer/application/core-infrastructure/run-status/RunStatusGuard'
+export * from '@xo-c-layer/application/features/equipment/EquipmentContextHandler'
+export * from '@xo-c-layer/application/features/equipment/EquipmentService'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatContextAccessor'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatContextHandler'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatCoordinationService'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatDomainConverter'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatProcessor'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatTransactionManager'
+export * from '@xo-c-layer/application/features/post-combat/core/PostCombatValidator'
+export * from '@xo-c-layer/application/features/post-combat/reward/Reward'
+export * from '@xo-c-layer/application/features/post-combat/reward/RewardFactory'
+export * from '@xo-c-layer/application/features/run/coordinator/RunCoordinationService'
+export * from '@xo-c-layer/application/features/run/GameStartOptionsService'
+export * from '@xo-c-layer/application/features/run/init/RunExternalAdapter'
+export * from '@xo-c-layer/application/features/run/init/RunInitializationService'
+export * from '@xo-c-layer/application/features/run/RunContextHandler'
+export * from '@xo-c-layer/application/features/run/RunService'
+export * from '@xo-c-layer/application/features/run/stage-progression/service/StageInitializationService'
+export * from '@xo-c-layer/application/features/run/stage-progression/service/StageNodeGenerationService'
+export * from '@xo-c-layer/application/features/shop/ShopContextHandler'
+export * from '@xo-c-layer/application/features/shop/ShopService'
+export * from '@xo-c-layer/domain/character/Character'
+export * from '@xo-c-layer/domain/item/Item'
+export * from '@xo-c-layer/domain/post-combat/PostCombat'
+export * from '@xo-c-layer/domain/shop/Shop'
+export * from '@xo-c-layer/domain/stash/Stash'
+export * from '@xo-c-layer/infra/static-config/assembler/GameConfigAssembler'
+export * from '@xo-c-layer/infra/static-config/loader/InternalAffixConfigLoader'
+export * from '@xo-c-layer/infra/static-config/loader/InternalEnemyConfigLoader'
+export * from '@xo-c-layer/infra/static-config/loader/InternalItemConfigLoader'
+export * from '@xo-c-layer/infra/static-config/loader/InternalProfessionConfigLoader'
+export * from '@xo-c-layer/infra/static-config/loader/InternalShopConfigLoader'
+export * from '@xo-c-layer/infra/static-config/loader/InternalUltimateConfigLoader'
+export * from '@xo-c-layer/shared/result/ErrorCodes'
+export * from '@xo-c-layer/shared/result/Result'
+
+================
+File: main.ts
+================
+import { Logger, ValidationPipe } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import cookieParser from 'cookie-parser'
+import { AppModule } from './features/app/app.module'
+import { AllExceptionsFilter } from './features/shared/filters/all-exceptions.filter'
+import { ResultExceptionFilter } from './features/shared/filters/result-exception.filter'
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule)
+  const logger = new Logger('Bootstrap')
+  const configService = app.get(ConfigService)
+  app.use(cookieParser())
+  app.useGlobalFilters(new ResultExceptionFilter(), new AllExceptionsFilter())
+  const config = new DocumentBuilder()
+    .setTitle('Game Core API')
+    .setDescription('遊戲核心 API 文檔')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: '請輸入 JWT Token',
+        in: 'header',
+      },
+      'access-token'
+    )
+    .build()
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('api', app, document)
+  const port = configService.get<number>('PORT', 3000)
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  await app.listen(port)
+  logger.log(`應用已啟動, Swagger 文檔地址: http://localhost:${port}/api`)
+}
+void bootstrap()
+
+
+
+
+
+================================================================
+End of Codebase
+================================================================
